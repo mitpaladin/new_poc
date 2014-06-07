@@ -81,6 +81,8 @@ GEM
     bullet (4.10.0)
       activesupport
       uniform_notifier (~> 1.6.0)
+    bundler-reorganizer (1.1.1)
+      thor
     callsite (0.0.11)
     cane (2.6.2)
       parallel
@@ -419,6 +421,7 @@ DEPENDENCIES
   binding_of_caller
   blind
   bullet
+  bundler-reorganizer
   capybara
   capybara-webkit
   chronic
