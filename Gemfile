@@ -72,6 +72,7 @@ group :development, :test do
   gem 'capybara-webkit'
   gem 'chronic'
   gem 'database_cleaner'
+  gem 'factory_girl_rails'
   gem 'quiet_assets'
   gem 'rspec'
   gem 'rspec-collection_matchers'
