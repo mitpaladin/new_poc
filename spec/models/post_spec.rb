@@ -10,6 +10,17 @@ describe Post do
     expect(post.blog).to be_nil
   end
 
+  it 'supports setting attributes in the initialiser' do
+    post = Post.new title: 'A Title', body: 'A Body'
+    expect(post.title).to eq 'A Title'
+    expect(post.body).to eq 'A Body'
+  end
+
+  it 'does not support setting arbitrary attributes in the initialiser' do
+    expect { Post.new title: 'Title', body: 'Body', foo: 'Bar' }.to \
+        raise_error NoMethodError, /undefined method `foo=' .+/
+  end
+
   describe 'supports reading and writing' do
 
     it 'a title' do
