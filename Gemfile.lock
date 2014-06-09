@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/bbatsov/rubocop.git
-  revision: e5401d72638b14425dc986e710a1d27ba2c9b9f9
+  revision: 3a4e4e58668e247d388be76eccbd6e621729e3f3
   specs:
     rubocop (0.23.0)
       json (>= 1.7.7, < 2)
@@ -21,7 +21,8 @@ GIT
 
 GIT
   remote: git://github.com/orgsync/active_interaction.git
-  revision: a31400d6bcc9b4cad0c917ceaf88706b55e8b294
+  revision: 6d11f3ef0f5e743d2babdcf507cb20afe016c6dd
+  branch: v1.3.0
   specs:
     active_interaction (1.2.3)
       activemodel (>= 3.2, < 5)

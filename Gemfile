@@ -3,10 +3,10 @@ source 'https://rubygems.org'
 source 'https://rails-assets.org'
 
 gem 'active_attr'
-gem 'active_interaction', {:github=>'orgsync/active_interaction'}
+gem 'active_interaction', github: 'orgsync/active_interaction', branch: 'v1.3.0'
 gem 'bundler-reorganizer'
 gem 'coffee-rails', '~> 4.0.0'
-gem 'draper', {:github=>'drapergem/draper'}
+gem 'draper', github: 'drapergem/draper'
 gem 'jbuilder', '~> 2.0'
 gem 'jquery-rails'
 gem 'naught'
@@ -37,7 +37,7 @@ group :development do
   gem 'pry-rails'
   gem 'pry-rescue'
   gem 'rails-footnotes'
-  gem 'rubocop', {:github=>'bbatsov/rubocop'}
+  gem 'rubocop', github: 'bbatsov/rubocop'
   gem 'spring'
 end
 
