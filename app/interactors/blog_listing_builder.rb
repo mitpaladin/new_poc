@@ -1,6 +1,4 @@
 
-require 'fancy-open-struct'
-
 module DSO
   # Build list of information about a blog for presentation: title, subtitle,
   # entry data.
@@ -9,25 +7,39 @@ module DSO
 
     # Eventually, this is where we'd sort and filter posts being presented to
     # the user (public/private/draft posts; ordering, limiting, etc.) We "fake
-    # it" by returning a FancyOpenStruct with *a copy of* the details.
+    # it" by returning an object with *a read-only copy of* the details.
     def execute
-      ret = init_return_value_from blog
-      blog.entries.each { |post| ret.entries << copy_entry_from(post) }
-      ret
+      Builder.new blog
     end
 
-    private
+    # Why? So we can use attr_reader to lock down write access to attributes,
+    # which OpenStruct/FancyOpenStruct don't support (intentionally).
+    class Builder
+      attr_reader :title, :subtitle, :entries
 
-    def copy_entry_from(post)
-      FancyOpenStruct.new title: post.title, body: post.body
-    end
+      def initialize(blog)
+        @title = blog.title.freeze
+        @subtitle = blog.subtitle.freeze
+        @entries = copy_entries_from(blog)
+        @entries.freeze # <mc_hammer>can't touch this</mc_hammer>
+      end
 
-    def init_return_value_from(blog)
-      ret = FancyOpenStruct.new
-      ret.title = blog.title
-      ret.subtitle = blog.subtitle
-      ret.entries = []
-      ret
-    end
+      private
+
+      # Information about a blog entry, currently only body and title.
+      class Entry
+        attr_reader :title, :body
+        def initialize(post)
+          @title = post.title.freeze
+          @body = post.body.freeze
+        end
+      end # class DSO::BlogListingBuilder::Builder::Entry
+
+      def copy_entries_from(blog)
+        ret = []
+        blog.entries.each { |post| ret << Entry.new(post) }
+        ret
+      end
+    end # class DSO::BlogListingBuilder::Builder
   end # class DSO::BlogListingBuilder
 end # module DSO
