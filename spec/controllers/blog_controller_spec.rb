@@ -41,7 +41,7 @@ describe BlogController do
       end
 
       it 'has the expected subtitle' do
-        @expected = 'The trusted source for drying paint news and opinion'
+        @expected = 'The trusted source for paint drying news and opinion'
         @field = :subtitle
       end
 

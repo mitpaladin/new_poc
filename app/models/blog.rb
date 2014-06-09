@@ -5,7 +5,7 @@ class Blog
 
   def initialize
     @title = 'Watching Paint Dry'
-    @subtitle = 'The trusted source for drying paint news and opinion'
+    @subtitle = 'The trusted source for paint drying news and opinion'
     @entries = []
   end
 end # class Blog

@@ -4,7 +4,6 @@ require 'spec_helper'
 describe 'blog/index.slim' do
   before :each do
     @blog = Blog.new
-    view.assigns[:blog] = @blog
     render
   end
 
