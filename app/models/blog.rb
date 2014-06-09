@@ -14,8 +14,8 @@ class Blog
     @entries << entry
   end
 
-  def new_post
-    post_source.call.tap { |p| p.blog = self }
+  def new_post(*args)
+    post_source.call(*args).tap { |p| p.blog = self }
   end
 
   private

@@ -65,5 +65,14 @@ describe Blog do
     it "sets the post's blog reference to itself" do
       expect(blog.new_post.blog).to be blog
     end
+
+    it 'accepts an attribute hash on behalf of the post maker' do
+      post_source = double 'post_source'
+      params_in = { x: 42, y: 'z' }
+      expect(post_source).to receive(:call)
+          .with(params_in).and_return @new_post
+      blog.post_source = post_source
+      blog.new_post x: 42, y: 'z'
+    end
   end # describe :new_post
 end # describe Blog
