@@ -4,6 +4,12 @@ require 'spec_helper'
 describe BlogController do
   describe :routing.to_s, type: :routing do
     it { expect(get '/blog').to route_to 'blog#index' }
+    it { expect(get '/blog/blog/new').to_not be_routable }
+    it { expect(post '/blog/blog').to_not be_routable }
+    it { expect(get '/blog/blog/1').to_not be_routable }
+    it { expect(get '/blog/blog/edit').to_not be_routable }
+    it { expect(put '/blog/blog/1').to_not be_routable }
+    it { expect(delete '/blog/blog/1').to_not be_routable }
   end
 
   describe :helpers.to_s do
