@@ -5,4 +5,4 @@ div class='page-header row'
 
 div class='page-content'
   div class='row well'
-    p Find me in app/views/blog/index.html.slim
+    = render partial: 'entry', collection: @blog.entries
