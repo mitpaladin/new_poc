@@ -47,7 +47,7 @@ group :development, :test do
   gem "database_cleaner"
   gem "factory_girl_rails"
   gem "quiet_assets"
-  gem "rspec"
+  gem "rspec", "~> 2.99.0"
   gem "rspec-collection_matchers"
   gem "rspec-html-matchers"
   gem "rspec-http"
