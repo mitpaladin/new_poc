@@ -29,7 +29,7 @@ This demo will be declared successful when it meets each and all of the followin
 1. Rails controllers, used to implement normal RESTful resource actions exhibit no direct knowledge of domain concepts; they defer to DSOs for actions upon data resources (such as "blog posts" or "user sessions") and page transitions (such as redirecting to a DSO-specified page on the success or failure o an action);
 2. Rails views will have no domain-knowledge-exhibiting code embedded in them, but will call Rails helpers and/or Draper decorators. They should be as close to the often-discussed "logic-less templates" as is practicable;
 3. The goals of the earlier `interactor_demo` tutorial adaptation shall be met, including:
-	4. Logic *roughly* analogous to the first thirteen sections of Avdi Grimm's [*Objects on Rails*](http://objectsonrails.com/) book, **but** see the section "*It Seemed a Good Idea at the Time*" [below](#itseemedagoodideaatthetime);
+	4. Logic *roughly* analogous to the first thirteen sections of Avdi Grimm's [*Objects on Rails*](http://objectsonrails.com/) book, **but** see the section "*It Seemed a Good Idea at the Time*" [below](#it-seemed-a-good-idea-at-the-time);
 	5. Persistence, using standard ActiveRecord models shadowed by a boundary layer between ActiveRecord and the remainder of the domain logic;
 	6. Authentication, allowing the author of each individual blog entry to be identified and credited when the article is presented;
 	7. Authorisation, supporting three capabilities:
