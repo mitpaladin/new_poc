@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/bbatsov/rubocop.git
-  revision: 3a4e4e58668e247d388be76eccbd6e621729e3f3
+  revision: 56a5a7741db8d51006155ba5ed05b6680afac2ea
   specs:
     rubocop (0.23.0)
       json (>= 1.7.7, < 2)
@@ -155,7 +155,7 @@ GEM
     hirb (0.7.2)
     i18n (0.6.9)
     interception (0.5)
-    jbuilder (2.0.8)
+    jbuilder (2.1.0)
       activesupport (>= 3.0.0, < 5)
       multi_json (~> 1.2)
     jist (1.5.1)
@@ -331,7 +331,7 @@ GEM
       rspec-core (~> 2.99.0)
       rspec-expectations (~> 2.99.0)
       rspec-mocks (~> 2.99.0)
-    rspec-collection_matchers (0.0.4)
+    rspec-collection_matchers (1.0.0)
       rspec-expectations (>= 2.99.0.beta1)
     rspec-core (2.99.0)
     rspec-expectations (2.99.0)
@@ -416,7 +416,7 @@ GEM
     uglifier (2.5.0)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
-    uniform_notifier (1.6.1)
+    uniform_notifier (1.6.2)
     uuid (2.3.7)
       macaddr (~> 1.0)
     xpath (2.0.0)
