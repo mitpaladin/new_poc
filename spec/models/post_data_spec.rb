@@ -21,7 +21,7 @@ describe PostData do
     end
 
     it 'with a title parameter string only' do
-      expect { FactoryGirl.build :post_datum, body: nil }.to_not raise_error
+      expect { FactoryGirl.create :post_datum, body: nil }.to_not raise_error
     end
 
     it 'with both title and body parameter strings' do
