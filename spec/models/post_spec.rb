@@ -17,8 +17,8 @@ describe Post do
   end
 
   it 'does not support setting arbitrary attributes in the initialiser' do
-    expect { Post.new title: 'Title', body: 'Body', foo: 'Bar' }.to \
-        raise_error NoMethodError, /undefined method `foo=' .+/
+    post = Post.new title: 'Title', body: 'Body', foo: 'Bar'
+    expect(post.instance_variables).to_not include :@foo
   end
 
   describe 'supports reading and writing' do
@@ -41,13 +41,14 @@ describe Post do
   end # describe 'supports reading and writing'
 
   describe :publish do
+    let(:post) { Post.new title: 'A Title' }
 
     it 'adds the post to the blog' do
       blog = Blog.new
       post.blog = blog
-      expect(blog.entries).to_not include post
+      expect(blog.entry? post).to be false
       post.publish
-      expect(blog.entries).to include post
+      expect(blog.entry? post).to be true
     end
   end # describe :publish
 end # describe Post

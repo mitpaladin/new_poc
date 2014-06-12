@@ -1,17 +1,26 @@
 
+include Forwardable
+
 # Blog class encapsulates the blog as a whole.
 class Blog
-  attr_reader :title, :subtitle, :entries
+  extend Forwardable
+  def_delegators :@blog_data, :title, :subtitle
   attr_writer :post_source
 
   def initialize
-    @title = 'Watching Paint Dry'
-    @subtitle = 'The trusted source for paint drying news and opinion'
-    @entries = []
+    @blog_data = BLO::BlogDataBoundary.new
   end
 
   def add_entry(entry)
-    @entries << entry
+    BLO::PostDataBoundary.save_entry entry
+  end
+
+  def entries
+    BLO::PostDataBoundary.load_all
+  end
+
+  def entry?(entry)
+    BLO::PostDataBoundary.entry? entry
   end
 
   def new_post(*args)
