@@ -12,8 +12,12 @@
 # Read about factories at https://github.com/thoughtbot/factory_girl
 
 FactoryGirl.define do
+  sequence :title do |n|
+    "Test Title Number #{n}"
+  end
+
   factory :post_datum, class: 'PostData' do
-    title 'The Title'
+    title { generate :title }
     body 'The Body'
   end
 end

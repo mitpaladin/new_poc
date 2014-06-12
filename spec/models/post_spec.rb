@@ -41,13 +41,14 @@ describe Post do
   end # describe 'supports reading and writing'
 
   describe :publish do
+    let(:post) { Post.new title: 'A Title' }
 
     it 'adds the post to the blog' do
       blog = Blog.new
       post.blog = blog
-      expect(blog.entries).to_not include post
+      expect(blog.entry? post).to be false
       post.publish
-      expect(blog.entries).to include post
+      expect(blog.entry? post).to be true
     end
   end # describe :publish
 end # describe Post

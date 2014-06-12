@@ -45,11 +45,33 @@ describe Blog do
   describe :add_entry do
 
     it 'adds the entry to the blog' do
-      entry = Object.new
+      entry = FancyOpenStruct.new title: 'title', body: 'body'
       blog.add_entry entry
-      expect(blog.entries).to include entry
+      expect(blog.entry? entry).to be true
     end
   end # describe :add_entry
+
+  describe :entries do
+    let(:entry_count) { 10 }
+
+    before :each do
+      FactoryGirl.create_list :post_datum, entry_count
+    end
+
+    it 'returns a collection with the correct number of entries' do
+      expect(blog.entries).to have(entry_count).entries
+    end
+
+    it 'has the correct ordering of entries' do
+      title_pattern = /Test Title Number (\d+)/
+      title_format  = 'Test Title Number %d'
+      first_index = blog.entries.first.title.match(title_pattern)[1].to_i
+      blog.entries.each_with_index do |_post, index|
+        expected = format title_format, first_index + index
+        expect(blog.entries[index].title).to eq expected
+      end
+    end
+  end # describe :entries
 
   describe :new_post do
 
