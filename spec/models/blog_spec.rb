@@ -7,27 +7,7 @@ describe Blog do
 
   describe 'has accessors for' do
 
-    describe 'a "title" that is' do
-
-      it 'string-like' do
-        expect(blog.title).to respond_to :to_s
-      end
-
-      it 'not empty' do
-        expect(blog.title).to_not be_empty
-      end
-    end # describe 'a "title" that is'
-
-    describe 'a "subtitle" that is' do
-
-      it 'string-like' do
-        expect(blog.subtitle).to respond_to :to_s
-      end
-
-      it 'not empty' do
-        expect(blog.subtitle).to_not be_empty
-      end
-    end # describe 'a "subtitle" that is'
+    # "title" and "subtitle" are now delegated
 
     describe 'an "entries" attribute that is' do
 
