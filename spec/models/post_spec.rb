@@ -17,8 +17,8 @@ describe Post do
   end
 
   it 'does not support setting arbitrary attributes in the initialiser' do
-    expect { Post.new title: 'Title', body: 'Body', foo: 'Bar' }.to \
-        raise_error NoMethodError, /undefined method `foo=' .+/
+    post = Post.new title: 'Title', body: 'Body', foo: 'Bar'
+    expect(post.instance_variables).to_not include :@foo
   end
 
   describe 'supports reading and writing' do
