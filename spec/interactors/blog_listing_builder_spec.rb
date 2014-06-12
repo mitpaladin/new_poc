@@ -21,6 +21,7 @@ module DSO
     end
 
     let(:klass) { BlogListingBuilder }
+    let(:blog) { setup_blog }
 
     it 'can be called using a `blog` parameter' do
       blog_obj = Blog.new
@@ -34,7 +35,6 @@ module DSO
     end
 
     describe 'copies values from the Blog instance for the' do
-      let(:blog) { setup_blog }
 
       subject(:obj) { klass.run! blog: blog }
 
@@ -68,8 +68,14 @@ module DSO
       expect { obj.entries.first.body = 'foo' }.to \
           raise_error NoMethodError, /undefined method `body='.+/
       item = obj.entries.first
-      expect { obj.entries << item }.to \
-          raise_error RuntimeError, /can't modify frozen .+/
+      expect { item.title = 'foo' }.to \
+          raise_error NoMethodError, /undefined method `title='.+/
+      expect { item.body = 'foo' }.to \
+          raise_error NoMethodError, /undefined method `body='.+/
+      dummy_params = FancyOpenStruct.new title: 'foo', body: 'bar'
+      new_entry = BlogListingBuilder::Builder::Entry.new dummy_params
+      expect { obj.entries << new_entry }.to \
+          raise_error RuntimeError, /can't modify frozen Array/
     end
   end # describe BlogListingBuilder
 end # module DSO
