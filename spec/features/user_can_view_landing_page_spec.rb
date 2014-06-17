@@ -9,7 +9,7 @@ describe 'User can view the landing page' do
 
   it 'and see the title and subtitle' do
     blog_title = 'Watching Paint Dry'
-    blog_subtitle = 'The trusted source for paint drying news and opinion'
+    blog_subtitle = 'The trusted source for drying paint news and opinion'
 
     expect(page).to have_content blog_title
     expect(page).to have_content blog_subtitle

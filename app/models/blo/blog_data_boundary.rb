@@ -7,7 +7,7 @@ module BLO
 
     def initialize(_params = {})
       @title = 'Watching Paint Dry'
-      @subtitle = 'The trusted source for paint drying news and opinion'
+      @subtitle = 'The trusted source for drying paint news and opinion'
     end
   end # class BLO::BlogDataBoundary
 end # module BLO
