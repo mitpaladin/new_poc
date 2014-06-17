@@ -5,7 +5,7 @@ module BLO
   class BlogDataBoundary
     attr_reader :title, :subtitle
 
-    def initialize
+    def initialize(_params = {})
       @title = 'Watching Paint Dry'
       @subtitle = 'The trusted source for paint drying news and opinion'
     end
