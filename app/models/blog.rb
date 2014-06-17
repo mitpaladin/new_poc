@@ -7,8 +7,8 @@ class Blog
   def_delegators :@blog_data, :title, :subtitle
   attr_writer :post_source
 
-  def initialize
-    @blog_data = BLO::BlogDataBoundary.new
+  def initialize(params = {})
+    @blog_data = BLO::BlogDataBoundary.new params
   end
 
   def add_entry(entry)
