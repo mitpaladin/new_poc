@@ -13,4 +13,8 @@ class Post
   def publish
     blog.add_entry self
   end
-end # class Blog::Post
+
+  def valid?
+    String(title).present?
+  end
+end # class Post

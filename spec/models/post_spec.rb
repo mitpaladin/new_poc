@@ -51,4 +51,17 @@ describe Post do
       expect(blog.entry? post).to be true
     end
   end # describe :publish
+
+  describe :valid? do
+    let(:post) { Post.new title: 'A Title' }
+
+    it 'returns true for a valid post' do
+      expect(post).to be_valid
+    end
+
+    it 'returns false for an invalid post' do
+      post.title = ''
+      expect(post).to_not be_valid
+    end
+  end
 end # describe Post
