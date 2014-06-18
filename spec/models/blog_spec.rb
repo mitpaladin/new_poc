@@ -77,4 +77,113 @@ describe Blog do
       blog.new_post x: 42, y: 'z'
     end
   end # describe :new_post
+
+  # FIXME: Repetitive. Clean up w/shared examples or even function(s).
+  describe 'compares correctly when' do
+
+    let(:blog2) { blog.clone }
+    let(:symbol) { '<=>'.to_sym }
+
+    it 'comparing to an "equal" other' do
+      expect(blog.send symbol, blog2).to eq 0
+    end
+
+    describe 'the other blog' do
+
+      let(:lower)   { 'titleA' }
+      let(:higher)  { 'titleB' }
+
+      after :each do
+        allow(blog).to receive(method).and_return @ret1
+        allow(blog2).to receive(method).and_return @ret2
+        expect(blog.send symbol, blog2).to eq @expected
+      end
+
+      describe 'title is' do
+
+        let(:method)  { :title }
+
+        it 'less than this one' do
+          @ret1 = higher
+          @ret2 = lower
+          @expected = 1
+        end
+
+        it 'greater than this one' do
+          @ret1 = lower
+          @ret2 = higher
+          @expected = -1
+        end
+      end # describe 'title is'
+
+      describe 'subtitle is' do
+
+        let(:method)  { :subtitle }
+
+        it 'less than this one' do
+          @ret1 = higher
+          @ret2 = lower
+          @expected = 1
+        end
+
+        it 'greater than this one' do
+          @ret1 = lower
+          @ret2 = higher
+          @expected = -1
+        end
+      end # describe 'subtitle is'
+
+      describe 'has' do
+        let(:method) { :entries }
+
+        it 'fewer entries than this one' do
+          @ret1 = [nil]
+          @ret2 = []
+          @expected = 1
+        end
+
+        it 'more entries than this one' do
+          @ret1 = []
+          @ret2 = [nil]
+          @expected = -1
+        end
+
+        describe "an entry's title that is" do
+
+          let(:e1) { FancyOpenStruct.new title: higher }
+          let(:e2) { FancyOpenStruct.new title: lower }
+
+          it 'lower than in this one' do
+            @ret1 = [e1]
+            @ret2 = [e2]
+            @expected = 1
+          end
+
+          it 'higher than in this one' do
+            @ret1 = [e2]
+            @ret2 = [e1]
+            @expected = -1
+          end
+        end # describe "an entry's title that is"
+
+        describe "an entry's body that is" do
+
+          let(:e1) { FancyOpenStruct.new title: 't', body: higher }
+          let(:e2) { FancyOpenStruct.new title: 't', body: lower }
+
+          it 'lower than in this one' do
+            @ret1 = [e1]
+            @ret2 = [e2]
+            @expected = 1
+          end
+
+          it 'higher than in this one' do
+            @ret1 = [e2]
+            @ret2 = [e1]
+            @expected = -1
+          end
+        end # describe "an entry's body that is"
+      end # describe 'has'
+    end # describe 'the other blog'
+  end # describe 'compares correctly when'
 end # describe Blog
