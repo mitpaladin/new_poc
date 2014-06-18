@@ -8,13 +8,20 @@ module DSO
   describe BlogSelector do
 
     let(:klass) { BlogSelector }
+    let(:expected_blog) do
+      title = 'Watching Paint Dry'
+      subtitle = 'The trusted source for drying paint news and opinion'
+      FancyOpenStruct.new title: title, subtitle: subtitle, entries: []
+    end
 
     it 'returns a blog-like object when called with valid parameters' do
       obj = klass.run! params: { blog_params: { id: 1 } }
-      expect(obj.title).to eq 'Watching Paint Dry'
-      subtitle = 'The trusted source for drying paint news and opinion'
-      expect(obj.subtitle).to eq subtitle
-      expect(obj.entries).to be_an Array
+      expect(obj).to have_same_blog_content_as(expected_blog)
+    end
+
+    it 'Does The Right Thing when called without parameters' do
+      obj = klass.run!
+      expect(obj).to have_same_blog_content_as(expected_blog)
     end
 
     # all failure specs presently disabled; hardcoding for the moment :P
