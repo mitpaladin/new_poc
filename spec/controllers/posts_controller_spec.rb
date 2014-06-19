@@ -5,7 +5,7 @@ require 'spec_helper'
 describe PostsController do
   describe :routing.to_s, type: :routing do
     it { expect(get '/posts/new').to route_to 'posts#new' }
-    it { expect(post '/posts').to_not be_routable }
+    it { expect(post '/posts').to route_to 'posts#create' }
     it { expect(get '/posts').to_not be_routable }
     it { expect(get '/posts/1').to_not be_routable }
     it { expect(get '/posts/edit').to_not be_routable }
