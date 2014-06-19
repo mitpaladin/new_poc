@@ -63,5 +63,26 @@ describe Post do
       post.title = ''
       expect(post).to_not be_valid
     end
-  end
+  end # describe :valid?
+
+  describe 'supports ActiveModel conventions by' do
+
+    subject(:post) { Blog.new.new_post FactoryGirl.attributes_for(:post_datum) }
+
+    describe 'including module ActiveModel::Conversion module, as shown by' do
+
+      it 'having a #to_model instance method' do
+        expect(post).to respond_to :to_model
+      end
+
+    end # describe 'including module ActiveModel::Conversion, as shown by'
+
+    describe 'extending module ActiveModel::Naming, as shown by' do
+
+      it 'having a #model_name class method' do
+        expect(post.class).to respond_to :model_name
+      end
+
+    end # describe 'extending module ActiveModel::Naming, as shown by'
+  end # describe 'supports ActiveModel conventions by'
 end # describe Post
