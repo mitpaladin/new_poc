@@ -12,7 +12,8 @@ class PostsController < ApplicationController
   end
 
   def create
-    blog = CCO::BlogCCO.to_entity BlogData.find(params[:blog])
+    blog_params = params[:blog] || BlogData.first.to_param
+    blog = CCO::BlogCCO.to_entity BlogData.find(blog_params)
     @post = create_post_and(blog, params) do |post|
       DSO::PostPublisher.run! post: post
     end
@@ -32,7 +33,7 @@ class PostsController < ApplicationController
   def new_post_params
     {
       blog:       DSO::BlogSelector.run!,
-      params_in:  { blog_post: {} }
+      params_in:  { post_data: {} }
     }
   end
 

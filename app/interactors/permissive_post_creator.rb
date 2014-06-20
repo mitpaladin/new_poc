@@ -5,14 +5,14 @@ module DSO
   class PermissivePostCreator < ActiveInteraction::Base
     interface :blog, methods: [:new_post]
     hash :params_in do
-      hash :blog_post do
+      hash :post_data do
         string :title, default: '', strip: true
         string :body, default: '', strip: true
       end
     end
 
     def execute
-      blog.new_post params_in[:blog_post]
+      blog.new_post params_in[:post_data]
     end
   end
 end # module DSO

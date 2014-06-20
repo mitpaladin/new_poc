@@ -39,7 +39,7 @@ describe PostsController do
     before :each do
       blog = BlogData.first # ???
       params = FactoryGirl.attributes_for :post_datum
-      post :create, blog_post: params, blog: blog
+      post :create, post_data: params, blog: blog
     end
 
     it 'assigns the :post item as a PostData instance' do

@@ -15,8 +15,7 @@ module BLO
     private
 
     def get_blog_data_for(params = {})
-      default_id = BlogData.all.first.id
-      default_params = { id: default_id }
+      default_params = { id: BlogData.first.id }
       blog_params = params.fetch :blog_params, default_params
       BlogData.find blog_params[:id]
     end

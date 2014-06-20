@@ -10,10 +10,10 @@ module DSO
     let(:klass) { PermissivePostCreator }
     let(:blog) { Blog.new }
     let(:valid_params) do
-      { blog_post: { title: 'This is a Title', body: 'This is a Body' } }
+      { post_data: { title: 'This is a Title', body: 'This is a Body' } }
     end
     let(:image_post_params) do
-      { blog_post: {
+      { post_data: {
         title: 'This is a Title',
         image_url: 'http://localhost/foo.png'
       } }
