@@ -6,7 +6,9 @@ require 'permissive_post_creator'
 class PostsController < ApplicationController
   def new
     blog = DSO::BlogSelector.run!
-    @post = DSO::PermissivePostCreator.run! new_post_params(blog)
+    post = DSO::PermissivePostCreator.run! new_post_params(blog)
+    # The DSO hands back an entity; Rails needs to see an implementation model
+    @post = CCO::PostCCO.from_entity post
   end
 
   def create

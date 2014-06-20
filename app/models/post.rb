@@ -1,7 +1,7 @@
 
 # A Post encapsulates an entry within a Blog.
 class Post
-  include ActiveAttr::BasicModel
+  # include ActiveAttr::BasicModel
   attr_accessor :blog, :body, :title
 
   def initialize(attrs = {})

@@ -23,9 +23,9 @@ describe PostsController do
       response.should be_success
     end
 
-    it 'assigns a Post to :post' do
+    it 'assigns a PostData instance to :post' do
       get :new
-      expect(assigns[:post]).to be_a Post
+      expect(assigns[:post]).to be_a PostData
     end
 
     it 'renders the :new template' do
