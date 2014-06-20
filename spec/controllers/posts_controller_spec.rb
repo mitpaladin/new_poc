@@ -33,4 +33,25 @@ describe PostsController do
       expect(response).to render_template :new
     end
   end # describe "GET 'new'"
+
+  describe "POST 'create'" do
+
+    before :each do
+      blog = BlogData.first # ???
+      params = FactoryGirl.attributes_for :post_datum
+      post :create, blog_post: params, blog: blog
+    end
+
+    it 'assigns the :post item as a PostData instance' do
+      expect(assigns[:post]).to be_a PostData
+    end
+
+    it 'redirects to the root path' do
+      expect(response).to redirect_to root_path
+    end
+
+    it 'displays the "Post added!" flash message' do
+      expect(request.flash[:success]).to eq 'Post added!'
+    end
+  end # describe "POST 'create'"
 end # describe PostsController
