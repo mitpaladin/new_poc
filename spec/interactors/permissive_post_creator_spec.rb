@@ -12,11 +12,8 @@ module DSO
     let(:valid_params) do
       { post_data: { title: 'This is a Title', body: 'This is a Body' } }
     end
-    let(:image_post_params) do
-      { post_data: {
-        title: 'This is a Title',
-        image_url: 'http://localhost/foo.png'
-      } }
+    let(:missing_title_params) do
+      { post_data: { title: '', body: 'This is a Body' } }
     end
 
     it 'fails when called with an invalid Blog parameter' do
@@ -39,18 +36,11 @@ module DSO
           expect(post.blog).to be blog
         end
       end # describe 'a text post, so that it'
-
-      describe 'an image post, so that it' do
-        it 'is valid' do
-          expect(klass.run! blog: blog,
-                            params_in: image_post_params).to be_valid
-        end
-
-        it 'has a reference to the blog' do
-          post = klass.run! blog: blog, params_in: image_post_params
-          expect(post.blog).to be blog
-        end
-      end # describe 'an image post, so that it'
     end # describe 'succeeds when called with valid parameters for'
+
+    it 'succeeds but marks post as invalid given invalid parameters' do
+      post = klass.run! blog: blog, params_in: missing_title_params
+      expect(post).to_not be_valid
+    end
   end # describe DSO::PermissivePostCreator
 end # module DSO
