@@ -26,6 +26,7 @@ module CCO
         attr_name = ivar.to_s.split('@').last
         Internal.set_attr_on ret, attr_name, attr_value
       end # ivars.each do |ivar|
+      ret.valid?  # trigger building of error messages for invalid record
       ret
     end
 
