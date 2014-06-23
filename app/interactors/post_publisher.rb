@@ -14,7 +14,8 @@ module DSO
     private
 
     def validate_post
-      post.valid?
+      message = 'may not be blank or missing'
+      errors.add(:title, message) unless post.title.present?
     end
   end
 end # module DSO
