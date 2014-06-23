@@ -36,22 +36,46 @@ describe PostsController do
 
   describe "POST 'create'" do
 
-    before :each do
-      blog = BlogData.first # ???
-      params = FactoryGirl.attributes_for :post_datum
-      post :create, post_data: params, blog: blog
-    end
+    let(:blog) { BlogData.first }
+    let(:params) { FactoryGirl.attributes_for :post_datum }
 
-    it 'assigns the :post item as a PostData instance' do
-      expect(assigns[:post]).to be_a PostData
-    end
+    describe 'with valid parameters' do
+      before :each do
+        post :create, post_data: params, blog: blog
+      end
 
-    it 'redirects to the root path' do
-      expect(response).to redirect_to root_path
-    end
+      it 'assigns the :post item as a PostData instance' do
+        expect(assigns[:post]).to be_a PostData
+      end
 
-    it 'displays the "Post added!" flash message' do
-      expect(request.flash[:success]).to eq 'Post added!'
-    end
+      it 'redirects to the root path' do
+        expect(response).to redirect_to root_path
+      end
+
+      it 'displays the "Post added!" flash message' do
+        expect(request.flash[:success]).to eq 'Post added!'
+      end
+    end # describe 'with valid parameters'
+
+    describe 'with an invalid title, the returned PostData instance is' do
+
+      before :each do
+        params[:title] = ''
+        post :create, post_data: params, blog: blog
+        @post = assigns[:post]
+      end
+
+      it 'a new record' do
+        expect(@post).to be_a_new_record
+      end
+
+      it 'is invalid' do
+        expect(@post).to_not be_valid
+      end
+
+      it 'provides the correct error message' do
+        expect(@post.errors.full_messages).to include "Title can't be blank"
+      end
+    end # describe 'with an invalid title, the returned PostData instance is'
   end # describe "POST 'create'"
 end # describe PostsController

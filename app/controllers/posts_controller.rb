@@ -12,23 +12,16 @@ class PostsController < ApplicationController
   end
 
   def create
-    blog_params = params[:blog] || BlogData.first.to_param
-    blog = CCO::BlogCCO.to_entity BlogData.find(blog_params)
-    @post = create_post_and(blog, params) do |post|
-      DSO::PostPublisher.run! post: post
+    publication = publish_entry(params)
+    @post = CCO::PostCCO.from_entity publication.inputs[:post]
+    if publication.valid?
+      redirect_to(root_path, redirect_params)
+    else
+      render 'new'
     end
-    redirect_to root_path, redirect_params
-  rescue ActiveInteraction::InvalidInteractionError
-    render 'new'
   end
 
   private
-
-  def create_post_and(blog, params, &_block)
-    post = DSO::PermissivePostCreator.run! blog: blog, params_in: params
-    yield post
-    CCO::PostCCO.from_entity post
-  end
 
   def new_post_params
     {
@@ -37,11 +30,15 @@ class PostsController < ApplicationController
     }
   end
 
+  # FIXME: Shouldn't this be a DSO in its own right?
+  def publish_entry(params)
+    blog_params = params[:blog] || {}
+    blog = DSO::BlogSelector.run! blog_params: blog_params
+    post = DSO::PermissivePostCreator.run! blog: blog, params_in: params
+    DSO::PostPublisher.run post: post
+  end
+
   def redirect_params
-    {
-      flash:  {
-        success:  'Post added!'
-      }
-    }
+    { flash: { success:  'Post added!' } }
   end
 end # class Blog::PostsController
