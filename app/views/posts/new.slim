@@ -1,9 +1,8 @@
 
 h1 New Post
 
-- form_html = { class: 'form-horizontal new_post', id: 'new_post' }
-= form_for(@post, role: 'form', url: posts_path, html: { class: 'form-horizontal' } ) do |f|
-  / = explain_errors @post
+= form_for(@post, new_post_form_attributes ) do |f|
+  == explain_errors @post
   legend Create a New Post
 
   div class='control-group'
