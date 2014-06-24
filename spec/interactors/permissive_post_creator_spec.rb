@@ -8,7 +8,7 @@ module DSO
   describe PermissivePostCreator do
 
     let(:klass) { PermissivePostCreator }
-    let(:blog) { Blog.new }
+    let(:blog) { {} }
     let(:valid_params) do
       { post_data: { title: 'This is a Title', body: 'This is a Body' } }
     end
@@ -16,13 +16,22 @@ module DSO
       { post_data: { title: '', body: 'This is a Body' } }
     end
 
-    it 'fails when called with an invalid Blog parameter' do
-      call_params = { blog: Object.new, params_in: valid_params }
-      expect { klass.run! call_params }.to raise_error(
-        ActiveInteraction::InvalidInteractionError,
-        'Blog is not a valid interface'
-        )
+    it 'ignores an invalid "blog" input parameter and Does The Right Thing' do
+      call_params = { blog: Object.new.to_param, params_in: valid_params }
+      post = klass.run! call_params
+      expect(post).to be_a Post
+      expect(post).to_not respond_to :id
     end
+
+    describe 'succeeds when called without parameters, so that it' do
+
+      it 'creates a text post with an empty title and an empty body' do
+        post = klass.run!
+        expect(post).to be_a Post
+        expect(post.title).to be_empty
+        expect(post.body).to be_empty
+      end
+    end # describe 'succeeds when called without parameters, so that it'
 
     describe 'succeeds when called with valid parameters for' do
 
@@ -32,8 +41,9 @@ module DSO
         end
 
         it 'has a reference to the blog' do
+          blog_entity = DSO::BlogSelector.run! params: { blog_params: blog }
           post = klass.run! blog: blog, params_in: valid_params
-          expect(post.blog).to be blog
+          expect(post.blog).to have_same_blog_content_as blog_entity
         end
       end # describe 'a text post, so that it'
     end # describe 'succeeds when called with valid parameters for'
