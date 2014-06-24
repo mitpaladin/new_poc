@@ -26,7 +26,7 @@ module MatcherSupport
         items = [
           { name: 'title', accessor: ->(x) { x.title } },
           { name: 'subtitle', accessor: ->(x) { x.subtitle } },
-          { name: 'entry count', accessor: ->(x) { x.entries.count } }
+          { name: 'entry count', accessor: ->(x) { Array(x.entries).count } }
         ]
         items.each_with_index { |x, n| items[n] = FancyOpenStruct.new x }
       end

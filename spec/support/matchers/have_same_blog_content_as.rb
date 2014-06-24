@@ -10,6 +10,7 @@ RSpec::Matchers.define :have_same_blog_content_as do |other_blog|
       if verifier.valid?
         MatcherSupport::BlogEntryMatcher.new(actual_blog, other_blog).run
       else
+        @reasons = verifier.messages
         false
       end
     end
