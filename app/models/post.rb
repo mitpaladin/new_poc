@@ -3,16 +3,20 @@
 class Post
   # include ActiveAttr::BasicModel
   attr_accessor :blog, :body, :title
+  attr_reader :published
+  alias_method :published?, :published
 
   def initialize(attrs = {})
     attrs.each do |k, v|
       ivar_sym = ['@', k].join.to_sym
       instance_variable_set ivar_sym, v if respond_to? k
     end
+    @published = false
   end
 
   def publish
     blog.add_entry self
+    @published = true
   end
 
   def valid?
