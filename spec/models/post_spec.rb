@@ -52,6 +52,20 @@ describe Post do
     end
   end # describe :publish
 
+  describe :published? do
+
+    it 'returns false for a newly-created Post' do
+      expect(Blog.new.new_post).to_not be_published
+    end
+
+    it 'returns true after a post has been publsihed' do
+      blog = Blog.new
+      post = blog.new_post title: 'A Title', body: 'A Body'
+      post.publish
+      expect(post).to be_published
+    end
+  end
+
   describe :valid? do
     let(:post) { Post.new title: 'A Title' }
 
