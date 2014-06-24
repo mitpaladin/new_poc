@@ -1,7 +1,7 @@
 
-require 'blog_selector'
+require 'blog_selector'   # only needed for #new_post_params
 require 'permissive_post_creator'
-require 'post_publisher'
+require 'post_creator_and_publisher'
 
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
@@ -12,9 +12,9 @@ class PostsController < ApplicationController
   end
 
   def create
-    publication = publish_entry(params)
-    @post = CCO::PostCCO.from_entity publication.inputs[:post]
-    if @post.valid? && publication.valid?
+    post = DSO::PostCreatorAndPublisher.run! params: params
+    @post = CCO::PostCCO.from_entity post
+    if @post.valid?
       redirect_to(root_path, redirect_params)
     else
       render 'new'
@@ -23,19 +23,12 @@ class PostsController < ApplicationController
 
   private
 
+  # FIXME: Update PermissivePostCreator to use this as default if no params
   def new_post_params
     {
       blog:       DSO::BlogSelector.run!,
       params_in:  { post_data: {} }
     }
-  end
-
-  # FIXME: Shouldn't this be a DSO in its own right?
-  def publish_entry(params)
-    blog_params = params[:blog] || {}
-    blog = DSO::BlogSelector.run! blog_params: blog_params
-    post = DSO::PermissivePostCreator.run! blog: blog, params_in: params
-    DSO::PostPublisher.run post: post
   end
 
   def redirect_params
