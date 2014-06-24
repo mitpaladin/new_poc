@@ -6,7 +6,7 @@ require 'post_creator_and_publisher'
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
   def new
-    post = DSO::PermissivePostCreator.run! new_post_params
+    post = DSO::PermissivePostCreator.run!
     # The DSO hands back an entity; Rails needs to see an implementation model
     @post = CCO::PostCCO.from_entity post
   end
@@ -22,14 +22,6 @@ class PostsController < ApplicationController
   end
 
   private
-
-  # FIXME: Update PermissivePostCreator to use this as default if no params
-  def new_post_params
-    {
-      blog:       DSO::BlogSelector.run!,
-      params_in:  { post_data: {} }
-    }
-  end
 
   def redirect_params
     { flash: { success:  'Post added!' } }

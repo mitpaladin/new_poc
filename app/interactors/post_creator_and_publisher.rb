@@ -16,8 +16,11 @@ module DSO
     end
 
     def execute
-      blog = BlogSelector.run! blog_params: { id: params[:blog] }
-      post = PermissivePostCreator.run! blog: blog, params_in: params
+      create_params = {
+        blog_params: { id: params[:blog] },
+        post_data: params[:post_data]
+      }
+      post = PermissivePostCreator.run! create_params
       PostPublisher.run!(post: post) if post.valid?
       post
     end

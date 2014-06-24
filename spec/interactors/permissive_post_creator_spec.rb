@@ -8,38 +8,44 @@ module DSO
   describe PermissivePostCreator do
 
     let(:klass) { PermissivePostCreator }
-    let(:blog) { Blog.new }
-    let(:valid_params) do
-      { post_data: { title: 'This is a Title', body: 'This is a Body' } }
-    end
-    let(:missing_title_params) do
-      { post_data: { title: '', body: 'This is a Body' } }
+    let(:blog) { {} }
+    let(:post_data) { { title: 'This is a Title', body: 'This is a Body' } }
+    let(:full_params) { { blog: blog, post_data: post_data } }
+
+    it 'ignores a missing "blog" input parameter and Does The Right Thing' do
+      post = klass.run! post_data: post_data
+      expect(post).to be_a Post
+      expect(post).to_not respond_to :id
     end
 
-    it 'fails when called with an invalid Blog parameter' do
-      call_params = { blog: Object.new, params_in: valid_params }
-      expect { klass.run! call_params }.to raise_error(
-        ActiveInteraction::InvalidInteractionError,
-        'Blog is not a valid interface'
-        )
-    end
+    describe 'succeeds when called without parameters, so that it' do
+
+      it 'creates a text post with an empty title and an empty body' do
+        post = klass.run!
+        expect(post).to be_a Post
+        expect(post.title).to be_empty
+        expect(post.body).to be_empty
+      end
+    end # describe 'succeeds when called without parameters, so that it'
 
     describe 'succeeds when called with valid parameters for' do
 
       describe 'a text post, so that it' do
         it 'is valid' do
-          expect(klass.run! blog: blog, params_in: valid_params).to be_valid
+          expect(klass.run! full_params).to be_valid
         end
 
         it 'has a reference to the blog' do
-          post = klass.run! blog: blog, params_in: valid_params
-          expect(post.blog).to be blog
+          blog_entity = DSO::BlogSelector.run! params: { blog_params: blog }
+          post = klass.run! full_params
+          expect(post.blog).to have_same_blog_content_as blog_entity
         end
       end # describe 'a text post, so that it'
     end # describe 'succeeds when called with valid parameters for'
 
     it 'succeeds but marks post as invalid given invalid parameters' do
-      post = klass.run! blog: blog, params_in: missing_title_params
+      missing_title_params = { body: post_data[:body] }
+      post = klass.run! blog: blog, post_data: missing_title_params
       expect(post).to_not be_valid
     end
   end # describe DSO::PermissivePostCreator

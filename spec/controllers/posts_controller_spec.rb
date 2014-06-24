@@ -36,7 +36,7 @@ describe PostsController do
 
   describe "POST 'create'" do
 
-    let(:blog) { BlogData.first }
+    let(:blog) { BlogData.first.to_param }
     let(:params) { FactoryGirl.attributes_for :post_datum }
 
     describe 'with valid parameters' do
