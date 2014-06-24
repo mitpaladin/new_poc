@@ -14,6 +14,7 @@ class PostsController < ApplicationController
   def create
     post = DSO::PostCreatorAndPublisher.run! params: params
     @post = CCO::PostCCO.from_entity post
+    # NOTE: It Would Be Very Nice If™ this used MQs or etc. to be more direct.
     if @post.valid?
       redirect_to(root_path, redirect_params)
     else
