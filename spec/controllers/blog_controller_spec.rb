@@ -41,20 +41,14 @@ describe BlogController do
       end
 
       it 'has the expected subtitle' do
-        @expected = 'The trusted source for paint drying news and opinion'
+        @expected = 'The trusted source for drying paint news and opinion'
         @field = :subtitle
       end
 
-      # it 'has the expected entries' do
-      #   @expected = []
-      #   @field = :entries
-      # end
+      it 'has the expected entries' do
+        @expected = []
+        @field = :entries
+      end
     end # describe 'assigns a "blog" controller variable that'
-
-    it 'loads placeholder posts into the blog :entries field' do
-      get :index
-      blog = assigns 'blog'
-      expect(blog).to have(2).entries
-    end
   end # describe "GET 'index'"
 end

@@ -6,7 +6,7 @@ require 'placeholder_builder'
 class BlogController < ApplicationController
   def index
     blog = Blog.new
-    DSO::PlaceholderBuilder.run! blog: blog
+    # DSO::PlaceholderBuilder.run! blog: blog
     @blog = DSO::BlogListingBuilder.run! blog: blog
   end
 end

@@ -1,0 +1,17 @@
+
+h1 New Post
+
+= form_for(@post, new_post_form_attributes ) do |f|
+  == explain_errors @post
+  legend Create a New Post
+
+  div class='control-group'
+    = f.label :title, class: 'control-label'
+    div class='controls'
+      = f.text_field :title
+    = f.label :body, class: 'control-label'
+    div class='controls'
+      = f.text_area :body
+
+  div class='form-actions'
+    = f.submit 'Create Post'

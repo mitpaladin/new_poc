@@ -12,4 +12,5 @@
 # PostData: ActiveRecord persistence for Posts.
 class PostData < ActiveRecord::Base
   # attr_accessor :title, :body # DANGER! DON'T *DO* THIS FOR DB FIELDS!
+  validates :title, presence: true
 end
