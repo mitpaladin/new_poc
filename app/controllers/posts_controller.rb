@@ -14,7 +14,7 @@ class PostsController < ApplicationController
   def create
     publication = publish_entry(params)
     @post = CCO::PostCCO.from_entity publication.inputs[:post]
-    if publication.valid?
+    if @post.valid? && publication.valid?
       redirect_to(root_path, redirect_params)
     else
       render 'new'
