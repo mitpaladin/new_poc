@@ -20,5 +20,6 @@ FactoryGirl.define do
   factory :post_datum, class: 'PostData' do
     title { generate :title }
     body 'The Body'
+    image_url 'http://example.com/image1.png'
   end
 end
