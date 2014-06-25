@@ -1,25 +1,33 @@
 
 require 'spec_helper'
 
+require 'blog_selector'
+
 describe Post do
-  let(:post) { Post.new }
+  let(:blog) { DSO::BlogSelector.run! }
+  let(:post) { Post.new FactoryGirl.attributes_for :post_datum }
 
-  it 'starts with blank (nil) attributes' do
-    expect(post.title).to be_nil
-    expect(post.body).to be_nil
-    expect(post.blog).to be_nil
-  end
+  context 'initialisation' do
 
-  it 'supports setting attributes in the initialiser' do
-    post = Post.new title: 'A Title', body: 'A Body'
-    expect(post.title).to eq 'A Title'
-    expect(post.body).to eq 'A Body'
-  end
+    it 'starts with blank (nil) attributes by default' do
+      post = Post.new
+      expect(post.title).to be_nil
+      expect(post.body).to be_nil
+      expect(post.blog).to be_nil
+      expect(post.image_url).to be_nil
+    end
 
-  it 'does not support setting arbitrary attributes in the initialiser' do
-    post = Post.new title: 'Title', body: 'Body', foo: 'Bar'
-    expect(post.instance_variables).to_not include :@foo
-  end
+    it 'supports setting attributes in the initialiser' do
+      post = Post.new title: 'A Title', body: 'A Body'
+      expect(post.title).to eq 'A Title'
+      expect(post.body).to eq 'A Body'
+    end
+
+    it 'does not support setting arbitrary attributes in the initialiser' do
+      post = Post.new title: 'Title', body: 'Body', foo: 'Bar'
+      expect(post.instance_variables).to_not include :@foo
+    end
+  end # context 'initialisation'
 
   describe 'supports reading and writing' do
 
@@ -41,11 +49,9 @@ describe Post do
   end # describe 'supports reading and writing'
 
   describe :publish do
-    let(:post) { Post.new title: 'A Title' }
+    let(:post) { blog.new_post FactoryGirl.attributes_for :post_datum }
 
     it 'adds the post to the blog' do
-      blog = Blog.new
-      post.blog = blog
       expect(blog.entry? post).to be false
       post.publish
       expect(blog.entry? post).to be true
@@ -59,7 +65,6 @@ describe Post do
     end
 
     it 'returns true after a post has been publsihed' do
-      blog = Blog.new
       post = blog.new_post title: 'A Title', body: 'A Body'
       post.publish
       expect(post).to be_published
