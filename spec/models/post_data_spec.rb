@@ -7,6 +7,7 @@
 #  body       :text
 #  created_at :datetime
 #  updated_at :datetime
+#  image_url  :string(255)
 #
 
 require 'spec_helper'
