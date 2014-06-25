@@ -21,6 +21,12 @@ module BLO
       PostData.where(attribs).any?
     end
 
+    def self.full_error_messages(entry)
+      datum = PostData.find_or_initialize_by attribs_for(entry)
+      datum.valid?
+      datum.errors.full_messages
+    end
+
     def self.load_all
       ret = []
       PostData.all.each { |post| ret << Post.new(post.attributes) }

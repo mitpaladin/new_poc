@@ -27,6 +27,47 @@ module BLO
       end # describe 'when a matching entry exists'
     end # describe :entry?
 
+    describe :full_error_messages do
+
+      context 'for an entity with valid attributes' do
+        let(:post) { Post.new FactoryGirl.attributes_for :post_datum }
+
+        it 'returns an empty array' do
+          expect(klass.full_error_messages post).to be_an Array
+          expect(klass.full_error_messages post).to be_empty
+        end
+      end # context 'for an entity with valid attributes'
+
+      context 'for an entry with a single invalid attribute' do
+        let(:message) { "Title can't be blank" }
+        let(:post) do
+          Post.new FactoryGirl.attributes_for :post_datum, title: nil
+        end
+
+        it 'returns an array with a single error-message string' do
+          expect(klass.full_error_messages post).to eq [message]
+        end
+      end # context 'for an entry with a single invalid attribute'
+
+      context 'for an entry with multiple invalid attributes' do
+        let(:messages) do
+          [
+            "Title can't be blank",
+            'Body must be present if image URL is not present'
+          ]
+        end
+        let(:post) { Post.new }
+
+        it 'returns an array with one error message per invalid attribute' do
+          actual = klass.full_error_messages post
+          expect(actual.count).to eq messages.count
+          actual.each do |item|
+            expect(messages).to include item
+          end
+        end
+      end # context 'for an entry with multiple invalid attributes'
+    end # describe :full_error_messages
+
     describe :load_all do
       it 'returns an empty list when there are no entries' do
         expect(klass.load_all).to be_empty
