@@ -72,15 +72,40 @@ describe Post do
   end
 
   describe :valid? do
-    let(:post) { Post.new title: 'A Title' }
+    let(:post) { Post.new FactoryGirl.attributes_for(:post_datum) }
 
-    it 'returns true for a valid post' do
-      expect(post).to be_valid
-    end
+    describe 'returns true for a post with' do
 
-    it 'returns false for an invalid post' do
-      post.title = ''
-      expect(post).to_not be_valid
-    end
+      after :each do
+        expect(post).to be_valid
+      end
+
+      it 'a body and an image URL both present' do
+      end
+
+      it 'an empty body and an image URL that is not empty' do
+        post.body = ''
+      end
+
+      it 'an empty image URL and a body that is not empty' do
+        post.image_url = ''
+      end
+    end # describe 'returns true for a post with'
+
+    describe 'returns false for a post with' do
+
+      after :each do
+        expect(post).to_not be_valid
+      end
+
+      it 'an empty title' do
+        post.title = ''
+      end
+
+      it 'both an empty body and an empty image URL' do
+        post.body = ''
+        post.image_url = ''
+      end
+    end # describe 'returns false for a post with'
   end # describe :valid?
 end # describe Post

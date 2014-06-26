@@ -20,7 +20,6 @@ class Post
   end
 
   def valid?
-    # BLO::PostDataBoundary.valid? self
-    String(title).present?
+    BLO::PostDataBoundary.valid? self
   end
 end # class Post
