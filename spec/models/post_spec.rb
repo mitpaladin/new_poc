@@ -48,6 +48,34 @@ describe Post do
     end
   end # describe 'supports reading and writing'
 
+  describe :error_messages do
+
+    context 'when called on a valid post' do
+      let(:post) { blog.new_post FactoryGirl.attributes_for :post_datum }
+
+      it 'returns an empty array' do
+        expect(post.error_messages).to be_an Array
+        expect(post.error_messages).to be_empty
+      end
+    end # context 'when called on a valid post'
+
+    context 'when called on an invalid post' do
+      let(:post) do
+        blog.new_post FactoryGirl.attributes_for :post_datum, title: nil
+      end
+
+      it 'returns a non-empty array' do
+        expect(post.error_messages).to be_an Array
+        expect(post.error_messages).to_not be_empty
+      end
+
+      it 'returns the correct error message in the array' do
+        expect(post).to have(1).error_message
+        expect(post.error_messages).to include "Title can't be blank"
+      end
+    end # context 'when called on an invalid post'
+  end # describe :error_messages
+
   describe :publish do
     let(:post) { blog.new_post FactoryGirl.attributes_for :post_datum }
 

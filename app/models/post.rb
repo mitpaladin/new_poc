@@ -14,6 +14,11 @@ class Post
     @published = false
   end
 
+  def error_messages
+    return [] if valid?
+    BLO::PostDataBoundary.full_error_messages self
+  end
+
   def publish
     blog.add_entry self
     @published = true
