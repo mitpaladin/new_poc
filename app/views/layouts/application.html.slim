@@ -16,6 +16,6 @@ html
             li = link_to 'Home', root_path
             li = link_to 'New post...', new_post_path
         div class='col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main'
-          / == show_appwide_flashes flash
+          == show_appwide_flashes flash
           = yield
           = debug(params) if Rails.env.development?
