@@ -2,7 +2,7 @@
 # A Post encapsulates an entry within a Blog.
 class Post
   # include ActiveAttr::BasicModel
-  attr_accessor :blog, :body, :title
+  attr_accessor :blog, :body, :title, :image_url
   attr_reader :published
   alias_method :published?, :published
 
@@ -14,12 +14,17 @@ class Post
     @published = false
   end
 
+  def error_messages
+    return [] if valid?
+    BLO::PostDataBoundary.full_error_messages self
+  end
+
   def publish
     blog.add_entry self
     @published = true
   end
 
   def valid?
-    String(title).present?
+    BLO::PostDataBoundary.valid? self
   end
 end # class Post

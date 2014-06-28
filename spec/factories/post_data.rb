@@ -7,6 +7,7 @@
 #  body       :text
 #  created_at :datetime
 #  updated_at :datetime
+#  image_url  :string(255)
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl
@@ -19,5 +20,6 @@ FactoryGirl.define do
   factory :post_datum, class: 'PostData' do
     title { generate :title }
     body 'The Body'
+    image_url 'http://example.com/image1.png'
   end
 end

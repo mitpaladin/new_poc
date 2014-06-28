@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140617180439) do
+ActiveRecord::Schema.define(version: 20140625080238) do
 
   create_table "blog_data", force: true do |t|
     t.string "title",    null: false
@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 20140617180439) do
     t.text     "body"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "image_url"
   end
 
 end

@@ -18,17 +18,24 @@ module DSO
       end
     end # describe 'succeeds when called with'
 
-    describe 'fails when called with' do
-      # The problem with validating the post *as a model* vs validating it by
-      # scarfing any errors it has is that validation isn't performed in the
-      # order we would wish it to be (`model` check first, then method call).
-      # Therefore, any passed in "post" that doesn't quack compatibly with
-      # ActiveModel::Validations will cause a nasty runtime error. YHBW.
+    describe 'reports failure when called with' do
 
-      it 'a Post whose #valid? method returns false' do
-        post.title = nil
-        expect { klass.run! post: post }.to raise_error
-      end
+      context 'an invalid Post, by' do
+        before :each do
+          post.title = nil
+        end
+
+        it 'returning false from the #valid? method' do
+          expect(klass.run post: post).to_not be_valid
+        end
+
+        it 'reporting the correct full error message' do
+          message = "Post Title can't be blank"
+          result = klass.run post: post
+          expect(result.errors.full_messages).to have(1).item
+          expect(result.errors.full_messages).to include message
+        end
+      end # context 'an invalid Post, by'
     end # describe 'fails when called with'
   end # describe DSO::PostPublisher
 end # module DSO

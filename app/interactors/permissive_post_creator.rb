@@ -11,6 +11,7 @@ module DSO
     hash :post_data, default: {} do
       string :title, default: '', strip: true
       string :body, default: '', strip: true
+      string :image_url, default: '', strip: true
     end
 
     def execute
