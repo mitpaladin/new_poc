@@ -33,6 +33,7 @@ module CCO
     end # describe 'has a .from_entity method that'
 
     describe 'has a .to_entity method that' do
+      let(:impl) { BlogData.first }
 
       it 'is a class method' do
         expect(to.receiver).to be BlogCCO2
@@ -41,6 +42,10 @@ module CCO
       it 'takes one required parameter' do
         expect(to.arity).to be 1
         expect(to.parameters.first[0]).to be :req
+      end
+
+      it 'returns a Blog instance when called with a BlogData parameter' do
+        expect(BlogCCO2.to_entity impl).to be_a Blog
       end
     end # describe 'has a .to_entity method that'
   end # describe CCO::BlogCCO2
