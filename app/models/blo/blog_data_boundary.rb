@@ -3,21 +3,20 @@
 module BLO
   # Boundary-layer object for (potential) database-stored data re Blog data.
   class BlogDataBoundary
-    attr_reader :title, :subtitle
+    attr_reader :title, :subtitle, :entries
 
-    def initialize(params = {})
-      data = get_blog_data_for params
-      @title = data.title
-      @subtitle = data.subtitle
+    # We need to get entries (posts) from *somewhere*; we're not handed in a
+    # collection of Post instances (or PostData instances, for that matter).
+    # We're being called from either a DSO or a CCO, so chances are very good
+    # that our caller can deal with entities more readily than implementation
+    # model instances. (BlogData doesn't know about PostData now, anyway.). So,
+    # entities. But how to get them? The `PostDataBoundary` class' `#load_all`
+    # method. Pffft.
+    def initialize(impl = BlogData.first)
+      @title = impl.title
+      @subtitle = impl.subtitle
+      @entries = PostDataBoundary.load_all
       self
-    end
-
-    private
-
-    def get_blog_data_for(params = {})
-      default_params = { id: BlogData.first.id }
-      blog_params = params.fetch :blog_params, default_params
-      BlogData.find blog_params[:id]
     end
   end # class BLO::BlogDataBoundary
 end # module BLO

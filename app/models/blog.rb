@@ -6,22 +6,21 @@ class Blog
   extend Forwardable
   include Comparable
   def_delegators :@blog_data, :title, :subtitle
+  attr_reader :entries
   attr_writer :post_source
 
-  def initialize(params = {})
-    @blog_data = BLO::BlogDataBoundary.new params
+  def initialize
+    @blog_data = BLO::BlogDataBoundary.new
+    @entries = []
   end
 
   def add_entry(entry)
-    BLO::PostDataBoundary.save_entry entry
-  end
-
-  def entries
-    BLO::PostDataBoundary.load_all
+    entry.instance_variable_set '@blog'.to_sym, self
+    @entries << entry
   end
 
   def entry?(entry)
-    BLO::PostDataBoundary.entry? entry
+    @entries.include? entry
   end
 
   def new_post(*args)
@@ -56,6 +55,7 @@ class Blog
     sym = '<=>'.to_sym
     ret = entry1.title.send sym, entry2.title
     ret = entry1.body.send(sym, entry2.body) if ret == 0
+    # FIXME: Image URL field? Better yet, implement #<=> on Post and kill this.
     ret
   end
 

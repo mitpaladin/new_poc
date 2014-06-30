@@ -68,9 +68,10 @@ module CCO
           end
 
           it 'a blog with entries' do
-            3.times { FactoryGirl.create :post_datum }
+            FactoryGirl.create_list :post_datum, 3
             entity = BlogCCO2.to_entity impl
             expect(entity).to have(3).entries
+            PostData.delete_all
           end
         end # describe 'number of entries for'
       end # describe 'returns a Blog instance with the correct'

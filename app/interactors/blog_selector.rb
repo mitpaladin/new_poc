@@ -10,7 +10,7 @@ module DSO
     end
 
     def execute
-      Blog.new id: blog_id_from(params)
+      Blog.new # id: blog_id_from(params)
     end
 
     private
