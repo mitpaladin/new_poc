@@ -47,6 +47,33 @@ module CCO
       it 'returns a Blog instance when called with a BlogData parameter' do
         expect(BlogCCO2.to_entity impl).to be_a Blog
       end
+
+      describe 'returns a Blog instance with the correct' do
+        let(:entity) { BlogCCO2.to_entity impl }
+
+        describe 'attribute values for' do
+          it 'title' do
+            expect(entity.title).to eq impl.title
+          end
+
+          it 'subtitle' do
+            expect(entity.subtitle).to eq impl.subtitle
+          end
+        end # describe 'attribute values for'
+
+        describe 'number of entries for' do
+
+          it 'an empty blog' do
+            expect(entity.entries).to be_empty
+          end
+
+          it 'a blog with entries' do
+            3.times { FactoryGirl.create :post_datum }
+            entity = BlogCCO2.to_entity impl
+            expect(entity).to have(3).entries
+          end
+        end # describe 'number of entries for'
+      end # describe 'returns a Blog instance with the correct'
     end # describe 'has a .to_entity method that'
   end # describe CCO::BlogCCO2
 end # module CCO
