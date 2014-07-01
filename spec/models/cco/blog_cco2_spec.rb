@@ -8,6 +8,8 @@ module CCO
   describe BlogCCO2 do
     let(:from) { BlogCCO2.public_method :from_entity }
     let(:to) { BlogCCO2.public_method :to_entity }
+    let(:impl) { BlogData.first }
+    let(:entity) { Blog.new }
 
     describe 'has a .from_entity method that' do
 
@@ -30,6 +32,28 @@ module CCO
           expect(param[0]).to be :opt
         end
       end # describe 'takes two parameters, where'
+
+      it 'accepts a BlogData instance as its first parameter' do
+        expect { from.call entity }.to_not raise_error
+      end
+
+      context 'can be called with a Blog entity and no second param, ' do
+
+        it 'returning a BlogData model instance' do
+          expect(from.call entity).to be_a BlogData
+        end
+
+        describe 'returning a BlogData model instance that contains' do
+
+          it "the entity's title attribute" do
+            expect(from.call(entity).title).to eq entity.title
+          end
+
+          it "the entity's subtitle attribute" do
+            expect(from.call(entity).subtitle).to eq entity.subtitle
+          end
+        end # describe 'returning a BlogData model instance that contains'
+      end # context 'can be called with a BlogData... and no second param,'
     end # describe 'has a .from_entity method that'
 
     describe 'has a .to_entity method that' do
