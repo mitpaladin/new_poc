@@ -124,7 +124,7 @@ module BLO
 
       context 'when called using an instance that is invalid' do
 
-        let(:blog) { klass.parent.parent::DSO::BlogSelector.run! }
+        let(:blog) { ::DSO::BlogSelector.run! }
 
         context 'because its title is invalid' do
           let(:post) do

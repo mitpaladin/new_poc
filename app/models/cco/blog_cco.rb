@@ -1,21 +1,26 @@
 
+require 'blo/blog_data_boundary'
+
 module CCO
-  # Cross-layer conversion object for Blogs. API (slightly) tailored from Base.
-  class BlogCCO < Base
+  # Second-generation CCO for Blogs. Does not (presently) subclass Base.
+  class BlogCCO
+    def self.from_entity(entity, post_callback = ->(_post) {})
+      # We only support a single blog at present, so this is easy
+      ret = BlogData.first
+      ret.title = entity.title
+      ret.subtitle = entity.subtitle
+      entity.entries.each do |post|
+        post_callback.call PostCCO.from_entity(post)
+      end
+      ret
+    end
+
     def self.to_entity(impl)
-      new_entity = Blog.new
-      params = FancyOpenStruct.new impl: impl, new_entity: new_entity
-      super params
+      ret = Blog.new
+      ::BLO::BlogDataBoundary.new(impl).entries.each do |entry|
+        ret.entries << entry
+      end
+      ret
     end
-
-    # Exception raised by .from_entity until we actually need this feature.
-    class UnsupportedConversionError < StandardError
-    end
-
-    def self.from_entity(_entity)
-      fail UnsupportedConversionError,
-           'Conversion from Blog entity unsupported at this time.'
-      # super FancyOpenStruct.new entity: entity, new_impl: BlogData.new
-    end
-  end # class CCO::PostCCO
+  end # class CCO::BlogCCO
 end # module CCO

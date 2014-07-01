@@ -5,6 +5,11 @@ describe Blog do
 
   subject(:blog) { Blog.new }
 
+  it 'has an initialiser that accepts no arguments' do
+    expect { Blog.new nil }
+        .to raise_error ArgumentError, 'wrong number of arguments (1 for 0)'
+  end
+
   describe 'has accessors for' do
 
     # "title" and "subtitle" are now delegated
@@ -35,7 +40,13 @@ describe Blog do
     let(:entry_count) { 10 }
 
     before :each do
-      FactoryGirl.create_list :post_datum, entry_count
+      posts = FactoryGirl.build_list :post_datum, entry_count
+      # Setting a Post's `@blog` attribute to the blog entity is done in the
+      # `Blog#add_entry` method. An argument could be made that this *should* be
+      # the CCO's job, or that the CCO should set the entity's `@blog` attribute
+      # to something *other than* the underlying `BlogData` instance, but Oh
+      # Well...
+      posts.each { |post| blog.add_entry(CCO::PostCCO.to_entity post) }
     end
 
     it 'returns a collection with the correct number of entries' do
