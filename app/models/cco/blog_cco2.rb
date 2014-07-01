@@ -4,11 +4,14 @@ require 'blo/blog_data_boundary'
 module CCO
   # Second-generation CCO for Blogs. Does not (presently) subclass Base.
   class BlogCCO2
-    def self.from_entity(entity, _post_callback = ->(_post) {})
+    def self.from_entity(entity, post_callback = ->(_post) {})
       # We only support a single blog at present, so this is easy
       ret = BlogData.first
       ret.title = entity.title
       ret.subtitle = entity.subtitle
+      entity.entries.each do |post|
+        post_callback.call PostCCO.from_entity(post)
+      end
       ret
     end
 

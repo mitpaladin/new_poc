@@ -54,6 +54,31 @@ module CCO
           end
         end # describe 'returning a BlogData model instance that contains'
       end # context 'can be called with a BlogData... and no second param,'
+
+      context 'can be called with both an entity and a lambda for posts' do
+
+        let(:post_count) { 5 }
+        let(:entity) do
+          e = Blog.new
+          post_count.times do
+            p = e.new_post FactoryGirl.attributes_for(:post_datum)
+            e.add_entry p
+          end
+          e
+        end
+
+        # Note that we can't add the PostData instances directly into the
+        # BlogData instance. For one thing, there's currently no schema
+        # provision for that; our single-Blog implementation naively uses all
+        # PostData instances.
+        it 'with the lambda called once with each Post entity' do
+          the_posts = []
+          callback = -> (post) { the_posts << post }
+          from.call entity, callback
+          expect(the_posts).to have(post_count).entries
+          the_posts.each { |post| expect(post).to be_a PostData }
+        end
+      end # context 'can be called with both an entity and a lambda for posts'
     end # describe 'has a .from_entity method that'
 
     describe 'has a .to_entity method that' do
