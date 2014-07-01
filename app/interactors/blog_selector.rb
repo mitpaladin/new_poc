@@ -10,15 +10,7 @@ module DSO
     end
 
     def execute
-      Blog.new # id: blog_id_from(params)
-    end
-
-    private
-
-    def blog_id_from(params)
-      default_params = { id: 1 }
-      blog_params = params.fetch :blog_params, default_params
-      blog_params[:id]
+      Blog.new # id: params[:blog_params][:id]
     end
   end # class DSO::BlogSelector
 end # module DSO
