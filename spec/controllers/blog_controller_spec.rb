@@ -47,33 +47,8 @@ describe BlogController do
         end
       end # describe 'that'
 
-      context 'that, when no posts have been published,' do
+      # No tests for entries; the blog *implementation model* knows no entries!
 
-        it 'has an empty "entries" collection' do
-          get :index
-          blog = assigns 'blog'
-          entries = blog.send :entries
-          expect(entries).to be_an Array
-          expect(entries).to be_empty
-        end
-      end # context 'that, when no posts have been published,'
-
-      context 'that, when published posts exist for the blog,' do
-        before :each do
-          FactoryGirl.create_list :post_datum, 5
-        end
-
-        it 'has the posts in its "entries" collection' do
-          get :index
-          blog = assigns 'blog'
-          entries = blog.send :entries
-          expect(entries).to have(5).entries
-          entries.each do |entry|
-            expect(entry.title).to match(/\ATest Title Number \d+\z/)
-            expect(entry.body).to eq 'The Body'
-          end
-        end
-      end # context 'that, when published posts exist for the blog,'
     end # describe 'assigns a "blog" controller variable'
   end # describe "GET 'index'"
 end
