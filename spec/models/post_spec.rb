@@ -90,6 +90,22 @@ describe Post do
       post.publish
       expect(blog.entry? post).to be true
     end
+
+    describe 'sets the "pubdate" attribute on a newly-published post' do
+
+      it 'to the current time by default' do
+        expect(post.pubdate).to be nil
+        stamp = Time.now
+        post.publish
+        expect(post.pubdate.to_s).to eq stamp.to_s
+      end
+
+      it 'to a time specified as a parameter to #publish' do
+        stamp = Chronic.parse '1 July 2014 at 4.15 PM'
+        post.publish stamp
+        expect(post.pubdate.to_s).to eq stamp.to_s
+      end
+    end # describe 'sets the "pubdate" attribute on a newly-published post'
   end # describe :publish
 
   describe :published? do

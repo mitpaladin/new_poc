@@ -19,8 +19,9 @@ class Post
     BLO::PostDataBoundary.full_error_messages self
   end
 
-  def publish
+  def publish(published_at = Time.now)
     blog.add_entry self
+    @pubdate = published_at
     @published = true
   end
 
