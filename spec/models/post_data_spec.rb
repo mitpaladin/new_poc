@@ -8,6 +8,7 @@
 #  created_at :datetime
 #  updated_at :datetime
 #  image_url  :string(255)
+#  pubdate    :datetime
 #
 
 require 'spec_helper'
