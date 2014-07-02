@@ -41,6 +41,20 @@ module CCO
         it 'body' do
           expect(instance.body).to eq post.body
         end
+
+        describe 'pubdate' do
+
+          it 'for an unpublished post' do
+            expect(instance.pubdate).to eq post.pubdate
+          end
+
+          it 'for a published post' do
+            stamp = Time.now
+            post.publish stamp
+            instance = klass.from_entity post
+            expect(instance.pubdate).to eq post.pubdate
+          end
+        end # describe 'pubdate'
       end # describe 'returns a PostData instance with correct values for'
     end # describe :from_entity
 
@@ -63,6 +77,22 @@ module CCO
         it 'body' do
           expect(instance.body).to eq impl.body
         end
+
+        describe 'pubdate' do
+
+          it 'for an unpublished post' do
+            expect(instance.pubdate).to eq impl.pubdate
+          end
+
+          it 'for a published post' do
+            stamp = Time.now
+            impl.pubdate = stamp
+            impl.save!
+            instance = klass.to_entity impl
+            expect(instance.pubdate).to eq impl.pubdate
+            expect(instance).to be_published
+          end
+        end # describe 'pubdate'
       end # describe 'returns a PostData instance with correct values for'
     end # describe :to_entity
   end # describe CCO::Blog
