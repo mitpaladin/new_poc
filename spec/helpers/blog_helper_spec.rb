@@ -1,15 +1,7 @@
 require 'spec_helper'
 
-# Specs in this file have access to a helper object that includes
-# the BlogHelper. For example:
-#
-# describe BlogHelper do
-#   describe "string concat" do
-#     it "concats two strings with spaces" do
-#       expect(helper.concat_strings("this","that")).to eq("this that")
-#     end
-#   end
-# end
+require 'post_decorator'
+
 describe BlogHelper do
   describe '#entries_for' do
 
@@ -94,6 +86,12 @@ describe BlogHelper do
 
             it 'being a Post entity instance' do
               @entries.each { |entry| expect(entry).to be_a Post }
+            end
+
+            it 'decorated with a PostDecorator' do
+              @entries.each do |entry|
+                expect(entry).to be_decorated_with(PostDecorator)
+              end
             end
 
             describe 'having the correct' do
