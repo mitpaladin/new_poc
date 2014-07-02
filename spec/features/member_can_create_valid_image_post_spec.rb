@@ -19,9 +19,7 @@ describe 'Member can create a valid image post' do
     click_on 'Create Post'
     expect(page).to have_text 'Post added!'
     expect(page).to have_selector 'article > header > h3', post_title
-    # FIXME: How did we skip over Section 10?
-    # expect(page).to have_selector 'article > header > p > time'
-    # ... Below is for image-post markup that's presently in process.
+    expect(page).to have_selector 'article > header > p > time'
     expect(page).to have_selector 'article > figure > figcaption', post_body
     selector = format 'article > figure > img[src="%s"]', image_url
     expect(page).to have_selector selector

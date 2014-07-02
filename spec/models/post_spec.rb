@@ -15,6 +15,7 @@ describe Post do
       expect(post.body).to be_nil
       expect(post.blog).to be_nil
       expect(post.image_url).to be_nil
+      expect(post.pubdate).to be_nil
     end
 
     it 'supports setting attributes in the initialiser' do
@@ -39,6 +40,11 @@ describe Post do
     it 'a post body' do
       post.body = 'The Body'
       expect(post.body).to eq 'The Body'
+    end
+
+    it 'the publication date' do
+      post.pubdate = Chronic.parse '1 July 2014 at 4.15 PM'
+      expect(post.pubdate.to_s).to match(/2014-07-01 16:15:00 [\+\-]\d{4}/)
     end
 
     it 'supports reading and writing a blog reference' do
@@ -84,6 +90,22 @@ describe Post do
       post.publish
       expect(blog.entry? post).to be true
     end
+
+    describe 'sets the "pubdate" attribute on a newly-published post' do
+
+      it 'to the current time by default' do
+        expect(post.pubdate).to be nil
+        stamp = Time.now
+        post.publish
+        expect(post.pubdate.to_s).to eq stamp.to_s
+      end
+
+      it 'to a time specified as a parameter to #publish' do
+        stamp = Chronic.parse '1 July 2014 at 4.15 PM'
+        post.publish stamp
+        expect(post.pubdate.to_s).to eq stamp.to_s
+      end
+    end # describe 'sets the "pubdate" attribute on a newly-published post'
   end # describe :publish
 
   describe :published? do

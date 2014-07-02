@@ -2,16 +2,13 @@
 # A Post encapsulates an entry within a Blog.
 class Post
   # include ActiveAttr::BasicModel
-  attr_accessor :blog, :body, :title, :image_url
-  attr_reader :published
-  alias_method :published?, :published
+  attr_accessor :blog, :body, :title, :image_url, :pubdate
 
   def initialize(attrs = {})
     attrs.each do |k, v|
       ivar_sym = ['@', k].join.to_sym
       instance_variable_set ivar_sym, v if respond_to? k
     end
-    @published = false
   end
 
   def error_messages
@@ -19,9 +16,13 @@ class Post
     BLO::PostDataBoundary.full_error_messages self
   end
 
-  def publish
+  def publish(published_at = Time.now)
     blog.add_entry self
-    @published = true
+    @pubdate = published_at
+  end
+
+  def published?
+    pubdate.present?
   end
 
   def valid?
