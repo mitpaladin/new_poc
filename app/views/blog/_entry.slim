@@ -1,5 +1,8 @@
 
 article
   header
+    p
+      time pubdate='pubdate'
+        = entry.pubdate
     h3 = entry.title
   == entry.build_body
