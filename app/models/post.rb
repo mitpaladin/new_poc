@@ -2,7 +2,7 @@
 # A Post encapsulates an entry within a Blog.
 class Post
   # include ActiveAttr::BasicModel
-  attr_accessor :blog, :body, :title, :image_url
+  attr_accessor :blog, :body, :title, :image_url, :pubdate
   attr_reader :published
   alias_method :published?, :published
 
