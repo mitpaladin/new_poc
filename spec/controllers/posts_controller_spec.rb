@@ -48,6 +48,10 @@ describe PostsController do
         expect(assigns[:post]).to be_a PostData
       end
 
+      it 'persists the PostData instance corresponding to the :post' do
+        expect(assigns[:post]).to_not be_a_new_record
+      end
+
       it 'redirects to the root path' do
         expect(response).to redirect_to root_path
       end

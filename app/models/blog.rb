@@ -5,7 +5,7 @@ include Forwardable
 class Blog
   extend Forwardable
   include Comparable
-  def_delegators :@blog_data, :title, :subtitle
+  def_delegators :@blog_data, :title, :subtitle, :entries
   attr_reader :entries
   attr_writer :post_source
 

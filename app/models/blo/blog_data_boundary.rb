@@ -3,7 +3,7 @@
 module BLO
   # Boundary-layer object for (potential) database-stored data re Blog data.
   class BlogDataBoundary
-    attr_reader :title, :subtitle, :entries
+    attr_reader :title, :subtitle
 
     # We need to get entries (posts) from *somewhere*; we're not handed in a
     # collection of Post instances (or PostData instances, for that matter).
@@ -15,8 +15,11 @@ module BLO
     def initialize(impl = BlogData.first)
       @title = impl.title
       @subtitle = impl.subtitle
-      @entries = PostDataBoundary.load_all
       self
+    end
+
+    def entries
+      PostDataBoundary.load_all
     end
   end # class BLO::BlogDataBoundary
 end # module BLO
