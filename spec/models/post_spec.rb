@@ -3,6 +3,21 @@ require 'spec_helper'
 
 require 'blog_selector'
 
+shared_examples 'array not empty if' do |not_empty|
+  if not_empty
+    desc = 'returns a non-empty array'
+    message = :any?
+  else
+    desc = 'returns an empty array'
+    message = :empty?
+  end
+
+  it desc do
+    expect(post.error_messages).to be_an Array
+    expect(post.error_messages.send message).to be true
+  end
+end
+
 describe Post do
   let(:blog) { DSO::BlogSelector.run! }
   let(:post) { Post.new FactoryGirl.attributes_for :post_datum }
@@ -59,10 +74,11 @@ describe Post do
     context 'when called on a valid post' do
       let(:post) { blog.new_post FactoryGirl.attributes_for :post_datum }
 
-      it 'returns an empty array' do
-        expect(post.error_messages).to be_an Array
-        expect(post.error_messages).to be_empty
-      end
+      it_behaves_like 'array not empty if', false
+      # it 'returns an empty array' do
+      #   expect(post.error_messages).to be_an Array
+      #   expect(post.error_messages).to be_empty
+      # end
     end # context 'when called on a valid post'
 
     context 'when called on an invalid post' do

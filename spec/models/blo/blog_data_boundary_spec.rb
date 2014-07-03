@@ -1,6 +1,8 @@
 
 require 'spec_helper'
 
+require 'support/shared_examples/models/blo/blog_data_boundary/a_bdo_attribute'
+
 # Module containing "boundary-layer objects" between DSOs and implementation.
 module BLO
   describe BlogDataBoundary do
@@ -8,38 +10,11 @@ module BLO
 
       subject(:blog_data) { BlogDataBoundary.new }
 
-      describe 'a "title" that is' do
+      it_behaves_like 'a BDO attribute', 'string-like', :title, :present?
 
-        it 'string-like' do
-          expect(blog_data.title).to respond_to :to_s
-        end
+      it_behaves_like 'a BDO attribute', 'string-like', :subtitle, :present?
 
-        it 'not empty' do
-          expect(blog_data.title).to_not be_empty
-        end
-      end # describe 'a "title" that is'
-
-      describe 'a "subtitle" that is' do
-
-        it 'string-like' do
-          expect(blog_data.subtitle).to respond_to :to_s
-        end
-
-        it 'not empty' do
-          expect(blog_data.subtitle).to_not be_empty
-        end
-      end # describe 'a "subtitle" that is'
-
-      describe 'an "entries" collection that is' do
-
-        it 'array-like' do
-          expect(blog_data.entries).to respond_to :[]
-        end
-
-        it 'initially empty' do
-          expect(blog_data.entries).to be_empty
-        end
-      end # describe 'an "entries" collection that is'
+      it_behaves_like 'a BDO attribute', 'array-like', :entries, :empty?
     end # describe 'has accessors for'
   end # describe BLO::BlogDataBoundary
 end # module BLO

@@ -30,18 +30,21 @@ module DSO
           PlaceholderBuilder.run! blog: blog
         end
 
+        after :each do
+          expect(@post.title).to eq @title
+          expect(@post.body).to eq @body
+        end
+
         it 'first post' do
-          post = blog.entries.first
-          expect(post.title).to eq 'Paint just applied'
-          expected = "Paint just applied. It's a lovely orangey-purple!"
-          expect(post.body).to eq expected
+          @post = blog.entries.first
+          @title = 'Paint just applied'
+          @body = "Paint just applied. It's a lovely orangey-purple!"
         end
 
         it 'second post' do
-          post = blog.entries.second
-          expect(post.title).to eq 'Still wet'
-          expected = 'Paint is still quite wet. No bubbling yet!'
-          expect(post.body).to eq expected
+          @post = blog.entries.second
+          @title = 'Still wet'
+          @body = 'Paint is still quite wet. No bubbling yet!'
         end
       end # describe 'with expected values for the'
     end # describe 'updates the blog contents'
