@@ -2,6 +2,8 @@ require 'spec_helper'
 
 require 'post_decorator'
 
+require 'support/shared_examples/post_like_attributes'
+
 describe BlogHelper do
   describe '#entries_for' do
 
@@ -31,26 +33,11 @@ describe BlogHelper do
 
           describe 'each item' do
 
+            it_behaves_like 'Post-like attributes'
+
             it 'being a Post entity instance' do
               @entries.each { |entry| expect(entry).to be_a Post }
             end
-
-            describe 'having the correct' do
-
-              it 'title' do
-                expr = /Test Title Number \d+/
-                @entries.each { |entry| expect(entry.title).to match expr }
-              end
-
-              it 'body text' do
-                @entries.each { |entry| expect(entry.body).to eq 'The Body' }
-              end
-
-              it 'image URL' do
-                url = 'http://example.com/image1.png'
-                @entries.each { |entry| expect(entry.image_url).to match url }
-              end
-            end # describe 'having the correct'
           end # describe 'each item'
         end # describe 'returns an array with'
       end # context 'when entries have been added to the blog' do
@@ -84,6 +71,8 @@ describe BlogHelper do
 
           describe 'each item' do
 
+            it_behaves_like 'Post-like attributes'
+
             it 'being a Post entity instance' do
               @entries.each { |entry| expect(entry).to be_a Post }
             end
@@ -93,23 +82,6 @@ describe BlogHelper do
                 expect(entry).to be_decorated_with(PostDecorator)
               end
             end
-
-            describe 'having the correct' do
-
-              it 'title' do
-                expr = /Test Title Number \d+/
-                @entries.each { |entry| expect(entry.title).to match expr }
-              end
-
-              it 'body text' do
-                @entries.each { |entry| expect(entry.body).to eq 'The Body' }
-              end
-
-              it 'image URL' do
-                url = 'http://example.com/image1.png'
-                @entries.each { |entry| expect(entry.image_url).to match url }
-              end
-            end # describe 'having the correct'
           end # describe 'each item'
         end # describe 'returns an array with'
       end # context 'when entries have been added to the blog' do
