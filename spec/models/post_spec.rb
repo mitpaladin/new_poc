@@ -174,4 +174,49 @@ describe Post do
       end
     end # describe 'returns false for a post with'
   end # describe :valid?
+
+  describe '<=>' do
+    let(:post) { Post.new FactoryGirl.attributes_for(:post_datum) }
+
+    it 'reports two posts as "equal" when they have the same field values' do
+      post2 = post.clone
+      expect(post2).to eq post
+    end
+
+    describe 'reports a post as greater than another if its' do
+      let(:post2) { post.clone }
+
+      after :each do
+        expect(post2 > post).to be true
+      end
+
+      describe "fields compare higher than the other's, when checking" do
+        after :each do
+          field_sym = (RSpec.current_example.description + '=').to_s
+          post.send field_sym, 'string1'
+          post2.send field_sym, 'string2'
+        end
+
+        it :title do
+        end
+
+        it :body do
+        end
+
+        it :image_url do
+        end
+      end # describe "fields compare higher than the other's, when checking"
+
+      describe 'publication date is' do
+        it 'more recent than the other' do
+          post.pubdate = Chronic.parse 'yesterday at 4 PM'
+          post2.pubdate = Chronic.parse 'yesterday at 5 PM'
+        end
+
+        it 'set when the other is not' do
+          post2.pubdate = Chronic.parse 'yesterday at 5 PM'
+        end
+      end # describe 'publication date is'
+    end # describe 'reports a post as greater than another if its'
+  end # describe '<=>'
 end # describe Post
