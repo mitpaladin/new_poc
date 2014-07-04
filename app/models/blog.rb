@@ -28,35 +28,20 @@ class Blog
   end
 
   def <=>(other)
-    sym = '<=>'.to_sym
-    steps = [
-      -> () { title.send sym, other.title },
-      -> () { subtitle.send sym, other.subtitle },
-      -> () { entries.length.send sym, other.entries.length },
-      -> () { compare_entries other.entries }
-    ]
-    ret = 0
-    steps.each { |step| ret = step.call if ret == 0 }
-    ret
+    comparator = -> (pair) { pair[0] <=> pair[1] }
+    failures = field_pairs(other).reject { |p| comparator.call(p) == 0 }
+    return 0 if failures.empty?
+    comparator.call failures[0]
   end
 
   private
 
-  def compare_entries(other_entries)
-    ret = 0
-    entries.each_with_index do |item, index|
-      ret = compare_single_entries item, other_entries[index]
-      break unless ret == 0
-    end
-    ret
-  end
-
-  def compare_single_entries(entry1, entry2)
-    sym = '<=>'.to_sym
-    ret = entry1.title.send sym, entry2.title
-    ret = entry1.body.send(sym, entry2.body) if ret == 0
-    # FIXME: Image URL field? Better yet, implement #<=> on Post and kill this.
-    ret
+  def field_pairs(other)
+    [
+      [title, other.title],
+      [subtitle, other.subtitle],
+      [entries, other.entries]
+    ]
   end
 
   def post_source
