@@ -3,20 +3,9 @@ require 'spec_helper'
 
 require 'blog_selector'
 
-shared_examples 'array not empty if' do |not_empty|
-  if not_empty
-    desc = 'returns a non-empty array'
-    message = :any?
-  else
-    desc = 'returns an empty array'
-    message = :empty?
-  end
-
-  it desc do
-    expect(post.error_messages).to be_an Array
-    expect(post.error_messages.send message).to be true
-  end
-end
+require 'support/shared_examples/models/error_message_list_state'
+require 'support/shared_examples/models/post_field_comparison'
+require 'support/shared_examples/models/post_field_priority'
 
 describe Post do
   let(:blog) { DSO::BlogSelector.run! }
@@ -74,11 +63,7 @@ describe Post do
     context 'when called on a valid post' do
       let(:post) { blog.new_post FactoryGirl.attributes_for :post_datum }
 
-      it_behaves_like 'array not empty if', false
-      # it 'returns an empty array' do
-      #   expect(post.error_messages).to be_an Array
-      #   expect(post.error_messages).to be_empty
-      # end
+      it_behaves_like 'error-message list empty-state check'
     end # context 'when called on a valid post'
 
     context 'when called on an invalid post' do
@@ -86,10 +71,7 @@ describe Post do
         blog.new_post FactoryGirl.attributes_for :post_datum, title: nil
       end
 
-      it 'returns a non-empty array' do
-        expect(post.error_messages).to be_an Array
-        expect(post.error_messages).to_not be_empty
-      end
+      it_behaves_like 'error-message list empty-state check', false
 
       it 'returns the correct error message in the array' do
         expect(post).to have(1).error_message
@@ -174,4 +156,47 @@ describe Post do
       end
     end # describe 'returns false for a post with'
   end # describe :valid?
+
+  describe '<=>' do
+    it 'reports two posts as "equal" when they have the same field values' do
+      post = Post.new FactoryGirl.attributes_for(:post_datum)
+      post2 = post.clone
+      expect(post2).to eq post
+    end
+
+    it_behaves_like 'Post field comparison', :title
+
+    it_behaves_like 'Post field comparison', :body
+
+    it_behaves_like 'Post field comparison', :image_url
+
+    it_behaves_like 'Post field comparison',
+                    :pubdate,
+                    higher: Chronic.parse('yesterday at 5 PM'),
+                    lower:  Chronic.parse('yesterday at 9 AM')
+
+    description = 'reports a post as greater than another if its publication' \
+        ' date is set when the other is not'
+    it description do
+      post = Post.new FactoryGirl.attributes_for(:post_datum)
+      post2 = post.clone
+      post2.pubdate = Chronic.parse('yesterday at 9 AM')
+      expect(post2 > post).to be true
+    end
+
+    it_behaves_like 'Post field priority',
+                    priority: :pubdate,
+                    others:   [:title, :body, :image_url],
+                    higher:   Chronic.parse('yesterday at 5 PM'),
+                    lower:    Chronic.parse('yesterday at 9 AM')
+
+    it_behaves_like 'Post field priority',
+                    priority: :title,
+                    others:   [:body, :image_url]
+
+    it_behaves_like 'Post field priority',
+                    priority: :body,
+                    others:   [:image_url]
+
+  end # describe '<=>'
 end # describe Post

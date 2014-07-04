@@ -2,6 +2,7 @@
 # A Post encapsulates an entry within a Blog.
 class Post
   # include ActiveAttr::BasicModel
+  include Comparable
   attr_accessor :blog, :body, :title, :image_url, :pubdate
 
   def initialize(attrs = {})
@@ -27,5 +28,18 @@ class Post
 
   def valid?
     BLO::PostDataBoundary.valid? self
+  end
+
+  def <=>(other)
+    parts = [
+      [pubdate.to_i, other.pubdate.to_i],
+      [title, other.title],
+      [body, other.body],
+      [image_url, other.image_url]
+    ]
+    checker = -> (part) { part[0] <=> part[1] }
+    failed_parts = parts.reject { |part| checker.call(part) == 0 }
+    return 0 if failed_parts.empty?
+    checker.call failed_parts.first
   end
 end # class Post
