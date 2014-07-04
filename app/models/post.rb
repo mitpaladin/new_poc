@@ -32,10 +32,10 @@ class Post
 
   def <=>(other)
     parts = [
+      [pubdate.to_i, other.pubdate.to_i],
       [title, other.title],
       [body, other.body],
-      [image_url, other.image_url],
-      [pubdate.to_i, other.pubdate.to_i]
+      [image_url, other.image_url]
     ]
     checker = -> (part) { part[0] <=> part[1] }
     failed_parts = parts.reject { |part| checker.call(part) == 0 }
