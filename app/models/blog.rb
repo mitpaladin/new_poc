@@ -5,6 +5,7 @@ include Forwardable
 class Blog
   extend Forwardable
   include Comparable
+  include Enumerable
   def_delegators :@blog_data, :title, :subtitle, :entries
   attr_reader :entries
   attr_writer :post_source
@@ -17,6 +18,10 @@ class Blog
   def add_entry(entry)
     entry.instance_variable_set '@blog'.to_sym, self
     @entries << entry
+  end
+
+  def each
+    @entries.each { |entry| yield entry }
   end
 
   def entry?(entry)
