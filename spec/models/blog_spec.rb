@@ -48,16 +48,46 @@ describe Blog do
 
   describe :each do
 
-    it 'allows the Blog to be iterated as a collection of Posts' do
-      titles = %w(red green blue pink Cadillac)
-      titles.each do |title|
-        attribs = FactoryGirl.attributes_for :post_datum, title: title
-        blog.add_entry(blog.new_post attribs)
+    context 'for a collection of unpublished posts' do
+
+      it 'allows the Blog to be iterated as a collection of Posts by title' do
+        titles = %w(red green blue pink Cadillac)
+        titles.each do |title|
+          attribs = FactoryGirl.attributes_for :post_datum, title: title
+          blog.add_entry(blog.new_post attribs)
+        end
+        mangled = blog.sort.map { |e| e.title.upcase }
+        expected = %w(CADILLAC BLUE GREEN PINK RED)
+        expect(mangled).to eq expected
       end
-      mangled = blog.sort.map { |e| e.title.upcase }
-      expected = %w(CADILLAC BLUE GREEN PINK RED)
-      expect(mangled).to eq expected
-    end
+    end # context 'for a collection of unpublished posts'
+
+    context 'for a collection of published posts' do
+
+      it 'allows the Blog to be iterated as a collection of Posts by date' do
+        data = [
+          ['Terrible Tuesday', Chronic.parse('last Tuesday at 9 AM')],
+          ['Magic Monday', Chronic.parse('last Monday at 8 AM')],
+          ['Ready for Thursday?', Chronic.parse('last Thursday at noon')],
+          ['Welcome to Wednesday', Chronic.parse('last Wednesday at 2 PM')],
+          ['Finally Friday', Chronic.parse('last Friday at 6 PM')]
+        ]
+        data.each do |item|
+          attribs = FactoryGirl.attributes_for :post_datum, title: item[0]
+          post = blog.new_post attribs
+          post.publish item[1]
+        end
+        expected_titles = [
+          'Magic Monday',
+          'Terrible Tuesday',
+          'Welcome to Wednesday',
+          'Ready for Thursday?',
+          'Finally Friday'
+        ]
+        actual = blog.sort.map { |entry| entry.title }
+        expect(actual).to eq expected_titles
+      end
+    end # context 'for a collection of published posts'
   end # describe :each
 
   describe :entries do
