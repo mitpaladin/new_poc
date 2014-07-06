@@ -3,12 +3,18 @@
 class BlogDecorator < Draper::Decorator
   delegate_all
 
-  # Define presentation-specific methods here. Helpers are accessed through
-  # `helpers` (aka `h`). You can override attributes, for example:
-  #
-  #   def created_at
-  #     helpers.content_tag :span, class: 'time' do
-  #       object.created_at.strftime("%a %m/%d/%y")
-  #     end
-  #   end
+  def initialize(*)
+    super
+    @default_entry_count = 10
+  end
+
+  def summarise(count = default_entry_count)
+    entries.select { |post| post.published? }.take(count).sort do |a, b|
+      b.pubdate <=> a.pubdate
+    end
+  end
+
+  protected
+
+  attr_reader :default_entry_count
 end
