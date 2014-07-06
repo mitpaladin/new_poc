@@ -1,17 +1,24 @@
 
 require 'spec_helper'
 
+require 'support/random_item_array_generator'
+
 def build_example_posts(entry_count)
   Array.new(entry_count).fill do
     Post.new(FactoryGirl.attributes_for :post_datum)
   end
 end
 
+def random_ages(sample, back_to_limit = 180)
+  item_maker = -> (_index, current) { current.days.ago }
+  RandomItemArrayGenerator.new(back_to_limit).generate sample, item_maker
+end
+
 def build_and_publish_posts(blog, count = 10)
+  ages = random_ages(count)
   build_example_posts(count).each_with_index do |post, index|
     post.blog = blog
-    age = count - index
-    post.publish age.days.ago
+    post.publish ages[index]
   end
 end
 

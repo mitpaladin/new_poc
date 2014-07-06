@@ -9,9 +9,7 @@ class BlogDecorator < Draper::Decorator
   end
 
   def summarise(count = default_entry_count)
-    entries.select { |post| post.published? }.take(count).sort do |a, b|
-      b.pubdate <=> a.pubdate
-    end
+    entries.select { |post| post.published? }.sort.reverse.take(count)
   end
 
   protected
