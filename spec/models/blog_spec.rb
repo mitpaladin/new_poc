@@ -173,4 +173,18 @@ describe Blog do
       end # describe :entries
     end # describe 'the two blogs differ only in their'
   end # describe 'compares correctly when'
+
+  describe 'will not add a Post to itself multiple times' do
+
+    it 'through calling #publish after #add_entry' do
+      attribs = FactoryGirl.attributes_for :post_datum
+      post = blog.new_post attribs
+      # OK, we've "edited a draft" -- save it
+      blog.add_entry post
+      # And, some time later, we've finished editing. Publication time!
+      post.publish
+      # Now... is the post in `entries` more than once?
+      expect(blog.entries.rindex post).to eq blog.entries.index(post)
+    end
+  end # describe 'will not add a Post to itself multiple times'
 end # describe Blog
