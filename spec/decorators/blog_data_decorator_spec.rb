@@ -3,10 +3,10 @@ require 'spec_helper'
 
 require 'support/random_item_array_generator'
 
-def build_example_posts(entry_count)
-  Array.new(entry_count).fill do
-    Post.new(FactoryGirl.attributes_for :post_datum)
-  end
+# NOTE: Helper functions like this need to have unique names across ALL sources.
+#       You Have Been Warned.
+def bdds_build_example_posts(entry_count)
+  FactoryGirl.build_list :post_datum, entry_count
 end
 
 def random_ages(sample, back_to_limit = 180)
@@ -14,24 +14,24 @@ def random_ages(sample, back_to_limit = 180)
   RandomItemArrayGenerator.new(back_to_limit).generate sample, item_maker
 end
 
-def build_and_publish_posts(blog, count = 10)
+def build_and_publish_posts(_blog, count = 10)
   ages = random_ages(count)
-  build_example_posts(count).each_with_index do |post, index|
-    post.blog = blog
-    post.publish ages[index]
+  bdds_build_example_posts(count).each_with_index do |post, index|
+    post.pubdate = ages[index]
+    post.save!
   end
 end
 
-describe BlogDecorator do
+describe BlogDataDecorator do
 
-  let(:blog) { BlogDecorator.decorate Blog.new }
+  let(:blog) { BlogData.first.decorate }
 
   describe :summarise do
 
     it 'returns a list of 10 entries by default' do
       build_and_publish_posts blog, 11
-      entries = blog.summarise
-      expect(entries.count).to eq 10
+      post_entries = blog.summarise
+      expect(post_entries.count).to eq 10
     end
 
     describe 'returns a list of a valid length specified by a parameter' do
@@ -73,8 +73,8 @@ describe BlogDecorator do
     it 'includes only published entries' do
       published_post_count = 8
       build_and_publish_posts blog, published_post_count
-      unpublished_posts = build_example_posts(10 - published_post_count)
-      unpublished_posts.each { |post| blog.add_entry post }
+      unpublished_posts = bdds_build_example_posts(10 - published_post_count)
+      unpublished_posts.each(&:save!)
       entries = blog.summarise
       expect(entries.count).to eq published_post_count
       entries.each { |post| expect(post).to be_published }

@@ -1,11 +1,11 @@
 
 require 'draper'
 
-require_relative './post_decorator/image_body_builder'
-require_relative './post_decorator/text_body_builder'
+require_relative './post_data_decorator/image_body_builder'
+require_relative './post_data_decorator/text_body_builder'
 
-# PostDecorator: Draper Decorator, aka ViewModel, for the Post model.
-class PostDecorator < Draper::Decorator
+# PostDataDecorator: Draper Decorator, aka ViewModel, for the PostData model.
+class PostDataDecorator < Draper::Decorator
   delegate_all
 
   # After Avdi's #render_body; his "exhibits" are much more closely associated
@@ -29,4 +29,4 @@ class PostDecorator < Draper::Decorator
       SupportClasses::TextBodyBuilder
     end
   end
-end # class PostDecorator
+end # class PostDataDecorator

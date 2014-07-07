@@ -1,11 +1,11 @@
 
 require 'spec_helper'
 
-require 'post_decorator/body_builder'
+require 'post_data_decorator/body_builder'
 
 # Support classes used by various Blog components; initially, helpers.
-class PostDecorator
-  # Internal support class(es) used by PostDecorator.
+class PostDataDecorator
+  # Internal support class(es) used by PostDataDecorator.
   module SupportClasses
     describe BodyBuilder do
       it 'accepts one parameter for initialisation' do
@@ -17,5 +17,5 @@ class PostDecorator
         expect(obj.instance_variable_get(:@h)).to be h
       end
     end
-  end # module PostDecorator::SupportClasses
-end # class PostDecorator
+  end # module PostDataDecorator::SupportClasses
+end # class PostDataDecorator

@@ -3,14 +3,14 @@ require 'spec_helper'
 
 require 'draper'
 
-require 'post_decorator'
+require 'post_data_decorator'
 
-describe PostDecorator do
+describe PostDataDecorator do
 
   # We can't do `Post.new(...).decorate` unless Post is a genuine ActiveModel.
   # ActiveAttr *does not* quack quite right.
   # See https://github.com/drapergem/draper/issues/619
-  subject(:post) { PostDecorator.decorate(Post.new blog: Blog.new) }
+  subject(:post) { PostDataDecorator.decorate(Post.new blog: Blog.new) }
 
   it 'decorates the model' do
     expect(post).to be_decorated
@@ -63,4 +63,4 @@ describe PostDecorator do
     end # describe 'generates the correct markup for'
   end # describe :build_body
 
-end # describe PostDecorator
+end # describe PostDataDecorator

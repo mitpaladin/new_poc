@@ -1,6 +1,6 @@
 
 # Decorators: Presentation logic based on the model but not part *of* the model.
-class BlogDecorator < Draper::Decorator
+class BlogDataDecorator < Draper::Decorator
   delegate_all
 
   def initialize(*)
@@ -9,7 +9,7 @@ class BlogDecorator < Draper::Decorator
   end
 
   def summarise(count = default_entry_count)
-    entries.select { |post| post.published? }.sort.reverse.take(count)
+    PostData.all.select(&:published?).sort_by(&:pubdate).reverse.take count
   end
 
   protected
