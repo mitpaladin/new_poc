@@ -17,6 +17,10 @@ class PostData < ActiveRecord::Base
   validates :title, presence: true
   validate :body_or_image_url?
 
+  def published?
+    pubdate.present?
+  end
+
   private
 
   def body_or_image_url?

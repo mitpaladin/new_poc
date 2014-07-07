@@ -60,4 +60,17 @@ describe PostData do
       end
     end # context 'is invalid with'
   end # describe 'reports validation correctly, showing that an instance'
+
+  describe :published? do
+    let(:post) { FactoryGirl.build :post_datum }
+
+    it 'returns false when the "pubdate" field is nil' do
+      expect(post).to_not be_published
+    end
+
+    it 'returns true when the "pubdate" field is set' do
+      post.pubdate = 5.seconds.ago
+      expect(post).to be_published
+    end
+  end # describe :published?
 end
