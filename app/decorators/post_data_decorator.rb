@@ -20,6 +20,10 @@ class PostDataDecorator < Draper::Decorator
     body_builder_class.new(helpers).build self
   end
 
+  def published?
+    pubdate.present?
+  end
+
   private
 
   def body_builder_class

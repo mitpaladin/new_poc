@@ -32,8 +32,8 @@ describe PostDataDecorator do
       post.image_url = 'IMAGE URL'
       expect(post.image_url).to eq 'IMAGE URL'
       # FIXME: We skipped section 10, idiot!
-      # post.pubdate = 'PUBDATE'
-      # expect(post.pubdate).to eq 'PUBDATE'
+      post.pubdate = 'PUBDATE'
+      expect(post.pubdate).to eq 'PUBDATE'
     end
 
     # The method should NOT "render" *anything*. It should build either the
@@ -62,5 +62,18 @@ describe PostDataDecorator do
       end
     end # describe 'generates the correct markup for'
   end # describe :build_body
+
+  describe :published? do
+    let(:post) { FactoryGirl.build(:post_datum).decorate }
+
+    it 'returns false when the "pubdate" field is nil' do
+      expect(post).to_not be_published
+    end
+
+    it 'returns true when the "pubdate" field is set' do
+      post.pubdate = 5.seconds.ago
+      expect(post).to be_published
+    end
+  end # describe :published?
 
 end # describe PostDataDecorator

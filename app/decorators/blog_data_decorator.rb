@@ -9,7 +9,13 @@ class BlogDataDecorator < Draper::Decorator
   end
 
   def summarise(count = default_entry_count)
-    PostData.all.select(&:published?).sort_by(&:pubdate).reverse.take count
+    PostData
+        .all
+        .map(&:decorate)
+        .select(&:published?)
+        .sort_by(&:pubdate)
+        .reverse
+        .take(count)
   end
 
   protected

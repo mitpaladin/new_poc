@@ -62,15 +62,9 @@ describe PostData do
   end # describe 'reports validation correctly, showing that an instance'
 
   describe :published? do
-    let(:post) { FactoryGirl.build :post_datum }
 
-    it 'returns false when the "pubdate" field is nil' do
-      expect(post).to_not be_published
-    end
-
-    it 'returns true when the "pubdate" field is set' do
-      post.pubdate = 5.seconds.ago
-      expect(post).to be_published
+    it 'has been removed; PostData no longer responds to :published?' do
+      expect(FactoryGirl.build :post_datum).to_not respond_to :published?
     end
   end # describe :published?
 end

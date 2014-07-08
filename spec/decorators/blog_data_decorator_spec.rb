@@ -90,6 +90,14 @@ describe BlogDataDecorator do
       end
     end
 
+    it 'decorates each PostData entry with a PostDataDecorator' do
+      build_and_publish_posts blog
+      entries = blog.summarise
+      entries.each do |post|
+        expect(post).to be_decorated_with PostDataDecorator
+      end
+    end
+
   end # describe :summarise
 
 end
