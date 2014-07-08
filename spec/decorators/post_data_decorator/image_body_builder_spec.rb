@@ -2,9 +2,9 @@
 require 'spec_helper'
 require 'nokogiri'
 
-require 'post_decorator/image_body_builder'
+require 'post_data_decorator/image_body_builder'
 
-class PostDecorator
+class PostDataDecorator
   # Support class(es) for image post body builder.
   module SupportClasses
     describe ImageBodyBuilder do
@@ -66,5 +66,5 @@ class PostDecorator
         end # describe 'when called with a missing post body'
       end # describe :build
     end # describe TextBodyBuilder
-  end # module PostDecorator::SupportClasses
-end # class PostDecorator
+  end # module PostDataDecorator::SupportClasses
+end # class PostDataDecorator

@@ -1,9 +1,9 @@
 
 require 'spec_helper'
 
-require 'post_decorator/text_body_builder'
+require 'post_data_decorator/text_body_builder'
 
-class PostDecorator
+class PostDataDecorator
   # Support class(es) for image post body builder.
   module SupportClasses
     describe TextBodyBuilder do
@@ -16,5 +16,5 @@ class PostDecorator
         end
       end # describe :build
     end # describe TextBodyBuilder
-  end # module PostDecorator::SupportClasses
-end # class PostDecorator
+  end # module PostDataDecorator::SupportClasses
+end # class PostDataDecorator

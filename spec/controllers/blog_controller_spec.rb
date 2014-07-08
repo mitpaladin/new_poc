@@ -17,23 +17,28 @@ describe BlogController do
   end
 
   describe "GET 'index'" do
-    it 'returns http success' do
+
+    before :each do
       get :index
+    end
+
+    it 'returns http success' do
       response.should be_success
     end
 
     it 'renders the index template' do
-      get :index
       expect(response).to render_template 'index'
     end
 
     describe 'assigns a "blog" controller variable' do
 
+      before :each do
+        @blog = assigns 'blog'
+      end
+
       describe 'that' do
         after :each do
-          get :index
-          blog = assigns 'blog'
-          expect(blog.send @field).to eq @expected
+          expect(@blog.send @field).to eq @expected
         end
 
         it 'has the expected title' do
@@ -46,6 +51,10 @@ describe BlogController do
           @field = :subtitle
         end
       end # describe 'that'
+
+      it 'that is decorated with a BlogDataDecorator' do
+        expect(@blog).to be_decorated_with(BlogDataDecorator)
+      end
 
       # No tests for entries; the blog *implementation model* knows no entries!
 

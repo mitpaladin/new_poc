@@ -1,10 +1,10 @@
 
-require 'post_decorator'
+require 'post_data_decorator'
 
 shared_examples 'a call to #entries_for' do |with_param|
   if with_param
     outer_context_desc = 'when specifying a parameter'
-    blog = BlogData.first
+    blog = BlogData.first.decorate
   else
     outer_context_desc = 'without specifying a parameter'
   end
@@ -62,14 +62,14 @@ shared_examples 'a call to #entries_for' do |with_param|
             end
           end # describe 'having the correct'
 
-          it 'being a Post entity instance' do
-            @entries.each { |entry| expect(entry).to be_a Post }
+          it 'being a PostData implementation-model instance' do
+            @entries.each { |entry| expect(entry).to be_a PostData }
           end
 
           if is_decorated
-            it 'decorated with a PostDecorator' do
+            it 'decorated with a PostDataDecorator' do
               @entries.each do |entry|
-                expect(entry).to be_decorated_with(PostDecorator)
+                expect(entry).to be_decorated_with(PostDataDecorator)
               end
             end
           end # if is_decorated

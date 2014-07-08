@@ -1,10 +1,10 @@
 
 require_relative 'body_builder'
 
-# PostDecorator: Draper Decorator, aka ViewModel, for the Post model.
-class PostDecorator < Draper::Decorator
+# PostDataDecorator: Draper Decorator, aka ViewModel, for the Post model.
+class PostDataDecorator < Draper::Decorator
   module SupportClasses
-    # Build image-post body. Called on behalf of PostDecorator#build_body.
+    # Build image-post body. Called on behalf of PostDataDecorator#build_body.
     class ImageBodyBuilder < BodyBuilder
       def build(obj)
         h.content_tag(:figure) do
@@ -24,4 +24,4 @@ class PostDecorator < Draper::Decorator
       end
     end # class ImageBodyBuilder
   end # module SupportClasses
-end # class PostDecorator
+end # class PostDataDecorator

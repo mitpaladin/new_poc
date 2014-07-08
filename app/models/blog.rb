@@ -16,6 +16,8 @@ class Blog
   end
 
   def add_entry(entry)
+    return @entries if @entries.include? entry
+
     entry.instance_variable_set '@blog'.to_sym, self
     @entries << entry
   end

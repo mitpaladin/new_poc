@@ -3,7 +3,7 @@ require 'spec_helper'
 
 describe 'blog/index.slim' do
   before :each do
-    @blog = Blog.new
+    @blog = BlogData.first.decorate
     render
   end
 

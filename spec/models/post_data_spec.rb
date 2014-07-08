@@ -60,4 +60,11 @@ describe PostData do
       end
     end # context 'is invalid with'
   end # describe 'reports validation correctly, showing that an instance'
+
+  describe :published? do
+
+    it 'has been removed; PostData no longer responds to :published?' do
+      expect(FactoryGirl.build :post_datum).to_not respond_to :published?
+    end
+  end # describe :published?
 end
