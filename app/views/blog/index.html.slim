@@ -5,4 +5,4 @@ div class='page-header row'
 
 div class='page-content'
   div class='row well'
-    = render partial: 'entry', collection: entries_for(@blog)
+    = render partial: 'entry', collection: @blog.summarise
