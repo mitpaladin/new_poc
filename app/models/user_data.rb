@@ -15,16 +15,18 @@ class UserData < ActiveRecord::Base
   validates :name,
             uniqueness: true,
             presence: true,
-            format: { with: /\A\S+?.+?\S+?/ }
+            format: { with: /\A\S+?.+?\S+?\z/ }
+
+  validate :verify_no_repeated_spaces_in_name
+
   # NOTE: Set check_mx to true for production?
   validates_email_format_of :email, check_mx: false
 
-  def registered?
-    return false unless name.present?
-    name != self.class.guest_user_name
-  end
+  private
 
-  def self.guest_user_name
-    'Guest User'
+  def verify_no_repeated_spaces_in_name
+    rebuilt_name = name.to_s.split.join(' ')
+    message = 'may not contain adjacent whitespace'
+    errors.add :name, message unless name == rebuilt_name
   end
 end
