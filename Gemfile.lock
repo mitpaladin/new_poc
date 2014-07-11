@@ -1,8 +1,14 @@
 GIT
-  remote: git://github.com/bbatsov/rubocop.git
-  revision: 47da7b071bafb9d1baa23931ac1452fd6eb2f61c
+  remote: git://github.com/alexdunae/validates_email_format_of.git
+  revision: f2b20985865069905ba58580bfcfb41c198107b6
   specs:
-    rubocop (0.24.0)
+    validates_email_format_of (1.5.3)
+
+GIT
+  remote: git://github.com/bbatsov/rubocop.git
+  revision: 0bf15622b57cc0fcd95c659bf17e0a53426383f5
+  specs:
+    rubocop (0.24.1)
       json (>= 1.7.7, < 2)
       parser (>= 2.2.0.pre.3, < 3.0)
       powerpack (~> 0.0.6)
@@ -87,14 +93,14 @@ GEM
     callsite (0.0.11)
     cane (2.6.2)
       parallel
-    capybara (2.3.0)
+    capybara (2.4.1)
       mime-types (>= 1.16)
       nokogiri (>= 1.3.3)
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
-    capybara-webkit (1.2.0)
-      capybara (>= 2.0.2, < 2.4.0)
+    capybara-webkit (1.1.0)
+      capybara (~> 2.0, >= 2.0.2)
       json
     chronic (0.10.2)
     churn (0.0.35)
@@ -153,9 +159,9 @@ GEM
       posix-spawn (~> 0.3.6)
     hike (1.2.3)
     hirb (0.7.2)
-    i18n (0.6.9)
+    i18n (0.6.11)
     interception (0.5)
-    jbuilder (2.1.1)
+    jbuilder (2.1.2)
       activesupport (>= 3.0.0, < 5)
       multi_json (~> 1.2)
     jist (1.5.1)
@@ -178,10 +184,10 @@ GEM
       fattr (>= 2.2.0)
       map (>= 5.1.0)
     map (6.5.4)
-    meta_request (0.3.0)
-      callsite
-      rack-contrib
-      railties
+    meta_request (0.3.3)
+      callsite (~> 0.0, >= 0.0.11)
+      rack-contrib (~> 1.1)
+      railties (>= 3.0.0, < 5.0.0)
     method_source (0.8.2)
     metric_fu (4.11.1)
       cane (~> 2.5, >= 2.5.2)
@@ -200,9 +206,10 @@ GEM
     metric_fu-Saikuro (1.1.3)
     mime-types (1.25.1)
     mini_portile (0.6.0)
-    minitest (5.3.5)
+    minitest (5.4.0)
     multi_json (1.10.1)
     naught (1.0.0)
+    netrc (0.7.7)
     nokogiri (1.6.2.1)
       mini_portile (= 0.6.0)
     parallel (1.0.0)
@@ -316,15 +323,16 @@ GEM
     rdoc (4.1.1)
       json (~> 1.4)
     redcard (1.1.0)
-    reek (1.3.7)
-      rainbow
-      ruby2ruby (~> 2.0.8)
+    reek (1.3.8)
+      rainbow (>= 1.99, < 3.0)
+      ruby2ruby (>= 2.0.8, < 3.0)
       ruby_parser (~> 3.3)
       sexp_processor
     request_store (1.0.6)
     require_all (1.3.2)
-    rest-client (1.6.7)
-      mime-types (>= 1.16)
+    rest-client (1.7.1)
+      mime-types (>= 1.16, < 3.0)
+      netrc (~> 0.7)
     roodi (3.3.1)
       ruby_parser (~> 3.2, >= 3.2.2)
     rspec (2.99.0)
@@ -354,7 +362,7 @@ GEM
     ruby-growl (4.1)
       uuid (~> 2.3, >= 2.3.5)
     ruby-progressbar (1.5.1)
-    ruby2ruby (2.0.8)
+    ruby2ruby (2.1.1)
       ruby_parser (~> 3.1)
       sexp_processor (~> 4.0)
     ruby_parser (3.6.1)
@@ -374,7 +382,7 @@ GEM
       multi_json
       simplecov-html (~> 0.8.0)
     simplecov-html (0.8.0)
-    slim (2.0.2)
+    slim (2.0.3)
       temple (~> 0.6.6)
       tilt (>= 1.3.3, < 2.1)
     slim-rails (2.1.5)
@@ -400,7 +408,7 @@ GEM
       json
     teaspoon (0.8.0)
       railties (>= 3.2.5, < 5)
-    temple (0.6.7)
+    temple (0.6.8)
     thin (1.6.2)
       daemons (>= 1.0.9)
       eventmachine (>= 1.0.0)
@@ -476,4 +484,5 @@ DEPENDENCIES
   teaspoon
   thin
   uglifier (>= 2.5.1)
+  validates_email_format_of!
   yajl-ruby
