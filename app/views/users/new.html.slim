@@ -1,5 +1,5 @@
 
-= form_for(@user) do |f|
+= form_for(@user, url: users_path) do |f|
   == explain_errors @user
   legend Sign Up
 
@@ -20,7 +20,7 @@
     div class='controls'
       = f.password_field :password_confirmation
     #
-    = f.label :profile, class: 'control-label', 'Profile Summary (Optional)'
+    = f.label :profile, 'Profile Summary (Optional)', class: 'control-label'
     div class='controls'
       = f.text_area :profile
 
