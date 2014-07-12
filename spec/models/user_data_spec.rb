@@ -2,12 +2,13 @@
 #
 # Table name: user_data
 #
-#  id         :integer          not null, primary key
-#  name       :string(255)      not null
-#  email      :string(255)      not null
-#  profile    :text
-#  created_at :datetime
-#  updated_at :datetime
+#  id              :integer          not null, primary key
+#  name            :string(255)      not null
+#  email           :string(255)      not null
+#  profile         :text
+#  created_at      :datetime
+#  updated_at      :datetime
+#  password_digest :string(255)
 #
 
 require 'spec_helper'

@@ -4,6 +4,7 @@ source 'https://rails-assets.org'
 
 gem 'active_attr'
 gem 'active_interaction', github: 'orgsync/active_interaction', branch: 'v1.3.0'
+gem 'bcrypt-ruby', '~> 3.1.5'
 gem 'bundler-reorganizer'
 gem 'coffee-rails', '~> 4.0.0'
 gem 'draper', github: 'drapergem/draper'
