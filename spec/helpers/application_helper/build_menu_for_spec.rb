@@ -24,9 +24,9 @@ def it_behaves_like_a_menu_separator(params)
   expect(inner_text.inner_text).to eq HTMLEntities.new.decode('&nbsp;')
 end
 
-shared_examples 'a valid menu of a specified style' do |menu_sym|
+shared_examples 'a valid menu of a specified style' do |menu_sym, current_user|
   context "when called passing in :#{menu_sym}" do
-    let(:built_menu) { build_menu_for menu_sym }
+    let(:built_menu) { build_menu_for menu_sym, current_user }
     let(:container) { Nokogiri.parse built_menu }
     if menu_sym == :navbar
       nav_style = 'navbar-nav'
@@ -118,15 +118,16 @@ describe ApplicationHelper::BuildMenuFor do
 
   describe :build_menu_for.to_s do
 
-    it 'is a method taking one parameter' do
+    it 'is a method taking two parameters' do
       p = public_method :build_menu_for
       expect(p).to be_a Method
-      expect(p.arity).to eq 1
+      expect(p.arity).to eq 2
     end
 
-    it_behaves_like 'a valid menu of a specified style', :navbar
+    current_user = UserData.first # Guest User
+    it_behaves_like 'a valid menu of a specified style', :navbar, current_user
 
-    it_behaves_like 'a valid menu of a specified style', :sidebar
+    it_behaves_like 'a valid menu of a specified style', :sidebar, current_user
 
   end # describe :build_menu_for.to_s
 

@@ -2,8 +2,8 @@
 module ApplicationHelper
   # Module containing the `#build_menu_for` application-helper method.
   module BuildMenuFor
-    def build_menu_for(which)
-      MenuForBuilder.new(self, which).to_html
+    def build_menu_for(which, current_user)
+      MenuForBuilder.new(self, which, current_user).to_html
     end
 
     private
@@ -41,33 +41,50 @@ module ApplicationHelper
       end
     end # class ApplicationHelper::BuildMenuFor::MenuForDetailsSelector
 
+    # Encapsulate what we need to know here about a user: guest status and name
+    class MFBUser
+      def initialize(user_impl)
+        @user = user_impl
+      end
+
+      # def name
+      #   @user.name
+      # end
+
+      # def registered?
+      #   name != 'Guest User'
+      # end
+    end # class ApplicationHelper::BuildMenuFor::MFBUser
+
     # Class wrapping logic of `#build_menu_for` application-helper function.
     class MenuForBuilder
       include Rails.application.routes.url_helpers
 
-      def initialize(h, which)
+      def initialize(h, which, current_user)
         extend MenuForDetailsSelector.new.select(which)
         @h = h
+        @current_user = MFBUser.new current_user
       end
 
       def to_html
-        build_container do |cont|
-          cont.build_item_for 'Home', href: root_path
-          cont.build_item_for 'New Post', href: new_post_path
-          cont.build_separator_item
-          cont.build_item_for 'Sign up', href: new_user_path
-          cont.build_item_for 'Log in', href: new_session_path
-          cont.build_item_for 'Log out', cont.logout_params
+        build_container do
+          build_item_for 'Home', href: root_path
+          build_item_for 'New Post', href: new_post_path
+          build_separator_item
+          build_item_for 'Sign up', href: new_user_path
+          build_item_for 'Log in', href: new_session_path
+          build_item_for 'Log out', logout_params
         end
       end
 
       protected
 
+      attr_reader :current_user
       attr_reader :h
 
-      def build_container
+      def build_container(&block)
         h.content_tag :ul, class: container_classes do
-          yield self
+          instance_eval(&block)
         end
       end
 
