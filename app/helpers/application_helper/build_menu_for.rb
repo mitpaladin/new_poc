@@ -17,7 +17,7 @@ module ApplicationHelper
       def separator_attrs
         { style: 'min-width: 3rem;' }
       end
-    end # module AppicationHelper::BuildMenuFor::NavbarMenuForDetails
+    end # module ApplilcationHelper::BuildMenuFor::NavbarMenuForDetails
 
     # Settings for MenuForBuilder to use when building a :sidebar menu
     module SidebarMenuForDetails
@@ -28,7 +28,7 @@ module ApplicationHelper
       def separator_attrs
         {}
       end
-    end # module AppicationHelper::BuildMenuFor::SidebarMenuForDetails
+    end # module ApplicationHelper::BuildMenuFor::SidebarMenuForDetails
 
     # Which settings module should be used for a MenuForBuilder instance?
     class MenuForDetailsSelector
@@ -43,6 +43,8 @@ module ApplicationHelper
 
     # Class wrapping logic of `#build_menu_for` application-helper function.
     class MenuForBuilder
+      include Rails.application.routes.url_helpers
+
       def initialize(h, which)
         extend MenuForDetailsSelector.new.select(which)
         @h = h
@@ -50,11 +52,11 @@ module ApplicationHelper
 
       def to_html
         build_container do |cont|
-          cont.build_item_for 'Home', href: h.root_path
-          cont.build_item_for 'New Post', href: h.new_post_path
+          cont.build_item_for 'Home', href: root_path
+          cont.build_item_for 'New Post', href: new_post_path
           cont.build_separator_item
-          cont.build_item_for 'Sign up', href: h.new_user_path
-          cont.build_item_for 'Log in', href: h.new_session_path
+          cont.build_item_for 'Sign up', href: new_user_path
+          cont.build_item_for 'Log in', href: new_session_path
           cont.build_item_for 'Log out', cont.logout_params
         end
       end
@@ -81,7 +83,7 @@ module ApplicationHelper
 
       def build_separator_item
         item = h.content_tag :li, separator_attrs do
-          h.concat '&nbsp;'
+          HTMLEntities.new.decode '&nbsp;'
         end
         h.concat item
       end

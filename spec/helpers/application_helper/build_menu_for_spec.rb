@@ -17,11 +17,11 @@ def it_behaves_like_a_menu_separator(params)
   index, current_el, style = params.values
   current_li = current_el.children[index]
   expect(current_li.name).to eq 'li'
-  expect(current_li.text).to eq '&nbsp;'
+  expect(current_li.text).to eq HTMLEntities.new.decode('&nbsp;')
   expect(current_li['style']).to eq style
   inner_text = current_li.children[0]
   expect(inner_text).to be_text
-  expect(inner_text.inner_text).to eq '&nbsp;'
+  expect(inner_text.inner_text).to eq HTMLEntities.new.decode('&nbsp;')
 end
 
 shared_examples 'a valid menu of a specified style' do |menu_sym|

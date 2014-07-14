@@ -6,7 +6,7 @@ GIT
 
 GIT
   remote: git://github.com/bbatsov/rubocop.git
-  revision: 0bf15622b57cc0fcd95c659bf17e0a53426383f5
+  revision: 834328c4da6734baca40beff345422eab1d37ae3
   specs:
     rubocop (0.24.1)
       json (>= 1.7.7, < 2)
@@ -50,7 +50,7 @@ GEM
       activesupport (= 4.1.4)
       builder (~> 3.1)
       erubis (~> 2.7.0)
-    active_attr (0.8.3)
+    active_attr (0.8.4)
       activemodel (>= 3.0.2, < 4.2)
       activesupport (>= 3.0.2, < 4.2)
     activemodel (4.1.4)
@@ -88,7 +88,7 @@ GEM
       activesupport
     bond (0.5.1)
     builder (3.2.2)
-    bullet (4.11.3)
+    bullet (4.12.0)
       activesupport (>= 3.0.0)
       uniform_notifier (>= 1.6.0)
     bundler-reorganizer (1.1.1)
@@ -162,6 +162,7 @@ GEM
       posix-spawn (~> 0.3.6)
     hike (1.2.3)
     hirb (0.7.2)
+    htmlentities (4.3.2)
     i18n (0.6.11)
     interception (0.5)
     jbuilder (2.1.2)
@@ -456,6 +457,7 @@ DEPENDENCIES
   draper!
   factory_girl_rails
   fancy-open-struct
+  htmlentities
   jbuilder (~> 2.0)
   jquery-rails
   meta_request
