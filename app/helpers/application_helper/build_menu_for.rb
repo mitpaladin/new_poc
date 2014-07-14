@@ -8,17 +8,51 @@ module ApplicationHelper
 
     private
 
+    # Settings for MenuForBuilder to use when building a :navbar menu.
+    module NavbarMenuForDetails
+      def container_classes
+        'nav navbar-nav'
+      end
+
+      def separator_attrs
+        { style: 'min-width: 3rem;' }
+      end
+    end # module AppicationHelper::BuildMenuFor::NavbarMenuForDetails
+
+    # Settings for MenuForBuilder to use when building a :sidebar menu
+    module SidebarMenuForDetails
+      def container_classes
+        'nav nav-sidebar'
+      end
+
+      def separator_attrs
+        {}
+      end
+    end # module AppicationHelper::BuildMenuFor::SidebarMenuForDetails
+
+    # Which settings module should be used for a MenuForBuilder instance?
+    class MenuForDetailsSelector
+      def select(which)
+        if which == :navbar
+          NavbarMenuForDetails
+        elsif which == :sidebar
+          SidebarMenuForDetails
+        end # other value? Fall off; crash and burn; diagnose
+      end
+    end # class ApplicationHelper::BuildMenuFor::MenuForDetailsSelector
+
     # Class wrapping logic of `#build_menu_for` application-helper function.
     class MenuForBuilder
       def initialize(h, which)
-        @h, @which = h, which
+        extend MenuForDetailsSelector.new.select(which)
+        @h = h
       end
 
       def to_html
         build_container do |cont|
           cont.build_item_for 'Home', href: h.root_path
           cont.build_item_for 'New Post', href: h.new_post_path
-          cont.build_separator_item(which)
+          cont.build_separator_item
           cont.build_item_for 'Sign up', href: h.new_user_path
           cont.build_item_for 'Log in', href: h.new_session_path
           cont.build_item_for 'Log out', cont.logout_params
@@ -27,16 +61,12 @@ module ApplicationHelper
 
       protected
 
-      attr_reader :h, :which
+      attr_reader :h
 
       def build_container
         h.content_tag :ul, class: container_classes do
           yield self
         end
-      end
-
-      def build_dummy_item
-        build_item_for 'Dummy Text', href: '#'
       end
 
       def build_item_for(text, attrs = {})
@@ -49,21 +79,11 @@ module ApplicationHelper
         h.concat item
       end
 
-      def build_separator_item(which)
-        item = h.content_tag :li, style: separator_style(which) do
+      def build_separator_item
+        item = h.content_tag :li, separator_attrs do
           h.concat '&nbsp;'
         end
         h.concat item
-      end
-
-      def container_classes
-        parts = ['nav']
-        parts << if which == :navbar
-                   'navbar-nav'
-                 elsif which == :sidebar
-                   'nav-sidebar'
-                 end
-        parts.join ' '
       end
 
       def logout_params
@@ -73,10 +93,6 @@ module ApplicationHelper
         }
         ret['data-method'] = 'delete'
         ret
-      end
-
-      def separator_style(_which)
-        'min-width: 3rem;'
       end
     end # class MenuForBuilder
   end # module ApplicationHelper::BuildMenuFor

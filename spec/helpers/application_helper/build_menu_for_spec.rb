@@ -1,6 +1,119 @@
 
 require 'spec_helper'
 
+def it_behaves_like_a_menu_list_item(params)
+  text, index, path, current_el, data_method = params.values
+  current_li = current_el.children[index]
+  expect(current_li.name).to eq 'li'
+  expect(current_li).to have(1).children
+  a_tag = current_li.children.first
+  expect(a_tag.name).to eq 'a'
+  expect(a_tag['href']).to eq path
+  expect(a_tag['data-method']).to eq data_method if data_method
+  expect(a_tag.text).to eq text
+end
+
+def it_behaves_like_a_menu_separator(params)
+  index, current_el, style = params.values
+  current_li = current_el.children[index]
+  expect(current_li.name).to eq 'li'
+  expect(current_li.text).to eq '&nbsp;'
+  expect(current_li['style']).to eq style
+  inner_text = current_li.children[0]
+  expect(inner_text).to be_text
+  expect(inner_text.inner_text).to eq '&nbsp;'
+end
+
+shared_examples 'a valid menu of a specified style' do |menu_sym|
+  context "when called passing in :#{menu_sym}" do
+    let(:built_menu) { build_menu_for menu_sym }
+    let(:container) { Nokogiri.parse built_menu }
+    if menu_sym == :navbar
+      nav_style = 'navbar-nav'
+      separator_style = 'min-width: 3rem;'
+    elsif menu_sym == :sidebar
+      nav_style = 'nav-sidebar'
+      separator_style = nil
+    end
+
+    it 'contains a single (top-level) HTML element' do
+      expect(container).to have(1).element
+    end
+
+    it 'contains a top-level `ul` element' do
+      expect(container.elements.first.name).to eq 'ul'
+    end
+
+    describe 'contains a top-level `ul` element that' do
+      let(:current_el) { container.elements.first }
+
+      it "has the 'nav' and '#{nav_style}' CSS classes" do
+        classes = current_el['class'].split
+        expect(classes).to include 'nav'
+        expect(classes).to include nav_style
+      end
+
+      it 'contains 6 child elements' do
+        expect(current_el).to have(6).children
+      end
+
+      it %w(has as its first child element an `li` element whose only child is
+            an `a` element with the text "Home" that links to the root
+            path).join(' ') do
+        it_behaves_like_a_menu_list_item text: 'Home',
+                                         index: 0,
+                                         path: root_path,
+                                         current_el: current_el
+      end
+
+      it %w(has as its second child element an `li` element whose only child
+            is an `a` element with the text "New Post" that links to the
+            new-post path).join(' ') do
+        it_behaves_like_a_menu_list_item text: 'New Post',
+                                         index: 1,
+                                         path: new_post_path,
+                                         current_el: current_el
+      end
+
+      it %w(has as its third child element an `li` element which serves as a
+            vertical spacer).join(' ') do
+        it_behaves_like_a_menu_separator index: 2,
+                                         current_el: current_el,
+                                         style: separator_style
+      end
+
+      it %w(has as its fourth child element an `li` element whose only child
+            is an `a` element with the text "Sign up" that links to the
+            new-user path).join(' ') do
+        it_behaves_like_a_menu_list_item text: 'Sign up',
+                                         index: 3,
+                                         path: new_user_path,
+                                         current_el: current_el
+      end
+
+      it %w(has as its fifth child element an `li` element whose only child is
+            an `a` element with the text "Log in" that links to the
+            new-session path).join(' ') do
+        it_behaves_like_a_menu_list_item text: 'Log in',
+                                         index: 4,
+                                         path: new_session_path,
+                                         current_el: current_el
+      end
+
+      it %w(has as its sixth child element an `li` element whose only child is
+            an `a` element with the text "Log out" that links to the
+            current session path using the HTTP DELETE action, and informs
+            search engines not to follow the link).join(' ') do
+        it_behaves_like_a_menu_list_item text: 'Log out',
+                                         index: 5,
+                                         path: '/sessions/current',
+                                         current_el: current_el,
+                                         data_method: 'delete'
+      end
+    end # describe 'contains a top-level `ul` element that'
+  end # context "when called passing in :#{menu_sym}"
+end # shared_examples 'a valid menu of a specified style'
+
 describe ApplicationHelper::BuildMenuFor do
 
   describe :build_menu_for.to_s do
@@ -11,123 +124,9 @@ describe ApplicationHelper::BuildMenuFor do
       expect(p.arity).to eq 1
     end
 
-    describe 'can accept a parameter of the symbol' do
+    it_behaves_like 'a valid menu of a specified style', :navbar
 
-      after :each do
-        param = RSpec.current_example.description.to_sym
-        expect { build_menu_for param }.to_not raise_error
-      end
-
-      it :navbar do
-      end
-
-      it :sidebar do
-      end
-    end # describe 'can accept a parameter of the symbol'
-
-    context 'when called passing in :navbar' do
-      let(:built_menu) { build_menu_for :navbar }
-      let(:container) { Nokogiri.parse built_menu }
-
-      it 'contains a single (top-level) HTML element' do
-        expect(container).to have(1).element
-      end
-
-      it 'contains a top-level `ul` element' do
-        expect(container.elements.first.name).to eq 'ul'
-      end
-
-      describe 'contains a top-level `ul` element that' do
-        let(:current_el) { container.elements.first }
-
-        it 'has the "nav" and "navbar-nav" CSS classes' do
-          classes = current_el['class'].split
-          expect(classes).to include 'nav'
-          expect(classes).to include 'navbar-nav'
-        end
-
-        it 'contains 6 child elements' do
-          expect(current_el).to have(6).children
-          # puts "\n***** #{built_menu} *****\n"
-        end
-
-        it %w(has as its first child element an `li` element whose only child is
-              an `a` element with the text "Home" that links to the root
-              path).join(' ') do
-          current_li = current_el.children[0]
-          expect(current_li.name).to eq 'li'
-          expect(current_li).to have(1).children
-          a_tag = current_li.children.first
-          expect(a_tag.name).to eq 'a'
-          expect(a_tag['href']).to eq root_path
-          expect(a_tag.text).to eq 'Home'
-        end
-
-        it %w(has as its second child element an `li` element whose only child
-              is an `a` element with the text "New Post" that links to the
-              new-post path).join(' ') do
-          current_li = current_el.children[1]
-          expect(current_li.name).to eq 'li'
-          expect(current_li).to have(1).children
-          a_tag = current_li.children.first
-          expect(a_tag.name).to eq 'a'
-          expect(a_tag['href']).to eq new_post_path
-          expect(a_tag.text).to eq 'New Post'
-        end
-
-        it %w(has as its third child element an `li` element which serves as a
-              horizontal spacer).join(' ') do
-          current_li = current_el.children[2]
-          expect(current_li.name).to eq 'li'
-          expect(current_li.text).to eq '&nbsp;'
-          expect(current_li['style']).to eq 'min-width: 3rem;'
-          inner_text = current_li.children[0]
-          expect(inner_text).to be_text
-          expect(inner_text.inner_text).to eq '&nbsp;'
-        end
-
-        it %w(has as its fourth child element an `li` element whose only child
-              is an `a` element with the text "Sign up" that links to the
-              new-user path).join(' ') do
-          current_li = current_el.children[3]
-          expect(current_li.name).to eq 'li'
-          expect(current_li).to have(1).children
-          a_tag = current_li.children.first
-          expect(a_tag.name).to eq 'a'
-          expect(a_tag['href']).to eq new_user_path
-          expect(a_tag.text).to eq 'Sign up'
-        end
-
-        it %w(has as its fifth child element an `li` element whose only child is
-              an `a` element with the text "Log in" that links to the
-              new-session path).join(' ') do
-          current_li = current_el.children[4]
-          expect(current_li.name).to eq 'li'
-          expect(current_li).to have(1).children
-          a_tag = current_li.children.first
-          expect(a_tag.name).to eq 'a'
-          expect(a_tag['href']).to eq new_session_path
-          expect(a_tag.text).to eq 'Log in'
-        end
-
-        it %w(has as its sixth child element an `li` element whose only child is
-              an `a` element with the text "Log out" that links to the
-              current session path using the HTTP DELETE action, and informs
-              search engines not to follow the link).join(' ') do
-          current_li = current_el.children[5]
-          expect(current_li.name).to eq 'li'
-          expect(current_li).to have(1).children
-          a_tag = current_li.children.first
-          expect(a_tag.name).to eq 'a'
-          expect(a_tag['href']).to eq '/sessions/current'
-          expect(a_tag['data-method']).to eq 'delete'
-          expect(a_tag.text).to eq 'Log out'
-        end
-      end # describe 'contains a top-level `ul` element that'
-    end # context 'when called passing in :navbar'
-
-    context 'when called passing in :sidebar' do
-    end # context 'when called passing in :sidebar'
+    it_behaves_like 'a valid menu of a specified style', :sidebar
 
   end # describe :build_menu_for.to_s
 
