@@ -7,7 +7,8 @@ class SessionsController < ApplicationController
       session[:user_id] = user.id
       redirect_to root_url, flash: { success: 'Logged in!' }
     else
-      flash.now.alert 'Invalid user name or password!'
+      alert_message = 'Invalid user name or password'
+      redirect_to new_session_url, flash: { alert: alert_message }
     end
   end
 
