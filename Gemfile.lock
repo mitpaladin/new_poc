@@ -6,7 +6,7 @@ GIT
 
 GIT
   remote: git://github.com/bbatsov/rubocop.git
-  revision: 834328c4da6734baca40beff345422eab1d37ae3
+  revision: fff83e3f1fd799836e1786a51b9078c34eae5b20
   specs:
     rubocop (0.24.1)
       json (>= 1.7.7, < 2)
@@ -14,6 +14,14 @@ GIT
       powerpack (~> 0.0.6)
       rainbow (>= 1.99.1, < 3.0)
       ruby-progressbar (~> 1.4)
+
+GIT
+  remote: git://github.com/billychan/pundit.git
+  revision: 2c2f9a1550bafc4f4e15d415526bc1f77b665f53
+  branch: stand-alone-authorizer
+  specs:
+    pundit (0.2.3)
+      activesupport (>= 3.0.0)
 
 GIT
   remote: git://github.com/drapergem/draper.git
@@ -334,7 +342,7 @@ GEM
       sexp_processor
     request_store (1.0.6)
     require_all (1.3.2)
-    rest-client (1.7.1)
+    rest-client (1.7.2)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
     roodi (3.3.1)
@@ -466,6 +474,7 @@ DEPENDENCIES
   pry-full
   pry-rails
   pry-rescue
+  pundit!
   quiet_assets
   rails (= 4.1.4)
   rails-assets-bootstrap (~> 3.1.1)

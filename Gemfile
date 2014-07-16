@@ -13,6 +13,8 @@ gem 'htmlentities'
 gem 'jbuilder', '~> 2.0'
 gem 'jquery-rails'
 gem 'naught'
+# NOTE: Revert to `elabs/pundit' after PR 136 is merged
+gem 'pundit', github: 'billychan/pundit', branch: 'stand-alone-authorizer'
 gem 'rails', '4.1.4'
 gem 'rails-assets-bootstrap', '~> 3.1.1'
 gem 'rails-assets-bootswatch', '~> 3.1.1'
