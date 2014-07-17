@@ -18,6 +18,10 @@ class BlogDataDecorator < Draper::Decorator
         .take(count)
   end
 
+  def self.policy_class
+    BlogDataPolicy
+  end
+
   protected
 
   attr_reader :default_entry_count
