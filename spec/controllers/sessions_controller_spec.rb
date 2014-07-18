@@ -15,6 +15,8 @@ shared_examples 'invalid login credentials' do |invalid_field_sym|
 
   describe description_str do
     before :each do
+      @starting_id = UserData.first.id
+      session[:user_id] = @starting_id
       post :create, name: name, password: password
     end
 
@@ -22,8 +24,8 @@ shared_examples 'invalid login credentials' do |invalid_field_sym|
       expect(response).to redirect_to new_session_path
     end
 
-    it 'does not set the session data item for the user ID' do
-      expect(session[:user_id]).to be_nil
+    it 'does not change the session data item for the user ID' do
+      expect(session[:user_id]).to be @starting_id
     end
 
     it 'sets the "Invalid user name or password" flash alert message' do
@@ -59,6 +61,7 @@ describe SessionsController do
       let(:user) { FactoryGirl.create :user_datum }
 
       before :each do
+        session[:user_id] = UserData.first.id
         post :create, name: user.name, password: user.password
       end
 
@@ -80,40 +83,22 @@ describe SessionsController do
       it_behaves_like 'invalid login credentials', :name
 
       it_behaves_like 'invalid login credentials', :password
-
-      describe 'the password is incorrect' do
-        let(:user) { FactoryGirl.create :user_datum }
-
-        before :each do
-          post :create, name: user.name, password: 'bogus password'
-        end
-
-        it 'redirects to the "Sign In" page again' do
-          expect(response).to redirect_to new_session_path
-        end
-
-        it 'does not set the session data item for the user ID' do
-          expect(session[:user_id]).to be_nil
-        end
-
-        it 'sets the "Invalid user name or password" flash alert message' do
-          expect(flash[:alert]).to eq 'Invalid user name or password'
-        end
-      end # describe 'the password is incorrect'
     end # describe 'with parameters that are invalid because'
   end # describe "POST 'create'"
 
   describe "DELETE 'destroy'" do
 
     before :each do
+      @guest_user_id = UserData.first.id
       @user = FactoryGirl.create :user_datum
+      session[:user_id] = @guest_user_id
       post :create, name: @user.name, password: @user.password
-      expect(session[:user_id]).to_not be_nil
+      expect(session[:user_id]).to be @user.id
       delete :destroy, id: @user.id
     end
 
-    it 'clears the session data item for the user ID' do
-      expect(session[:user_id]).to be_nil
+    it 'sets the session data item for the user ID to the Guest User' do
+      expect(session[:user_id]).to be @guest_user_id
     end
 
     it 'redirects to the root URL' do

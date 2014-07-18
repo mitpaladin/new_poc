@@ -5,10 +5,9 @@ require 'spec_helper'
 class FooPolicy < ApplicationPolicy
 end
 
-# Dummy "moidel" class for testing ApplicationPolicy.
+# Dummy "model" class for testing ApplicationPolicy.
 class Foo
   include ActiveAttr::BasicModel
-  attr_writer :uberfoo
 
   def exists?
     false

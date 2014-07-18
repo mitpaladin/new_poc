@@ -5,9 +5,6 @@ require 'post_creator_and_publisher'
 
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
-  after_action :verify_authorized,  except: :index
-  after_action :verify_policy_scoped, only: :index
-
   def new
     post = DSO::PermissivePostCreator.run!
     # The DSO hands back an entity; Rails needs to see an implementation model
