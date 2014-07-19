@@ -2,34 +2,19 @@
 require 'spec_helper'
 
 describe PostDataPolicy do
-  subject(:policy) { PostDataPolicy.new user, record }
-  let(:record) { FactoryGirl.build :post_datum }
+  subject { PostDataPolicy }
+  let(:guest_user) { UserData.first }
+  let(:registered_user) { FactoryGirl.build :user_datum }
+  let(:instance) { SessionData.new }
 
-  context 'for the Guest User' do
-    let(:user) { UserData.first }
+  permissions :create? do
 
-    describe 'does not permit' do
-      after :each do
-        action = RSpec.current_example.description.to_sym
-        expect(policy).to_not permit action
-      end
+    it 'prohibits the Guest User from invokuing the :create action' do
+      expect(subject).not_to permit(guest_user, instance)
+    end
 
-      it :create do
-      end
-    end # describe 'does not permit'
-  end # context 'for the Guest User'
-
-  context 'for a Registered User' do
-    let(:user) { FactoryGirl.build :user_datum }
-
-    describe 'permits' do
-      after :each do
-        action = RSpec.current_example.description.to_sym
-        expect(policy).to permit action
-      end
-
-      it :create do
-      end
-    end # describe 'permits'
-  end # context 'for a Registered User'
+    it 'permits a Registered User to invoke the :create action' do
+      expect(subject).to permit(registered_user, instance)
+    end
+  end # permissions :create?
 end # describe PostDataPolicy

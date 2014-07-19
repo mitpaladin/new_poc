@@ -2,22 +2,19 @@
 require 'spec_helper'
 
 describe BlogDataPolicy do
-  subject(:policy) { BlogDataPolicy.new user, record }
-  let(:record) { FactoryGirl.build :post_datum }
+  subject { BlogDataPolicy }
+  let(:guest_user) { UserData.first }
+  let(:registered_user) { FactoryGirl.build :user_datum }
+  let(:instance) { SessionData.new }
 
-  context 'for the Guest User' do
-    let(:user) { UserData.find_by_name 'Guest User' }
+  permissions :index? do
 
-    it 'permits the index action' do
-      expect(policy).to permit :index
+    it 'permits the Guest User to invoke the :index action' do
+      expect(subject).to permit(guest_user, instance)
     end
-  end # context 'for the Guest User'
 
-  context 'for a Registered User' do
-    let(:user) { FactoryGirl.build :user_datum }
-
-    it 'permits the index action' do
-      expect(policy).to permit :index
+    it 'permits a Registered User to invoke the :index action' do
+      expect(subject).to permit(registered_user, instance)
     end
-  end # context 'for a Registered User'
-end # describe PostDataPolicy
+  end # permissions :new?
+end # describe BlogDataPolicy

@@ -23,22 +23,29 @@ class Foo
 end
 
 describe ApplicationPolicy do
-  subject(:policy) { FooPolicy.new user, record }
+  subject { FooPolicy }
   let(:record) { Foo.new }
   let(:user) { FactoryGirl.build :user_datum }
 
   [
-    :index,
-    :show,
-    :create,
-    :new,
-    :update,
-    :edit,
-    :destroy
-  ].each { |action| it { should_not permit action } }
+    :index?,
+    :show?,
+    :create?,
+    :new?,
+    :update?,
+    :edit?,
+    :destroy?
+  ].each do |query|
+    permissions query do
+      action = query.to_s.chop
+      it "does not permit the user to invoke the :#{action} action" do
+        expect(subject).not_to permit(user, record)
+      end
+    end
+  end
 
   it 'verifies that #scope returns the class of the record' do
-    foo = policy.scope
+    foo = subject.new(user, record).scope
     expect(foo).to be Foo
   end
 

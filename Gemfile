@@ -43,7 +43,7 @@ group :development do
   gem 'pry-rails'
   gem 'pry-rescue'
   gem 'rails-footnotes'
-  gem 'rubocop', github: 'bbatsov/rubocop'
+  gem 'rubocop', github: 'bbatsov/rubocop', ref: '075846d'
   gem 'spring'
 end
 

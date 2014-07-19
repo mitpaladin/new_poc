@@ -2,42 +2,41 @@
 require 'spec_helper'
 
 describe SessionDataPolicy do
-  subject(:policy) { SessionDataPolicy.new user, record }
-  let(:record) do
-    ret = SessionData.new
-    ret.id = user.id
-    ret
-  end
+  subject { SessionDataPolicy }
+  let(:guest_user) { UserData.first }
+  let(:registered_user) { FactoryGirl.build :user_datum }
+  let(:instance) { SessionData.new }
 
-  context 'for the Guest User' do
-    let(:user) { UserData.first }
+  permissions :new? do
 
-    describe 'permits' do
-      [:create, :new].each do |action|
-        it "permits #{action}" do
-          expect(policy).to permit action
-        end
-      end
-    end # describe 'permits'
-
-    it 'does not permit :destroy' do
-      expect(policy).to_not permit :destroy
+    it 'permits the Guest User to invoke the :new action' do
+      expect(subject).to permit(guest_user, instance)
     end
-  end # context 'for the Guest User'
 
-  context 'for a Registered User' do
-    let(:user) { FactoryGirl.build :user_datum }
-
-    describe 'does not permit' do
-      [:create, :new].each do |action|
-        it "permits #{action}" do
-          expect(policy).to_not permit action
-        end
-      end
-    end # describe 'does not permit'
-
-    it 'permits :destroy' do
-      expect(policy).to permit :destroy
+    it 'prohibits a Registered User from invoking the :new action' do
+      expect(subject).not_to permit(registered_user, instance)
     end
-  end # context 'for a Registered User'
+  end # permissions :new?
+
+  permissions :create? do
+
+    it 'permits the Guest User to invoke the :create action' do
+      expect(subject).to permit(guest_user, instance)
+    end
+
+    it 'prohibits a Registered User from invoking the :create action' do
+      expect(subject).not_to permit(registered_user, instance)
+    end
+  end # permissions :create?
+
+  permissions :destroy? do
+
+    it 'prohibits the Guest User from invoking the :destroy action' do
+      expect(subject).not_to permit(guest_user, instance)
+    end
+
+    it 'permits a Registered User to invoke the :destroy action' do
+      expect(subject).to permit(registered_user, instance)
+    end
+  end # permissions :destroy?
 end # describe SessionDataPolicy
