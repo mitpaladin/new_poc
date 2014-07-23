@@ -1,9 +1,12 @@
 
 require 'spec_helper'
 
+require 'support/feature_spec_login_helper'
+
 describe 'Member can create a valid image post' do
 
   before :each do
+    FeatureSpecLoginHelper.new(self).register_and_login
     visit new_post_path
   end
 

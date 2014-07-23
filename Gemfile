@@ -13,6 +13,7 @@ gem 'htmlentities'
 gem 'jbuilder', '~> 2.0'
 gem 'jquery-rails'
 gem 'naught'
+gem 'pundit', github: 'elabs/pundit'
 gem 'rails', '4.1.4'
 gem 'rails-assets-bootstrap', '~> 3.1.1'
 gem 'rails-assets-bootswatch', '~> 3.1.1'
@@ -41,7 +42,7 @@ group :development do
   gem 'pry-rails'
   gem 'pry-rescue'
   gem 'rails-footnotes'
-  gem 'rubocop', github: 'bbatsov/rubocop'
+  gem 'rubocop', github: 'bbatsov/rubocop', ref: '075846d'
   gem 'spring'
 end
 

@@ -11,9 +11,9 @@ html
     = render 'layouts/top_nav_header'
     div class='container-fluid'
       div class='row'
-        div class='col-sm-3 col-md-2 sidebar'
+        div class='col-md-2 sidebar'
           == build_menu_for :sidebar, current_user
-        div class='col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main'
+        div class='col-md-10 main'
           == show_appwide_flashes flash
           = yield
           = debug(params) if Rails.env.development?

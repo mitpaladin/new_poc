@@ -9,11 +9,15 @@ class PostsController < ApplicationController
     post = DSO::PermissivePostCreator.run!
     # The DSO hands back an entity; Rails needs to see an implementation model
     @post = CCO::PostCCO.from_entity post
+    authorize @post
+    @post
   end
 
   def create
     post = DSO::PostCreatorAndPublisher.run! params: params
     @post = CCO::PostCCO.from_entity post
+    @post.valid?
+    authorize @post
     # NOTE: It Would Be Very Nice If this used MQs or etc. to be more direct.
     if @post.valid?
       @post.save!

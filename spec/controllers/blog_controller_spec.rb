@@ -18,46 +18,100 @@ describe BlogController do
 
   describe "GET 'index'" do
 
-    before :each do
-      get :index
-    end
-
-    it 'returns http success' do
-      response.should be_success
-    end
-
-    it 'renders the index template' do
-      expect(response).to render_template 'index'
-    end
-
-    describe 'assigns a "blog" controller variable' do
-
+    context 'for a logged-in user' do
       before :each do
-        @blog = assigns 'blog'
+        user = FactoryGirl.create :user_datum
+        session[:user_id] = user.id
+        get :index
       end
 
-      describe 'that' do
-        after :each do
-          expect(@blog.send @field).to eq @expected
-        end
-
-        it 'has the expected title' do
-          @expected = 'Watching Paint Dry'
-          @field = :title
-        end
-
-        it 'has the expected subtitle' do
-          @expected = 'The trusted source for drying paint news and opinion'
-          @field = :subtitle
-        end
-      end # describe 'that'
-
-      it 'that is decorated with a BlogDataDecorator' do
-        expect(@blog).to be_decorated_with(BlogDataDecorator)
+      after :each do
+        UserData.find(session[:user_id]).destroy
+        session[:user_id] = nil
       end
 
-      # No tests for entries; the blog *implementation model* knows no entries!
+      fit 'returns http success' do
+        expect(response).to be_success
+      end
 
-    end # describe 'assigns a "blog" controller variable'
+      fit 'renders the index template' do
+        expect(response).to render_template 'index'
+      end
+
+      describe 'assigns a "blog" controller variable' do
+
+        before :each do
+          @blog = assigns 'blog'
+        end
+
+        describe 'that' do
+          after :each do
+            expect(@blog.send @field).to eq @expected
+          end
+
+          it 'has the expected title' do
+            @expected = 'Watching Paint Dry'
+            @field = :title
+          end
+
+          it 'has the expected subtitle' do
+            @expected = 'The trusted source for drying paint news and opinion'
+            @field = :subtitle
+          end
+        end # describe 'that'
+
+        it 'that is decorated with a BlogDataDecorator' do
+          expect(@blog).to be_decorated_with(BlogDataDecorator)
+        end
+
+        # No tests for entries; the *implementation model* knows no entries!
+
+      end # describe 'assigns a "blog" controller variable'
+    end # context 'for a logged-in user'
+
+    context 'for the Guest User' do
+      before :each do
+        session[:user_id] = nil
+        get :index
+      end
+
+      it 'returns http OK' do
+        expect(response).to be_ok
+      end
+
+      it 'renders the index template' do
+        expect(response).to render_template 'index'
+      end
+
+      describe 'assigns a "blog" controller variable' do
+
+        before :each do
+          @blog = assigns 'blog'
+        end
+
+        describe 'that' do
+          after :each do
+            expect(@blog.send @field).to eq @expected
+          end
+
+          it 'has the expected title' do
+            @expected = 'Watching Paint Dry'
+            @field = :title
+          end
+
+          it 'has the expected subtitle' do
+            @expected = 'The trusted source for drying paint news and opinion'
+            @field = :subtitle
+          end
+        end # describe 'that'
+
+        it 'that is decorated with a BlogDataDecorator' do
+          expect(@blog).to be_decorated_with(BlogDataDecorator)
+        end
+
+        # No tests for entries; the *implementation model* knows no entries!
+
+      end # describe 'assigns a "blog" controller variable'
+    end # context 'for the Guest User'
   end # describe "GET 'index'"
 end

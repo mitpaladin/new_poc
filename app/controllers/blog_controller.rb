@@ -2,7 +2,7 @@
 # A controller should assign resources and redirect flow. Full stop.
 class BlogController < ApplicationController
   def index
-    @blog = BlogData.first.decorate
-    # @blog = CCO::BlogCCO.to_entity datum
+    @blog = policy_scope(BlogData.first).decorate
+    authorize @blog
   end
-end
+end # class BlogController

@@ -1,6 +1,8 @@
 
 require 'spec_helper'
 
+require 'support/feature_spec_login_helper'
+
 describe 'Member cannot create post without' do
 
   let(:error_detail)    { "Title can't be blank" }
@@ -9,6 +11,7 @@ describe 'Member cannot create post without' do
   let(:success_report)  { 'Post added!' }
 
   before :each do
+    FeatureSpecLoginHelper.new(self).register_and_login
     visit new_post_path
   end
 

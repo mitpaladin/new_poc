@@ -1,6 +1,8 @@
 
 require 'spec_helper'
 
+require 'support/feature_spec_login_helper'
+
 describe 'Member can enter' do
 
   let(:error_message)   { '1 error prevented this PostData from being saved:' }
@@ -9,6 +11,7 @@ describe 'Member can enter' do
   let(:post_url)        { 'http://www.example.com/foo.png' }
 
   before :each do
+    FeatureSpecLoginHelper.new(self).register_and_login
     visit new_post_path
   end
 
