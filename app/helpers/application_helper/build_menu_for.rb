@@ -1,6 +1,5 @@
 
 require_relative 'build_menu_for/menu_for_details_selector'
-require_relative 'build_menu_for/mfb_user'
 
 module ApplicationHelper
   # Module containing the `#build_menu_for` application-helper method.
@@ -19,7 +18,7 @@ module ApplicationHelper
       def initialize(h, which, current_user)
         extend MenuForDetailsSelector.new.select(which)
         @h = h
-        @markup = if MFBUser.new(current_user).registered?
+        @markup = if CCO::UserCCO.to_entity(current_user).registered?
                     build_html_for_registered_user
                   else
                     build_html_for_guest_user
