@@ -14,3 +14,7 @@
  *= require bootstrap
  *= require_self
  */
+
+div.greeter {
+  margin-right: 2em;
+}

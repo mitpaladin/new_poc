@@ -1,7 +1,4 @@
 
-require_relative 'navbar_menu_for_details'
-require_relative 'sidebar_menu_for_details'
-
 module ApplicationHelper
   # Module containing the `#build_menu_for` application-helper method.
   module BuildMenuFor

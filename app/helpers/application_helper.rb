@@ -7,6 +7,7 @@ require 'application_helper/show_appwide_flashes'
 # app expands.
 module ApplicationHelper
   include AppwideFlashes
+  include BuildGreeterFor
   include BuildMenuFor
   include ExplainErrors
 end

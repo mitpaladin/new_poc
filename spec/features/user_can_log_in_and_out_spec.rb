@@ -20,6 +20,7 @@ describe 'User can' do
     click_button 'Log In'
     expect(page).to have_content landing_page_header
     expect(page).to have_css '.alert.alert-success', text: 'Logged in!'
+    expect(page).to have_content "Hello, #{@user_name}!"
   end
 
   it 'logout' do
@@ -28,5 +29,6 @@ describe 'User can' do
       click_link 'Log out'
     end
     expect(page).to have_css '.alert.alert-success', text: 'Logged out!'
+    expect(page).to have_content 'Hello, Guest User!'
   end
 end # describe 'User can log in and out'
