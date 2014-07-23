@@ -55,35 +55,85 @@ describe SessionsController do
     it { expect(session_path(1)).to eq '/sessions/1' }
   end
 
+  describe "GET 'new'" do
+
+    context 'for the Guest User' do
+      before :each do
+        session[:user_id] = nil
+        get :new
+      end
+
+      it 'assigns a SessionDataPolicy instance to :policy' do
+        expect(assigns[:policy]).to be_a SessionDataPolicy
+      end
+
+      it 'renders the :new template' do
+        expect(response).to render_template :new
+      end
+
+      it 'returns HTTP success' do
+        expect(response).to be_ok
+      end
+    end # context 'for the Guest User'
+
+    context 'for a Registered User' do
+      before :each do
+        @user = FactoryGirl.create :user_datum
+        session[:user_id] = @user.id
+        get :new
+      end
+
+      after :each do
+        session[:user_id] = nil
+        @user.destroy
+      end
+
+      it 'returns HTTP Redirection' do
+        expect(response).to be_redirection
+      end
+
+      it 'redirects to the root path' do
+        expect(response).to redirect_to root_path
+      end
+
+      it 'has the correct flash error message' do
+        message = 'You are not authorized to perform this action.'
+        expect(flash[:error]).to eq message
+      end
+    end # context 'for a Registered User'
+  end # describe "GET 'new'"
+
   describe "POST 'create'" do
 
-    describe 'with valid params' do
-      let(:user) { FactoryGirl.create :user_datum }
+    context 'for the Guest User' do
+      describe 'with valid params' do
+        let(:user) { FactoryGirl.create :user_datum }
 
-      before :each do
-        session[:user_id] = UserData.first.id
-        post :create, name: user.name, password: user.password
-      end
+        before :each do
+          session[:user_id] = UserData.first.id
+          post :create, name: user.name, password: user.password
+        end
 
-      it 'redirects to the root URL' do
-        expect(response).to redirect_to root_url
-      end
+        it 'redirects to the root URL' do
+          expect(response).to redirect_to root_url
+        end
 
-      it 'saves the user ID number in the session data' do
-        expect(session[:user_id]).to eq user.id
-      end
+        it 'saves the user ID number in the session data' do
+          expect(session[:user_id]).to eq user.id
+        end
 
-      it 'sets the logged-in flash message' do
-        expect(flash[:success]).to eq 'Logged in!'
-      end
-    end # describe 'with valid params'
+        it 'sets the logged-in flash message' do
+          expect(flash[:success]).to eq 'Logged in!'
+        end
+      end # describe 'with valid params'
 
-    describe 'with parameters that are invalid because' do
+      describe 'with parameters that are invalid because' do
 
-      it_behaves_like 'invalid login credentials', :name
+        it_behaves_like 'invalid login credentials', :name
 
-      it_behaves_like 'invalid login credentials', :password
-    end # describe 'with parameters that are invalid because'
+        it_behaves_like 'invalid login credentials', :password
+      end # describe 'with parameters that are invalid because'
+    end # context 'for the Guest User'
   end # describe "POST 'create'"
 
   describe "DELETE 'destroy'" do
