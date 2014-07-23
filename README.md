@@ -18,7 +18,6 @@ Specific, significant components include:
 
 * [Draper](https://github.com/drapergem/draper), for Rails model "decorators"; the Gem has also been described as providing ViewModels;
 * [OrgSync ActiveInteraction](https://github.com/orgsync/active_interaction) as our DSO implementation mechanism;
-* [Wisper](http://www.sitepoint.com/using-wisper-to-decompose-applications/) for decoupling services best thought of as orthogonal to either the "traditional" Rails MVC architecture or our DSO implementation;
 * [Slim](http://slim-lang.com) as the view template language;
 * and others that, though important in the development process, aren't really part of the point of the demo.
 
@@ -63,10 +62,6 @@ Additionally, at least at the time that he wrote this book, Avdi was firmly in t
 `interactor_demo`, largely for what are now historical reasons, is and will remain a Rails 3.2 app. This application is using Rails 4 (absent [turbolinks](http://blog.steveklabnik.com/posts/2013-06-25-removing-turbolinks-from-rails-4)) from its inception. One consequence of this is expected to be that the move from Rails 3.2 to Rails 4 should *not* affect how the DSOs or decorators are written and used, demonstrating even more conclusively that Rails is "just" an implementation detail.
 
 Finally, this app is intended as a more complete demonstration of our application architecture than the earlier demo. By explicitly and consistently using DSOs, decorators, and message queues to isolate the domain logic from the implementation/delivery system, we demonstrate the ability to ramp up productivity from a severely under-resourced team while shifting into a more conventionally agile workflow with regular, incremental deliveries. This should not only dramatically improve morale within the company, it should be usable as a credible indication to outside stakeholders that we finally, at long last, have our "head on straight" and can be expected to significantly ramp up velocity towards delivering a successful product.
-
-### Schedule Comparison
-
-Whereas [`interactor_demo`](https://github.com/jdickey/interactor_demo) has taken several weeks of effort, plodding through its source material and incrementally (hopefully) improving the software and process used to create each successive candidate branch, this project builds on that earlier work for a straight-line, incremental, productive demonstration of its purpose. This of course does not take into consideration fundamental shifts in approach, such as that of mid-June where the architecture was shifted to a more explicitly hexagonal approach with early, parallel development of "real" Rails models necessitated rewriting roughly a day's worth of work.
 
 ## Bugs and Feedback
 
