@@ -20,6 +20,10 @@ class PostDataDecorator < Draper::Decorator
     body_builder_class.new(helpers).build self
   end
 
+  def build_byline
+    BylineBuilder.new(self).to_html
+  end
+
   def published?
     pubdate.present?
   end
