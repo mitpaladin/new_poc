@@ -14,10 +14,16 @@ class PostsController < ApplicationController
   end
 
   def create
-    post = DSO::PostCreatorAndPublisher.run! params: params
+    post = DSO::PostCreatorAndPublisher.run! params: tweak_create_params(params)
     @post = CCO::PostCCO.from_entity post
     @post.valid?
     authorize @post
+    process_create_result
+  end
+
+  private
+
+  def process_create_result
     # NOTE: It Would Be Very Nice If this used MQs or etc. to be more direct.
     if @post.valid?
       @post.save!
@@ -27,9 +33,13 @@ class PostsController < ApplicationController
     end
   end
 
-  private
-
   def redirect_params
     { flash: { success:  'Post added!' } }
+  end
+
+  def tweak_create_params(params)
+    user = CCO::UserCCO.to_entity(current_user)
+    params[:post_data][:author_name] = user.name if user.registered?
+    params
   end
 end # class Blog::PostsController

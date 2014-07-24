@@ -5,7 +5,7 @@ module BLO
   module Internal
     def attribs_for(obj)
       ret = {}
-      [:title, :body, :image_url].each do |k|
+      [:title, :body, :image_url, :author_name].each do |k|
         ret[k] = obj.send k
       end
       ret

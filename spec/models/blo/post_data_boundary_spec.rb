@@ -53,6 +53,7 @@ module BLO
         let(:messages) do
           [
             "Title can't be blank",
+            "Author name can't be blank",
             'Body must be present if image URL is not present'
           ]
         end

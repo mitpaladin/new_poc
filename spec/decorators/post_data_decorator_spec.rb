@@ -6,11 +6,19 @@ require 'draper'
 require 'post_data_decorator'
 
 describe PostDataDecorator do
-
-  # We can't do `Post.new(...).decorate` unless Post is a genuine ActiveModel.
-  # ActiveAttr *does not* quack quite right.
-  # See https://github.com/drapergem/draper/issues/619
-  subject(:post) { PostDataDecorator.decorate(Post.new blog: Blog.new) }
+  let(:post_attribs) do
+    attribs = FactoryGirl.attributes_for :post_datum
+    attribs[:blog] = Blog.new
+    attribs
+  end
+  let(:post) do
+    PostDataDecorator.new(Post.new post_attribs)
+  end
+  let(:text_post) do
+    attribs = post_attribs
+    attribs.delete :image_url
+    PostDataDecorator.new(Post.new attribs)
+  end
 
   it 'decorates the model' do
     expect(post).to be_decorated
@@ -21,7 +29,6 @@ describe PostDataDecorator do
     it 'takes no parameters' do
       message = 'wrong number of arguments (1 for 0)'
       expect { post.build_body post }.to raise_error ArgumentError, message
-
     end
 
     it 'delegates method calls to the post' do
@@ -41,11 +48,6 @@ describe PostDataDecorator do
     # this instance of the model. NO PARTIALS ARE NEEDED. D'oh!
     describe 'generates the correct markup for' do
 
-      before :each do
-        post.title = 'A Title'
-        post.body = 'A Body or Caption'
-      end
-
       it 'an image post' do
         post.image_url = 'http://www.example.com/foo.png'
         format_str = '<figure>' \
@@ -58,10 +60,28 @@ describe PostDataDecorator do
 
       it 'a text post' do
         expected = ['<p>', '</p>'].join post.body
-        expect(post.build_body).to eq expected
+        expect(text_post.build_body).to eq expected
       end
     end # describe 'generates the correct markup for'
   end # describe :build_body
+
+  describe :build_byline do
+    let(:byline) { post.build_byline }
+
+    it 'takes no parameters' do
+      message = 'wrong number of arguments (1 for 0)'
+      expect { post.build_byline 'foo' }.to raise_error ArgumentError, message
+    end
+
+    it 'returns a paragraph tag' do
+      post.publish
+      pubdate = post.pubdate.localtime.strftime '%c %Z'
+      expected = '<p><time pubdate="pubdate">' \
+          "Posted #{pubdate} by #{post.author_name}" \
+          '</time></p>'
+      expect(byline).to eq expected
+    end
+  end # describe :build_byline
 
   describe :published? do
     let(:post) { FactoryGirl.build(:post_datum).decorate }

@@ -9,7 +9,7 @@ module DSO
 
     let(:klass) { PermissivePostCreator }
     let(:blog) { {} }
-    let(:post_data) { { title: 'This is a Title', body: 'This is a Body' } }
+    let(:post_data) { FactoryGirl.attributes_for :post_datum }
     let(:full_params) { { blog: blog, post_data: post_data } }
     let(:image_url) do
       'http://images.nationalgeographic.com/wpf/media-live/photos/000/805/' \

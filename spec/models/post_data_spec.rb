@@ -2,13 +2,14 @@
 #
 # Table name: post_data
 #
-#  id         :integer          not null, primary key
-#  title      :string(255)      not null
-#  body       :text
-#  created_at :datetime
-#  updated_at :datetime
-#  image_url  :string(255)
-#  pubdate    :datetime
+#  id          :integer          not null, primary key
+#  title       :string(255)      not null
+#  body        :text
+#  created_at  :datetime
+#  updated_at  :datetime
+#  image_url   :string(255)
+#  pubdate     :datetime
+#  author_name :string(255)
 #
 
 require 'spec_helper'
@@ -35,20 +36,24 @@ describe PostData do
 
     context 'is valid with' do
 
-      it 'an instance with a title but no body' do
+      it 'an instance with an author name title but no body' do
         expect(FactoryGirl.build :post_datum, body: nil).to be_valid
       end
 
-      it 'both title and body' do
+      it 'author name, title and body' do
         expect(FactoryGirl.build :post_datum, image_url: nil).to be_valid
       end
 
-      it 'both title and image_url but no body' do
+      it 'author_name, title and image_url but no body' do
         expect(FactoryGirl.build :post_datum, body: nil).to be_valid
       end
     end # context 'is valid with'
 
     context 'is invalid with' do
+
+      it 'no author name' do
+        expect(FactoryGirl.build :post_datum, author_name: nil).to_not be_valid
+      end
 
       it 'no title' do
         expect(FactoryGirl.build :post_datum, title: nil).to_not be_valid

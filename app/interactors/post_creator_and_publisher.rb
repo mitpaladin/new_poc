@@ -13,6 +13,7 @@ module DSO
         string :title, default: '', strip: true
         string :body, default: '', strip: true
         string :image_url, default: '', strip: true
+        string :author_name, default: '', strip: true
       end
     end
 
