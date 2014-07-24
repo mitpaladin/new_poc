@@ -32,7 +32,7 @@ This demo will be declared successful when it meets each and all of the followin
 	5. Persistence, using standard ActiveRecord models shadowed by a boundary layer between ActiveRecord and the remainder of the domain logic;
 	6. Authentication, allowing the author of each individual blog entry to be identified and credited when the article is presented;
 	7. Authorisation, supporting three capabilities:
-		8. Only the author of an article may edit its content after publication;
+		8. Only the author of an article may edit its content;
 		9. When a user creates an article, it is initially marked as `draft` until explicitly published. While a post has `draft` status, only the author may view it or its title;
 		10. An author may choose to publish an article as 'private', whereby it *will not* appear in index listings or the like. Any logged-in user who directly visits the post's URL, however, will be allowed to view its content;
 
