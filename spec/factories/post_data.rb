@@ -23,5 +23,6 @@ FactoryGirl.define do
     title { generate :title }
     body 'The Body'
     image_url 'http://example.com/image1.png'
+    author_name 'Just Anybody'
   end
 end

@@ -16,6 +16,7 @@
 class PostData < ActiveRecord::Base
   # attr_accessor :title, :body # DANGER! DON'T *DO* THIS FOR DB FIELDS!
   validates :title, presence: true
+  validates :author_name, presence: true
   validate :body_or_image_url?
 
   private

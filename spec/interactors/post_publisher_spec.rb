@@ -8,7 +8,7 @@ module DSO
   describe PostPublisher do
 
     let(:blog) { Blog.new }
-    let(:post) { blog.new_post title: 'A Title', body: 'A Body' }
+    let(:post) { blog.new_post FactoryGirl.attributes_for(:post_datum) }
     let(:klass) { PostPublisher }
 
     describe 'succeeds when called with' do

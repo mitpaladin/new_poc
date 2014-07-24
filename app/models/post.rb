@@ -3,7 +3,7 @@
 class Post
   # include ActiveAttr::BasicModel
   include Comparable
-  attr_accessor :blog, :body, :title, :image_url, :pubdate
+  attr_accessor :blog, :body, :title, :image_url, :pubdate, :author_name
 
   def initialize(attrs = {})
     attrs.each do |k, v|
