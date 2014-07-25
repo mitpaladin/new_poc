@@ -10,28 +10,24 @@
 #  image_url   :string(255)
 #  pubdate     :datetime
 #  author_name :string(255)
+#  slug        :string(255)
 #
 
 # PostData: ActiveRecord persistence for Posts.
 class PostData < ActiveRecord::Base
   extend FriendlyId
   # attr_accessor :title, :body # DANGER! DON'T *DO* THIS FOR DB FIELDS!
-  validates :title, presence: true, uniqueness: true
+  validates :title, presence: true # Slugs are unique so titles need not be.
   # other :use options we might investigate: :scoped, :simple_i18n, :history
-  friendly_id :title, use: [:slugged, :finders]
+  friendly_id :slug_candidates, use: [:slugged, :finders]
   validates :author_name, presence: true
   validate :body_or_image_url?
 
-  # def slug_candidates
-  #   [
-  #     :title,
-  #     [:title, :author_name]
-  #   ]
-  # end
-
-  def slug
-    return 'no-title-for-this-article' if title.nil?
-    title.parameterize
+  def slug_candidates
+    [
+      :title,
+      [:title, :author_name]
+    ]
   end
 
   private

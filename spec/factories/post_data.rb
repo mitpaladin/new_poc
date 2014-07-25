@@ -10,6 +10,7 @@
 #  image_url   :string(255)
 #  pubdate     :datetime
 #  author_name :string(255)
+#  slug        :string(255)
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

@@ -10,6 +10,7 @@
 #  image_url   :string(255)
 #  pubdate     :datetime
 #  author_name :string(255)
+#  slug        :string(255)
 #
 
 require 'spec_helper'
@@ -76,29 +77,32 @@ describe PostData do
   describe :slug do
 
     context 'with a valid title' do
-      let(:post) { FactoryGirl.build :post_datum }
+      let(:post) { FactoryGirl.create :post_datum }
 
       it 'matches the parameterised title' do
         expect(post.slug).to eq post.title.parameterize
       end
     end # context 'with a valid title'
 
-    context 'with an invalid title' do
-      let(:post) { FactoryGirl.build :post_datum, title: nil }
+    # An invalid title violates a database-level constraint; no longer needed.
 
-      it 'states that no title exists for this article' do
-        expect(post.slug).to eq 'no-title-for-this-article'
-      end
-    end # context 'with an invalid title'
+    context 'where two articles have the same title' do
+      let(:title) { 'This Is a Redundant, Duplicated Title' }
+      # eager evaluation so second-slug test passes
+      let!(:post1) { FactoryGirl.create :post_datum, title: title }
+      let!(:post2) { FactoryGirl.create :post_datum, title: title }
 
-    # context 'where two articles have the same title' do
-    #   let(:title) { 'This Is a Redundant, Duplicated Title' }
-    #   let(:post1) { FactoryGirl.create :post_datum, title: title }
-    #   let(:post2) { FactoryGirl.create :post_datum, title: title }
-    #
-    #   it 'should not generate the same slug' do
-    #     expect(post1.slug).not_to eq post2.slug
-    #   end
-    # end # context 'where two articles have the same title'
+      describe 'they do not have the same slug value;' do
+        it 'the first has a slug that is the parameterised title' do
+          expect(post1.slug).to eq post1.title.parameterize
+        end
+
+        it 'the second has a slug that parameterises the title and author' do
+          expected_parts = [post2.title, post2.author_name]
+          expected_parts = expected_parts.map(&:parameterize)
+          expect(post2.slug).to eq expected_parts.join('-')
+        end
+      end # describe 'they do not have the same slug value;'
+    end # context 'where two articles have the same title'
   end # describe :slug
 end
