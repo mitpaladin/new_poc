@@ -58,6 +58,8 @@ describe User do
 
   it_behaves_like 'a value object with read-only attribute', :profile
 
+  it_behaves_like 'a value object with read-only attribute', :slug
+
   it_behaves_like 'a flag set based on user state', :authenticated?
 
   it_behaves_like 'a flag set based on user state', :registered?
