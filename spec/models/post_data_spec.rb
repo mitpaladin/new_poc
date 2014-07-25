@@ -72,4 +72,33 @@ describe PostData do
       expect(FactoryGirl.build :post_datum).to_not respond_to :published?
     end
   end # describe :published?
+
+  describe :slug do
+
+    context 'with a valid title' do
+      let(:post) { FactoryGirl.build :post_datum }
+
+      it 'matches the parameterised title' do
+        expect(post.slug).to eq post.title.parameterize
+      end
+    end # context 'with a valid title'
+
+    context 'with an invalid title' do
+      let(:post) { FactoryGirl.build :post_datum, title: nil }
+
+      it 'states that no title exists for this article' do
+        expect(post.slug).to eq 'no-title-for-this-article'
+      end
+    end # context 'with an invalid title'
+
+    # context 'where two articles have the same title' do
+    #   let(:title) { 'This Is a Redundant, Duplicated Title' }
+    #   let(:post1) { FactoryGirl.create :post_datum, title: title }
+    #   let(:post2) { FactoryGirl.create :post_datum, title: title }
+    #
+    #   it 'should not generate the same slug' do
+    #     expect(post1.slug).not_to eq post2.slug
+    #   end
+    # end # context 'where two articles have the same title'
+  end # describe :slug
 end
