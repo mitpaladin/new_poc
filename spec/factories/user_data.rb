@@ -9,6 +9,7 @@
 #  created_at      :datetime
 #  updated_at      :datetime
 #  password_digest :string(255)
+#  slug            :string(255)
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl
@@ -24,5 +25,6 @@ FactoryGirl.define do
     profile 'Just Another Random User'
     password 'password'
     password_confirmation 'password'
+    slug nil
   end
 end

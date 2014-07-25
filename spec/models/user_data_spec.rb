@@ -9,6 +9,7 @@
 #  created_at      :datetime
 #  updated_at      :datetime
 #  password_digest :string(255)
+#  slug            :string(255)
 #
 
 require 'spec_helper'
@@ -66,6 +67,21 @@ describe UserData do
         end
       end # describe 'as conforming to the format for'
     end # describe :name
+
+    describe :slug do
+
+      context 'with a valid name' do
+        let(:user) { FactoryGirl.create :user_datum }
+
+        it 'matches the parameterised name' do
+          expect(user.slug).to eq user.name.parameterize
+        end
+      end # context 'with a valid name'
+
+      # An invalid name violates a database-level constraint; no longer needed.
+
+      # Two users cannot have the same name, or therefore the same slug.
+    end # describe :slug
 
     describe :email do
       let(:user) { FactoryGirl.build :user_datum }

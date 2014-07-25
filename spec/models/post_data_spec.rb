@@ -10,6 +10,7 @@
 #  image_url   :string(255)
 #  pubdate     :datetime
 #  author_name :string(255)
+#  slug        :string(255)
 #
 
 require 'spec_helper'
@@ -72,4 +73,36 @@ describe PostData do
       expect(FactoryGirl.build :post_datum).to_not respond_to :published?
     end
   end # describe :published?
+
+  describe :slug do
+
+    context 'with a valid title' do
+      let(:post) { FactoryGirl.create :post_datum }
+
+      it 'matches the parameterised title' do
+        expect(post.slug).to eq post.title.parameterize
+      end
+    end # context 'with a valid title'
+
+    # An invalid title violates a database-level constraint; no longer needed.
+
+    context 'where two articles have the same title' do
+      let(:title) { 'This Is a Redundant, Duplicated Title' }
+      # eager evaluation so second-slug test passes
+      let!(:post1) { FactoryGirl.create :post_datum, title: title }
+      let!(:post2) { FactoryGirl.create :post_datum, title: title }
+
+      describe 'they do not have the same slug value;' do
+        it 'the first has a slug that is the parameterised title' do
+          expect(post1.slug).to eq post1.title.parameterize
+        end
+
+        it 'the second has a slug that parameterises the title and author' do
+          expected_parts = [post2.title, post2.author_name]
+          expected_parts = expected_parts.map(&:parameterize)
+          expect(post2.slug).to eq expected_parts.join('-')
+        end
+      end # describe 'they do not have the same slug value;'
+    end # context 'where two articles have the same title'
+  end # describe :slug
 end

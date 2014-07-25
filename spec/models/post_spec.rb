@@ -9,7 +9,8 @@ require 'support/shared_examples/models/post_field_priority'
 
 describe Post do
   let(:blog) { DSO::BlogSelector.run! }
-  let(:post) { Post.new FactoryGirl.attributes_for :post_datum }
+  let(:post_attribs) { FactoryGirl.attributes_for :post_datum }
+  let(:post) { Post.new post_attribs }
 
   context 'initialisation' do
 
@@ -58,17 +59,44 @@ describe Post do
     end
   end # describe 'supports reading and writing'
 
+  describe 'supports reading the attribute' do
+    [:author_name, :slug].each do |attr_sym|
+      it ":#{attr_sym}" do
+        post = Post.new post_attribs
+        expect(post.send attr_sym).to eq post_attribs[attr_sym]
+      end
+    end
+  end # describe 'supports reading the attribute'
+
+  describe 'DOES NOT support modifying the attribute' do
+    [:author_name, :slug].each do |attr_sym|
+      it ":#{attr_sym}" do
+        setter = [attr_sym.to_s, '='].join.to_sym
+        error_match = Regexp.new("undefined method `#{setter}' for .*?")
+        post = Post.new post_attribs
+        expect { post.send setter, 'anything at all' }
+            .to raise_error NoMethodError, error_match
+      end
+    end
+  end # describe 'DOES NOT support modifying the attribute'
+
+  it 'does not change the slug value when the title changes' do
+    post = Post.new post_attribs
+    post.title = 'And Now For Something Completely Different'
+    expect(post.slug).to eq post_attribs[:slug]
+  end
+
   describe :error_messages do
 
     context 'when called on a valid post' do
-      let(:post) { blog.new_post FactoryGirl.attributes_for :post_datum }
+      let(:post) { blog.new_post post_attribs }
 
       it_behaves_like 'error-message list empty-state check'
     end # context 'when called on a valid post'
 
     context 'when called on an invalid post' do
       let(:post) do
-        blog.new_post FactoryGirl.attributes_for :post_datum, title: nil
+        blog.new_post post_attribs.merge(title: nil)
       end
 
       it_behaves_like 'error-message list empty-state check', false
@@ -81,7 +109,7 @@ describe Post do
   end # describe :error_messages
 
   describe :publish do
-    let(:post) { blog.new_post FactoryGirl.attributes_for :post_datum }
+    let(:post) { blog.new_post post_attribs }
 
     it 'adds the post to the blog' do
       expect(blog.entry? post).to be false
@@ -120,7 +148,7 @@ describe Post do
   end
 
   describe :valid? do
-    let(:post) { Post.new FactoryGirl.attributes_for(:post_datum) }
+    let(:post) { Post.new post_attribs }
 
     describe 'returns true for a post with' do
 
@@ -159,7 +187,7 @@ describe Post do
 
   describe '<=>' do
     it 'reports two posts as "equal" when they have the same field values' do
-      post = Post.new FactoryGirl.attributes_for(:post_datum)
+      post = Post.new post_attribs
       post2 = post.clone
       expect(post2).to eq post
     end
@@ -178,7 +206,7 @@ describe Post do
     description = 'reports a post as greater than another if its publication' \
         ' date is set when the other is not'
     it description do
-      post = Post.new FactoryGirl.attributes_for(:post_datum)
+      post = Post.new post_attribs
       post2 = post.clone
       post2.pubdate = Chronic.parse('yesterday at 9 AM')
       expect(post2 > post).to be true

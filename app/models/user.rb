@@ -1,10 +1,10 @@
 
 # Everything other entities or DSOs need to know about a user should be in here.
 class User
-  attr_reader :name, :email, :profile
+  attr_reader :name, :email, :profile, :slug
 
   def initialize(attrs = {})
-    ivars = [:name, :email, :profile, :session_token]
+    ivars = [:name, :email, :profile, :session_token, :slug]
     attrs.each do |k, v|
       ivar_sym = ['@', k].join.to_sym
       instance_variable_set ivar_sym, v if ivars.include? k

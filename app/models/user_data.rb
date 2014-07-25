@@ -9,10 +9,13 @@
 #  created_at      :datetime
 #  updated_at      :datetime
 #  password_digest :string(255)
+#  slug            :string(255)
 #
 
 # UserData: ActiveRecord persistence and validation for Users.
 class UserData < ActiveRecord::Base
+  extend FriendlyId
+  friendly_id :name, use: [:slugged, :finders]
   # attr_accessible :password, :password_confirmation
   has_secure_password
   validates :name,

@@ -10,6 +10,7 @@
 #  image_url   :string(255)
 #  pubdate     :datetime
 #  author_name :string(255)
+#  slug        :string(255)
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl
@@ -24,5 +25,7 @@ FactoryGirl.define do
     body 'The Body'
     image_url 'http://example.com/image1.png'
     author_name 'Just Anybody'
+    # See https://norman.github.io/friendly_id/file.Guide.html#Deciding_When_to_Generate_New_Slugs
+    slug nil
   end
 end
