@@ -1,5 +1,6 @@
 
 require 'blog_selector'
+require_relative 'support/post_data_lambda'
 
 module DSO
   # Create a new post on a blog, isolating the caller (which is normally the
@@ -9,10 +10,7 @@ module DSO
       integer :id, default: 1
     end
     hash :post_data, default: {} do
-      string :author_name, default: '', strip: true
-      string :title, default: '', strip: true
-      string :body, default: '', strip: true
-      string :image_url, default: '', strip: true
+      POST_DATA_LAMBDA.call self
     end
 
     def execute

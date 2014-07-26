@@ -2,7 +2,9 @@
 require 'blog_selector'
 require 'permissive_post_creator'
 require 'post_publisher'
+require_relative 'support/post_data_lambda'
 
+# Module containing domain service-level objects, aka DSOs or interactors.
 module DSO
   # Create and publish a new post on a blog, using other DSOs as workers.
   class PostCreatorAndPublisher < ActiveInteraction::Base
@@ -10,10 +12,7 @@ module DSO
       # NOTE: This is the blog ID as a Rails controller parameter (string).
       string :blog, default: '1'
       hash :post_data do
-        string :title, default: '', strip: true
-        string :body, default: '', strip: true
-        string :image_url, default: '', strip: true
-        string :author_name, default: '', strip: true
+        POST_DATA_LAMBDA.call self
       end
     end
 
