@@ -1,5 +1,7 @@
 # New POC
 
+[![Code Climate](https://codeclimate.com/github/jdickey/new_poc.png)](https://codeclimate.com/github/jdickey/new_poc)
+
 This is an experiment in clean(er) architecture in Rails. It's not intended as a full, releasable application, but rather to answer some critical questions about how we will actually release such an app.
 
 ## Background
