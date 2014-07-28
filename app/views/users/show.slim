@@ -1,0 +1,25 @@
+
+- posts = PostData \
+    .select { |post| post.author_name == @user.name } \
+    .map(&:decorate)
+
+div class='row'
+  div class='col-md-12'
+    div class='row'
+      div class='col-md-1' &nbsp;
+      div class='col-md-10'
+        div class='row'
+          h1 Profile Page for #{@user.name}
+          div class='panel panel-default'
+            div class='panel-heading'
+              h3 class='panel-title' User Profile/Bio Information
+            div class='panel-body' #{@user.profile}
+        div class='row' id='contrib-row'
+          h3 Articles Authored By #{@user.name}
+          ul class='list-group'
+            - posts.each do |post|
+              li class='list-group-item'
+                a href="/posts/#{post.slug}" "#{post.title}" Published #{post.pubdate.localtime.strftime '%c %Z'}
+      div class='col-md-1' &nbsp;
+
+hr
