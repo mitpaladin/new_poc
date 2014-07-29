@@ -19,9 +19,13 @@ FactoryGirl.define do
     "J Random User Number #{n}"
   end
 
+  sequence :email do |n|
+    "jruser#{n}@example.com"
+  end
+
   factory :user_datum, class: 'UserData' do
     name { generate :name }
-    email 'jruser@example.com'
+    email { generate :email }
     profile 'Just Another Random User'
     password 'password'
     password_confirmation 'password'

@@ -50,4 +50,13 @@ class FeatureSpecLoginHelper < FeatureSpecHelperBase
       end
     end
   end
+
+  def setup_user_fields(user_data = FactoryGirl.attributes_for(:user_datum))
+    s.instance_eval do
+      @user_bio ||=       user_data[:profile]
+      @user_email ||=     user_data[:email]
+      @user_name ||=      user_data[:name]
+      @user_password ||=  user_data[:password]
+    end
+  end
 end

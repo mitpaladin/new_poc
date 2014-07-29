@@ -10,13 +10,4 @@ class FeatureSpecHelperBase
   protected
 
   attr_reader :s
-
-  def setup_user_fields
-    s.instance_eval do
-      @user_bio ||=       'I am what I am. You are what you eat.'
-      @user_email ||=     'jruser@example.com'
-      @user_name ||=      'J Random User'
-      @user_password ||=  's00persecret'
-    end
-  end
 end
