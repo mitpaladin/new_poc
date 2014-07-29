@@ -5,9 +5,7 @@ require 'support/feature_spec_login_helper'
 
 describe 'Member can view own profile page' do
   before :each do
-    @login_helper = FeatureSpecLoginHelper.new(self)
-    @login_helper.register_and_login
-    # visit root_path
+    FeatureSpecLoginHelper.new(self).register_and_login
     within(:css, 'ul.navbar-nav') do
       click_link 'View your profile'
     end
