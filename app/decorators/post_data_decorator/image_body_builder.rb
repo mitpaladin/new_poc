@@ -16,7 +16,7 @@ class PostDataDecorator < Draper::Decorator
       private
 
       def figcaption(obj)
-        h.content_tag :figcaption, obj.body
+        h.content_tag :figcaption, obj.body, nil, false
       end
 
       def image_tag(obj)

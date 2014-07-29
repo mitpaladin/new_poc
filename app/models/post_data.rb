@@ -16,6 +16,7 @@
 # PostData: ActiveRecord persistence for Posts.
 class PostData < ActiveRecord::Base
   extend FriendlyId
+  include Bootsy::Container
   # attr_accessor :title, :body # DANGER! DON'T *DO* THIS FOR DB FIELDS!
   validates :title, presence: true # Slugs are unique so titles need not be.
   # other :use options we might investigate: :scoped, :simple_i18n, :history

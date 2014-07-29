@@ -15,6 +15,7 @@
 # UserData: ActiveRecord persistence and validation for Users.
 class UserData < ActiveRecord::Base
   extend FriendlyId
+  include Bootsy::Container
   friendly_id :name, use: [:slugged, :finders]
   # attr_accessible :password, :password_confirmation
   has_secure_password
