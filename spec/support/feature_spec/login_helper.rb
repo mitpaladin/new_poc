@@ -1,10 +1,8 @@
 
-# Feature-spec support class to create and log in with a new user.
-class FeatureSpecLoginHelper
-  def initialize(spec_obj)
-    @s = spec_obj
-  end
+require 'support/feature_spec/helper_base'
 
+# Feature-spec support class to create and log in with a new user.
+class FeatureSpecLoginHelper < FeatureSpecHelperBase
   def register_and_login
     register
     login
@@ -42,10 +40,6 @@ class FeatureSpecLoginHelper
     end
   end
 
-  protected
-
-  attr_reader :s
-
   private
 
   def click_sign_up_navbar_link
@@ -54,15 +48,6 @@ class FeatureSpecLoginHelper
       within(:css, 'ul.navbar-nav') do
         click_link 'Sign up'
       end
-    end
-  end
-
-  def setup_user_fields
-    s.instance_eval do
-      @user_bio =       'I am what I am. You are what you eat.'
-      @user_email =     'jruser@example.com'
-      @user_name =      'J Random User'
-      @user_password =  's00persecret'
     end
   end
 end

@@ -1,7 +1,7 @@
 
 require 'spec_helper'
 
-require 'support/feature_spec_login_helper'
+require 'support/feature_spec/login_helper'
 
 describe 'User can' do
   let(:landing_page_header) { 'Watching Paint Dry' }

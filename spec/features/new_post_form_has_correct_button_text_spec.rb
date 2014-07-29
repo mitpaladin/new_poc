@@ -1,7 +1,7 @@
 
 require 'spec_helper'
 
-require 'support/feature_spec_login_helper'
+require 'support/feature_spec/login_helper'
 
 describe '"New Post" form has correct' do
   before :each do
