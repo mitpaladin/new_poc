@@ -1,0 +1,74 @@
+
+require 'spec_helper'
+
+describe UsersHelper do
+  describe :profile_article_list.to_s do
+    let(:post_count) { 5 }
+    let(:user) { FactoryGirl.create :user_datum }
+    let(:pubdate) { Chronic.parse '3 days ago at 3 PM' }
+    let(:pubdate_string) { pubdate.localtime.strftime '%c %Z' }
+    let!(:posts) do
+      FactoryGirl.create_list :post_datum, post_count,
+                              author_name: user.name,
+                              pubdate: pubdate
+    end
+    let(:fragment) do
+      Nokogiri.parse(profile_article_list user.name).children.first
+    end
+
+    it 'generates an outermost ul.list-group element' do
+      expected = Regexp.new '\A<ul class="list-group">.*?</ul>\z'
+      expect(profile_article_list user.name).to match expected
+    end
+
+    it 'contains the correct number of child elements' do
+      expect(fragment).to have(5).children
+    end
+
+    # FIXME: There's *got* to be a better way to do this.
+    describe 'for each child element of the ul.list-group element' do
+      it 'is a li.list-group-item element' do
+        fragment.children.each do |child|
+          expect(child.name).to eq 'li'
+          expect(child['class']).to eq 'list-group-item'
+        end
+      end
+
+      describe 'for each li.list-group-item element' do
+
+        it 'has a single child element' do
+          fragment.children.each do |li|
+            expect(li).to have(1).child
+          end
+        end
+
+        it 'contains a child element with an "a" tag' do
+          fragment.children.each do |li|
+            expect(li.children.first.name).to eq 'a'
+          end
+        end
+
+        describe 'contains a child anchor link with' do
+          it 'an "href" attribute matching the currect article slug' do
+            fragment.children.each_with_index do |li, li_index|
+              slug = "/posts/#{posts[li_index].title.parameterize}"
+              expect(li.children.first['href']).to eq slug
+            end
+          end
+
+          it 'the correct text content' do
+            fragment.children.each_with_index do |li, li_index|
+              title = posts[li_index].title
+              expected = [
+                %("#{title}"),
+                'Published',
+                pubdate_string
+              ].join ' '
+              expect(li.children.first.content).to eq expected
+            end
+          end
+        end # describe 'contains a child anchor link with'
+      end # describe 'for each li.list-group-item element'
+    end # describe 'for each child element of the ul.list-group element'
+  end # describe :profile_article_list
+end # describe UsersHelper
