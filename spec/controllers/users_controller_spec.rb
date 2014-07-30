@@ -7,8 +7,11 @@ describe UsersController do
     it { expect(get '/users/new').to route_to 'users#new' }
     it { expect(post '/users').to route_to 'users#create' }
     it { expect(get '/users').to_not be_routable }
-    it { expect(get '/users/1').to_not be_routable }
-    it { expect(get '/users/edit').to_not be_routable }
+    it do
+      expect(get '/users/john-doe')
+          .to route_to controller: 'users', action: 'show', id: 'john-doe'
+    end
+    it { expect(get '/users/1/edit').to_not be_routable }
     it { expect(put '/users/1').to_not be_routable }
     it { expect(delete '/users/1').to_not be_routable }
   end
@@ -93,4 +96,22 @@ describe UsersController do
       end
     end # describe 'with invalid parameters, such as'
   end # describe "POST 'create'"
+
+  describe "GET 'show'" do
+
+    context 'for the logged-in user' do
+      let(:user) { FactoryGirl.create :user_datum }
+      before :each do
+        session[:user_id] = user.id
+      end
+
+      it 'assigns the user object with the slugged name to :user' do
+        get :show, id: user.name.parameterize
+        expect(assigns[:user]).to eq user
+      end
+    end # context 'for the logged-in user'
+
+    context 'for the Guest User' do
+    end # context 'for the Guest User'
+  end # describe "GET 'show'"
 end # describe UsersController

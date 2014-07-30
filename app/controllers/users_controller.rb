@@ -21,4 +21,9 @@ class UsersController < ApplicationController
       render 'new'
     end
   end
+
+  def show
+    @user = UserData.friendly.find params[:id]
+    authorize @user
+  end
 end # class UsersController

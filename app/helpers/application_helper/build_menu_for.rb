@@ -18,7 +18,8 @@ module ApplicationHelper
       def initialize(h, which, current_user)
         extend MenuForDetailsSelector.new.select(which)
         @h = h
-        @markup = if CCO::UserCCO.to_entity(current_user).registered?
+        @current_user = CCO::UserCCO.to_entity current_user
+        @markup = if @current_user.registered?
                     build_html_for_registered_user
                   else
                     build_html_for_guest_user
@@ -49,6 +50,7 @@ module ApplicationHelper
           build_item_for 'Home', href: root_path
           build_item_for 'New Post', href: new_post_path
           build_separator_item
+          build_item_for 'View your profile', href: user_profile_path
           build_item_for 'Log out', logout_params
         end
       end
@@ -77,6 +79,10 @@ module ApplicationHelper
         }
         ret['data-method'] = 'delete'
         ret
+      end
+
+      def user_profile_path
+        user_path(id: @current_user.name.parameterize)
       end
     end # class MenuForBuilder
   end # module ApplicationHelper::BuildMenuFor
