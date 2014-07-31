@@ -2,8 +2,10 @@
 require 'spec_helper'
 
 require 'support/shared_examples/users_helper/a_profile_article_list'
+require 'support/shared_examples/users_helper/a_profile_bio_panel'
 
 describe UsersHelper do
+  let(:user) { FactoryGirl.create :user_datum }
 
   describe :profile_article_list.to_s do
     fragment_builder = lambda do |markup|
@@ -13,7 +15,6 @@ describe UsersHelper do
   end # describe :profile_article_list
 
   describe :profile_articles_row.to_s do
-    let(:user) { FactoryGirl.create :user_datum }
     let(:fragment) do
       Nokogiri.parse(profile_articles_row user.name).children.first
     end
@@ -48,4 +49,9 @@ describe UsersHelper do
       it_behaves_like 'a profile article list', fragment_builder
     end # describe 'contains a second child element...a profile article list'
   end # describe :profile_articles_row
+
+  describe :profile_bio_panel.to_s do
+
+    it_behaves_like 'a profile bio panel'
+  end # describe :profile_bio_panel
 end # describe UsersHelper

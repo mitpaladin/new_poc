@@ -6,14 +6,13 @@ div class='row'
       div class='col-md-10'
         div class='row'
           h1 Profile Page for #{@user.name}
-          div class='panel panel-default'
-            div class='panel-heading'
-              h3 class='panel-title' User Profile/Bio Information
-            div class='panel-body'
-              == @user.profile
-        div class='row' id='contrib-row'
-          h3 Articles Authored By #{@user.name}
-          == profile_article_list(@user.name)
+          == profile_bio_panel @user.profile
+          / div class='panel panel-default'
+          /   div class='panel-heading'
+          /     h3 class='panel-title' User Profile/Bio Information
+          /   div class='panel-body'
+          /     == @user.profile
+        == profile_articles_row(@user.name)
       div class='col-md-1' &nbsp;
 
 hr
