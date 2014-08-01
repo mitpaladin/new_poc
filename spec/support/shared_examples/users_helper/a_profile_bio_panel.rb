@@ -1,13 +1,14 @@
 
-shared_examples 'a profile bio panel' do
+shared_examples 'a profile bio panel' do |fragment_builder|
   let(:user) { FactoryGirl.create :user_datum }
   let(:fragment) do
-    Nokogiri.parse(profile_bio_panel(user.profile)).children.first
+    fragment_builder.call profile_bio_panel(user.profile.squish)
   end
 
   it 'generates an outermost div.panel.panel-default element' do
-    expected = Regexp.new '\A<div class="panel panel-default">.*?</div>\z'
-    expect(profile_bio_panel user.profile).to match expected
+    expect(fragment.name).to eq 'div'
+    classes = fragment['class'].split
+    expect(classes.sort).to eq ['panel', 'panel-default']
   end
 
   it 'contains a single child element' do

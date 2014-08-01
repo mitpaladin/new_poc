@@ -51,7 +51,43 @@ describe UsersHelper do
   end # describe :profile_articles_row
 
   describe :profile_bio_panel.to_s do
-
-    it_behaves_like 'a profile bio panel'
+    fragment_builder = lambda do |markup|
+      Nokogiri.parse(markup).children.first
+    end
+    it_behaves_like 'a profile bio panel', fragment_builder
   end # describe :profile_bio_panel
+
+  describe :profile_bio_row.to_s do
+    let(:fragment) do
+      Nokogiri.parse(profile_bio_row user.name, user.profile).children.first
+    end
+
+    it 'is a div.row element' do
+      expect(fragment.name).to eq 'div'
+      expect(fragment['class']).to eq 'row'
+    end
+
+    it 'contains two child elements' do
+      expect(fragment).to have(2).children
+    end
+
+    describe 'has a first child element that' do
+      let(:child) { fragment.children.first }
+
+      it 'is an h1 tag' do
+        expect(child.name).to eq 'h1'
+      end
+
+      it 'contains text including the user name' do
+        expect(child.content).to eq "Profile Page for #{user.name}"
+      end
+    end # describe 'has a first child element that'
+
+    describe 'has a second child element that' do
+      fragment_builder = lambda do |markup|
+        Nokogiri.parse(markup).children.last
+      end
+      it_behaves_like 'a profile bio panel', fragment_builder
+    end # describe 'has a second child element that'
+  end # describe :profile_bio_row
 end # describe UsersHelper
