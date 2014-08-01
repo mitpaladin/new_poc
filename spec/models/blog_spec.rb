@@ -66,12 +66,12 @@ describe Blog do
 
       it 'allows the Blog to be iterated as a collection of Posts by date' do
         data = [
-          ['Terrible Tuesday', Chronic.parse('second Tuesday last month')],
-          ['Magic Monday', Chronic.parse('second Monday last month')],
-          ['Ready for Thursday?', Chronic.parse('second Thursday last month')],
+          ['Terrible Tuesday', Chronic.parse('third Tuesday next month')],
+          ['Magic Monday', Chronic.parse('third Monday next month')],
+          ['Ready for Thursday?', Chronic.parse('third Thursday next month')],
           # I *love* Chronic.
-          ['Welcome to Wednesday', Chronic.parse('second Wed last month')],
-          ['Finally Friday', Chronic.parse('second Friday last month')]
+          ['Welcome to Wednesday', Chronic.parse('third Wed next month')],
+          ['Finally Friday', Chronic.parse('third Friday next month')]
         ]
         data.each do |item|
           attribs = FactoryGirl.attributes_for :post_datum, title: item[0]
