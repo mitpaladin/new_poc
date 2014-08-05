@@ -378,6 +378,37 @@ describe 'RedCarpet simple exploration, such that' do
 
       # Since option has no visible effect, default is meaningless
     end # describe ':lax_spacing'
+
+    describe ':space_after_headers' do
+      let(:fragment) { '#Is This a Header?' }
+
+      describe 'when set to' do
+
+        context 'true' do
+          let(:options) { { space_after_headers: true } }
+
+          it 'does not render the fragment as a header' do
+            expect(markup).to eq "<p>#Is This a Header?</p>\n"
+          end
+        end # context 'true'
+
+        context 'false' do
+          let(:options) { { space_after_headers: false } }
+
+          it 'renders the fragment as a header' do
+            expect(markup).to eq "<h1>Is This a Header?</h1>\n"
+          end
+        end # context 'true'
+      end # describe 'when set to'
+
+      describe 'deffaults to' do
+        let(:options) { {} }
+
+        it 'false' do
+          expect(markup).to eq "<h1>Is This a Header?</h1>\n"
+        end
+      end # describe 'defaults to'
+    end # describe ':space_after_headers'
   end # describe "we can poke at options, such as"
 
 end # describe 'RedCarpet simple exploration, such that'
