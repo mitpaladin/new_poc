@@ -53,11 +53,11 @@ describe 'RedCarpet simple exploration, such that' do
   end
 
   describe 'we can poke at options, such as' do
+    let(:renderer) { Redcarpet::Markdown.new Renderer, options }
+    let(:markup) { renderer.render fragment }
 
     describe ':no_intra_emphasis' do
       let(:fragment) { 'This has a snake_case_style string in it.' }
-      let(:renderer) { Redcarpet::Markdown.new Renderer, options }
-      let(:markup) { renderer.render fragment }
       let(:true_regex) { /.+?snake_case_style.+/ }
       let(:false_regex) { Regexp.new('.+?snake<em>case</em>style.+') }
 
@@ -90,7 +90,6 @@ describe 'RedCarpet simple exploration, such that' do
     end # describe ':no_intra_emphasis'
 
     describe ':tables' do
-      let(:renderer) { Redcarpet::Markdown.new Renderer, options }
       let(:bad_markup) { renderer.render bad_fragment }
 
       describe 'must have' do
@@ -102,7 +101,6 @@ describe 'RedCarpet simple exploration, such that' do
             "| ------------- |:-------------:| -----:|\n" \
             '| col 3 is      | right-aligned | $1600 |'
           end
-          let(:markup) { renderer.render fragment }
           let(:options) { { tables: true } }
 
           it 'to generate the correct markup' do
@@ -144,7 +142,6 @@ describe 'RedCarpet simple exploration, such that' do
           "| ------------- |:-------------:| -----:|\n" \
           '| col 3 is      | right-aligned | $1600 |'
         end
-        let(:markup) { renderer.render fragment }
         let(:options) { { tables: true } }
 
         it 'a final newline' do
@@ -160,8 +157,6 @@ describe 'RedCarpet simple exploration, such that' do
           "| col 2 is      | centered      |   $12 |\n" \
           '| zebra stripes | are neat      |    $1 |'
         end
-        let(:renderer) { Redcarpet::Markdown.new Renderer, options }
-        let(:markup) { renderer.render fragment }
         let(:false_markup) { ['<p>', fragment, "</p>\n"].join }
 
         describe 'when set to' do
@@ -204,8 +199,6 @@ describe 'RedCarpet simple exploration, such that' do
         "```\n\n" \
         'Trailing content'
       end
-      let(:renderer) { Redcarpet::Markdown.new Renderer, options }
-      let(:markup) { renderer.render fragment }
       let(:false_matcher) do
         match_str = '<p>Leading content</p>\s+?' \
             '<p>```.+?```</p>\s+?<p>Trailing content</p>'
@@ -248,8 +241,6 @@ describe 'RedCarpet simple exploration, such that' do
       let(:url) { 'http://www.4chan.org' }
       let(:parts) { ['Visit ', ' to completely waste your time.'] }
       let(:fragment) { parts.join url }
-      let(:renderer) { Redcarpet::Markdown.new Renderer, options }
-      let(:markup) { renderer.render fragment }
 
       describe 'when set to' do
 
@@ -280,6 +271,49 @@ describe 'RedCarpet simple exploration, such that' do
         end
       end # describe 'deaults to'
     end # describe ':autolink'
+
+    describe ':disable_indented_code_blocks' do
+      let(:code_line) { 'attr_accessor :foo' }
+      let(:fragment) do
+        "Leading content.\n\n" \
+        "    #{code_line}\n\n" \
+        'Trailing content'
+      end
+      let(:false_matcher) do
+        str = [
+          '<pre><code class="highlight plaintext">',
+          "\n</code></pre>"
+        ].join code_line
+        Regexp.new str, Regexp::MULTILINE
+      end
+
+      describe 'when set to' do
+
+        context 'true' do
+          let(:options) { { disable_indented_code_blocks: true } }
+
+          it 'does not convert the indented text to a code block' do
+            expect(markup).to match Regexp.new "<p>#{code_line}</p>"
+          end
+        end # context 'true'
+
+        context 'false' do
+          let(:options) { { disable_indented_code_blocks: false } }
+
+          it 'converts the indented text to a code block' do
+            expect(markup).to match false_matcher
+          end
+        end # context 'false'
+      end # describe 'when set to'
+
+      describe 'defaults to' do
+        let(:options) { {} }
+
+        it 'false' do
+          expect(markup).to match(false_matcher)
+        end
+      end # describe 'defaults to'
+    end # describe ':disable_indented_code_blocks'
   end # describe "we can poke at options, such as"
 
 end # describe 'RedCarpet simple exploration, such that'
