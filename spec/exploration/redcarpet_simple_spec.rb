@@ -152,7 +152,6 @@ describe 'RedCarpet simple exploration, such that' do
         end
       end
 
-      # ################### #
       context 'basic demo' do
         let(:fragment) do
           "| Tables        | Are           | Cool  |\n" \
@@ -163,6 +162,7 @@ describe 'RedCarpet simple exploration, such that' do
         end
         let(:renderer) { Redcarpet::Markdown.new Renderer, options }
         let(:markup) { renderer.render fragment }
+        let(:false_markup) { ['<p>', fragment, "</p>\n"].join }
 
         describe 'when set to' do
 
@@ -178,12 +178,71 @@ describe 'RedCarpet simple exploration, such that' do
             let(:options) { { tables: false } }
 
             it 'creates no HTML table but returns original markup in a `p`' do
-              expect(markup).to eq ['<p>', fragment, "</p>\n"].join
+              expect(markup).to eq false_markup
             end
           end
         end # describe 'when set to'
+
+        describe 'defaults to' do
+          let(:options) { {} }
+
+          it 'false' do
+            expect(markup).to eq false_markup
+          end
+        end # describe 'defaults to'
       end # context 'basic demo'
     end # describe ':tables'
+
+    describe ':fenced_code_blocks' do
+      let(:fragment) do
+        "Leading content\n\n" \
+        "```ruby\n" \
+        "# This is a Ruby comment. D'oh!\n" \
+        "def foo(bar = 'bar', options = {})\n" \
+        "  format 'bar = %s, options = %s', bar, options.inspect\n" \
+        "end\n" \
+        "```\n\n" \
+        'Trailing content'
+      end
+      let(:renderer) { Redcarpet::Markdown.new Renderer, options }
+      let(:markup) { renderer.render fragment }
+      let(:false_matcher) do
+        match_str = '<p>Leading content</p>\s+?' \
+            '<p>```.+?```</p>\s+?<p>Trailing content</p>'
+        Regexp.new match_str, Regexp::MULTILINE
+      end
+
+      describe 'when set to' do
+
+        context 'true' do
+          let(:options) { { fenced_code_blocks: true } }
+
+          it 'formats the code block embedded in the markup' do
+            match_str = '<p>Leading content</p>\s+?' \
+              '<pre><code class="highlight ruby">.+?' \
+              '</code></pre>\s+?<p>Trailing content</p>'
+            matcher = Regexp.new match_str, Regexp::MULTILINE
+            expect(markup).to match matcher
+          end
+        end # context 'true'
+
+        context 'false' do
+          let(:options) { { fenced_code_blocks: false } }
+
+          it 'creates no pre-formatted code block in the markup' do
+            expect(markup).to match false_matcher
+          end
+        end # context 'false'
+      end # describe 'when set to'
+
+      describe 'defaults to' do
+        let(:options) { {} }
+
+        it 'false' do
+          expect(markup).to match false_matcher
+        end
+      end # describe 'defaults to'
+    end # describe ':fenced_code_blocks'
   end # describe "we can poke at options, such as"
 
 end # describe 'RedCarpet simple exploration, such that'
