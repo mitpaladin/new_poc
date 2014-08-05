@@ -243,6 +243,43 @@ describe 'RedCarpet simple exploration, such that' do
         end
       end # describe 'defaults to'
     end # describe ':fenced_code_blocks'
+
+    describe ':autolink' do
+      let(:url) { 'http://www.4chan.org' }
+      let(:parts) { ['Visit ', ' to completely waste your time.'] }
+      let(:fragment) { parts.join url }
+      let(:renderer) { Redcarpet::Markdown.new Renderer, options }
+      let(:markup) { renderer.render fragment }
+
+      describe 'when set to' do
+
+        context 'true' do
+          let(:options) { { autolink: true } }
+
+          it 'converts the URL text to a link' do
+            url_tag = format '<a href="%s">%s</a>', url, url
+            content = parts.join url_tag
+            expect(markup).to eq ['<p>', "</p>\n"].join(content)
+          end
+        end # context 'true'
+
+        context 'false' do
+          let(:options) { { autolink: false } }
+
+          it 'leaves the URL text as it is' do
+            expect(markup).to eq ['<p>', "</p>\n"].join(fragment)
+          end
+        end # context 'false'
+      end # describe 'when set to'
+
+      describe 'defaults to' do
+        let(:options) { {} }
+
+        it 'false' do
+          expect(markup).to eq ['<p>', "</p>\n"].join(fragment)
+        end
+      end # describe 'deaults to'
+    end # describe ':autolink'
   end # describe "we can poke at options, such as"
 
 end # describe 'RedCarpet simple exploration, such that'
