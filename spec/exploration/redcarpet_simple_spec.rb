@@ -345,6 +345,39 @@ describe 'RedCarpet simple exploration, such that' do
         end
       end # describe 'defaults to'
     end # describe 'strikethrough'
+
+    describe ':lax_spacing' do
+      let(:fragment) do
+        "Leading content\n" \
+        "```\n" \
+        "  attr_accessor :foo\n" \
+        "```\n" \
+        'Trailing content'
+      end
+      describe 'when set to' do
+
+        context 'true' do
+          let(:options) { { lax_spacing: true } }
+
+          # The big thing here is "no clases", meaning that specifying the
+          # language after the opening ticks (see :fenced_code_blocks) DOES NOT
+          # include the synatx-highlighter code classes. You Have Been Warned.
+          it 'wraps the fenced content with a <code> tag having NO CSS' do
+            expect(markup).to match(/<code>.+?<\/code>/m)
+          end
+        end # context 'true'
+
+        context 'false' do
+          let(:options) { { lax_spacing: false } }
+
+          it 'has same effect as setting flag to true' do
+            expect(markup).to match(/<code>.+?<\/code>/m)
+          end
+        end # context 'false'
+      end # describe 'when set to'
+
+      # Since option has no visible effect, default is meaningless
+    end # describe ':lax_spacing'
   end # describe "we can poke at options, such as"
 
 end # describe 'RedCarpet simple exploration, such that'
