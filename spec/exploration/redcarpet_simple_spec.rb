@@ -314,6 +314,37 @@ describe 'RedCarpet simple exploration, such that' do
         end
       end # describe 'defaults to'
     end # describe ':disable_indented_code_blocks'
+
+    describe ':strikethrough' do
+      let(:fragment) { 'This is ~~hideous~~excellent' }
+
+      describe 'when set to' do
+
+        context 'true' do
+          let(:options) { { strikethrough: true } }
+
+          it 'wraps the content enclosed in ~~ pairs with a <del> tag' do
+            expect(markup).to eq "<p>This is <del>hideous</del>excellent</p>\n"
+          end
+        end # context 'true'
+
+        context 'false' do
+          let(:options) { { strikethrough: false } }
+
+          it 'does not modify the text of the fragment rendered in markup' do
+            expect(markup).to eq ['<p>', "</p>\n"].join(fragment)
+          end
+        end # context 'false'
+      end # describe 'when set to'
+
+      describe 'defaults to' do
+        let(:options) { {} }
+
+        it 'false' do
+          expect(markup).to eq ['<p>', "</p>\n"].join(fragment)
+        end
+      end # describe 'defaults to'
+    end # describe 'strikethrough'
   end # describe "we can poke at options, such as"
 
 end # describe 'RedCarpet simple exploration, such that'
