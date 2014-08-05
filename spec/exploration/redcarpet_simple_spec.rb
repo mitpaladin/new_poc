@@ -15,16 +15,16 @@ describe 'RedCarpet simple exploration, such that' do
 
   let(:renderer_options) do
     {
-      autolink: true,
-      fenced_code_blocks: true,
-      tables: true
+      # autolink: true,
+      # fenced_code_blocks: true,
+      # tables: true
     }
   end
   let(:renderer) { Redcarpet::Markdown.new(Renderer, renderer_options) }
   let(:base_fragment) do
     "This is a *test*.\n\nAnd another test.\n\nAll _*done*_."
   end
-  let(:fragment) { ['<div id="outer">', base_fragment, '</div>'].join }
+  let(:fragment) { enclose_markup base_fragment }
   let(:base_markup) { renderer.render base_fragment }
   let(:markup) do
     enclose_markup renderer.render(base_fragment)
@@ -51,5 +51,139 @@ describe 'RedCarpet simple exploration, such that' do
     kids = div.children.reject { |k| k.name == 'text' }
     expect(kids.length).to eq 3
   end
+
+  describe 'we can poke at options, such as' do
+
+    describe ':no_intra_emphasis' do
+      let(:fragment) { 'This has a snake_case_style string in it.' }
+      let(:renderer) { Redcarpet::Markdown.new Renderer, options }
+      let(:markup) { renderer.render fragment }
+      let(:true_regex) { /.+?snake_case_style.+/ }
+      let(:false_regex) { Regexp.new('.+?snake<em>case</em>style.+') }
+
+      describe 'when set to' do
+
+        context 'true' do
+          let(:options) { { no_intra_emphasis: true } }
+
+          it 'does not emphasise snake_case_style strings' do
+            expect(markup).to match true_regex
+          end
+        end # context 'true'
+
+        context 'false' do
+          let(:options) { { no_intra_emphasis: false } }
+
+          it 'replaces snake_case_style strings with emphasised words' do
+            expect(markup).to match false_regex
+          end
+        end # context 'false'
+      end # describe 'when set to'
+
+      describe 'defaults to' do
+        let(:options) { {} }
+
+        it 'false' do
+          expect(markup).to match false_regex
+        end
+      end # describe 'defaults to'
+    end # describe ':no_intra_emphasis'
+
+    describe ':tables' do
+      let(:renderer) { Redcarpet::Markdown.new Renderer, options }
+      let(:bad_markup) { renderer.render bad_fragment }
+
+      describe 'must have' do
+
+        describe 'headings' do
+          let(:bad_fragment) { '| col 3 is      | right-aligned | $1600 |' }
+          let(:fragment) do
+            "| Tables        | Are           | Cool  |\n" \
+            "| ------------- |:-------------:| -----:|\n" \
+            '| col 3 is      | right-aligned | $1600 |'
+          end
+          let(:markup) { renderer.render fragment }
+          let(:options) { { tables: true } }
+
+          it 'to generate the correct markup' do
+            matcher_str = '\<table\>\<thead\>.+\<\/thead\>' \
+              '\<tbody\>.+\<\/tbody\>\<\/table\>'
+            matcher = Regexp.new matcher_str
+            # Squish replaces multiple whitespace (including newlines) with a
+            # single space.
+            expect(markup.squish).to match matcher
+          end
+
+          it 'otherwise table markup is not generated' do
+            expect(bad_markup).to eq ['<p>', bad_fragment, "</p>\n"].join
+          end
+        end # describe 'headings'
+      end # describe 'must have'
+
+      describe 'must NOT have' do
+
+        describe 'footers' do
+          let(:bad_fragment) do
+            "| Tables        | Are           | Cool  |\n" \
+            "| ------------- |:-------------:| -----:|\n" \
+            "| col 3 is      | right-aligned | $1600 |\n" \
+            "| ------------- |:-------------:| -----:|\n" \
+            '| Tables        | Are           | Cool  |'
+          end
+          let(:options) { { tables: true } }
+
+          it 'or else garbage markup is generated in place of `tfoot`' do
+            expect(bad_markup.squish).not_to match(/.+?tfoot.+?/)
+          end
+        end # describe 'footers'
+      end # describe 'must NOT have'
+
+      describe 'always include' do
+        let(:fragment) do
+          "| Tables        | Are           | Cool  |\n" \
+          "| ------------- |:-------------:| -----:|\n" \
+          '| col 3 is      | right-aligned | $1600 |'
+        end
+        let(:markup) { renderer.render fragment }
+        let(:options) { { tables: true } }
+
+        it 'a final newline' do
+          expect(markup).to match(/<table>.+?<\/table>\n/m)
+        end
+      end
+
+      # ################### #
+      context 'basic demo' do
+        let(:fragment) do
+          "| Tables        | Are           | Cool  |\n" \
+          "| ------------- |:-------------:| -----:|\n" \
+          "| col 3 is      | right-aligned | $1600 |\n" \
+          "| col 2 is      | centered      |   $12 |\n" \
+          '| zebra stripes | are neat      |    $1 |'
+        end
+        let(:renderer) { Redcarpet::Markdown.new Renderer, options }
+        let(:markup) { renderer.render fragment }
+
+        describe 'when set to' do
+
+          context 'true' do
+            let(:options) { { tables: true } }
+
+            it 'creates an HTML table from the markup' do
+              expect(markup).to match(/<table>.+?<\/table>\n/m)
+            end
+          end # context 'true'
+
+          context 'false' do
+            let(:options) { { tables: false } }
+
+            it 'creates no HTML table but returns original markup in a `p`' do
+              expect(markup).to eq ['<p>', fragment, "</p>\n"].join
+            end
+          end
+        end # describe 'when set to'
+      end # context 'basic demo'
+    end # describe ':tables'
+  end # describe "we can poke at options, such as"
 
 end # describe 'RedCarpet simple exploration, such that'
