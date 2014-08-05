@@ -13,5 +13,4 @@
  *= require_tree .
  *= used_to require bootstrap # see application.html.slim for bootswatch
  *= require_self
- *= require bootsy
  */

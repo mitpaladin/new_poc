@@ -14,8 +14,7 @@ h1 New Post
       = f.text_field :image_url
     = f.label :body, class: 'control-label'
     div class='controls'
-      = f.bootsy_area :body, cols: 80, rows: 10,
-                      editor_options: {link: false, image: false}
+      = f.text_area :body, cols: 80, rows: 10
 
   div class='form-actions'
     = f.submit 'Create Post'
