@@ -458,6 +458,45 @@ describe 'RedCarpet simple exploration, such that' do
         end
       end # describe 'defaults to'
     end # describe ':superscript'
+
+    describe ':underline' do
+      let(:fragment) { 'This may be _underlined_ but this is still *italic*.' }
+
+      describe 'when set to' do
+
+        context 'true' do
+          let(:options) { { underline: true } }
+
+          description = 'it replaces _ pairs with a <ul> tag pair, while *' \
+              ' pairs are still replaced by <em> pairs'
+          it description do
+            expected = '<p>This may be <u>underlined</u> but this is still ' \
+                "<em>italic</em>.</p>\n"
+            expect(markup).to eq expected
+          end
+        end # context 'true'
+
+        context 'false' do
+          let(:options) { { underline: false } }
+
+          it 'replaces _ pairs with <em> pairs, identically to * pairs' do
+            expected = '<p>This may be <em>underlined</em> but this is still ' \
+                "<em>italic</em>.</p>\n"
+            expect(markup).to eq expected
+          end
+        end # context 'false'
+      end # describe 'when set to'
+
+      describe 'defaults to' do
+        let(:options) { {} }
+
+        it 'false' do
+          expected = '<p>This may be <em>underlined</em> but this is still ' \
+              "<em>italic</em>.</p>\n"
+          expect(markup).to eq expected
+        end
+      end # describe 'defaults to'
+    end # describe ':underline'
   end # describe "we can poke at options, such as"
 
 end # describe 'RedCarpet simple exploration, such that'
