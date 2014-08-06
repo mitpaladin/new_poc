@@ -497,6 +497,39 @@ describe 'RedCarpet simple exploration, such that' do
         end
       end # describe 'defaults to'
     end # describe ':underline'
+
+    describe ':highlight' do
+      let(:fragment) { 'This is ==highlighted== and this is not.' }
+
+      describe 'when set to' do
+
+        context 'true' do
+          let(:options) { { highlight: true } }
+
+          it 'replaces pairs of == markers with <mark> tag pairs' do
+            expected = '<p>This is <mark>highlighted</mark> and this is not.' \
+                "</p>\n"
+            expect(markup).to eq expected
+          end
+        end # context 'true'
+
+        context 'false' do
+          let(:options) { { highlight: false } }
+
+          it 'renders fragment unmodified within a <p> tag pair' do
+            expect(markup).to eq "<p>#{fragment}</p>\n"
+          end
+        end # context 'false'
+      end # describe 'when set to'
+
+      describe 'defaults to' do
+        let(:options) { {} }
+
+        it 'false' do
+          expect(markup).to eq "<p>#{fragment}</p>\n"
+        end
+      end # describe 'defaults to'
+    end # describe ':highlight'
   end # describe "we can poke at options, such as"
 
 end # describe 'RedCarpet simple exploration, such that'
