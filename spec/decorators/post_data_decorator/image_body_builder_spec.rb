@@ -48,7 +48,9 @@ class PostDataDecorator
             end
 
             it 'has the defined body as its inner text' do
-              expect(child_element.text).to eq obj.body
+              # Stripped so that otherwise irrelevant newline does not break
+              # comparison
+              expect(child_element.text.strip).to eq obj.body
             end
           end # describe 'has a second child element that'
         end # describe 'wraps its contents in an outermost tag tag is'
