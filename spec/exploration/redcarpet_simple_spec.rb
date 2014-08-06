@@ -564,6 +564,57 @@ describe 'RedCarpet simple exploration, such that' do
 
       # no way to check default since setting apparently inoperative
     end # describe ':quote'
+
+    describe ':footnotes' do
+      # Typos are not merely *EVIL*; they break your markup and you are told
+      # absolutely nothing about why.
+      let(:fragment) do
+        "This is a footnote.[^1]\n\n" \
+        "[^1]: It provides additional information.\n"
+      end
+
+      describe 'when set to' do
+
+        context 'true' do
+          let(:options) { { footnotes: true } }
+
+          it 'hooks up the footnote ref and text by HTML links' do
+            expected = [
+              %(<p>),
+              %(This is a footnote.),
+              %(<sup id="fnref1"><a href="#fn1" rel="footnote">1</a></sup>),
+              %(</p>\n\n),
+              %(<div class="footnotes">\n<hr>\n<ol>\n\n),
+              %(<li id="fn1">\n),
+              %(<p>It provides additional information.&nbsp;),
+              %(<a href="#fnref1" rev="footnote">↩</a></p>\n),
+              %(</li>\n\n</ol>\n</div>\n)
+            ].join
+            expect(CGI.unescape_html markup).to eq expected
+          end
+        end # context 'true'
+
+        context 'false' do
+          let(:options) { { footnotes: false } }
+
+          it 'does not interpret the footnote markup as footnote markup' do
+            expected = "<p>This is a footnote.[^1]</p>\n\n" \
+                "<p>[^1]: It provides additional information.</p>\n"
+            expect(markup).to eq expected
+          end
+        end # context 'false'
+      end # describe 'when set to'
+
+      describe 'defaults to' do
+        let(:options) { {} }
+
+        it 'false' do
+          expected = "<p>This is a footnote.[^1]</p>\n\n" \
+              "<p>[^1]: It provides additional information.</p>\n"
+          expect(markup).to eq expected
+        end
+      end # describe 'defaults to'
+    end # describe ':footnotes'
   end # describe "we can poke at options, such as"
 
 end # describe 'RedCarpet simple exploration, such that'
