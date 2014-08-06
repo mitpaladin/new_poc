@@ -10,9 +10,9 @@ class PostDataDecorator
       let(:builder) { TextBodyBuilder.new h }
 
       describe :build do
-        it 'wraps the "body" attribute of its caller in an HTML paragraph' do
+        it 'wraps the "body" attribute of its param as a Markup paragraph' do
           obj = OpenStruct.new(body: 'The Body')
-          expect(builder.build obj).to eq '<p>The Body</p>'
+          expect(builder.build obj).to eq "\nThe Body\n"
         end
       end # describe :build
     end # describe TextBodyBuilder

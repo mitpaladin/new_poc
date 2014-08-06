@@ -6,6 +6,10 @@ class PostDataDecorator < Draper::Decorator
   module SupportClasses
     # Build image-post body. Called on behalf of PostDataDecorator#build_body.
     class ImageBodyBuilder < BodyBuilder
+      # Note that since Markdown has no specific support for the :figure, :img,
+      # or :figcaption tags beyond being a superset of HTML (valid HTML in a
+      # Markdown document should be processed correctly), we're leaving the
+      # `#build` method as is here.
       def build(obj)
         h.content_tag(:figure) do
           h.concat image_tag(obj)

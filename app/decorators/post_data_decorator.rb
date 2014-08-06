@@ -4,9 +4,16 @@ require 'draper'
 require_relative './post_data_decorator/image_body_builder'
 require_relative './post_data_decorator/text_body_builder'
 
+require 'rouge/plugins/redcarpet'
+
 # PostDataDecorator: Draper Decorator, aka ViewModel, for the PostData model.
 class PostDataDecorator < Draper::Decorator
   delegate_all
+
+  # Redcarpet Markdown output renderer. Uses Rouge for syntax highlighting.
+  class Renderer < Redcarpet::Render::HTML
+    include Rouge::Plugins::Redcarpet
+  end
 
   # After Avdi's #render_body; his "exhibits" are much more closely associated
   # with views than Draper's decorators are. While that's a perfectly valid
@@ -17,7 +24,8 @@ class PostDataDecorator < Draper::Decorator
   # not strictly part of, the model. Doing so obviates the entire question of
   # view partial templates, replacing them with "pure Ruby" code.
   def build_body
-    body_builder_class.new(helpers).build self
+    fragment = body_builder_class.new(helpers).build self
+    convert_body fragment
   end
 
   def build_byline
@@ -36,5 +44,25 @@ class PostDataDecorator < Draper::Decorator
     else
       SupportClasses::TextBodyBuilder
     end
+  end
+
+  def convert_body(fragment)
+    # `fragment` is Markdown, HTML or some combination thereof; run it through
+    # RedCarpet's Markdown parser to yield HTML to return to caller.
+    renderer = Redcarpet::Markdown.new Renderer, conversion_options
+    renderer.render fragment
+  end
+
+  def conversion_options
+    {
+      autolink:                     true,
+      fenced_code_blocks:           true,
+      highlight:                    true,
+      no_intra_emphasis:            false,
+      strikethrough:                true,
+      superscript:                  true,
+      tables:                       true,
+      underline:                    true
+    }
   end
 end # class PostDataDecorator

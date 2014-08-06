@@ -4,7 +4,8 @@ require 'spec_helper'
 require 'rouge/plugins/redcarpet'
 
 def enclose_markup(markup)
-  ['<div id="outer">', markup, '</div>'].join
+  %(<div id="outer">#{markup}</div>")
+  # ['<div id="outer">', markup, '</div>'].join
 end
 
 describe 'RedCarpet simple exploration, such that' do

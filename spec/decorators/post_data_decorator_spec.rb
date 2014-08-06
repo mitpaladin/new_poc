@@ -50,17 +50,15 @@ describe PostDataDecorator do
 
       it 'an image post' do
         post.image_url = 'http://www.example.com/foo.png'
-        format_str = '<figure>' \
-          '<img src="%s" />' \
-          '<figcaption>%s</figcaption>' \
-          '</figure>'
-        expected = format format_str, post.image_url, post.body
+        expected = %(<figure><img src="#{post.image_url}" />)
+        expected += %(<figcaption>#{post.body}</figcaption></figure>\n)
+        # expected = %(<figure><img src="#{post.image_url}" />) \
+        #     %(<figcaption>#{post.body}</figcaption></figure>\n)
         expect(post.build_body).to eq expected
       end
 
       it 'a text post' do
-        expected = ['<p>', '</p>'].join post.body
-        expect(text_post.build_body).to eq expected
+        expect(text_post.build_body).to eq %(<p>#{post.body}</p>\n)
       end
     end # describe 'generates the correct markup for'
   end # describe :build_body
