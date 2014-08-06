@@ -530,6 +530,40 @@ describe 'RedCarpet simple exploration, such that' do
         end
       end # describe 'defaults to'
     end # describe ':highlight'
+
+    describe ':quote' do
+      let(:fragment) { 'He said, <q>Stop</q>, and I kept on walking.' }
+
+      describe 'when set to' do
+
+        context 'true' do
+          let(:options) { { quote: true } }
+
+          it 'replaces double-quotation marks with <q> tag pairs' do
+            expected = '<p>He said, <q>Stop</q>, and I kept on walking.</p>' \
+                "\n"
+            expect(markup).to eq expected
+          end
+        end # context 'true'
+
+        context 'false' do
+          let(:options) { { quote: false } }
+
+          # it 'does not modify double-quotation marks in content' do
+          #   expected = '<p>He said, "Stop", and I kept on walking.</p>' "\n"
+          #   expect(markup).to eq expected
+          # end
+
+          it 'is indistinguishable from when set to true' do
+            expected = '<p>He said, <q>Stop</q>, and I kept on walking.</p>' \
+                "\n"
+            expect(markup).to eq expected
+          end
+        end # context 'false'
+      end # describe 'when set to'
+
+      # no way to check default since setting apparently inoperative
+    end # describe ':quote'
   end # describe "we can poke at options, such as"
 
 end # describe 'RedCarpet simple exploration, such that'
