@@ -409,6 +409,55 @@ describe 'RedCarpet simple exploration, such that' do
         end
       end # describe 'defaults to'
     end # describe ':space_after_headers'
+
+    describe ':superscript' do
+
+      describe 'when set to' do
+
+        context 'true' do
+          let(:options) { { superscript: true } }
+
+          describe 'it wraps a <sup> tag pair around' do
+            context 'following text up to whitespace' do
+              let(:fragment) { 'At script^super and after' }
+
+              it 'removing the caret' do
+                expected = "<p>At script<sup>super</sup> and after</p>\n"
+                expect(markup).to eq expected
+              end
+            end # context 'following text up to whitespace'
+
+            context 'following text wrapped in parentheses' do
+              let(:fragment) { 'A script^(super or not)acular event' }
+
+              it 'removing the caret' do
+                expected = '<p>A script<sup>super or not</sup>acular event' \
+                    "</p>\n"
+                expect(markup).to eq expected
+              end
+            end # context 'following text wrapped in parentheses'
+          end # describe 'it wraps a <sup> tag pair around'
+        end # context 'true'
+
+        context 'false' do
+          let(:options) { { superscript: false } }
+          let(:fragment) { 'At script^super and after' }
+
+          it 'leaves the ^ and inserts no <sup> tags' do
+            expect(markup).to eq "<p>#{fragment}</p>\n"
+          end
+        end # context 'false'
+      end # describe 'when set to'
+
+      describe 'defaults to' do
+        let(:options) { {} }
+        let(:fragment) { 'At script^super and after' }
+
+        it 'false' do
+          expect(markup).to eq "<p>#{fragment}</p>\n"
+        end
+      end # describe 'defaults to'
+    end # describe ':superscript'
   end # describe "we can poke at options, such as"
 
 end # describe 'RedCarpet simple exploration, such that'
