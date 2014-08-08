@@ -22,8 +22,7 @@
     #
     = f.label :profile, 'Profile Summary (Optional)', class: 'control-label'
     div class='controls'
-      = f.bootsy_area :profile, cols: 80, rows: 10,
-                      editor_options: {link: false, image: false}
+      = f.text_area :profile, cols: 80, rows: 10
 
   div class='form-actions'
     = f.submit 'Sign Up'

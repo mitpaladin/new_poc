@@ -7,7 +7,7 @@ class PostDataDecorator < Draper::Decorator
     # Build text post body. Called on behalf of PostDataDecorator#build_body.
     class TextBodyBuilder < BodyBuilder
       def build(obj)
-        h.content_tag :p, obj.body, nil, false
+        "\n#{obj.body}\n"
       end
     end # class TextBodyBuilder
   end # module SupportClasses

@@ -26,7 +26,7 @@ FactoryGirl.define do
   factory :user_datum, class: 'UserData' do
     name { generate :name }
     email { generate :email }
-    profile 'Just Another Random User'
+    profile 'Just Another *Random* User'
     password 'password'
     password_confirmation 'password'
     slug nil

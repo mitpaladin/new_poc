@@ -48,19 +48,22 @@ describe PostDataDecorator do
     # this instance of the model. NO PARTIALS ARE NEEDED. D'oh!
     describe 'generates the correct markup for' do
 
+      # One issue with using RedCarpet the way we are in our ContentConverter
+      # class is that a simple string, e.g., 'foo', will always get converted to
+      # aa paragraph with a trailing newline, e.g., "<p>foo</p>\n". This is,
+      # AFAICT, acceptable within a <figcaption> tag per Mozilla's reference
+      # (https://developer.mozilla.org/en-US/docs/Web/HTML/Element/figcaption).
+      # It *is* "new behaviour" that broke this existing spec.
       it 'an image post' do
         post.image_url = 'http://www.example.com/foo.png'
-        format_str = '<figure>' \
-          '<img src="%s" />' \
-          '<figcaption>%s</figcaption>' \
-          '</figure>'
-        expected = format format_str, post.image_url, post.body
+        body_markup = "<p>#{post.body}</p>\n"
+        expected = %(<figure><img src="#{post.image_url}" />)
+        expected += %(<figcaption>#{body_markup}</figcaption></figure>\n)
         expect(post.build_body).to eq expected
       end
 
       it 'a text post' do
-        expected = ['<p>', '</p>'].join post.body
-        expect(text_post.build_body).to eq expected
+        expect(text_post.build_body).to eq %(<p>#{post.body}</p>\n)
       end
     end # describe 'generates the correct markup for'
   end # describe :build_body

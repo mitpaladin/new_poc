@@ -39,7 +39,7 @@ class FeatureSpecNewPostHelper < FeatureSpecHelperBase
   def setup_post_fields
     s.instance_eval do
       @post_title ||= 'This is a Title!'
-      @post_body ||= 'This is a Body!'
+      @post_body ||= 'This is a Body with *Emphasised* Content!'
       @image_url ||= 'http://fc01.deviantart.net/fs70/f/2014/113/e/6/' \
           'dreaming_of_another_reality_by_razielmb-d7fgl3s.png'
     end

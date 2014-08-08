@@ -16,6 +16,8 @@ describe 'Member can view own profile page' do
   end
 
   it 'and see biodata as entered' do
-    assert_selector '.panel-body', text: @user_bio
+    # @user_bio currently has one italicised content fragment in ordinary text
+    parts = @user_bio.match(/(.+?)\*(.+?)\*(.+)/).to_a.slice(1..3)
+    assert_selector '.panel-body', text: parts.join
   end
 end # describe 'Member can view own profile page'
