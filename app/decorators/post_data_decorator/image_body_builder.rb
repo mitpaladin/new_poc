@@ -1,6 +1,5 @@
 
 require_relative 'body_builder'
-require_relative 'content_converter'
 
 # PostDataDecorator: Draper Decorator, aka ViewModel, for the Post model.
 class PostDataDecorator < Draper::Decorator
@@ -21,7 +20,7 @@ class PostDataDecorator < Draper::Decorator
       private
 
       def body_markup(markup)
-        ContentConverter.new.to_html(markup)
+        MarkdownHtmlConverter.new.to_html(markup)
         # markup
       end
 
