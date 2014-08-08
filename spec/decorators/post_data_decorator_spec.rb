@@ -48,7 +48,7 @@ describe PostDataDecorator do
     # this instance of the model. NO PARTIALS ARE NEEDED. D'oh!
     describe 'generates the correct markup for' do
 
-      # One issue with using RedCarpet the way we are in our ContentConverter
+      # One issue with using RedCarpet as we are in our MarkdownHtmlConverter
       # class is that a simple string, e.g., 'foo', will always get converted to
       # aa paragraph with a trailing newline, e.g., "<p>foo</p>\n". This is,
       # AFAICT, acceptable within a <figcaption> tag per Mozilla's reference

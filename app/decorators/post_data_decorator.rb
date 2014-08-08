@@ -1,7 +1,6 @@
 
 require 'draper'
 
-require_relative './post_data_decorator/content_converter'
 require_relative './post_data_decorator/image_body_builder'
 require_relative './post_data_decorator/text_body_builder'
 
@@ -41,6 +40,6 @@ class PostDataDecorator < Draper::Decorator
   end
 
   def convert_body(fragment)
-    SupportClasses::ContentConverter.new.to_html(fragment)
+    MarkdownHtmlConverter.new.to_html(fragment)
   end
 end # class PostDataDecorator
