@@ -5,6 +5,8 @@ require 'post_creator_and_publisher'
 
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
+  rescue_from ActiveRecord::RecordNotFound, with: :article_not_found
+
   def new
     post = DSO::PermissivePostCreator.run!
     # The DSO hands back an entity; Rails needs to see an implementation model
@@ -21,7 +23,21 @@ class PostsController < ApplicationController
     process_create_result
   end
 
+  def show
+    @post = PostData.find params[:id]
+    authorize @post
+  end
+
   private
+
+  def article_not_found
+    redirect_to root_url, not_found_redirect_params
+  end
+
+  def not_found_redirect_params
+    slug = params[:id]
+    { flash: { alert: %(There is no article with an ID of "#{slug}"!) } }
+  end
 
   def process_create_result
     # NOTE: It Would Be Very Nice If this used MQs or etc. to be more direct.
