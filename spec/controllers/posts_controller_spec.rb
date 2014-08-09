@@ -27,17 +27,25 @@ end # shared_examples 'an attempt to create an invalid Post'
 # Posts controller dispatches post-specific actions
 describe PostsController do
   describe :routing.to_s, type: :routing do
-    it { expect(get '/posts/new').to route_to 'posts#new' }
-    it { expect(post '/posts').to route_to 'posts#create' }
-    it { expect(get '/posts').to_not be_routable }
-    it { expect(get '/posts/1').to_not be_routable }
-    it { expect(get '/posts/edit').to_not be_routable }
-    it { expect(put '/posts/1').to_not be_routable }
-    it { expect(delete '/posts/1').to_not be_routable }
+    it { expect(get new_post_path).to route_to 'posts#new' }
+    it { expect(post posts_path).to route_to 'posts#create' }
+    it { expect(get posts_path).to_not be_routable }
+    it do
+      expect(get post_path('the-title'))
+          .to route_to controller: 'posts', action: 'show', id: 'the-title'
+    end
+    # Can't disable ID-based routing but enable slug-based. This has to be
+    # restricted at the controller/DSO level.
+    # it { expect(get '/posts/:id').to_not be_routable }
+    it { expect(get '/posts/:id/edit').to_not be_routable }
+    it { expect(put post_path(1)).to_not be_routable }
+    it { expect(delete post_path(1)).to_not be_routable }
   end
 
   describe :helpers.to_s do
-    it { expect(new_post_path).to eq('/posts/new') }
+    it { expect(new_post_path).to eq '/posts/new' }
+    it { expect(posts_path).to eq '/posts' }
+    it { expect(post_path(42)).to eq '/posts/42' }
   end
 
   describe "GET 'new'" do
@@ -158,4 +166,57 @@ describe PostsController do
       it_behaves_like 'an attempt to create an invalid Post'
     end # context 'for the Guest User'
   end # describe "POST 'create'"
+
+  # Currently, *all* published articles are public, so no branching for that.
+  # Whether the requesting user is the author or not is irrelevant to the
+  # controller; it just retrieves the article.
+  describe "GET 'show'" do
+    let(:author) { FactoryGirl.create :user_datum }
+    let(:blog) { BlogData.first }
+    let(:article) do
+      FactoryGirl.create :post_datum,
+                         author_name: author.name,
+                         pubdate: Chronic.parse('3 PM yesterday')
+    end
+
+    context 'for a valid post' do
+      before :each do
+        get :show, id: article.slug
+      end
+
+      it 'responds with an HTTP status of :ok' do
+        expect(response).to be_ok
+      end
+
+      it 'assigns an object to Post' do
+        expect(assigns[:post]).to be_a PostData
+      end
+
+      it 'renders the :show template' do
+        expect(response).to render_template :show
+      end
+    end # context 'for a valid post'
+
+    context 'for an invalid post' do
+      let(:bad_slug) { 'this-is-a-bogus-article-slug' }
+      before :each do
+        get :show, id: bad_slug
+      end
+
+      it 'responds with an HTTP status of :redirect' do
+        expect(response).to be_redirect
+      end
+
+      it 'redirects to the root URL' do
+        expect(response).to redirect_to root_url
+      end
+
+      it 'renders the correct flash error message' do
+        expected = [
+          'There is no article with an ID of "',
+          '"!'].join bad_slug
+        expect(flash[:alert]).to eq expected
+      end
+    end # context 'for an invalid post'
+  end # describe "GET 'show'"
 end # describe PostsController

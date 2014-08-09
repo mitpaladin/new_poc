@@ -1,0 +1,33 @@
+
+div class='row'
+  div class='col-md-1' &nbsp;
+  div class='col-md-10 page-header'
+    h1
+      == "#{@post.title}&nbsp;"
+      small
+        i == "by #{@post.author_name}"
+div class='row'
+  div class='col-md-1' &nbsp;
+  div class='col-md-10 body' == @post.build_body
+  div class='col-md-1' &nbsp;
+<hr/>
+div class='row'
+  div class='col-md-1' &nbsp;
+  div class='col-md-10'
+    dl class='dl-horizontal'
+      dt
+        | By
+      dd = @post.author_name
+      dt
+        | Created at:
+      dd = @post.created_at.localtime.strftime "%c %Z"
+      dt
+        | Last modified at:
+      dd = @post.updated_at.localtime.strftime "%c %Z"
+      dt
+        | Published:
+      dd = @post.pubdate.localtime.strftime "%c %Z"
+      dt
+        | Article ID:
+      dd = @post.id
+  div class='col-md-1' &nbsp;
