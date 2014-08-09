@@ -4,5 +4,5 @@
 article
   header
     == entry.build_byline
-    h3 = entry.title
+    h3 = link_to entry.title, post_path(entry.slug)
   == entry.build_body
