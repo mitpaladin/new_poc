@@ -1,11 +1,13 @@
 
+- author_path = user_path @post.author_name.parameterize
+
 div class='row'
   div class='col-md-1' &nbsp;
   div class='col-md-10 page-header'
     h1
       == "#{@post.title}&nbsp;"
       small
-        i == "by #{@post.author_name}"
+        i == "by #{link_to @post.author_name, author_path}"
 div class='row'
   div class='col-md-1' &nbsp;
   div class='col-md-10 body' == @post.build_body
@@ -17,7 +19,7 @@ div class='row'
     dl class='dl-horizontal'
       dt
         | By
-      dd = @post.author_name
+      dd = link_to @post.author_name, author_path
       dt
         | Created at:
       dd = @post.created_at.localtime.strftime "%c %Z"
