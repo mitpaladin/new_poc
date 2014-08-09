@@ -24,7 +24,8 @@ class PostsController < ApplicationController
   end
 
   def show
-    @post = PostData.find params[:id]
+    post = PostData.find params[:id]
+    @post = PostDataDecorator.new(post)
     authorize @post
   end
 
