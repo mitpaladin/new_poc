@@ -11,8 +11,14 @@ describe UsersController do
       expect(get '/users/john-doe')
           .to route_to controller: 'users', action: 'show', id: 'john-doe'
     end
-    it { expect(get '/users/1/edit').to_not be_routable }
-    it { expect(put '/users/1').to_not be_routable }
+    it do
+      expect(get '/users/john-doe/edit')
+          .to route_to 'users#edit', id: 'john-doe'
+    end
+    it do
+      expect(put '/users/john-doe')
+          .to route_to 'users#update', id: 'john-doe'
+    end
     it { expect(delete '/users/1').to_not be_routable }
   end
 
@@ -21,18 +27,19 @@ describe UsersController do
   end
 
   describe "GET 'new'" do
-    it 'returns http success' do
+    before :each do
       get :new
+    end
+
+    it 'returns http success' do
       response.should be_success
     end
 
     it 'assigns a UserData instance to :user' do
-      get :new
       expect(assigns[:user]).to be_a UserData
     end
 
     it 'renders the :new template' do
-      get :new
       expect(response).to render_template :new
     end
   end # describe "GET 'new'"
@@ -114,4 +121,104 @@ describe UsersController do
     context 'for the Guest User' do
     end # context 'for the Guest User'
   end # describe "GET 'show'"
+
+  describe "GET 'edit'" do
+    let(:user) { FactoryGirl.create :user_datum }
+    let(:not_auth_message) { 'You are not authorized to perform this action.' }
+
+    context 'for the Guest User' do
+
+      before :each do
+        get :edit, id: user.name.parameterize
+      end
+
+      it 'displays the authorisation-failure flash message' do
+        expect(request.flash[:error]).to eq not_auth_message
+      end
+
+      it 'redirects to the root path' do
+        expect(response).to redirect_to root_path
+      end
+    end # context 'for the Guest User'
+
+    context 'for the logged-in user' do
+      let(:user) { FactoryGirl.create :user_datum }
+      before :each do
+        session[:user_id] = user.name.parameterize
+        get :edit, id: user.name.parameterize
+      end
+
+      describe 'editing his own record' do
+
+        it 'is successful' do
+          expect(response).to be_ok
+        end
+
+      end
+    end # context 'for the logged-in user'
+  end # describe "GET 'edit'"
+
+  describe "PATCH 'update'" do
+
+    context 'for a logged-in user' do
+      # Why #create rather than just #attributes_for ? So the slug gets built.
+      let(:user) { FactoryGirl.create :user_datum }
+      let(:updated_profile) { 'UPDATED ' + user[:profile] }
+
+      context 'whose record is being updated' do
+        before :each do
+          session[:user_id] = user.name.parameterize
+          params = {
+            id:         session[:user_id],
+            user_data:  {
+              name:     user.name,
+              email:    user.email,
+              profile:  updated_profile
+            }
+          }
+          patch :update, params
+        end
+
+        it 'assigns the updated user record' do
+          assigned = assigns[:user]
+          expect(assigned[:profile]).to eq updated_profile
+        end
+
+        it 'redirects to the user profile page' do
+          expect(response).to redirect_to user_path(user.slug)
+        end
+      end # context 'whose record is being updated'
+
+      context 'who is not the user whose record is being updated' do
+        let(:logged_in_user) { FactoryGirl.create :user_datum }
+        let(:params) do
+          {
+            id: user.id,
+            user_data: {
+              name:     user.name,
+              email:    user.email,
+              profile:  updated_profile
+            }
+          }
+        end
+        before :each do
+          session[:user_id] = logged_in_user.name.parameterize
+          patch :update, params
+        end
+
+        it 'redirects to the landing page' do
+          expect(response).to redirect_to root_path
+        end
+
+        it 'does not modify the user record' do
+          expect(assigns[:user][:profile]).not_to eq updated_profile
+          expect(UserData.find(assigns[:user][:id])[:profile])
+              .not_to eq updated_profile
+        end
+      end # context 'who is not the user whose record is being updated'
+    end # context 'for a logged-in user'
+
+    context 'for the Guest User' do
+    end # context 'for the Guest User'
+  end # describe "PATCH 'update'"
 end # describe UsersController
