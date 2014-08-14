@@ -16,8 +16,11 @@ describe 'Member can view own profile page' do
   end
 
   it 'and see biodata as entered' do
-    # @user_bio currently has one italicised content fragment in ordinary text
+    # @user_bio currently has one emphasised Markdown fragment in ordinary text
     parts = @user_bio.match(/(.+?)\*(.+?)\*(.+)/).to_a.slice(1..3)
-    assert_selector '.panel-body', text: parts.join
+    # Find the entire @user_bio markup in the panel
+    expected = [parts[0], '<em>', parts[1], '</em>', parts[2]].join
+    bio = page.find('.panel-body p').native # get the Nokogiri element node
+    expect(bio.to_html).to eq ['<p>', '</p>'].join(expected)
   end
 end # describe 'Member can view own profile page'
