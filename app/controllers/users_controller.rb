@@ -1,5 +1,6 @@
 
 require 'permissive_user_creator'
+require 'user_updater'
 
 # UsersController: actions related to Users within our "fancy" blog.
 class UsersController < ApplicationController
@@ -37,10 +38,10 @@ class UsersController < ApplicationController
   def update
     @user = UserData.find params[:id]
     authorize @user
-    update_attributes_from @user, params
-    if @user.save
-      message = 'You successfully updated your profile'
-      redirect_to user_path(@user), flash: { success: message }
+    entity = CCO::UserCCO.to_entity @user
+    result = DSO::UserUpdater.run user: entity, user_data: params[:user_data]
+    if result.valid?
+      update_and_redirect_with result.result
     else
       render 'edit'
     end
@@ -48,9 +49,9 @@ class UsersController < ApplicationController
 
   private
 
-  def update_attributes_from(user, params)
-    [:name, :email, :profile].each do |item|
-      user[item] = params[:user_data][item]
-    end
+  def update_and_redirect_with(attribs)
+    @user.update_attributes attribs
+    message = 'You successfully updated your profile'
+    redirect_to user_path(@user.slug), flash: { success: message }
   end
 end # class UsersController

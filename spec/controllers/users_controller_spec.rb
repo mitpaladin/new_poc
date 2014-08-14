@@ -159,11 +159,11 @@ describe UsersController do
   end # describe "GET 'edit'"
 
   describe "PATCH 'update'" do
+    # Why #create rather than just #attributes_for ? So the slug gets built.
+    let(:user) { FactoryGirl.create :user_datum }
+    let(:updated_profile) { 'UPDATED ' + user[:profile] }
 
     context 'for a logged-in user' do
-      # Why #create rather than just #attributes_for ? So the slug gets built.
-      let(:user) { FactoryGirl.create :user_datum }
-      let(:updated_profile) { 'UPDATED ' + user[:profile] }
 
       context 'whose record is being updated' do
         before :each do
@@ -186,6 +186,11 @@ describe UsersController do
 
         it 'redirects to the user profile page' do
           expect(response).to redirect_to user_path(user.slug)
+        end
+
+        it 'has the correct flash message' do
+          expected = 'You successfully updated your profile'
+          expect(flash[:success]).to eq expected
         end
       end # context 'whose record is being updated'
 
@@ -215,10 +220,43 @@ describe UsersController do
           expect(UserData.find(assigns[:user][:id])[:profile])
               .not_to eq updated_profile
         end
+
+        it 'has the correct flash message' do
+          expected = 'You are not authorized to perform this action.'
+          expect(flash[:error]).to eq expected
+        end
       end # context 'who is not the user whose record is being updated'
     end # context 'for a logged-in user'
 
     context 'for the Guest User' do
+      let(:params) do
+        {
+          id: user.id,
+          user_data: {
+            name:     user.name,
+            email:    user.email,
+            profile:  updated_profile
+          }
+        }
+      end
+      before :each do
+        patch :update, params
+      end
+
+      it 'redirects to the landing page' do
+        expect(response).to redirect_to root_path
+      end
+
+      it 'does not modify the user record' do
+        expect(assigns[:user][:profile]).not_to eq updated_profile
+        expect(UserData.find(assigns[:user][:id])[:profile])
+            .not_to eq updated_profile
+      end
+
+      it 'has the correct flash message' do
+        expected = 'You are not authorized to perform this action.'
+        expect(flash[:error]).to eq expected
+      end
     end # context 'for the Guest User'
   end # describe "PATCH 'update'"
 end # describe UsersController
