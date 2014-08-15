@@ -1,0 +1,26 @@
+
+div class='page-header row'
+  h1 All Registered Users
+
+div class='page-content'
+  div class='row'
+    div class='table-responsive'
+      table class='table table-striped table-hover'
+        thead
+          tr
+            th User Name
+            th Posts Published
+            th Member Since
+        tbody
+          tr
+            td = link_to 'Joe Blow', user_path('joe-blow')
+            td = 1
+            td = Chronic.parse('3 days ago at 9.15 AM').strftime '%a %b %e %Y at %R %Z (%z)'
+          tr
+            td = link_to 'John Doe', user_path('john-doe')
+            td = 1
+            td = Chronic.parse('8 days ago at 4.49 PM').strftime '%a %b %e %Y at %R %Z (%z)'
+          tr
+            td = link_to 'Alfred E Neumann', user_path('alfred-e-neumann')
+            td = 1
+            td = Chronic.parse('1 April 2014 at 11.59 PM').strftime '%a %b %e %Y at %R %Z (%z)'

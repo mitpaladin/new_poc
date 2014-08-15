@@ -7,6 +7,11 @@ class UsersController < ApplicationController
   after_action :verify_authorized,  except: :index
   after_action :verify_policy_scoped, only: :index
 
+  def index
+    @users = policy_scope UserData.all
+    authorize @users
+  end
+
   def new
     @user = UserData.new
     authorize @user
@@ -29,7 +34,7 @@ class UsersController < ApplicationController
   end
 
   def show
-    @user = UserData.friendly.find params[:id]
+    @user = UserData.friendly.find(params[:id]).decorate
     authorize @user
   end
 

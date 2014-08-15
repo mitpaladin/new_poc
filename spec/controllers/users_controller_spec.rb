@@ -26,13 +26,23 @@ describe UsersController do
     it { expect(new_user_path).to eq('/users/new') }
   end
 
+  describe "GET 'index'" do
+    before :each do
+      get :index
+    end
+
+    it 'returns http success' do
+      expect(response).to be_success
+    end
+  end # describe "GET 'index'"
+
   describe "GET 'new'" do
     before :each do
       get :new
     end
 
     it 'returns http success' do
-      response.should be_success
+      expect(response).to be_success
     end
 
     it 'assigns a UserData instance to :user' do
