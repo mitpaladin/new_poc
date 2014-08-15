@@ -5,19 +5,12 @@ shared_examples 'an entity and model with same main attrs' do |token|
   let(:impl) { FactoryGirl.build :user_datum }
   let(:entity) { CCO::UserCCO.to_entity impl, token }
   describe 'has the correct attributes for' do
-    after :each do
-      sym = RSpec.current_example.description.to_sym
-      expect(entity.send sym).to eq impl.send(sym)
-    end
 
-    it :name do
-    end
-
-    it :email do
-    end
-
-    it :profile do
-    end
+    [:name, :email, :profile, :slug].each do |sym|
+      it sym.to_s do
+        expect(entity.send sym).to eq impl.send(sym)
+      end
+    end # [...].each do |sym|
   end # describe 'has the correct attributes for'
 end # shared_examples 'an entity and model with same main attrs'
 
@@ -52,7 +45,7 @@ module CCO
   describe UserCCO do
 
     describe :to_entity do
-      let(:impl) { FactoryGirl.build :user_datum }
+      let(:impl) { FactoryGirl.create :user_datum }
 
       descr = 'an entity with expected attributes and session token'
       it_behaves_like descr
@@ -64,7 +57,9 @@ module CCO
       it_behaves_like 'an entity and model with same main attrs'
 
       it 'produces a new, unsaved record' do
-        entity = User.new FactoryGirl.attributes_for(:user_datum)
+        attribs = FactoryGirl.attributes_for :user_datum
+        attribs[:slug] ||= 'some-random-slug'
+        entity = User.new attribs
         impl = CCO::UserCCO.from_entity entity
         expect(impl).to be_a_new_record
       end

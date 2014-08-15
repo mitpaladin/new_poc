@@ -10,7 +10,7 @@ module CCO
 
     def self.from_entity(entity)
       impl = UserData.new
-      attrs = [:name, :email, :profile]
+      attrs = [:name, :email, :profile, :slug]
       attrs.each { |attr_name| impl[attr_name] = entity.send(attr_name) }
       impl
     end
