@@ -6,13 +6,20 @@ require 'support/feature_spec/login_helper'
 describe 'Member can view own profile page' do
   before :each do
     FeatureSpecLoginHelper.new(self).register_and_login
+    @profile_header = ['Profile Page for', @user_name].join ' '
     within(:css, 'ul.navbar-nav') do
       click_link 'View your profile'
     end
   end
 
   it 'and see own name in profile header' do
-    assert_selector 'h1', text: "Profile Page for #{@user_name}"
+    assert_selector 'h1', text: @profile_header
+  end
+
+  it 'and see edit-profile link next to profile header' do
+    href = edit_user_path(@user_name.parameterize)
+    assert_selector "h1 button[href='#{href}']",
+                    text: 'Edit Your Profile'
   end
 
   it 'and see biodata as entered' do

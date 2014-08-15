@@ -38,6 +38,7 @@ class FeatureSpecLoginHelper < FeatureSpecHelperBase
         click_link 'Log out'
       end
     end
+    clear_user_fields
   end
 
   private
@@ -48,6 +49,15 @@ class FeatureSpecLoginHelper < FeatureSpecHelperBase
       within(:css, 'ul.navbar-nav') do
         click_link 'Sign up'
       end
+    end
+  end
+
+  def clear_user_fields
+    s.instance_eval do
+      @user_bio = nil
+      @user_email = nil
+      @user_name = nil
+      @user_password = nil
     end
   end
 

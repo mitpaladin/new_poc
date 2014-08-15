@@ -2,6 +2,7 @@
 require_relative 'users_helper/profile_post_item_builder'
 require_relative 'users_helper/profile_article_list_builder'
 require_relative 'users_helper/profile_articles_row_builder'
+require_relative 'users_helper/profile_bio_header_builder'
 require_relative 'users_helper/profile_bio_panel_builder'
 require_relative 'users_helper/profile_bio_row_builder'
 
@@ -13,6 +14,10 @@ module UsersHelper
 
   def profile_articles_row(user_name)
     ProfileArticlesRowBuilder.new(user_name, self).to_html
+  end
+
+  def profile_bio_header(user_name)
+    ProfileBioHeaderBuilder.new(user_name, self).to_html
   end
 
   def profile_bio_panel(user_profile)
