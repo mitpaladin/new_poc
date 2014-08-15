@@ -6,7 +6,7 @@ describe UsersController do
   describe :routing.to_s, type: :routing do
     it { expect(get '/users/new').to route_to 'users#new' }
     it { expect(post '/users').to route_to 'users#create' }
-    it { expect(get '/users').to_not be_routable }
+    it { expect(get '/users').to route_to 'users#index' }
     it do
       expect(get '/users/john-doe')
           .to route_to controller: 'users', action: 'show', id: 'john-doe'
