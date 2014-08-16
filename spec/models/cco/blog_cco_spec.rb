@@ -60,8 +60,9 @@ module CCO
         let(:post_count) { 5 }
         let(:entity) do
           e = Blog.new
-          post_count.times do
-            p = e.new_post FactoryGirl.attributes_for(:post_datum)
+          # You learn something new every day. There *is* a FactoryGirl method
+          # named #attributes_for_list.
+          FactoryGirl.attributes_for_list(:post_datum, post_count).each do |p|
             e.add_entry p
           end
           e

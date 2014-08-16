@@ -76,13 +76,10 @@ module BLO
 
       describe 'when entries exist' do
         let(:entry_count) { 5 }
-        before :each do
-          @created_list = FactoryGirl.create_list :post_datum, entry_count
-        end
+        let!(:_list) { FactoryGirl.create_list :post_datum, entry_count }
 
         it 'returns a list with the correct number of entries' do
-          expected = @created_list.count
-          expect(klass.load_all).to have(expected).entries
+          expect(klass.load_all).to have(entry_count).entries
         end
       end # describe 'when entries exist'
     end # describe :load_all

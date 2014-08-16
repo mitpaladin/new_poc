@@ -127,11 +127,10 @@ describe PostData do
       end
 
       it 'of multiple posts returns an array with each authored post in it' do
-        new_posts = []
         new_post_count = 3
-        new_post_count.times do
-          new_posts << FactoryGirl.create(:post_datum, author_name: user.name)
-        end
+        new_posts = FactoryGirl.create_list :post_datum,
+                                            new_post_count,
+                                            author_name: user.name
         expect(posts).to have(new_post_count + 1).posts
         new_posts.each_with_index do |post, index|
           expect(posts[index + 1]).to eq post

@@ -125,13 +125,7 @@ describe UserData do
     end # context 'with one registered user'
 
     context 'with multiple registered users' do
-      let!(:created_users) do
-        ret = []
-        5.times do
-          ret << FactoryGirl.create(:user_datum)
-        end
-        ret
-      end
+      let!(:created_users) { FactoryGirl.create_list :user_datum, 5 }
 
       it 'returns an array with each of the users' do
         users = UserData.registered

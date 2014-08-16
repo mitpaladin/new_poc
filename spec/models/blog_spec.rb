@@ -5,9 +5,8 @@ require 'support/shared_examples/models/blog/single_differing_blog_field'
 
 def build_example_posts(entry_count = 10)
   posts = []
-  entry_count.times do
-    posts << Post.new(FactoryGirl.attributes_for :post_datum)
-  end
+  attr_list = FactoryGirl.attributes_for_list :post_datum, entry_count
+  attr_list.each { |post_attribs| posts << Post.new(post_attribs) }
   posts
 end
 
@@ -52,13 +51,12 @@ describe Blog do
 
       it 'allows the Blog to be iterated as a collection of Posts by title' do
         titles = %w(red green blue pink Cadillac)
-        titles.each do |title|
-          attribs = FactoryGirl.attributes_for :post_datum, title: title
+        FactoryGirl.attributes_for_list :post_datum, titles.count do |attribs|
+          attribs[:title] = titles.shift
           blog.add_entry(blog.new_post attribs)
         end
         mangled = blog.sort.map { |e| e.title.upcase }
-        expected = %w(CADILLAC BLUE GREEN PINK RED)
-        expect(mangled).to eq expected
+        expect(mangled).to eq %w(CADILLAC BLUE GREEN PINK RED)
       end
     end # context 'for a collection of unpublished posts'
 
