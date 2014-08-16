@@ -12,8 +12,8 @@ shared_examples description do |current_user, menu_sym|
     describe 'contains a top-level `ul` element that' do
       let(:current_el) { container.elements.first }
 
-      it 'contains 4 child elements' do
-        expect(current_el).to have(4).children
+      it 'contains 5 child elements' do
+        expect(current_el).to have(5).children
       end
 
       it %w(has as its first child element an `li` element whose only child is
@@ -25,27 +25,36 @@ shared_examples description do |current_user, menu_sym|
                                          current_el: current_el
       end
 
-      it %w(has as its second child element an `li` element which serves as a
+      it %w(has as its second child element an `li` element whose only child is
+            an `a` element with the text "All members" that links to the
+            user-index path).join(' ') do
+        it_behaves_like_a_menu_list_item text: 'All members',
+                                         index: 1,
+                                         path: users_path,
+                                         current_el: current_el
+      end
+
+      it %w(has as its third child element an `li` element which serves as a
             vertical spacer).join(' ') do
-        it_behaves_like_a_menu_separator index: 1,
+        it_behaves_like_a_menu_separator index: 2,
                                          current_el: current_el,
                                          style: separator_style
       end
 
-      it %w(has as its third child element an `li` element whose only child
+      it %w(has as its fourth child element an `li` element whose only child
             is an `a` element with the text "Sign up" that links to the
             new-user path).join(' ') do
         it_behaves_like_a_menu_list_item text: 'Sign up',
-                                         index: 2,
+                                         index: 3,
                                          path: new_user_path,
                                          current_el: current_el
       end
 
-      it %w(has as its fourth child element an `li` element whose only child is
+      it %w(has as its fifth child element an `li` element whose only child is
             an `a` element with the text "Log in" that links to the
             new-session path).join(' ') do
         it_behaves_like_a_menu_list_item text: 'Log in',
-                                         index: 3,
+                                         index: 4,
                                          path: new_session_path,
                                          current_el: current_el
       end
