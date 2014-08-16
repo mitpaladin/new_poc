@@ -8,8 +8,10 @@ class UsersController < ApplicationController
   after_action :verify_policy_scoped, only: :index
 
   def index
-    @users = policy_scope UserData.all
+    users = UserData.registered
+    @users = policy_scope users
     authorize @users
+    @users = UserDataDecorator.decorate_collection(@users)
   end
 
   def new

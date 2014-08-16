@@ -104,4 +104,42 @@ describe UserData do
     end
 
   end # describe 'validates'
+
+  describe :registered do
+
+    context 'with no registered users' do
+
+      it 'returns an empty array' do
+        expect(UserData.registered).to be_empty
+        expect(UserData.all).to have(1).record
+      end
+    end # context 'with no registered users'
+
+    context 'with one registered user' do
+      let!(:user1) { FactoryGirl.create :user_datum }
+
+      it 'returns an array with the one user' do
+        expect(UserData.registered).to have(1).record
+        expect(UserData.registered.first).to eq user1
+      end
+    end # context 'with one registered user'
+
+    context 'with multiple registered users' do
+      let!(:created_users) do
+        ret = []
+        5.times do
+          ret << FactoryGirl.create(:user_datum)
+        end
+        ret
+      end
+
+      it 'returns an array with each of the users' do
+        users = UserData.registered
+        expect(users).to have(created_users.count).records
+        created_users.each_with_index do |user, index|
+          expect(users[index]).to eq user
+        end
+      end
+    end # context 'with multiple registered users'
+  end # describe :registered
 end
