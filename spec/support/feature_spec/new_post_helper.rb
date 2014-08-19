@@ -1,5 +1,6 @@
 
-require 'support/feature_spec/helper_base'
+require_relative 'helper_base'
+require_relative 'post_helper_support/post_creator_data'
 
 # Feature-spec support class to create and publish a new post.
 class FeatureSpecNewPostHelper < FeatureSpecHelperBase
@@ -37,10 +38,10 @@ class FeatureSpecNewPostHelper < FeatureSpecHelperBase
   end
 
   def setup_post_fields
-    s.instance_eval do
-      @post_title ||= 'This is a Title!'
+    s.instance_exec(data) do |data|
+      @post_title = data.post_title
       @post_slug = @post_title.parameterize
-      @post_body ||= 'This is a Body with *Emphasised* Content!'
+      @post_body = data.post_body
       @image_url ||= 'http://fc01.deviantart.net/fs70/f/2014/113/e/6/' \
           'dreaming_of_another_reality_by_razielmb-d7fgl3s.png'
     end
