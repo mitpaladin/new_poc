@@ -1,6 +1,10 @@
 
 # Pundit authorisation policy for UserData record instances.
 class UserDataPolicy < ApplicationPolicy
+  def index?
+    true  # Anybody can browse the list of registered users...
+  end
+
   def create?
     # Should be based on `user.registered?` -- but that's an *entity* concept.
     user.name == user.class.first.name  # accept the Guest User only

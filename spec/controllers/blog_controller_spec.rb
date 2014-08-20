@@ -30,11 +30,11 @@ describe BlogController do
         session[:user_id] = nil
       end
 
-      fit 'returns http success' do
+      it 'returns http success' do
         expect(response).to be_success
       end
 
-      fit 'renders the index template' do
+      it 'renders the index template' do
         expect(response).to render_template 'index'
       end
 

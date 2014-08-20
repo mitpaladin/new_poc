@@ -6,7 +6,7 @@ describe UsersController do
   describe :routing.to_s, type: :routing do
     it { expect(get '/users/new').to route_to 'users#new' }
     it { expect(post '/users').to route_to 'users#create' }
-    it { expect(get '/users').to_not be_routable }
+    it { expect(get '/users').to route_to 'users#index' }
     it do
       expect(get '/users/john-doe')
           .to route_to controller: 'users', action: 'show', id: 'john-doe'
@@ -26,13 +26,23 @@ describe UsersController do
     it { expect(new_user_path).to eq('/users/new') }
   end
 
+  describe "GET 'index'" do
+    before :each do
+      get :index
+    end
+
+    it 'returns http success' do
+      expect(response).to be_success
+    end
+  end # describe "GET 'index'"
+
   describe "GET 'new'" do
     before :each do
       get :new
     end
 
     it 'returns http success' do
-      response.should be_success
+      expect(response).to be_success
     end
 
     it 'assigns a UserData instance to :user' do

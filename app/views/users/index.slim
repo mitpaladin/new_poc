@@ -1,0 +1,17 @@
+
+div class='page-header row'
+  h1 All Registered Users
+
+div class='page-content'
+  div class='row'
+    div class='table-responsive'
+      table class='table table-striped table-hover'
+        thead
+          tr
+            th User Name
+            th Posts Published
+            th Member Since
+        tbody
+          - @users.each do |user|
+            - post_count = PostData.authored_by(user.name).count
+            == user.decorate.build_index_row_for post_count

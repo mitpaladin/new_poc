@@ -12,8 +12,8 @@ shared_examples description do |current_user, menu_sym|
     describe 'contains a top-level `ul` element that' do
       let(:current_el) { container.elements.first }
 
-      it 'contains 5 child elements' do
-        expect(current_el).to have(5).children
+      it 'contains 8 child elements' do
+        expect(current_el).to have(8).children
       end
 
       it %w(has as its first child element an `li` element whose only child is
@@ -26,11 +26,11 @@ shared_examples description do |current_user, menu_sym|
       end
 
       it %w(has as its second child element an `li` element whose only child
-            is an `a` element with the text "New Post" that links to the
-            new-post path).join(' ') do
-        it_behaves_like_a_menu_list_item text: 'New Post',
+            is an `a` element with the text "All members" that links to the
+            user-index path).join(' ') do
+        it_behaves_like_a_menu_list_item text: 'All members',
                                          index: 1,
-                                         path: new_post_path,
+                                         path: users_path,
                                          current_el: current_el
       end
 
@@ -41,21 +41,45 @@ shared_examples description do |current_user, menu_sym|
                                          style: separator_style
       end
 
-      it %w(has as its fourth child element an `li` element whose only child is
+      it %w(has as its fourth child element an `li` element whose only child
+            is an `a` element with the text "New Post" that links to the
+            new-post path).join(' ') do
+        it_behaves_like_a_menu_list_item text: 'New Post',
+                                         index: 3,
+                                         path: new_post_path,
+                                         current_el: current_el
+      end
+
+      it %w(has as its fifth child element an `li` element which serves as a
+            vertical spacer).join(' ') do
+        it_behaves_like_a_menu_separator index: 4,
+                                         current_el: current_el,
+                                         style: separator_style
+      end
+
+      it %w(has as its sixth child element an `li` element whose only child is
             an `a` element with the text "View your profile" that links to the
             current user's profile path using the HTTP GET action).join(' ') do
         expected_path = "/users/#{current_user.name.parameterize}"
         it_behaves_like_a_menu_list_item text: 'View your profile',
-                                         index: 3,
+                                         index: 5,
                                          path: expected_path,
                                          current_el: current_el
       end
-      it %w(has as its fifth child element an `li` element whose only child is
+
+      it %w(has as its seventh child element an `li` element which serves as a
+            vertical spacer).join(' ') do
+        it_behaves_like_a_menu_separator index: 6,
+                                         current_el: current_el,
+                                         style: separator_style
+      end
+
+      it %w(has as its eighth child element an `li` element whose only child is
             an `a` element with the text "Log out" that links to the
             current session path using the HTTP DELETE action, and informs
             search engines not to follow the link).join(' ') do
         it_behaves_like_a_menu_list_item text: 'Log out',
-                                         index: 4,
+                                         index: 7,
                                          path: '/sessions/current',
                                          current_el: current_el,
                                          data_method: 'delete'

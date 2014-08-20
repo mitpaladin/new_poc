@@ -6,6 +6,7 @@ require_relative './post_data_decorator/text_body_builder'
 
 # PostDataDecorator: Draper Decorator, aka ViewModel, for the PostData model.
 class PostDataDecorator < Draper::Decorator
+  decorates_finders
   delegate_all
 
   # After Avdi's #render_body; his "exhibits" are much more closely associated

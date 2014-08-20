@@ -39,6 +39,7 @@ module ApplicationHelper
       def build_html_for_guest_user
         build_container do
           build_item_for 'Home', href: root_path
+          build_item_for 'All members', href: users_path
           build_separator_item
           build_item_for 'Sign up', href: new_user_path
           build_item_for 'Log in', href: new_session_path
@@ -48,9 +49,12 @@ module ApplicationHelper
       def build_html_for_registered_user
         build_container do
           build_item_for 'Home', href: root_path
+          build_item_for 'All members', href: users_path
+          build_separator_item
           build_item_for 'New Post', href: new_post_path
           build_separator_item
           build_item_for 'View your profile', href: user_profile_path
+          build_separator_item
           build_item_for 'Log out', logout_params
         end
       end

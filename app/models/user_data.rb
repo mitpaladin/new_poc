@@ -32,6 +32,8 @@ class UserData < ActiveRecord::Base
   # NOTE: Set check_mx to true for production?
   validates_email_format_of :email, check_mx: false
 
+  scope :registered, -> { where 'id > ?', 1 }
+
   private
 
   def verify_no_repeated_spaces_in_name

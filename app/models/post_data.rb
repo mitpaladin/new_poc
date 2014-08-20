@@ -30,6 +30,8 @@ class PostData < ActiveRecord::Base
     ]
   end
 
+  scope :authored_by, -> (user_name) { where 'author_name = ?', user_name }
+
   private
 
   def body_or_image_url?

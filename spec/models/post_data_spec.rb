@@ -105,4 +105,49 @@ describe PostData do
       end # describe 'they do not have the same slug value;'
     end # context 'where two articles have the same title'
   end # describe :slug
+
+  describe :authored_by do
+    let(:user) do
+      ret = FactoryGirl.build :user_datum
+      ret.send :set_slug  # private method normally used as AR callback
+      ret
+    end
+
+    it 'with an unpublished user yields no posts' do
+      expect(klass.authored_by user.name).to eq []
+    end
+
+    describe 'with a published user' do
+      let!(:post1) { FactoryGirl.create :post_datum, author_name: user.name }
+      let(:posts) { klass.authored_by user.name }
+
+      it 'of a single post returns an array with that post in it' do
+        expect(posts).to have(1).post
+        expect(posts.first).to eq post1
+      end
+
+      it 'of multiple posts returns an array with each authored post in it' do
+        new_post_count = 3
+        new_posts = FactoryGirl.create_list :post_datum,
+                                            new_post_count,
+                                            author_name: user.name
+        expect(posts).to have(new_post_count + 1).posts
+        new_posts.each_with_index do |post, index|
+          expect(posts[index + 1]).to eq post
+        end
+      end
+
+      it 'who is one of multiple published authors returns only her posts' do
+        new_post_count = 5
+        new_post_count.times do
+          new_author = FactoryGirl.create :user_datum
+          FactoryGirl.create :post_datum, author_name: new_author.name
+          FactoryGirl.create :post_datum, author_name: user.name
+        end
+        expect(posts).to have(new_post_count + 1).posts
+        expect(PostData.all).to have((new_post_count * 2) + 1).posts
+      end
+    end # describe 'with a published user'
+  end # describe :authored_by
+
 end
