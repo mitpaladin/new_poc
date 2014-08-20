@@ -1,8 +1,17 @@
 
-require 'support/feature_spec/helper_base'
+require_relative 'helper_base'
+require_relative 'user_helper_support/user_creator_data'
 
 # Feature-spec support class to create and log in with a new user.
 class FeatureSpecLoginHelper < FeatureSpecHelperBase
+  extend Forwardable
+
+  def_delegator :@data, :step, :step
+
+  def initialize(spec_obj, data = UserHelperSupport::UserCreatorData.new)
+    super
+  end
+
   def register_and_login
     register
     login
@@ -61,12 +70,12 @@ class FeatureSpecLoginHelper < FeatureSpecHelperBase
     end
   end
 
-  def setup_user_fields(user_data = FactoryGirl.attributes_for(:user_datum))
-    s.instance_eval do
-      @user_bio ||=       user_data[:profile]
-      @user_email ||=     user_data[:email]
-      @user_name ||=      user_data[:name]
-      @user_password ||=  user_data[:password]
+  def setup_user_fields
+    s.instance_exec(data) do |data|
+      @user_bio =         data.user_profile
+      @user_email =       data.user_email
+      @user_name =        data.user_name
+      @user_password =    data.user_password
     end
   end
 end

@@ -8,6 +8,10 @@ class FeatureSpecNewPostHelper < FeatureSpecHelperBase
 
   def_delegator :@data, :step, :step
 
+  def initialize(spec_obj, data = PostHelperSupport::PostCreatorData.new)
+    super
+  end
+
   def create_image_post
     create_post
   end

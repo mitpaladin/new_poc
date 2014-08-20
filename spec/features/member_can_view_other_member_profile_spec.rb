@@ -9,7 +9,8 @@ describe 'Member can view the profile of another member' do
     login_helper.register_and_login
     @author_name = @user_name
     login_helper.logout
-    FeatureSpecLoginHelper.new(self).register_and_login
+    login_helper.step
+    login_helper.register_and_login
     visit user_path(@author_name.parameterize)
   end
 
