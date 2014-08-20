@@ -20,5 +20,10 @@ module PostHelperSupport
     def post_title
       @post_title.to_s
     end
+
+    def step
+      @post_body.step
+      @post_title.step
+    end
   end # class PostHelperSupport::PostCreatorData
 end # module PostHelperSupport

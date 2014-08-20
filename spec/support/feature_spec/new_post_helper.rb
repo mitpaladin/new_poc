@@ -4,6 +4,10 @@ require_relative 'post_helper_support/post_creator_data'
 
 # Feature-spec support class to create and publish a new post.
 class FeatureSpecNewPostHelper < FeatureSpecHelperBase
+  extend Forwardable
+
+  def_delegator :@data, :step, :step
+
   def create_image_post
     create_post
   end
@@ -12,7 +16,7 @@ class FeatureSpecNewPostHelper < FeatureSpecHelperBase
     create_post(false)
   end
 
-  protected
+  private
 
   def click_new_post_navbar_link
     s.instance_eval do

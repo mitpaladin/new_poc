@@ -18,6 +18,31 @@ module PostHelperSupport
       end
     end # describe 'has a method returning a String or equivalent for'
 
+    describe 'has a #step method that updates' do
+      let(:obj) { PostCreatorData.new }
+      let(:pb_format) do
+        'This is \*another\* post body\. \(Number (\d+?) in a series\.\)'
+      end
+      let(:patterns) do
+        {
+          post_title: Regexp.new(/Post Title (\d+?)/),
+          post_body:  Regexp.new(pb_format)
+        }
+      end
+
+      [:post_title, :post_body].each do |method_sym|
+        it "the internal field so that ##{method_sym} returns the next value" do
+          v1 = obj.send method_sym
+          index1 = Integer(patterns[method_sym].match(v1)[1])
+          expect(index1).to eq 1
+          obj.step
+          v2 = obj.send method_sym
+          index2 = Integer(patterns[method_sym].match(v2)[1])
+          expect(index2).to eq 2
+        end
+      end
+    end # describe 'has a #step method that updates'
+
     context 'by default' do
       let(:obj) { PostCreatorData.new }
 
