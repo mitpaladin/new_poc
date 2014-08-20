@@ -5,7 +5,7 @@ require_relative 'user_helper_support/user_creator_data'
 # Feature-spec support class to create and log in with a new user.
 class FeatureSpecLoginHelper < FeatureSpecHelperBase
   extend Forwardable
-
+  attr_accessor :data
   def_delegator :@data, :step, :step
 
   def initialize(spec_obj, data = UserHelperSupport::UserCreatorData.new)
@@ -31,6 +31,7 @@ class FeatureSpecLoginHelper < FeatureSpecHelperBase
   end
 
   def login
+    setup_user_fields
     s.instance_eval do
       within(:css, 'ul.navbar-nav') do
         click_link 'Log in'
