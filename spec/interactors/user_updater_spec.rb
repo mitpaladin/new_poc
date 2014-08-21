@@ -56,7 +56,7 @@ module DSO
 
       it 'an invalid email address' do
         @data = user_data.clone.merge email: 'bogus email address'
-        @expected = ['Email does not appear to be valid']
+        @expected = ['Email does not appear to be a valid e-mail address']
       end
 
       # A reminder: the DSO strips leading/trailing spaces from hash items.

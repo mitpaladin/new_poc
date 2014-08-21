@@ -103,7 +103,7 @@ describe UsersController do
 
       it 'an invalid email address' do
         params[:email] = 'jruser at example dot com'
-        @messages = ['Email does not appear to be valid']
+        @messages = ['Email does not appear to be a valid e-mail address']
       end
 
       it 'mismatched passwords' do
