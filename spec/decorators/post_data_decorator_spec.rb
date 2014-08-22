@@ -78,7 +78,7 @@ describe PostDataDecorator do
 
     it 'returns a paragraph tag' do
       post.publish
-      pubdate = post.pubdate.localtime.strftime '%c %Z'
+      pubdate = post.pubdate.localtime.strftime '%a %b %e %Y at %R %Z (%z)'
       expected = '<p><time pubdate="pubdate">' \
           "Posted #{pubdate} by #{post.author_name}" \
           '</time></p>'

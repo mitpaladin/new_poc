@@ -1,9 +1,13 @@
 
+require 'decorator_shared/timestamp_builder'
+
 # PostDataDecorator: Draper Decorator, aka ViewModel, for the Post model.
 class PostDataDecorator < Draper::Decorator
   # Build article byline markup. Called on behalf of
   # PostDataDecorator#build_byline.
   class BylineBuilder
+    extend DecoratorShared
+
     def initialize(decorated_entry)
       @entry = decorated_entry
     end
@@ -29,7 +33,7 @@ class PostDataDecorator < Draper::Decorator
     end
 
     def build_pubdate
-      entry.pubdate.localtime.strftime '%c %Z'
+      UserDataDecorator.timestamp_for entry.pubdate
     end
   end
 end # class PostDataDecorator
