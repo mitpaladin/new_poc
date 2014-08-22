@@ -88,8 +88,7 @@ describe PostDataDecorator do
   describe :pubdate_str do
     it 'returns the correctly-formatted string equivalent of #pubdate' do
       post.publish
-      expected = post.pubdate.localtime.strftime '%a %b %e %Y at %R %Z (%z)'
-      expect(post.pubdate_str).to eq expected
+      expect(post.pubdate_str).to eq post.timestamp_for(post.pubdate)
     end
   end
 

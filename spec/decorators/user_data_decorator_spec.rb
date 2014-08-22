@@ -98,9 +98,7 @@ describe UserDataDecorator do
           let(:content) { cell.content }
 
           it 'the correct local-time format' do
-            format = '%a %b %e %Y at %R %Z (%z)'
-            expected = user.created_at.localtime.strftime format
-            expect(content).to eq expected
+            expect(content).to eq user.timestamp_for(user.created_at)
           end
         end # describe 'contains a formatted timestamp with'
       end # describe 'the third table-data cell'

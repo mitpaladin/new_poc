@@ -6,6 +6,7 @@ require 'decorator_shared/timestamp_builder'
 # Dummy test class for testing the DecoratorShared#timestamp_for function.
 class DummyTestClass
   extend DecoratorShared
+  include DecoratorShared
 end
 
 describe DummyTestClass do
@@ -19,10 +20,17 @@ describe DummyTestClass do
       end
 
       it 'called without a parameter, as if called using the current time' do
-        the_time = DateTime.now.to_time
-        expected = the_time.strftime '%a %b %e %Y at %R %Z (%z)'
+        expected = DateTime.now.to_time.strftime DummyTestClass.timestamp_format
         expect(DummyTestClass.timestamp_for).to eq expected
       end
     end # describe 'returns a formatted time/date string when'
   end # describe :timestamp_for
+
+  describe :timestamp_format do
+
+    it 'returns the correct Time#strftime format string' do
+      expected = '%a %b %e %Y at %R %Z (%z)'
+      expect(DummyTestClass.timestamp_format).to eq expected
+    end
+  end
 end # describe DummyTestClass

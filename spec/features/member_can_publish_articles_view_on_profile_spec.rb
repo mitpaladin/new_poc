@@ -3,6 +3,7 @@ require 'spec_helper'
 
 require 'support/feature_spec/login_helper'
 require 'support/feature_spec/new_post_helper'
+require 'support/feature_spec/timestamp_helper'
 
 describe 'Member can publish articles and' do
 
@@ -22,9 +23,8 @@ describe 'Member can publish articles and' do
     expected = [
       %("#{@post_title}"),
       'Published',
-      Time.now.localtime.strftime('%a %b %e %Y at %R %Z (%z)')
+      FeatureSpecTimestampHelper.to_timestamp_s
     ].join ' '
     expect(link).to have_text expected
   end
-
 end # describe 'Member can publish articles and'
