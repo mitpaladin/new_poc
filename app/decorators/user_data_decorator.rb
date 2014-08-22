@@ -1,10 +1,13 @@
 
 require 'draper'
 
+require 'decorator_shared/timestamp_builder'
+
 # UserDataDecorator: Draper Decorator, aka ViewModel, for the UserData model.
 class UserDataDecorator < Draper::Decorator
   decorates_finders
   delegate_all
+  extend DecoratorShared
 
   def build_profile
     MarkdownHtmlConverter.new.to_html @object[:profile]
@@ -31,7 +34,8 @@ class UserDataDecorator < Draper::Decorator
   end
 
   def build_member_since_item
-    value = created_at.localtime.strftime '%a %b %e %Y at %R %Z (%z)'
+    # value = created_at.localtime.strftime '%a %b %e %Y at %R %Z (%z)'
+    value = UserDataDecorator.timestamp_for created_at
     h.content_tag :td, value
   end
 
