@@ -22,7 +22,7 @@ describe 'Member can publish articles and' do
     expected = [
       %("#{@post_title}"),
       'Published',
-      Time.now.localtime.strftime('%c %Z')
+      Time.now.localtime.strftime('%a %b %e %Y at %R %Z (%z)')
     ].join ' '
     expect(link).to have_text expected
   end

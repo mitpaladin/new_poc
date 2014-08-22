@@ -3,7 +3,7 @@ shared_examples 'a profile article list' do |fragment_builder|
   let(:post_count) { 5 }
   let(:user) { FactoryGirl.create :user_datum }
   let(:pubdate) { Chronic.parse '3 days ago at 3 PM' }
-  let(:pubdate_str) { pubdate.localtime.strftime '%c %Z' }
+  let(:pubdate_str) { pubdate.localtime.strftime '%a %b %e %Y at %R %Z (%z)' }
   let!(:posts) do
     FactoryGirl.create_list :post_datum, post_count,
                             author_name: user.name,
