@@ -12,16 +12,16 @@ GIT
 
 GIT
   remote: git://github.com/alexdunae/validates_email_format_of.git
-  revision: 038e2d2399ed801b35ff95b62e4421d3b5b1507e
+  revision: 8493531b956ee51fdea38ea52bbcef81a9896104
   specs:
     validates_email_format_of (1.6.0)
       i18n
 
 GIT
   remote: git://github.com/elabs/pundit.git
-  revision: 165c7f4e5c523e25d64f508da3a03cfd1c7f53db
+  revision: 3bdc40e563f413e322ce6946b1e6ed949830c2d3
   specs:
-    pundit (0.2.3)
+    pundit (0.3.0)
       activesupport (>= 3.0.0)
 
 GIT
@@ -446,6 +446,7 @@ GEM
       polyglot
       polyglot
       polyglot
+      polyglot (>= 0.3.1)
       polyglot (>= 0.3.1)
       polyglot (>= 0.3.1)
       polyglot (>= 0.3.1)

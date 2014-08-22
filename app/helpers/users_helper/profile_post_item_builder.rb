@@ -25,10 +25,6 @@ class ProfilePostItemBuilder
   end
 
   def link_text
-    [
-      ['"', '"'].join(post.title),
-      'Published',
-      post.pubdate.localtime.strftime('%c %Z')
-    ].join ' '
+    ["\"#{post.title}\"", 'Published', post.pubdate_str].join ' '
   end
 end

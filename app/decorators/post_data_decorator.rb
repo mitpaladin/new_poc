@@ -1,13 +1,16 @@
 
 require 'draper'
 
-require_relative './post_data_decorator/image_body_builder'
-require_relative './post_data_decorator/text_body_builder'
+require_relative 'post_data_decorator/image_body_builder'
+require_relative 'post_data_decorator/text_body_builder'
+
+require_relative 'decorator_shared/timestamp_builder'
 
 # PostDataDecorator: Draper Decorator, aka ViewModel, for the PostData model.
 class PostDataDecorator < Draper::Decorator
   decorates_finders
   delegate_all
+  include DecoratorShared
 
   # After Avdi's #render_body; his "exhibits" are much more closely associated
   # with views than Draper's decorators are. While that's a perfectly valid
@@ -24,6 +27,10 @@ class PostDataDecorator < Draper::Decorator
 
   def build_byline
     BylineBuilder.new(self).to_html
+  end
+
+  def pubdate_str
+    timestamp_for pubdate
   end
 
   def published?
