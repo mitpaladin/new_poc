@@ -83,7 +83,7 @@ describe Blog do
           'Ready for Thursday?',
           'Finally Friday'
         ]
-        actual = blog.sort.map { |entry| entry.title }
+        actual = blog.sort.map(&:title)
         expect(actual).to eq expected_titles
       end
     end # context 'for a collection of published posts'

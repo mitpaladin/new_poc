@@ -11,7 +11,7 @@ shared_examples 'Post field priority' do |params|
   priority = "#{params[:priority]}=".to_sym
 
   # Write nice description
-  others_str = others.each { |other| other.to_s }
+  others_str = others.each(&:to_s)
       .join(', ')
       .sub(/, (\S+)$/, ' or \1')
       .sub(/image_url/, 'image URL')

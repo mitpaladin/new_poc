@@ -19,7 +19,7 @@ module MatcherSupport
       @messages = []
       items = Internal::ComparedItemsBuilder.new(actual_blog, other_blog).build
       items.each { |item| @messages << compare(item) }
-      @messages.delete_if { |x| !x }
+      @messages.delete_if(&:!)
       self
     end
 

@@ -13,6 +13,7 @@ gem 'fancy-open-struct'
 gem 'htmlentities'
 gem 'jbuilder', '~> 2.0'
 gem 'jquery-rails'
+gem 'markdown-toolbar'
 gem 'naught'
 gem 'pundit', github: 'elabs/pundit'
 gem 'rails', '4.1.5'
@@ -40,12 +41,27 @@ group :development do
   gem 'binding_of_caller'
   gem 'bullet'
   gem 'meta_request'
-  gem 'metric_fu'
-  gem 'pry-full'
+  gem 'metric_fu', github: 'metricfu/metric_fu'
+  # 'rking/pry-full' hasn't been maintained since Feb 2013; breaks Ruby 2.1.
+  # Its individual *components* are mostly fixed, so...
+  # gem 'pry-full'
+  gem 'pry'
+  gem 'pry-theme'
+  gem 'pry-pretty-numeric'
+  # gem 'pry-syntax-hacks'
+  gem 'pry-highlight'
+  gem 'pry-editline'
+  gem 'pry-git'
+  gem 'pry-developer_tools'
+  gem 'awesome_print'
+  # End of 'pry-full' foolishness.
+  gem 'pry-byebug'
   gem 'pry-rails'
   gem 'pry-rescue'
   gem 'rails-footnotes'
-  gem 'rubocop', github: 'bbatsov/rubocop', ref: '075846d'
+  # gem 'rubocop', github: 'bbatsov/rubocop', ref: '05cf121' # fails
+  # gem 'rubocop', github: 'bbatsov/rubocop', ref: 'e9f3428' # fails
+  gem 'rubocop', github: 'bbatsov/rubocop', ref: '1171580' # works
   gem 'spring'
 end
 
@@ -56,10 +72,12 @@ group :development, :test do
   gem 'database_cleaner'
   gem 'factory_girl_rails'
   gem 'quiet_assets'
-  gem 'rspec' #, '~> 2.99.0'
+  # RSpec *should* be 3.0. See Issue #90.
+  gem 'rspec', '~> 2.99.0'
   gem 'rspec-collection_matchers'
   gem 'rspec-html-matchers'
-  gem 'rspec-http'
+  # Original 'c42/rspec-http' is abandoned, pre-dates RSpec 2.14(!), now at 3.0
+  gem 'rspec-http', github: 'shishir/rspec-http'
   gem 'rspec-rails'
   gem 'ruby-growl'
   gem 'simplecov'
