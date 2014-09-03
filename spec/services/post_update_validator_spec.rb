@@ -5,8 +5,8 @@ describe PostUpdateValidator do
   let(:klass) { PostUpdateValidator }
 
   describe :initialize.to_s do
-    it 'requires two parameters' do
-      message = 'wrong number of arguments (0 for 2)'
+    it 'requires one or two parameters' do
+      message = 'wrong number of arguments (0 for 1..2)'
       expect { klass.new }.to raise_error ArgumentError, message
     end
 

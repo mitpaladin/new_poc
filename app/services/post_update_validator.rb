@@ -9,7 +9,7 @@
 class PostUpdateValidator
   attr_reader :messages
 
-  def initialize(post, data)
+  def initialize(post, data = {})
     @post = post
     @data = data
     @messages = {}
@@ -21,7 +21,7 @@ class PostUpdateValidator
   end
 
   def valid?
-    return true if @data.empty?
+    # return true if @data.empty?
     validate combined_data
   end
 
