@@ -37,7 +37,8 @@ end
 
 group :development do
   gem 'annotate'
-  gem 'better_errors'
+  # gem 'better_errors'
+  gem 'web-console', '2.0.0.beta3'
   gem 'binding_of_caller'
   gem 'bullet'
   gem 'meta_request'
