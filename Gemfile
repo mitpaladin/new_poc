@@ -29,6 +29,7 @@ gem 'sqlite3'
 gem 'thin'
 gem 'uglifier', '>= 2.5.1'
 gem 'validates_email_format_of', github: 'alexdunae/validates_email_format_of'
+gem 'wisper'
 gem 'yajl-ruby'
 
 group :doc do
