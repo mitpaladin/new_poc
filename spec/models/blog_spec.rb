@@ -13,11 +13,43 @@ end
 describe Blog do
 
   subject(:blog) { Blog.new }
-
-  it 'has an initialiser that accepts no arguments' do
-    expect { Blog.new nil }
-        .to raise_error ArgumentError, 'wrong number of arguments (1 for 0)'
+  let(:default_title) { 'Watching Paint Dry' }
+  let(:default_subtitle) do
+    'The trusted source for drying paint news and opinion'
   end
+
+  describe 'has an initialiser that' do
+    it 'accepts one optional parameter' do
+      p = Blog.method :new
+      # A value of 1 means "1 required param", with -1 as "one optional param"
+      expect(p.arity).to eq(-1)
+    end
+
+    context 'when no parameters are passed to the initializer' do
+
+      it 'has the default value for the blog title' do
+        expect(blog.title).to eq default_title
+      end
+
+      it 'has the default value for the blog subtitle' do
+        expect(blog.subtitle).to eq default_subtitle
+      end
+    end # context 'when no parameters are passed to the initializer'
+
+    context 'when a parameter Hash is passed to the initialiser' do
+      let(:title) { 'Some Blog Title' }
+      let(:subtitle) { 'Some Subtitle Or Other' }
+      let(:blog) { Blog.new title: title, subtitle: subtitle }
+
+      it 'has the specified value for the blog title' do
+        expect(blog.title).to eq title
+      end
+
+      it 'has the specified value for the blog subtitle' do
+        expect(blog.subtitle).to eq subtitle
+      end
+    end # context 'when a parameter Hash is passed to the initialiser'
+  end # describe 'has an initialiser that'
 
   describe 'has accessors for' do
 
