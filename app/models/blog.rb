@@ -1,6 +1,4 @@
 
-include Forwardable
-
 # Blog class encapsulates the blog as a whole.
 class Blog
   include Comparable
