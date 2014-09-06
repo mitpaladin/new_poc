@@ -3,6 +3,6 @@
 class BlogController < ApplicationController
   def index
     @blog = policy_scope(BlogData.first).decorate
-    authorize @blog
+    # authorize @blog
   end
 end # class BlogController
