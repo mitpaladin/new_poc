@@ -103,7 +103,8 @@ describe Post do
 
       it 'returns the correct error message in the array' do
         expect(post).to have(1).error_message
-        expect(post.error_messages).to include "Title can't be blank"
+        expect(post.error_messages.first).to match(/\ATitle .+?\z/)
+        # expect(post.error_messages).to include "Title can't be blank"
       end
     end # context 'when called on an invalid post'
   end # describe :error_messages
@@ -227,4 +228,23 @@ describe Post do
                     others:   [:image_url]
 
   end # describe '<=>'
+
+  describe :to_h do
+    it 'returns a Hash' do
+      expect(post.to_h).to be_a Hash
+    end
+
+    describe 'contains all expected keys, including' do
+      [:title, :body, :image_url, :author_name, :slug].each do |attr|
+        it ":#{attr}" do
+          expect(post.to_h[attr]).to eq post_attribs[attr]
+        end
+      end
+
+      it :pubdate do
+        expect(post.to_h).to have_key :pubdate
+      end
+    end # describe 'contains all expected keys, including'
+  end
+
 end # describe Post

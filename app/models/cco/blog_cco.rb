@@ -1,6 +1,7 @@
 
 require_relative 'base'
-require 'blo/blog_data_boundary'
+
+require 'blog_entity_post_loader'
 
 module CCO
   # Third-generation CCO for Blogs.
@@ -39,11 +40,9 @@ module CCO
       ret
     end
 
-    def self.to_entity(impl, _params = {})
+    def self.to_entity(_impl, _params = {})
       ret = super
-      ::BLO::BlogDataBoundary.new(impl).entries.each do |entry|
-        ret.entries << entry
-      end
+      DSO::BlogEntityPostLoader.run! blog: ret
       ret
     end
   end # class CCO::BlogCCO

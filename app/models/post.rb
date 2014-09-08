@@ -14,8 +14,9 @@ class Post
   end
 
   def error_messages
-    return [] if valid?
-    BLO::PostDataBoundary.full_error_messages self
+    validator = PostUpdateValidator.new self
+    return [] if validator.valid?
+    validator.messages.values
   end
 
   def publish(published_at = Time.now)
@@ -27,8 +28,19 @@ class Post
     pubdate.present?
   end
 
+  def to_h
+    {
+      author_name:  author_name,
+      body:         body,
+      image_url:    image_url,
+      pubdate:      pubdate,
+      slug:         slug,
+      title:        title
+    }
+  end
+
   def valid?
-    BLO::PostDataBoundary.valid? self
+    PostUpdateValidator.new(self).valid?
   end
 
   def <=>(other)

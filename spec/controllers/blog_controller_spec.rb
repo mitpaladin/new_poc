@@ -60,9 +60,7 @@ describe BlogController do
           end
         end # describe 'that'
 
-        it 'that is decorated with a BlogDataDecorator' do
-          expect(@blog).to be_decorated_with(BlogDataDecorator)
-        end
+        # Underlying implementation model, ergo decorators, going away...
 
         # No tests for entries; the *implementation model* knows no entries!
 
@@ -105,9 +103,7 @@ describe BlogController do
           end
         end # describe 'that'
 
-        it 'that is decorated with a BlogDataDecorator' do
-          expect(@blog).to be_decorated_with(BlogDataDecorator)
-        end
+        # Underlying implementation model, ergo decorators, going away...
 
         # No tests for entries; the *implementation model* knows no entries!
 

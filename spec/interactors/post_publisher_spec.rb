@@ -30,10 +30,11 @@ module DSO
         end
 
         it 'reporting the correct full error message' do
-          message = "Post Title can't be blank"
+          # message = "Post Title can't be blank" # See Issue #94.
+          message = /\APost Title .+?\z/
           result = klass.run post: post
           expect(result.errors.full_messages).to have(1).item
-          expect(result.errors.full_messages).to include message
+          expect(result.errors.full_messages.first).to match message
         end
       end # context 'an invalid Post, by'
     end # describe 'fails when called with'

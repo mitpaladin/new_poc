@@ -55,10 +55,13 @@ module DSO
           expect(post).to_not be_valid
         end
 
-        it 'the expected error is shown to have been detected' do
-          message = 'Body must be present if image URL is not present'
-          expect(post).to have(1).error_message
-          expect(post.error_messages).to include message
+        it 'the expected errors are shown to have been detected' do
+          format_str = '%s must be present if %s is missing or blank'
+          body_message = format format_str, 'Body', 'image url'
+          image_message = format format_str, 'Image url', 'body'
+          expect(post).to have(2).error_messages
+          expect(post.error_messages).to include body_message
+          expect(post.error_messages).to include image_message
         end
 
         it 'the post has not been published' do
