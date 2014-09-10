@@ -4,46 +4,59 @@ source 'https://rails-assets.org'
 
 gem 'active_attr'
 gem 'active_interaction'
-gem 'bcrypt-ruby', '~> 3.1.5'
+gem 'bcrypt-ruby'
 gem 'bundler-reorganizer'
-gem 'coffee-rails', '~> 4.0.0'
-gem 'draper', github: 'drapergem/draper'
-gem 'friendly_id', '~> 5.0.4'
+gem 'coffee-rails'
+gem 'draper'
 gem 'fancy-open-struct'
+gem 'friendly_id' #, github: 'norman/friendly_id'
 gem 'htmlentities'
-gem 'jbuilder', '~> 2.0'
+gem 'jbuilder'
 gem 'jquery-rails'
-gem 'markdown-toolbar'
-gem 'naught'
-gem 'pundit', github: 'elabs/pundit'
+gem 'markdown-toolbar', github: 'fuksito/markdown-toolbar'
+gem 'naught', github: 'avdi/naught'
+gem 'pundit'
 gem 'rails', '4.1.5'
+# gem 'rails', '4.1.6.rc2'
 gem 'rails-assets-bootstrap', '~> 3.2.0'
 gem 'rails-assets-bootswatch', '~> 3.2.0'
 gem 'rails-assets-sugar'
 gem 'rails-assets-underscore'
 gem 'redcarpet' # , github: 'vmg/redcarpet'
 gem 'rouge'
-gem 'sass-rails', '~> 4.0.3'
-gem 'slim-rails'
+gem 'sass-rails'
+gem 'slim-rails', github: 'slim-template/slim-rails'
 gem 'sqlite3'
 gem 'thin'
-gem 'uglifier', '>= 2.5.1'
-gem 'validates_email_format_of', github: 'alexdunae/validates_email_format_of'
+gem 'uglifier'
+gem 'validates_email_format_of'
 gem 'wisper'
-gem 'yajl-ruby'
+gem 'yajl-ruby', github: 'brianmario/yajl-ruby'
 
 group :doc do
-  gem 'sdoc', '~> 0.4.0'
+  gem 'sdoc'
 end
 
 group :development do
-  gem 'annotate'
-  # gem 'better_errors'
-  gem 'web-console', '2.0.0.beta3'
+  gem 'annotate', github: 'ctran/annotate_models'
+  # gem 'better_errors' # replaced by 'web-console'
+  gem 'web-console', github: 'rails/web-console'  # replaces 'better_errors'
   gem 'binding_of_caller'
   gem 'bullet'
   gem 'meta_request'
-  gem 'metric_fu', github: 'metricfu/metric_fu'
+  # metric_fu aggregates flog, flay, metric_fu-Saikuro, churn, reek, roodi,
+  # code_statistics, and rails_best_practices; several of which haven't been
+  # officially updated in *years*. Perhaps more selective filtering is
+  # warranted?
+  # gem 'metric_fu', github: 'metricfu/metric_fu'
+  gem 'flog' # , github: 'seattlerb/flog'
+  gem 'flay' # , github: 'seattlerb/flay'
+  gem 'metric_fu-Saikuro', github: 'metricfu/Saikuro'
+  gem 'churn', github: 'danmayer/churn'
+  gem 'reek', github: 'troessner/reek'
+  gem 'roodi'
+  # gem 'code_statistics' # Statistics like it's 2009, apparently
+  gem 'rails_best_practices'
   # 'rking/pry-full' hasn't been maintained since Feb 2013; breaks Ruby 2.1.
   # Its individual *components* are mostly fixed, so...
   # gem 'pry-full'
@@ -61,28 +74,33 @@ group :development do
   gem 'pry-rails'
   gem 'pry-rescue'
   gem 'rails-footnotes'
-  gem 'rubocop', github: 'bbatsov/rubocop'
+  gem 'rubocop'
   gem 'spring'
 end
 
 group :development, :test do
   gem 'capybara'
   gem 'capybara-webkit'
-  gem 'chronic'
-  gem 'database_cleaner'
+  gem 'chronic', github: 'mojombo/chronic'
+  gem 'database_cleaner', github: 'DatabaseCleaner/database_cleaner'
   gem 'factory_girl_rails'
   gem 'quiet_assets'
   # RSpec *should* be 3.0. See Issue #90.
-  gem 'rspec', '~> 2.99.0'
+  gem 'rspec' # , '~> 2.99.0'
   gem 'rspec-collection_matchers'
-  gem 'rspec-html-matchers'
-  # Original 'c42/rspec-http' is abandoned, pre-dates RSpec 2.14(!), now at 3.0
-  gem 'rspec-http', github: 'shishir/rspec-http'
-  gem 'rspec-rails'
+  # Fork doesn't have version dependency; *has* RSpec 3 'expect' syntax. Win!
+  gem 'rspec-html-matchers', github: 'seomoz/rspec-html-matchers'
+  # Original 'c42/rspec-http' is abandoned, pre-dates RSpec 2.14(!), now at 3.1.
+  # jdickey/rspec-http forked from shishir/rpec-http, which takes us to 2.99.0
+  # but needs work for RSpec 3.x.
+  gem 'rspec-http', github: 'jdickey/rspec-http'
+  # *Shoddy* release engineering. AIWT, 300+ commits since 3.0.0beta2 on master.
+  # gem 'rspec-rails', github: 'rspec/rspec-rails', branch: '3-1-maintenance'
+  gem 'rspec-rails', '~> 2.99.0'
   gem 'ruby-growl'
   gem 'simplecov'
   gem 'tapout'
-  gem 'teaspoon'
+  gem 'teaspoon', github: 'modeset/teaspoon'
 end
 
 group :test do

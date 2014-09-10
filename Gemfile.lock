@@ -1,63 +1,112 @@
 GIT
-  remote: git://github.com/alexdunae/validates_email_format_of.git
-  revision: 8493531b956ee51fdea38ea52bbcef81a9896104
+  remote: git://github.com/DatabaseCleaner/database_cleaner.git
+  revision: 5d85717975107e64521e943c8cac338eff080bab
   specs:
-    validates_email_format_of (1.6.0)
-      i18n
+    database_cleaner (1.3.0)
 
 GIT
-  remote: git://github.com/bbatsov/rubocop.git
-  revision: 422675a4e10305055eae2954d5d6bd5a66cea83d
+  remote: git://github.com/avdi/naught.git
+  revision: 7aab7b3f4b3af3312adae6f3aeb48c32329fddd3
   specs:
-    rubocop (0.26.0)
-      astrolabe (~> 1.3)
-      parser (>= 2.2.0.pre.4, < 3.0)
-      powerpack (~> 0.0.6)
-      rainbow (>= 1.99.1, < 3.0)
-      ruby-progressbar (~> 1.4)
+    naught (1.0.0)
 
 GIT
-  remote: git://github.com/drapergem/draper.git
-  revision: ff41f17fa3789e04c96d8bc2e53de55714e216ab
+  remote: git://github.com/brianmario/yajl-ruby.git
+  revision: d2e4ddee0158be330bd92dd79e42d15e3abfc3e5
   specs:
-    draper (1.3.1)
-      actionpack (>= 3.0)
-      activemodel (>= 3.0)
-      activesupport (>= 3.0)
-      request_store (~> 1.0.3)
+    yajl-ruby (1.2.1)
 
 GIT
-  remote: git://github.com/elabs/pundit.git
-  revision: b0b3f2c7289624a8718b9577c27c175c81bbcc53
+  remote: git://github.com/ctran/annotate_models.git
+  revision: 038b13c04e575cc0f0c89c702c994166c7dc9955
   specs:
-    pundit (0.3.0)
-      activesupport (>= 3.0.0)
+    annotate (2.6.5)
+      activerecord (>= 2.3.0)
+      rake (>= 0.8.7)
 
 GIT
-  remote: git://github.com/metricfu/metric_fu.git
-  revision: 4a60aa94f7ab455ee8398fc1028599147a692cf4
+  remote: git://github.com/danmayer/churn.git
+  revision: 2a03510d2b761812a36eac62b2d3e2858cc8ea59
   specs:
-    metric_fu (4.11.1)
-      cane (~> 2.5, >= 2.5.2)
-      churn (~> 0.0.35)
-      code_metrics (~> 0.1)
-      coderay
-      flay (~> 2.1, >= 2.0.1)
-      flog (~> 4.1, >= 4.1.1)
-      launchy (~> 2.0)
-      metric_fu-Saikuro (~> 1.1, >= 1.1.3)
-      multi_json
-      rails_best_practices (~> 1.14, >= 1.14.3)
-      redcard
-      reek (~> 1.3, >= 1.3.4)
-      roodi (~> 3.1)
+    churn (1.0.2)
+      chronic (>= 0.2.3)
+      hirb
+      json_pure
+      main
+      rest-client (>= 1.6.0)
+      ruby_parser (~> 3.0)
+      sexp_processor (~> 4.1)
 
 GIT
-  remote: git://github.com/shishir/rspec-http.git
+  remote: git://github.com/fuksito/markdown-toolbar.git
+  revision: d654f573ca8b6aed53667ed8fe1d9cfb510ac118
+  specs:
+    markdown-toolbar (0.2.4)
+
+GIT
+  remote: git://github.com/jdickey/rspec-http.git
   revision: 5c99f9c3b5b1e400533d03c204cdf7c572561387
   specs:
     rspec-http (0.10.0)
       rspec (~> 2.99)
+
+GIT
+  remote: git://github.com/metricfu/Saikuro.git
+  revision: 49b1adc997db33265203aff9d3597d438b9031db
+  specs:
+    metric_fu-Saikuro (1.1.3)
+
+GIT
+  remote: git://github.com/modeset/teaspoon.git
+  revision: 592c0dba4c1131f0107f773b483079cda61f5b06
+  specs:
+    teaspoon (0.8.0)
+      railties (>= 3.2.5, < 5)
+
+GIT
+  remote: git://github.com/mojombo/chronic.git
+  revision: 1b93e33592c388ca098cce3b28df064cd0d12061
+  specs:
+    chronic (0.10.2)
+      numerizer (~> 0.2)
+
+GIT
+  remote: git://github.com/rails/web-console.git
+  revision: cbb58f38fb6b098dee0e4f6a2b5fc1c45b14b7bf
+  specs:
+    web-console (2.0.0.beta3)
+      activemodel (~> 4.0)
+      binding_of_caller (= 0.7.3.pre1)
+      railties (~> 4.0)
+      sprockets-rails (>= 2.0, < 4.0)
+
+GIT
+  remote: git://github.com/seomoz/rspec-html-matchers.git
+  revision: db4a3b918bc8b2e0d29d85df7c9a3004a3e06088
+  specs:
+    rspec-html-matchers (0.5.0)
+      nokogiri (~> 1)
+      rspec
+
+GIT
+  remote: git://github.com/slim-template/slim-rails.git
+  revision: 01361c8c9db3b2b52704bcfb86191cb59bdb1e62
+  specs:
+    slim-rails (2.1.5)
+      actionpack (>= 3.0, < 4.2)
+      activesupport (>= 3.0, < 4.2)
+      railties (>= 3.0, < 4.2)
+      slim (~> 2.0)
+
+GIT
+  remote: git://github.com/troessner/reek.git
+  revision: 5d5350a70aafef61b7dd19446ba7438a90771cc3
+  specs:
+    reek (1.3.8)
+      rainbow (>= 1.99, < 3.0)
+      ruby2ruby (>= 2.0.8, < 3.0)
+      ruby_parser (>= 3.5.0, < 4.0)
+      sexp_processor (~> 4.4)
 
 GEM
   remote: https://rubygems.org/
@@ -94,10 +143,6 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.1)
       tzinfo (~> 1.1)
-    addressable (2.3.6)
-    annotate (2.6.5)
-      activerecord (>= 2.3.0)
-      rake (>= 0.8.7)
     ansi (1.4.3)
     arel (5.0.1.20140414130214)
     arrayfields (4.9.2)
@@ -114,7 +159,7 @@ GEM
       actionpack
       activesupport
     builder (3.2.2)
-    bullet (4.13.1)
+    bullet (4.13.2)
       activesupport (>= 3.0.0)
       uniform_notifier (>= 1.6.0)
     bundler-reorganizer (1.1.1)
@@ -124,8 +169,6 @@ GEM
       debugger-linecache (~> 1.2)
       slop (~> 3.6)
     callsite (0.0.11)
-    cane (2.6.2)
-      parallel
     capybara (2.4.1)
       mime-types (>= 1.16)
       nokogiri (>= 1.3.3)
@@ -135,18 +178,8 @@ GEM
     capybara-webkit (1.3.0)
       capybara (>= 2.0.2, < 2.5.0)
       json
-    chronic (0.10.2)
-    churn (0.0.35)
-      chronic (>= 0.2.3)
-      hirb
-      json_pure
-      main
-      rest-client (>= 1.6.0)
-      ruby_parser (~> 3.0)
-      sexp_processor (~> 4.1)
     code_analyzer (0.4.5)
       sexp_processor
-    code_metrics (0.1.3)
     coderay (1.1.0)
     coffee-rails (4.0.1)
       coffee-script (>= 2.2.0)
@@ -158,12 +191,16 @@ GEM
     colored (1.2)
     columnize (0.8.9)
     daemons (1.1.9)
-    database_cleaner (1.3.0)
     debug_inspector (0.0.2)
     debugger-linecache (1.2.0)
     diff-lcs (1.2.5)
     diffy (3.0.6)
     docile (1.1.5)
+    draper (1.3.1)
+      actionpack (>= 3.0)
+      activemodel (>= 3.0)
+      activesupport (>= 3.0)
+      request_store (~> 1.0.3)
     erubis (2.7.0)
     eventmachine (1.0.3)
     execjs (2.2.1)
@@ -200,8 +237,6 @@ GEM
       thor (>= 0.14, < 2.0)
     json (1.8.1)
     json_pure (1.8.1)
-    launchy (2.4.2)
-      addressable (~> 2.3)
     macaddr (1.7.1)
       systemu (~> 2.6.2)
     mail (2.5.4)
@@ -213,22 +248,19 @@ GEM
       fattr (>= 2.2.0)
       map (>= 5.1.0)
     map (6.5.4)
-    markdown-toolbar (0.2.4)
     meta_request (0.3.4)
       callsite (~> 0.0, >= 0.0.11)
       rack-contrib (~> 1.1)
       railties (>= 3.0.0, < 5.0.0)
     method_source (0.8.2)
-    metric_fu-Saikuro (1.1.3)
     mime-types (1.25.1)
     mini_portile (0.6.0)
     minitest (5.4.1)
     multi_json (1.10.1)
-    naught (1.0.0)
     netrc (0.7.7)
     nokogiri (1.6.3.1)
       mini_portile (= 0.6.0)
-    parallel (1.3.0)
+    numerizer (0.2.0)
     parser (2.2.0.pre.4)
       ast (>= 1.1, < 3.0)
       slop (~> 3.4, >= 3.4.5)
@@ -264,6 +296,8 @@ GEM
     pry-theme (1.1.3)
       coderay (~> 1.1)
       json (~> 1.8)
+    pundit (0.3.0)
+      activesupport (>= 3.0.0)
     quiet_assets (1.0.3)
       railties (>= 3.1, < 5.0)
     rack (1.5.2)
@@ -283,7 +317,7 @@ GEM
       sprockets-rails (~> 2.0)
     rails-assets-bootstrap (3.2.0)
       rails-assets-jquery (>= 1.9.0)
-    rails-assets-bootswatch (3.2.0.3)
+    rails-assets-bootswatch (3.2.0.4)
       rails-assets-bootstrap (~> 3.2.0)
     rails-assets-jquery (2.1.1)
     rails-assets-sugar (1.4.2)
@@ -309,19 +343,13 @@ GEM
     rake (10.3.2)
     rdoc (4.1.1)
       json (~> 1.4)
-    redcard (1.1.0)
     redcarpet (3.1.2)
-    reek (1.3.8)
-      rainbow (>= 1.99, < 3.0)
-      ruby2ruby (>= 2.0.8, < 3.0)
-      ruby_parser (~> 3.3)
-      sexp_processor
     request_store (1.0.8)
     require_all (1.3.2)
     rest-client (1.7.2)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
-    roodi (3.3.1)
+    roodi (4.0.0)
       ruby_parser (~> 3.2, >= 3.2.2)
     rouge (1.6.2)
     rspec (2.99.0)
@@ -333,9 +361,6 @@ GEM
     rspec-core (2.99.2)
     rspec-expectations (2.99.2)
       diff-lcs (>= 1.1.3, < 2.0)
-    rspec-html-matchers (0.5.0)
-      nokogiri (~> 1)
-      rspec (~> 2, >= 2.11.0)
     rspec-mocks (2.99.2)
     rspec-rails (2.99.0)
       actionpack (>= 3.0)
@@ -346,6 +371,12 @@ GEM
       rspec-core (~> 2.99.0)
       rspec-expectations (~> 2.99.0)
       rspec-mocks (~> 2.99.0)
+    rubocop (0.26.0)
+      astrolabe (~> 1.3)
+      parser (>= 2.2.0.pre.4, < 3.0)
+      powerpack (~> 0.0.6)
+      rainbow (>= 1.99.1, < 3.0)
+      ruby-progressbar (~> 1.4)
     ruby-growl (4.1)
       uuid (~> 2.3, >= 2.3.5)
     ruby-progressbar (1.5.1)
@@ -372,11 +403,6 @@ GEM
     slim (2.0.3)
       temple (~> 0.6.6)
       tilt (>= 1.3.3, < 2.1)
-    slim-rails (2.1.5)
-      actionpack (>= 3.0, < 4.2)
-      activesupport (>= 3.0, < 4.2)
-      railties (>= 3.0, < 4.2)
-      slim (~> 2.0)
     slop (3.6.0)
     spring (1.1.3)
     sprockets (2.11.0)
@@ -393,8 +419,6 @@ GEM
     tapout (0.4.5)
       ansi
       json
-    teaspoon (0.8.0)
-      railties (>= 3.2.5, < 5)
     temple (0.6.8)
     thin (1.6.2)
       daemons (>= 1.0.9)
@@ -405,71 +429,6 @@ GEM
     tilt (1.4.1)
     treetop (1.4.15)
       polyglot
-      polyglot
-      polyglot
-      polyglot
-      polyglot
-      polyglot
-      polyglot
-      polyglot
-      polyglot
-      polyglot
-      polyglot
-      polyglot
-      polyglot
-      polyglot
-      polyglot
-      polyglot
-      polyglot
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
       polyglot (>= 0.3.1)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
@@ -479,15 +438,11 @@ GEM
     uniform_notifier (1.6.2)
     uuid (2.3.7)
       macaddr (~> 1.0)
-    web-console (2.0.0.beta3)
-      activemodel (~> 4.0)
-      binding_of_caller (= 0.7.3.pre1)
-      railties (~> 4.0)
-      sprockets-rails (>= 2.0, < 4.0)
-    wisper (1.3.0)
+    validates_email_format_of (1.6.1)
+      i18n
+    wisper (1.4.0)
     xpath (2.0.0)
       nokogiri (~> 1.3)
-    yajl-ruby (1.2.1)
 
 PLATFORMS
   ruby
@@ -495,29 +450,32 @@ PLATFORMS
 DEPENDENCIES
   active_attr
   active_interaction
-  annotate
+  annotate!
   awesome_print
-  bcrypt-ruby (~> 3.1.5)
+  bcrypt-ruby
   binding_of_caller
   blind
   bullet
   bundler-reorganizer
   capybara
   capybara-webkit
-  chronic
-  coffee-rails (~> 4.0.0)
-  database_cleaner
-  draper!
+  chronic!
+  churn!
+  coffee-rails
+  database_cleaner!
+  draper
   factory_girl_rails
   fancy-open-struct
-  friendly_id (~> 5.0.4)
+  flay
+  flog
+  friendly_id
   htmlentities
-  jbuilder (~> 2.0)
+  jbuilder
   jquery-rails
-  markdown-toolbar
+  markdown-toolbar!
   meta_request
-  metric_fu!
-  naught
+  metric_fu-Saikuro!
+  naught!
   pry
   pry-byebug
   pry-developer_tools
@@ -528,7 +486,7 @@ DEPENDENCIES
   pry-rails
   pry-rescue
   pry-theme
-  pundit!
+  pundit
   quiet_assets
   rails (= 4.1.5)
   rails-assets-bootstrap (~> 3.2.0)
@@ -536,26 +494,29 @@ DEPENDENCIES
   rails-assets-sugar
   rails-assets-underscore
   rails-footnotes
+  rails_best_practices
   redcarpet
+  reek!
+  roodi
   rouge
-  rspec (~> 2.99.0)
+  rspec
   rspec-collection_matchers
-  rspec-html-matchers
+  rspec-html-matchers!
   rspec-http!
-  rspec-rails
-  rubocop!
+  rspec-rails (~> 2.99.0)
+  rubocop
   ruby-growl
-  sass-rails (~> 4.0.3)
-  sdoc (~> 0.4.0)
+  sass-rails
+  sdoc
   simplecov
-  slim-rails
+  slim-rails!
   spring
   sqlite3
   tapout
-  teaspoon
+  teaspoon!
   thin
-  uglifier (>= 2.5.1)
-  validates_email_format_of!
-  web-console (= 2.0.0.beta3)
+  uglifier
+  validates_email_format_of
+  web-console!
   wisper
-  yajl-ruby
+  yajl-ruby!
