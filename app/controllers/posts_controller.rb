@@ -23,6 +23,12 @@ class PostsController < ApplicationController
     process_create_result
   end
 
+  def edit
+    # FIXME: DSO? Logged in user?
+    @post = PostData.find(params['id']).decorate
+    authorize @post
+  end
+
   def show
     post = PostData.find params[:id]
     @post = PostDataDecorator.new(post)

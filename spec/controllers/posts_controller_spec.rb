@@ -37,7 +37,10 @@ describe PostsController do
     # Can't disable ID-based routing but enable slug-based. This has to be
     # restricted at the controller/DSO level.
     # it { expect(get '/posts/:id').to_not be_routable }
-    it { expect(get '/posts/:id/edit').to_not be_routable }
+    it do
+      expect(get edit_post_path('the-title'))
+          .to route_to controller: 'posts', action: 'edit', id: 'the-title'
+    end
     it { expect(put post_path(1)).to_not be_routable }
     it { expect(delete post_path(1)).to_not be_routable }
   end
@@ -166,6 +169,30 @@ describe PostsController do
       it_behaves_like 'an attempt to create an invalid Post'
     end # context 'for the Guest User'
   end # describe "POST 'create'"
+
+  describe "GET 'edit'" do
+    let(:author) { FactoryGirl.create :user_datum }
+    let!(:post) do
+      FactoryGirl.create(:post_datum, author_name: author.name).decorate
+    end
+
+    before :each do
+      session[:user_id] = author.id
+      get :edit, id: post.slug
+    end
+
+    it 'returns an HTTP status code of OK' do
+      expect(response).to be_ok
+    end
+
+    it 'renders the "edit" template' do
+      response.should render_template 'edit'
+    end
+
+    it 'assigns the :post variable' do
+      expect(assigns[:post]).to eq post.decorate
+    end
+  end # describe "GET 'edit'"
 
   # Currently, *all* published articles are public, so no branching for that.
   # Whether the requesting user is the author or not is irrelevant to the
