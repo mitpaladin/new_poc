@@ -36,6 +36,18 @@ class PostsController < ApplicationController
     authorize @post
   end
 
+  def update
+    post = PostData.find params[:id]
+    authorize post
+    @post = post
+    if @post.update_attributes select_updates
+      message = "Article '#{@post.title}' successfully updated."
+      redirect_to post_path(@post.slug), flash: { success: message }
+    else
+      render 'edit'
+    end
+  end
+
   private
 
   def article_not_found
@@ -59,6 +71,14 @@ class PostsController < ApplicationController
 
   def redirect_params
     { flash: { success:  'Post added!' } }
+  end
+
+  def select_updates
+    updates = {}
+    [:body, :image_url].each do |field|
+      updates[field] = params[:post_data][field]
+    end
+    updates
   end
 
   def tweak_create_params(params)

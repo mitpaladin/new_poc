@@ -33,6 +33,10 @@ shared_examples 'an unauthorised user for this post' do
     message = 'You are not authorized to perform this action.'
     expect(flash[:error]).to eq message
   end
+
+  it 'does not assign an object to :post' do
+    expect(assigns[:post]).to be nil
+  end
 end # shared_examples 'an unauthorised user for this post'
 
 # Posts controller dispatches post-specific actions
@@ -281,4 +285,47 @@ describe PostsController do
       end
     end # context 'for an invalid post'
   end # describe "GET 'show'"
+
+  describe "PATCH 'update'" do
+    let(:author) { FactoryGirl.create :user_datum }
+    let(:post) do
+      FactoryGirl.create(:post_datum, author_name: author.name).decorate
+    end
+    let(:post_data) { { body: 'Updated ' + post.body } }
+
+    context 'for the post author' do
+      before :each do
+        session[:user_id] = author.id
+        patch :update, id: post.slug, post_data: post_data
+      end
+
+      it 'redirects to the post page' do
+        expect(response).to redirect_to post_path(post)
+      end
+
+      it 'assigns the updated post' do
+        actual = assigns[:post]
+        expect(actual).to eq post
+        expect(actual.body).to eq post_data[:body]
+      end
+    end # context 'for the post author'
+
+    context 'for a registered user other than the post author' do
+      before :each do
+        user = FactoryGirl.create :user_datum
+        session[:user_id] = user.id
+        patch :update, id: post.slug, post_data: post_data
+      end
+
+      it_behaves_like 'an unauthorised user for this post'
+    end # context 'for a registered user other than the post author'
+
+    context 'for the Guest User' do
+      before :each do
+        patch :update, id: post.slug, post_data: post_data
+      end
+
+      it_behaves_like 'an unauthorised user for this post'
+    end # context 'for the Guest User'
+  end # describe "PATCH 'update'"
 end # describe PostsController
