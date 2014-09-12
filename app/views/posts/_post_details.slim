@@ -1,0 +1,17 @@
+
+dl class='dl-horizontal'
+  dt
+    | By
+  dd = link_to post.author_name, author_path
+  dt
+    | Created at:
+  dd = post.timestamp_for post.created_at
+  dt
+    | Last modified at:
+  dd = post.timestamp_for post.updated_at
+  dt
+    | Published:
+  dd = post.pubdate_str
+  dt
+    | Article ID:
+  dd = post.id
