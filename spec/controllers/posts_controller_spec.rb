@@ -24,6 +24,17 @@ shared_examples 'an attempt to create an invalid Post' do
   end # describe 'with an invalid title, the returned PostData instance is'
 end # shared_examples 'an attempt to create an invalid Post'
 
+shared_examples 'an unauthorised user for this post' do
+  it 'redirects to the root path' do
+    expect(response).to redirect_to root_path
+  end
+
+  it 'sets the correct flash error message' do
+    message = 'You are not authorized to perform this action.'
+    expect(flash[:error]).to eq message
+  end
+end # shared_examples 'an unauthorised user for this post'
+
 # Posts controller dispatches post-specific actions
 describe PostsController do
   describe :routing.to_s, type: :routing do
@@ -41,7 +52,10 @@ describe PostsController do
       expect(get edit_post_path('the-title'))
           .to route_to controller: 'posts', action: 'edit', id: 'the-title'
     end
-    it { expect(put post_path(1)).to_not be_routable }
+    it do
+      expect(put post_path 'the-title')
+          .to route_to controller: 'posts', action: 'update', id: 'the-title'
+    end
     it { expect(delete post_path(1)).to_not be_routable }
   end
 
@@ -176,22 +190,43 @@ describe PostsController do
       FactoryGirl.create(:post_datum, author_name: author.name).decorate
     end
 
-    before :each do
-      session[:user_id] = author.id
-      get :edit, id: post.slug
-    end
+    context 'for the Guest User' do
+      before :each do
+        get :edit, id: post.slug
+      end
 
-    it 'returns an HTTP status code of OK' do
-      expect(response).to be_ok
-    end
+      it_behaves_like 'an unauthorised user for this post'
+    end # context 'for the Guest User'
 
-    it 'renders the "edit" template' do
-      response.should render_template 'edit'
-    end
+    context 'when a user other than the post author is logged in' do
+      let(:user) { FactoryGirl.create :user_datum }
 
-    it 'assigns the :post variable' do
-      expect(assigns[:post]).to eq post.decorate
-    end
+      before :each do
+        session[:user_id] = user.id
+        get :edit, id: post.slug
+      end
+
+      it_behaves_like 'an unauthorised user for this post'
+    end # context 'when a user other than the post author is logged in'
+
+    context 'when the logged-in user is the post author' do
+      before :each do
+        session[:user_id] = author.id
+        get :edit, id: post.slug
+      end
+
+      it 'returns an HTTP status code of OK' do
+        expect(response).to be_ok
+      end
+
+      it 'renders the "edit" template' do
+        response.should render_template 'edit'
+      end
+
+      it 'assigns the :post variable' do
+        expect(assigns[:post]).to eq post.decorate
+      end
+    end # context 'when the logged-in user is the post author'
   end # describe "GET 'edit'"
 
   # Currently, *all* published articles are public, so no branching for that.

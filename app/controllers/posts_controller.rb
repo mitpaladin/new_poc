@@ -24,9 +24,10 @@ class PostsController < ApplicationController
   end
 
   def edit
-    # FIXME: DSO? Logged in user?
-    @post = PostData.find(params['id']).decorate
-    authorize @post
+    # FIXME: DSO? Input validity check?
+    post = PostData.find(params['id']).decorate
+    authorize post
+    @post = post
   end
 
   def show
