@@ -3,3 +3,6 @@ h1
   == "#{post.title}&nbsp;"
   small
     i == "by #{link_to post.author_name, author_path}"
+
+  - if current_user.name == post.author_name
+    = render partial: 'post_edit_button', locals: { post: post }
