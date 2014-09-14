@@ -21,7 +21,7 @@ RSpec::Matchers.define :have_same_blog_content_as do |other_blog|
         'same title and body for each corresponding entry in two blogs.'
   end
 
-  failure_message_for_should do
+  failure_message do
     'Expected two blogs to have identical content, but ' +
         @reasons.join('; and ')
   end

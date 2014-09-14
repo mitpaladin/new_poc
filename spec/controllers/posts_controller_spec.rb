@@ -224,7 +224,7 @@ describe PostsController do
       end
 
       it 'renders the "edit" template' do
-        response.should render_template 'edit'
+        expect(response).to render_template 'edit'
       end
 
       it 'assigns the :post variable' do
