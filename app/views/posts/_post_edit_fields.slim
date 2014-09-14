@@ -1,0 +1,11 @@
+
+div class='control-group'
+  = f.label :title, class: 'control-label'
+  div class='controls'
+    = f.text_field :title, title_params
+  = f.label :image_url, 'Image URL', class: 'control-label'
+  div class='controls'
+    = f.text_field :image_url
+  = f.label :body, class: 'control-label'
+  div class='controls'
+    = f.text_area :body, cols: 80, rows: 10

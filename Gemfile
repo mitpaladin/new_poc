@@ -95,16 +95,12 @@ group :development, :test do
   # Original 'c42/rspec-http' is abandoned, pre-dates RSpec 2.14(!), now at 3.1.
   # jdickey/rspec-http forked from shishir/rpec-http, which takes us to 2.99.0
   # but needs work for RSpec 3.x.
-  gem 'rspec-http', github: 'jdickey/rspec-http'
+  gem 'rspec-http', github: 'jdickey/rspec-http', branch: 'rspec-3'
   # *Shoddy* release engineering. AIWT, 300+ commits since 3.0.0beta2 on master.
-  # gem 'rspec-rails', github: 'rspec/rspec-rails', branch: '3-1-maintenance'
-  gem 'rspec-rails', '~> 2.99.0'
+  gem 'rspec-rails', github: 'rspec/rspec-rails', branch: '3-1-maintenance'
+  # gem 'rspec-rails', '~> 2.99.0'
   gem 'ruby-growl'
   gem 'simplecov'
   gem 'tapout'
   gem 'teaspoon', github: 'modeset/teaspoon'
-end
-
-group :test do
-  gem 'blind'
 end
