@@ -251,7 +251,6 @@ describe Post do
   describe :to_h do
     it 'returns a Hash' do
       expect(saved_post.to_h).to be_a Hash
-      ap saved_post.to_h
     end
 
     describe 'contains all expected keys, including' do
