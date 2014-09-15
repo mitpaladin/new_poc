@@ -16,8 +16,7 @@ gem 'jquery-rails'
 gem 'markdown-toolbar', github: 'fuksito/markdown-toolbar'
 gem 'naught', github: 'avdi/naught'
 gem 'pundit'
-# gem 'rails', '4.1.5'
-gem 'rails', '4.1.6.rc2'
+gem 'rails', '4.1.6'
 # gem 'rails', '4.2.0.beta1'
 gem 'rails-assets-bootstrap', '~> 3.2.0'
 gem 'rails-assets-bootswatch', '~> 3.2.0'
@@ -87,8 +86,7 @@ group :development, :test do
   gem 'database_cleaner', github: 'DatabaseCleaner/database_cleaner'
   gem 'factory_girl_rails'
   gem 'quiet_assets'
-  # RSpec *should* be 3.0. See Issue #90.
-  gem 'rspec' # , '~> 2.99.0'
+  gem 'rspec'
   gem 'rspec-collection_matchers'
   # Fork doesn't have version dependency; *has* RSpec 3 'expect' syntax. Win!
   gem 'rspec-html-matchers', github: 'seomoz/rspec-html-matchers'
@@ -98,7 +96,6 @@ group :development, :test do
   gem 'rspec-http', github: 'jdickey/rspec-http', branch: 'rspec-3'
   # *Shoddy* release engineering. AIWT, 300+ commits since 3.0.0beta2 on master.
   gem 'rspec-rails', github: 'rspec/rspec-rails', branch: '3-1-maintenance'
-  # gem 'rspec-rails', '~> 2.99.0'
   gem 'ruby-growl'
   gem 'simplecov'
   gem 'tapout'
