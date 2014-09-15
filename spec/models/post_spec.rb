@@ -9,8 +9,14 @@ require 'support/shared_examples/models/post_field_priority'
 
 describe Post do
   let(:blog) { DSO::BlogSelector.run! }
-  let(:post_attribs) { FactoryGirl.attributes_for :post_datum }
-  let(:post) { Post.new post_attribs }
+  let(:new_post_attribs) { FactoryGirl.attributes_for :post_datum, :new_post }
+  let(:saved_post_attribs) do
+    attrs = FactoryGirl.attributes_for :post_datum, :saved_post
+    attrs[:created_at] = DateTime.now
+    attrs
+  end
+  let(:new_post) { Post.new new_post_attribs }
+  let(:saved_post) { Post.new saved_post_attribs }
 
   context 'initialisation' do
 
@@ -21,6 +27,7 @@ describe Post do
       expect(post.blog).to be_nil
       expect(post.image_url).to be_nil
       expect(post.pubdate).to be_nil
+      expect(post.created_at).to be_nil
     end
 
     it 'supports setting attributes in the initialiser' do
@@ -38,32 +45,39 @@ describe Post do
   describe 'supports reading and writing' do
 
     it 'a title' do
-      post.title = 'Title'
-      expect(post.title).to eq 'Title'
+      new_post.title = 'Title Test'
+      expect(new_post.title).to eq 'Title Test'
     end
 
     it 'a post body' do
-      post.body = 'The Body'
-      expect(post.body).to eq 'The Body'
+      new_post.body = 'The Test Body'
+      expect(new_post.body).to eq 'The Test Body'
     end
 
     it 'the publication date' do
-      post.pubdate = Chronic.parse '1 July 2014 at 4.15 PM'
-      expect(post.pubdate.to_s).to match(/2014-07-01 16:15:00 [\+\-]\d{4}/)
+      new_post.pubdate = Chronic.parse '1 July 2014 at 4.15 PM'
+      expected = /2014-07-01 16:15:00 [\+\-]\d{4}/
+      expect(new_post.pubdate.to_s).to match expected
     end
 
-    it 'supports reading and writing a blog reference' do
+    it 'the :created_at timestamp' do
+      new_post.created_at = Chronic.parse '1 July 2014 at 10:55 AM'
+      expected = /2014-07-01 10:55:00 [\+\-]\d{4}/
+      expect(new_post.created_at.to_s).to match expected
+    end
+
+    it 'a blog reference' do
       blog = Object.new
-      post.blog = blog
-      expect(post.blog).to be blog
+      new_post.blog = blog
+      expect(new_post.blog).to be blog
     end
   end # describe 'supports reading and writing'
 
   describe 'supports reading the attribute' do
     [:author_name, :slug].each do |attr_sym|
       it ":#{attr_sym}" do
-        post = Post.new post_attribs
-        expect(post.send attr_sym).to eq post_attribs[attr_sym]
+        post = Post.new new_post_attribs
+        expect(post.send attr_sym).to eq new_post_attribs[attr_sym]
       end
     end
   end # describe 'supports reading the attribute'
@@ -73,7 +87,7 @@ describe Post do
       it ":#{attr_sym}" do
         setter = [attr_sym.to_s, '='].join.to_sym
         error_match = Regexp.new("undefined method `#{setter}' for .*?")
-        post = Post.new post_attribs
+        post = Post.new saved_post_attribs
         expect { post.send setter, 'anything at all' }
             .to raise_error NoMethodError, error_match
       end
@@ -81,22 +95,22 @@ describe Post do
   end # describe 'DOES NOT support modifying the attribute'
 
   it 'does not change the slug value when the title changes' do
-    post = Post.new post_attribs
+    post = Post.new saved_post_attribs
     post.title = 'And Now For Something Completely Different'
-    expect(post.slug).to eq post_attribs[:slug]
+    expect(post.slug).to eq saved_post_attribs[:slug]
   end
 
   describe :error_messages do
 
     context 'when called on a valid post' do
-      let(:post) { blog.new_post post_attribs }
+      let(:post) { blog.new_post saved_post_attribs }
 
       it_behaves_like 'error-message list empty-state check'
     end # context 'when called on a valid post'
 
     context 'when called on an invalid post' do
       let(:post) do
-        blog.new_post post_attribs.merge(title: nil)
+        blog.new_post new_post_attribs.merge(title: nil)
       end
 
       it_behaves_like 'error-message list empty-state check', false
@@ -110,7 +124,7 @@ describe Post do
   end # describe :error_messages
 
   describe :publish do
-    let(:post) { blog.new_post post_attribs }
+    let(:post) { blog.new_post new_post_attribs }
 
     it 'adds the post to the blog' do
       expect(blog.entry? post).to be false
@@ -149,7 +163,7 @@ describe Post do
   end
 
   describe :valid? do
-    let(:post) { Post.new post_attribs }
+    let(:post) { Post.new new_post_attribs }
 
     describe 'returns true for a post with' do
 
@@ -188,8 +202,8 @@ describe Post do
 
   describe '<=>' do
     it 'reports two posts as "equal" when they have the same field values' do
-      post = Post.new post_attribs
-      post2 = post.clone
+      post = Post.new saved_post_attribs
+      post2 = Marshal.load(Marshal.dump post)
       expect(post2).to eq post
     end
 
@@ -204,11 +218,16 @@ describe Post do
                     higher: Chronic.parse('yesterday at 5 PM'),
                     lower:  Chronic.parse('yesterday at 9 AM')
 
+    it_behaves_like 'Post field comparison',
+                    :created_at,
+                    higher: Chronic.parse('yesterday at 5 PM'),
+                    lower:  Chronic.parse('yesterday at 9 AM')
+
     description = 'reports a post as greater than another if its publication' \
         ' date is set when the other is not'
     it description do
-      post = Post.new post_attribs
-      post2 = post.clone
+      post = Post.new new_post_attribs
+      post2 = Marshal.load(Marshal.dump post)
       post2.pubdate = Chronic.parse('yesterday at 9 AM')
       expect(post2 > post).to be true
     end
@@ -231,18 +250,21 @@ describe Post do
 
   describe :to_h do
     it 'returns a Hash' do
-      expect(post.to_h).to be_a Hash
+      expect(saved_post.to_h).to be_a Hash
+      ap saved_post.to_h
     end
 
     describe 'contains all expected keys, including' do
       [:title, :body, :image_url, :author_name, :slug].each do |attr|
         it ":#{attr}" do
-          expect(post.to_h[attr]).to eq post_attribs[attr]
+          expect(saved_post.to_h[attr]).to eq saved_post_attribs[attr]
         end
       end
 
-      it :pubdate do
-        expect(post.to_h).to have_key :pubdate
+      [:pubdate, :created_at].each do |attr|
+        it attr do
+          expect(saved_post.to_h).to have_key attr
+        end
       end
     end # describe 'contains all expected keys, including'
   end
