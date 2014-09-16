@@ -24,7 +24,7 @@ describe Post do
       let(:post) { Post.new }
 
       it 'the :created_at property set to the current time' do
-        expect(post.created_at).to be_within(0.001.second).of Time.now
+        expect(post.created_at).to be_within(0.1.second).of Time.now
       end
 
       it 'blank (nil) values for all other properties' do
