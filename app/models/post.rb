@@ -3,7 +3,7 @@
 class Post
   # include ActiveAttr::BasicModel
   include Comparable
-  attr_accessor :blog, :body, :title, :image_url, :pubdate
+  attr_accessor :blog, :body, :title, :image_url, :pubdate, :created_at
   attr_reader :author_name, :slug
 
   def initialize(attrs = {})
@@ -11,6 +11,11 @@ class Post
       ivar_sym = ['@', k].join.to_sym
       instance_variable_set ivar_sym, v if respond_to? k
     end
+    @created_at ||= Time.now
+  end
+
+  def add_to_blog
+    blog.add_entry self
   end
 
   def error_messages
@@ -20,7 +25,7 @@ class Post
   end
 
   def publish(published_at = Time.now)
-    blog.add_entry self
+    add_to_blog
     @pubdate = published_at
   end
 
@@ -32,6 +37,7 @@ class Post
     {
       author_name:  author_name,
       body:         body,
+      created_at:   created_at,
       image_url:    image_url,
       pubdate:      pubdate,
       slug:         slug,
@@ -44,15 +50,22 @@ class Post
   end
 
   def <=>(other)
-    parts = [
-      [pubdate.to_i, other.pubdate.to_i],
-      [title, other.title],
-      [body, other.body],
-      [image_url, other.image_url]
-    ]
+    parts = comparison_order(other)
     checker = -> (part) { part[0] <=> part[1] }
     failed_parts = parts.reject { |part| checker.call(part) == 0 }
     return 0 if failed_parts.empty?
     checker.call failed_parts.first
+  end
+
+  private
+
+  def comparison_order(other)
+    [
+      [pubdate.to_i, other.pubdate.to_i],
+      [created_at.to_i, other.created_at.to_i],
+      [title, other.title],
+      [body, other.body],
+      [image_url, other.image_url]
+    ]
   end
 end # class Post

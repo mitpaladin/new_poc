@@ -7,7 +7,7 @@ module CCO
   #       You Have Been Warned.
   class PostCCO < Base
     def self.attr_names
-      [:title, :body, :image_url, :pubdate, :author_name, :slug]
+      [:title, :body, :image_url, :pubdate, :created_at, :author_name, :slug]
     end
 
     def self.entity
