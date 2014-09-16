@@ -1,7 +1,7 @@
 
 require 'spec_helper'
 
-require 'blog_selector'
+require_relative '../../app/interactors/blog_selector'
 
 require 'support/shared_examples/models/error_message_list_state'
 require 'support/shared_examples/models/post_field_comparison'
@@ -20,14 +20,20 @@ describe Post do
 
   context 'initialisation' do
 
-    it 'starts with blank (nil) attributes by default' do
-      post = Post.new
-      expect(post.title).to be_nil
-      expect(post.body).to be_nil
-      expect(post.blog).to be_nil
-      expect(post.image_url).to be_nil
-      expect(post.pubdate).to be_nil
-      expect(post.created_at).to be_nil
+    describe 'starts with' do
+      let(:post) { Post.new }
+
+      it 'the :created_at property set to the current time' do
+        expect(post.created_at).to be_within(0.001.second).of Time.now
+      end
+
+      it 'blank (nil) values for all other properties' do
+        expect(post.title).to be_nil
+        expect(post.body).to be_nil
+        expect(post.blog).to be_nil
+        expect(post.image_url).to be_nil
+        expect(post.pubdate).to be_nil
+      end
     end
 
     it 'supports setting attributes in the initialiser' do
@@ -67,7 +73,6 @@ describe Post do
     end
 
     it 'a blog reference' do
-      blog = Object.new
       new_post.blog = blog
       expect(new_post.blog).to be blog
     end
@@ -76,8 +81,7 @@ describe Post do
   describe 'supports reading the attribute' do
     [:author_name, :slug].each do |attr_sym|
       it ":#{attr_sym}" do
-        post = Post.new new_post_attribs
-        expect(post.send attr_sym).to eq new_post_attribs[attr_sym]
+        expect(new_post.send attr_sym).to eq new_post_attribs[attr_sym]
       end
     end
   end # describe 'supports reading the attribute'
@@ -87,17 +91,31 @@ describe Post do
       it ":#{attr_sym}" do
         setter = [attr_sym.to_s, '='].join.to_sym
         error_match = Regexp.new("undefined method `#{setter}' for .*?")
-        post = Post.new saved_post_attribs
-        expect { post.send setter, 'anything at all' }
+        expect { saved_post.send setter, 'anything at all' }
             .to raise_error NoMethodError, error_match
       end
     end
   end # describe 'DOES NOT support modifying the attribute'
 
   it 'does not change the slug value when the title changes' do
-    post = Post.new saved_post_attribs
-    post.title = 'And Now For Something Completely Different'
-    expect(post.slug).to eq saved_post_attribs[:slug]
+    saved_post.title = 'And Now For Something Completely Different'
+    expect(saved_post.slug).to eq saved_post_attribs[:slug]
+  end
+
+  describe :add_to_blog do
+    let(:post) { new_post.tap { |p| p.blog = blog } }
+
+    it 'adds the post to the blog' do
+      expect(blog.entry? post).to be false
+      post.add_to_blog
+      expect(blog.entry? post).to be true
+    end
+
+    it 'does not change any attributes of the post other than the blog ref' do
+      old_attribs = post.to_h
+      post.add_to_blog
+      expect(post.to_h).to eq old_attribs
+    end
   end
 
   describe :error_messages do
@@ -109,9 +127,7 @@ describe Post do
     end # context 'when called on a valid post'
 
     context 'when called on an invalid post' do
-      let(:post) do
-        blog.new_post new_post_attribs.merge(title: nil)
-      end
+      let(:post) { new_post.tap { |p| p.title = nil } }
 
       it_behaves_like 'error-message list empty-state check', false
 

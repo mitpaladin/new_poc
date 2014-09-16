@@ -11,6 +11,11 @@ class Post
       ivar_sym = ['@', k].join.to_sym
       instance_variable_set ivar_sym, v if respond_to? k
     end
+    @created_at ||= Time.now
+  end
+
+  def add_to_blog
+    blog.add_entry self
   end
 
   def error_messages
@@ -20,7 +25,7 @@ class Post
   end
 
   def publish(published_at = Time.now)
-    blog.add_entry self
+    add_to_blog
     @pubdate = published_at
   end
 

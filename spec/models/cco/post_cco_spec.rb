@@ -75,10 +75,8 @@ module CCO
           end
 
           it 'for a published post' do
-            # not precisely equal because entity creation/impl creation/saving
-            # takes finite time; < 1 second is "good enough for purposes here".
-            diff = saved_instance.created_at.localtime - saved_pubdate.localtime
-            expect(diff < 1.second).to be true
+            expect(saved_instance.created_at)
+                .to be_within(0.1.second).of saved_pubdate
           end
         end # describe 'created_at'
       end # describe 'returns a PostData instance with correct values for'
@@ -147,7 +145,7 @@ module CCO
 
         it 'created_at' do
           expect(saved_instance.created_at).to eq saved_impl.created_at
-          expect(new_instance.created_at).to eq new_impl.created_at
+          expect(new_instance.created_at).to be_within(0.1.second).of Time.now
         end
       end # describe 'returns a PostData instance with correct values for'
     end # describe :to_entity
