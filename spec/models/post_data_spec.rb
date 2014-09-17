@@ -78,7 +78,7 @@ describe PostData do
     end
 
     it 'writing' do
-      expect(obj.post_status).to be nil
+      expect(obj.post_status).to eq 'draft' # by default
       m = obj.public_method :post_status=
       expect(m.arity).to eq 1
       m.call 'public'

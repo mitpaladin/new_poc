@@ -1,4 +1,6 @@
 
+- logger.ap [:post_status, @post.post_status]
+
 div class='control-group'
   = f.label :title, class: 'control-label'
   div class='controls'
@@ -9,3 +11,6 @@ div class='control-group'
   = f.label :body, class: 'control-label'
   div class='controls'
     = f.text_area :body, cols: 80, rows: 10
+  = f.label :post_status, class: 'control-label'
+  div class='controls'
+    = f.select 'post_status', status_select_options(post)

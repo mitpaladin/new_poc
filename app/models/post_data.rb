@@ -18,12 +18,17 @@ class PostData < ActiveRecord::Base
   extend FriendlyId
   # attr_accessor :title, :body # DANGER! DON'T *DO* THIS FOR DB FIELDS!
   # `status` is apparently a method inherited from ActiveRecord...
-  attr_accessor :post_status
+  attr_writer :post_status
   validates :title, presence: true # Slugs are unique so titles need not be.
   # other :use options we might investigate: :scoped, :simple_i18n, :history
   friendly_id :slug_candidates, use: [:slugged, :finders]
   validates :author_name, presence: true
   validate :body_or_image_url?
+
+  def post_status
+    default_status = pubdate.present? ? 'public' : 'draft'
+    @post_status || default_status
+  end
 
   def slug_candidates
     [
