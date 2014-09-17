@@ -61,5 +61,59 @@ describe PostsHelper do
     end
   end # describe :edit_post_form_attributes
 
+  describe :status_select_options.to_s do
+
+    context 'for an unpublished post' do
+      let(:post) { FactoryGirl.build :post_datum, :new_post }
+      let(:actual) { status_select_options post }
+      let(:options) { actual.scan(Regexp.new '<option.+?</option>') }
+      let(:selected) { options.select { |s| s.match(/selected\=/) } }
+
+      it 'returns two HTML <option> tags' do
+        expect(options.count).to eq 2
+      end
+
+      describe 'returns <option> tags for' do
+
+        %w(draft public).each do |status|
+          it status do
+            regex = Regexp.new "value=\"#{status}\""
+            match = options.select { |s| s.match regex }
+            expect(match).not_to be nil
+          end
+        end
+      end # describe 'returns <option> tags for'
+
+      it 'has "draft" as the selected option' do
+        expect(selected.first).to match(/value="draft"/)
+      end
+    end # context 'for an unpublished post'
+
+    context 'for a published post' do
+      let(:post) { FactoryGirl.build :post_datum, :saved_post, :public_post }
+      let(:actual) { status_select_options post }
+      let(:options) { actual.scan(Regexp.new '<option.+?</option>') }
+      let(:selected) { options.select { |s| s.match(/selected\=/) } }
+
+      it 'returns two HTML <option> tags' do
+        expect(options.count).to eq 2
+      end
+
+      describe 'returns <option> tags for' do
+
+        %w(draft public).each do |status|
+          it status do
+            regex = Regexp.new "value=\"#{status}\""
+            match = options.select { |s| s.match regex }
+            expect(match).not_to be nil
+          end
+        end
+      end # describe 'returns <option> tags for'
+
+      it 'has "public" as the selected option' do
+        expect(selected.first).to match(/value="public"/)
+      end
+    end # context 'for a published post'
+  end # describe :status_select_options
   # it_behaves_like 'post form-attributes helper', 'edit_post'
 end # describe PostsHelper
