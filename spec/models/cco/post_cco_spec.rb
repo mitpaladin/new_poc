@@ -104,6 +104,18 @@ module CCO
           expect(impl2.changed_attributes.keys).to eq ['body']
         end
       end # context 'when called on an existing model record'
+
+      describe 'handles "post_status" attribute (Issue 100 et al)' do
+        it 'for an unpublished post' do
+          impl = klass.from_entity new_post
+          expect(impl.post_status).to eq 'draft'
+        end
+
+        it 'for a published post' do
+          impl = klass.from_entity saved_post
+          expect(impl.post_status).to eq 'public'
+        end
+      end # 'handles "post_status" attribute (Issue 100 et al)'
     end # describe :from_entity
 
     describe :to_entity do

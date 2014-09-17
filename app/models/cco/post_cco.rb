@@ -20,7 +20,9 @@ module CCO
 
     def self.model_instance_based_on(entity)
       attrs = { slug: entity.slug, author_name: entity.author_name }
-      model.find_or_initialize_by attrs
+      model.find_or_initialize_by(attrs).tap do |obj|
+        obj.post_status = entity.pubdate.present? ? 'public' : 'draft'
+      end
     end
 
     def self.entity_instance_based_on(attrs_in)

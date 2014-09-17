@@ -13,6 +13,13 @@ module PostsHelper
     attribs
   end
 
+  def status_select_options(post)
+    option_items = [%w(draft draft), %w(public public)]
+    # `status` appears to be an existing ActiveRecord::Base field. :(
+    current_status = post.post_status || 'draft'
+    options_for_select option_items, current_status
+  end
+
   private
 
   def shared_post_form_attributes(which)

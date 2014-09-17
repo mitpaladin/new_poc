@@ -4,7 +4,7 @@ h1 Edit Post
 = form_for(@post, edit_post_form_attributes(@post)) do |f|
   == explain_errors @post
   legend Update an Existing Post
-  - partial_locals = { f: f, title_params: { readonly: true }}
+  - partial_locals = { f: f, post: @post, title_params: { readonly: true }}
   = render partial: 'post_edit_fields', locals: partial_locals
 
   div class='form-actions'

@@ -67,6 +67,25 @@ describe PostData do
     end # context 'is invalid with'
   end # describe 'reports validation correctly, showing that an instance'
 
+  describe 'supports :post_status accessor methods for' do
+    let(:obj) { klass.new }
+
+    it 'reading' do
+      obj.post_status = 'public'
+      m = obj.public_method :post_status
+      expect(m.arity).to eq 0
+      expect(m.call).to eq 'public'
+    end
+
+    it 'writing' do
+      expect(obj.post_status).to eq 'draft' # by default
+      m = obj.public_method :post_status=
+      expect(m.arity).to eq 1
+      m.call 'public'
+      expect(obj.post_status).to eq 'public'
+    end
+  end # describe 'supports :post_data accessor methods for'
+
   describe :published? do
 
     it 'has been removed; PostData no longer responds to :published?' do
