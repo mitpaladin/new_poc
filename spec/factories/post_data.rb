@@ -36,5 +36,13 @@ FactoryGirl.define do
       slug { title.parameterize }
       pubdate { DateTime.now }
     end
+
+    trait :draft_post do
+      after(:build) { |p| p.post_status = 'draft' }
+    end
+
+    trait :public_post do
+      after(:build) { |p| p.post_status = 'public' }
+    end
   end
 end
