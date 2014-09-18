@@ -7,17 +7,44 @@ require 'cco/post_cco'
 module CCO
   describe PostCCO do
     let(:klass) { PostCCO }
-    let(:post_attribs) { FactoryGirl.attributes_for :post_datum }
     let(:blog) { Blog.new }
-    let(:new_post) { blog.new_post post_attribs }
-    let(:saved_pubdate) { Time.now }
-    let(:saved_post) do
-      ret = blog.new_post post_attribs
-      ret.publish saved_pubdate
-      ret
+    let(:ctime) { Time.now }
+    # new/saved, draft/public
+    let(:new_draft_impl) do
+      FactoryGirl.build :post_datum, :new_post, :draft_post, created_at: ctime
     end
-    let(:new_impl) { FactoryGirl.build :post_datum, :new_post }
-    let(:saved_impl) { FactoryGirl.create :post_datum, :saved_post }
+    let(:saved_draft_impl) do
+      FactoryGirl.build :post_datum, :saved_post, :draft_post, created_at: ctime
+    end
+    let(:new_public_impl) do
+      FactoryGirl.build :post_datum, :new_post, :public_post, created_at: ctime
+    end
+    let(:saved_public_impl) do
+      FactoryGirl.build :post_datum,
+                        :saved_post,
+                        :public_post,
+                        created_at: ctime
+    end
+    let(:all_impls) do
+      [
+        saved_draft_impl,
+        saved_public_impl,
+        new_draft_impl,
+        new_public_impl
+      ]
+    end
+    let(:new_draft_post) do
+      attribs = FactoryGirl.attributes_for :post_datum, :new_post, :draft_post
+      blog.new_post attribs
+    end
+    let(:new_public_post) do
+      attribs = FactoryGirl.attributes_for :post_datum, :new_post, :public_post
+      blog.new_post attribs
+    end
+    let(:saved_draft_post) do
+      attribs = FactoryGirl.attributes_for :post_datum, :saved_post, :draft_post
+      blog.new_post attribs
+    end
 
     it 'has a .from_entity class method' do
       p = klass.public_method :from_entity
@@ -31,64 +58,60 @@ module CCO
 
     describe :from_entity do
       it 'does not raise an error when called with a Post entity parameter' do
-        expect { klass.from_entity new_post }.not_to raise_error
-        expect { klass.from_entity saved_post }.not_to raise_error
+        expect { klass.from_entity new_draft_post }.not_to raise_error
+        expect { klass.from_entity saved_draft_post }.not_to raise_error
       end
 
       it 'returns a PostData instance when called with a Post entity' do
-        expect(klass.from_entity new_post).to be_a new_impl.class
-        expect(klass.from_entity saved_post).to be_a new_impl.class
+        expected_class = new_draft_impl.class
+        expect(klass.from_entity new_draft_post).to be_a expected_class
+        expect(klass.from_entity saved_draft_post).to be_a expected_class
       end
 
       describe 'returns a PostData instance with correct values for' do
-        let(:new_instance) { klass.from_entity new_post }
-        let(:saved_instance) do
-          ret = klass.from_entity saved_post
-          ret.save!
-          ret
-        end
 
         it 'title' do
-          expect(saved_instance.title).to eq saved_post.title
-          expect(new_instance.title).to eq new_post.title
+          all_impls.each do |impl|
+            instance = klass.from_entity impl
+            expect(instance.title).to eq impl.title
+          end
         end
 
         it 'body' do
-          expect(saved_instance.body).to eq saved_post.body
-          expect(new_instance.body).to eq new_post.body
+          all_impls.each do |impl|
+            instance = klass.from_entity impl
+            expect(instance.body).to eq impl.body
+          end
         end
 
         describe 'pubdate' do
 
           it 'for an unpublished post' do
-            expect(new_instance.pubdate).to eq new_post.pubdate
+            [saved_draft_impl, new_draft_impl].each do |impl|
+              expect(impl.pubdate).to be nil
+            end
           end
 
           it 'for a published post' do
-            expect(saved_instance.pubdate).to eq saved_pubdate
+            [saved_public_impl, new_public_impl].each do |impl|
+              expect(impl.pubdate).to be_within(1.second).of Time.now
+            end
           end
         end # describe 'pubdate'
 
         describe 'created_at' do
-          it 'for an unpublished post' do
-            expect(new_instance.created_at).to eq new_post.created_at
-          end
-
-          it 'for a published post' do
-            expect(saved_instance.created_at)
-                .to be_within(0.1.second).of saved_pubdate
+          it 'for both published and unpublished posts' do
+            all_impls.each { |impl| expect(impl.created_at).to eq ctime }
           end
         end # describe 'created_at'
       end # describe 'returns a PostData instance with correct values for'
 
       context 'when called on an existing model record' do
         let(:new_body) { 'THIS IS THE NEW BODY' }
-        let(:impl) do
-          ret = PostData.new post_attribs
-          ret.save!
-          ret
+        let(:entity) do
+          saved_draft_impl.save!
+          klass.to_entity saved_draft_impl
         end
-        let(:entity) { klass.to_entity impl }
 
         it 'updates the existing record' do
           entity.body = new_body
@@ -107,12 +130,12 @@ module CCO
 
       describe 'handles "post_status" attribute (Issue 100 et al)' do
         it 'for an unpublished post' do
-          impl = klass.from_entity new_post
+          impl = klass.from_entity new_draft_post
           expect(impl.post_status).to eq 'draft'
         end
 
         it 'for a published post' do
-          impl = klass.from_entity saved_post
+          impl = klass.from_entity new_public_post
           expect(impl.post_status).to eq 'public'
         end
       end # 'handles "post_status" attribute (Issue 100 et al)'
@@ -120,44 +143,46 @@ module CCO
 
     describe :to_entity do
       it 'does not raise an error when called with a PostData parameter' do
-        expect { klass.to_entity new_impl }.not_to raise_error
-        expect { klass.to_entity saved_impl }.not_to raise_error
+        all_impls.each do |impl|
+          expect { klass.to_entity impl }.not_to raise_error
+        end
       end
 
       it 'returns a Post instance when called with a PostData instance' do
-        expect(klass.to_entity new_impl).to be_a Post
-        expect(klass.to_entity saved_impl).to be_a Post
+        all_impls.each do |impl|
+          expect(klass.to_entity impl).to be_a Post
+        end
       end
 
       describe 'returns a Post instance with correct values for' do
-        let(:new_instance) { klass.to_entity new_impl }
-        let(:saved_instance) { klass.to_entity saved_impl }
+        let(:impls) do
+          ret = {}
+          ret[:new_draft_impl] = new_draft_impl
+          ret[:new_public_impl] = new_public_impl
+          ret[:saved_draft_impl] = saved_draft_impl
+          ret[:saved_public_impl] = saved_public_impl
+          ret
+        end
 
         it 'title' do
-          expect(new_instance.title).to eq new_impl.title
-          expect(saved_instance.title).to eq saved_impl.title
+          impls.keys.each do |impl_key|
+            entity = klass.to_entity impls[impl_key]
+            expect(entity.title).to eq impls[impl_key].title
+          end
         end
 
         it 'body' do
-          expect(new_instance.body).to eq new_impl.body
-          expect(saved_instance.body).to eq saved_impl.body
+          impls.keys.each do |impl_key|
+            entity = klass.to_entity impls[impl_key]
+            expect(entity.body).to eq impls[impl_key].body
+          end
         end
 
-        describe 'pubdate' do
-
-          it 'for an unpublished post' do
-            expect(new_instance.pubdate).to eq new_impl.pubdate
+        it 'pubdate' do
+          impls.keys.each do |impl_key|
+            entity = klass.to_entity impls[impl_key]
+            expect(entity.pubdate).to eq impls[impl_key].pubdate
           end
-
-          it 'for a published post' do
-            expect(saved_instance.pubdate).to eq saved_impl.pubdate
-            expect(saved_instance).to be_published
-          end
-        end # describe 'pubdate'
-
-        it 'created_at' do
-          expect(saved_instance.created_at).to eq saved_impl.created_at
-          expect(new_instance.created_at).to be_within(0.1.second).of Time.now
         end
       end # describe 'returns a PostData instance with correct values for'
     end # describe :to_entity

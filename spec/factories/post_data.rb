@@ -25,23 +25,25 @@ FactoryGirl.define do
     body 'The Body'
     image_url 'http://example.com/image1.png'
     author_name 'Just Anybody'
+    pubdate nil
 
     trait :new_post do
       # See https://norman.github.io/friendly_id/file.Guide.html#Deciding_When_to_Generate_New_Slugs
       slug nil
-      pubdate nil
     end
 
     trait :saved_post do
       slug { title.parameterize }
-      pubdate { DateTime.now }
     end
 
     trait :draft_post do
+      pubdate nil
+      # `post_status` field only applicable for PostData, not Post instances.
       after(:build) { |p| p.post_status = 'draft' }
     end
 
     trait :public_post do
+      pubdate { DateTime.now }
       after(:build) { |p| p.post_status = 'public' }
     end
   end
