@@ -1,15 +1,15 @@
 
 require 'spec_helper'
 
-require 'post_publisher'
+require 'blog_post_adder'
 
 # Module DSO contains our Domain Service Objects, aka "interactors".
 module DSO
-  describe PostPublisher do
+  describe BlogPostAdder do
 
     let(:blog) { Blog.new }
     let(:post) { blog.new_post FactoryGirl.attributes_for(:post_datum) }
-    let(:klass) { PostPublisher }
+    let(:klass) { BlogPostAdder }
 
     describe 'succeeds when called with' do
 
@@ -38,5 +38,5 @@ module DSO
         end
       end # context 'an invalid Post, by'
     end # describe 'fails when called with'
-  end # describe DSO::PostPublisher
+  end # describe DSO::BlogPostAdder
 end # module DSO
