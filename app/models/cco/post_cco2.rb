@@ -17,7 +17,7 @@ module CCO
 
     def self.to_entity(impl, _params = {})
       attribs = {}
-      [:author_name, :body, :image_url, :title].each do |method_sym|
+      [:author_name, :body, :image_url, :slug, :title].each do |method_sym|
         attribs[method_sym] = impl.attributes[method_sym.to_s]
       end
       Post.new attribs
