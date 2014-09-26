@@ -34,8 +34,7 @@ module CCO
 
         context 'for an invalid new draft post' do
           it_behaves_like 'a draft entity', [:new_post]
-          it_behaves_like 'an invalid entity', :title,
-                          [:new_post, :draft_post]
+          it_behaves_like 'an invalid entity', :title, [:new_post, :draft_post]
           it_behaves_like 'an unsaved entity', [:draft_post]
           it_behaves_like 'an entity with standard attributes',
                           [:new_post, :draft_post],
@@ -48,7 +47,7 @@ module CCO
           it_behaves_like 'a valid entity', [:saved_post, :draft_post]
           it_behaves_like 'a saved entity', [:draft_post]
           it_behaves_like 'an entity with standard attributes',
-                          [:new_post, :saved_post],
+                          [:draft_post, :saved_post],
                           [:author_name, :body, :image_url, :title]
         end # context 'for a valid saved draft post'
 
@@ -57,7 +56,7 @@ module CCO
                           [:saved_post, :draft_post]
           it_behaves_like 'a saved entity', [:draft_post]
           it_behaves_like 'an entity with standard attributes',
-                          [:new_post, :saved_post],
+                          [:draft_post, :saved_post],
                           [:author_name, :body, :image_url]
         end # context 'for an invalid saved draft post'
 
@@ -72,15 +71,31 @@ module CCO
 
         context 'for an invalid new public post' do
           it_behaves_like 'a public entity', [:new_post]
-          it_behaves_like 'an invalid entity', :title,
-                          [:new_post, :public_post]
+          it_behaves_like 'an invalid entity', :title, [:new_post, :public_post]
           it_behaves_like 'an unsaved entity', [:public_post]
           it_behaves_like 'an entity with standard attributes',
                           [:new_post, :public_post],
                           [:author_name, :body, :image_url]
         end # context 'for an invalid new public post'
 
-        context 'for a saved public post'
+        context 'for a valid saved public post' do
+          it_behaves_like 'an unattached entity', [:saved_post, :public_post]
+          it_behaves_like 'a public entity', [:saved_post]
+          it_behaves_like 'a valid entity', [:saved_post, :public_post]
+          it_behaves_like 'a saved entity', [:public_post]
+          it_behaves_like 'an entity with standard attributes',
+                          [:public_post, :saved_post],
+                          [:author_name, :body, :image_url, :title]
+        end # context 'for a valid saved public post'
+
+        context 'for an invalid saved public post' do
+          it_behaves_like 'an invalid entity', :title,
+                          [:saved_post, :public_post]
+          it_behaves_like 'a saved entity', [:public_post]
+          it_behaves_like 'an entity with standard attributes',
+                          [:public_post, :saved_post],
+                          [:author_name, :body, :image_url]
+        end # context 'for an invalid saved public post'
       end # context 'specifying only the implementation object'
     end # describe :from_entity
   end # describe CCO::PostCCO2
