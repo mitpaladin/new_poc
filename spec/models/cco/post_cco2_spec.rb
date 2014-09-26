@@ -97,6 +97,41 @@ module CCO
                           [:author_name, :body, :image_url]
         end # context 'for an invalid saved public post'
       end # context 'specifying only the implementation object'
+
+      context 'specifying both the implementation and parameter objects' do
+
+        context 'specifying only a Blog instance' do
+          let(:blog) { Blog.new }
+          let(:impl) { FactoryGirl.build :post_datum, :saved_post, :draft_post }
+          let(:entity) { CCO::PostCCO2.to_entity impl, blog: blog }
+
+          it 'sets the "blog" instance variable on the entity' do
+            expect(entity.blog).to be blog
+          end
+
+          it "adds the entity to the Blog's list of entries" do
+            expect(blog.entry? entity).to be true
+          end
+        end # context 'specifying only a Blog instance'
+
+        description = 'specifying a Blog instance and an add_to_blog value ' \
+            'of false'
+        context description do
+          let(:blog) { Blog.new }
+          let(:impl) { FactoryGirl.build :post_datum, :saved_post, :draft_post }
+          let(:entity) do
+            CCO::PostCCO2.to_entity impl, blog: blog, add_to_blog: false
+          end
+
+          it 'sets the "blog" instance variable on the entity' do
+            expect(entity.blog).to be blog
+          end
+
+          it "does NOT add the entity to the Blog's list of entries" do
+            expect(blog.entry? entity).to be false
+          end
+        end # context 'specifying a Blog instance and ... value of false'
+      end # context 'specifying both the implementation and parameter objects'
     end # describe :from_entity
   end # describe CCO::PostCCO2
 end # module CCO

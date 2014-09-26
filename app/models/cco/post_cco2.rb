@@ -12,15 +12,59 @@ module CCO
   #       Blog instance, which is almost certainly not what you want.
   #       You Have Been Warned.
   class PostCCO2
+    # Convert PostData implementation object to Post entity.
+    # FIXME: Move to own file when we replace PostCCO with PostCCO2.
+    class ImplConverter
+      def initialize(impl, params)
+        @impl, @params = impl, params
+      end
+
+      def convert
+        build_attribs
+        setup_post
+      end
+
+      protected
+
+      attr_accessor :attribs
+      attr_reader :impl, :params
+
+      private
+
+      def attrib_names
+        [:author_name, :body, :image_url, :slug, :title]
+      end
+
+      def build_attribs
+        @attribs = {}
+        attrib_names.each do |attrib|
+          @attribs[attrib] = impl.attributes[attrib.to_s]
+        end
+      end
+
+      def parse_params
+        blog = params.fetch :blog, nil
+        add_to_blog = params.fetch :add_to_blog, !blog.nil?
+        [blog, add_to_blog]
+      end
+
+      def setup_post
+        blog, add_to_blog = parse_params
+        post = Post.new attribs
+        if add_to_blog
+          blog.add_entry post
+        else
+          post.blog = blog
+        end
+        post
+      end
+    end # class PostCCO2::ImplConverter
+
     def self.from_entity(_entity, _params = {})
     end
 
-    def self.to_entity(impl, _params = {})
-      attribs = {}
-      [:author_name, :body, :image_url, :slug, :title].each do |method_sym|
-        attribs[method_sym] = impl.attributes[method_sym.to_s]
-      end
-      Post.new attribs
+    def self.to_entity(impl, params = {})
+      ImplConverter.new(impl, params).convert
     end
   end # class CCO::PostCCO2
 end # module CCO
