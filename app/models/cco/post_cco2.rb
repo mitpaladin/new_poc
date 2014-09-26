@@ -61,7 +61,9 @@ module CCO
     end # class PostCCO2::ImplConverter
 
     def self.from_entity(entity, _params = {})
-      PostData.new entity.to_h
+      PostData.new(entity.to_h).tap do |post|
+        post.save! if entity.slug
+      end
     end
 
     def self.to_entity(impl, params = {})
