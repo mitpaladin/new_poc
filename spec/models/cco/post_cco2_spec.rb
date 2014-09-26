@@ -233,10 +233,98 @@ module CCO
         end # describe 'when called with a (valid) Post entity, it returns a'
       end # context 'for a saved draft post'
 
-      context 'for a new public post'
+      context 'for a new public post' do
+        let(:entity_attribs) do
+          FactoryGirl.attributes_for :post_datum,
+                                     :new_post,
+                                     :public_post,
+                                     author_name: author_impl.name
+        end
 
-      context 'for a saved public post'
+        it 'does not raise an error when called with a Post entity parameter' do
+          expect { klass.from_entity post }.not_to raise_error
+        end
 
+        describe 'when called with a (valid) Post entity, it returns a ' do
+
+          it 'valid PostData instance' do
+            expect(impl).to be_a PostData
+            expect(impl).to be_valid
+          end
+
+          it 'new PostData instance' do
+            expect(impl).to be_a_new_record
+          end
+
+          describe 'PostData instance with correct values for' do
+
+            it 'basic content fields' do
+              expect(impl.title).to eq post.title
+              expect(impl.body).to eq post.body
+              expect(impl.image_url).to eq post.image_url
+              expect(impl.created_at).to eq post.created_at
+            end
+
+            it '"new post" fields' do
+              expect(impl.updated_at).to be nil
+              expect(impl.slug).to be_nil
+              expect(impl.id).to be nil
+            end
+
+            it '"public post" fields' do
+              expect(impl.pubdate).to be_a Time
+            end
+          end # describe 'PostData instance with correct values for'
+        end # describe 'when called with a (valid) Post entity, it returns a'
+      end # context 'for a new public post'
+
+      context 'for a saved public post' do
+        let(:entity_attribs) do
+          FactoryGirl.attributes_for :post_datum,
+                                     :saved_post,
+                                     :public_post,
+                                     author_name: author_impl.name
+        end
+
+        it 'does not raise an error when called with a Post entity parameter' do
+          expect { klass.from_entity post }.not_to raise_error
+        end
+
+        describe 'when called with a (valid) Post entity, it returns a ' do
+
+          it 'valid PostData instance' do
+            expect(impl).to be_a PostData
+            expect(impl).to be_valid
+          end
+
+          it 'saved PostData instance' do
+            expect(impl).not_to be_a_new_record
+          end
+
+          describe 'PostData instance with correct values for' do
+
+            it 'basic content fields' do
+              expect(impl.title).to eq post.title
+              expect(impl.body).to eq post.body
+              expect(impl.image_url).to eq post.image_url
+              expect(impl.created_at).to eq post.created_at
+            end
+
+            it '"saved post" fields' do
+              expect(impl.updated_at).to be_a Time
+              expect(impl.updated_at)
+                  .to be_within(0.5.seconds).of impl.created_at
+              expect(impl.slug).to eq post.slug
+              expect(impl.id).to be_a Fixnum
+              expect(impl.id).to be > 0
+            end
+
+            it '"public post" fields' do
+              expect(impl.pubdate).to be_a Time
+            end
+          end # describe 'PostData instance with correct values for'
+        end # describe 'when called with a (valid) Post entity, it returns a'
+      end # context 'for a saved public post'
     end # describe :from_entity
   end # describe CCO::PostCCO2
 end # module CCO
