@@ -166,7 +166,20 @@ module CCO
           describe 'PostData instance with correct values for' do
 
             it 'basic content fields' do
-              expect(impl).to have_same_basic_content_fields_as(post)
+              expect(impl.title).to eq post.title
+              expect(impl.body).to eq post.body
+              expect(impl.image_url).to eq post.image_url
+              expect(impl.created_at).to eq post.created_at
+            end
+
+            it '"new post" fields' do
+              expect(impl.updated_at).to be nil
+              expect(impl.slug).to be_nil
+              expect(impl.id).to be nil
+            end
+
+            it '"draft post" fields' do
+              expect(impl.pubdate).to be nil
             end
           end # describe 'PostData instance with correct values for'
         end # describe 'when called with a (valid) Post entity, it returns a'
