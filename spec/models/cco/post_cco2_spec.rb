@@ -132,6 +132,52 @@ module CCO
           end
         end # context 'specifying a Blog instance and ... value of false'
       end # context 'specifying both the implementation and parameter objects'
+    end # describe :to_entity
+
+    describe :from_entity.to_s do
+
+      context 'for a new draft post' do
+        let(:author_impl) { FactoryGirl.create :user_datum }
+        let(:blog) { Blog.new }
+        let(:entity_attribs) do
+          FactoryGirl.attributes_for :post_datum,
+                                     :new_post,
+                                     :draft_post,
+                                     author_name: author_impl.name
+        end
+        let(:post) { blog.new_post entity_attribs }
+        let(:impl) { klass.from_entity post }
+
+        it 'does not raise an error when called with a Post entity parameter' do
+          expect { klass.from_entity post }.not_to raise_error
+        end
+
+        describe 'when called with a (valid) Post entity, it returns a ' do
+
+          it 'valid PostData instance' do
+            expect(impl).to be_a PostData
+            expect(impl).to be_valid
+          end
+
+          it 'new PostData instance' do
+            expect(impl).to be_a_new_record
+          end
+
+          describe 'PostData instance with correct values for' do
+
+            it 'basic content fields' do
+              expect(impl).to have_same_basic_content_fields_as(post)
+            end
+          end # describe 'PostData instance with correct values for'
+        end # describe 'when called with a (valid) Post entity, it returns a'
+      end # context 'for a new draft post'
+
+      context 'for a saved draft post'
+
+      context 'for a new public post'
+
+      context 'for a saved public post'
+
     end # describe :from_entity
   end # describe CCO::PostCCO2
 end # module CCO

@@ -60,7 +60,8 @@ module CCO
       end
     end # class PostCCO2::ImplConverter
 
-    def self.from_entity(_entity, _params = {})
+    def self.from_entity(entity, _params = {})
+      PostData.new entity.to_h
     end
 
     def self.to_entity(impl, params = {})
