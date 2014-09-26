@@ -15,7 +15,7 @@ shared_examples 'an entity with standard attributes' do |traits, attribs_in|
 
     it :created_at do
       expected = impl.created_at
-      expect(entity.created_at).to be_within(0.1.second).of expected
+      expect(entity.created_at).to be_within(0.5.second).of expected
     end
   end # describe 'with the correct attribute values for'
 end # shared_examples 'an entity with standard attributes'
