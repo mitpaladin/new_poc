@@ -1,7 +1,7 @@
 
 shared_examples 'a saved entity' do |specifier_traits|
   let(:impl) do
-    build_attribs = specifier_traits + [:draft_post]
+    build_attribs = specifier_traits + [:saved_post]
     FactoryGirl.create :post_datum, *build_attribs
   end
   let(:blog) { Blog.new }
