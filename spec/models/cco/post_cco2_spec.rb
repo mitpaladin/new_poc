@@ -70,7 +70,15 @@ module CCO
                           [:author_name, :body, :image_url, :title]
         end # context 'for a valid new public post'
 
-        context 'for an invalid new public post'
+        context 'for an invalid new public post' do
+          it_behaves_like 'a public entity', [:new_post]
+          it_behaves_like 'an invalid entity', :title,
+                          [:new_post, :public_post]
+          it_behaves_like 'an unsaved entity', [:public_post]
+          it_behaves_like 'an entity with standard attributes',
+                          [:new_post, :public_post],
+                          [:author_name, :body, :image_url]
+        end # context 'for an invalid new public post'
 
         context 'for a saved public post'
       end # context 'specifying only the implementation object'
