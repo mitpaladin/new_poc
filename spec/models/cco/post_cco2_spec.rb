@@ -5,13 +5,67 @@ require 'cco/post_cco2'
 
 require_relative 'post_shared_examples/post_shared_examples'
 
+shared_examples "entity 'draft post' fields" do
+  it '"draft post" fields' do
+    expect(entity.pubdate).to be nil
+  end
+end
+
+shared_examples "entity 'new post' fields" do
+  it '"new post" fields' do
+    expect(entity.slug).to be nil
+  end
+end
+
+shared_examples 'a converted entity' do |persistence, visibility|
+  persist_str = persistence == :new_post ? 'new' : 'saved'
+  visible_str = visibility == :draft_post ? 'draft' : 'public'
+
+  context "for a #{persist_str} #{visible_str} post" do
+    let(:impl) do
+      method = persistence == :new_post ? :build : :create
+      FactoryGirl.send method,
+                       :post_datum,
+                       persistence,
+                       visibility,
+                       author_name: author.name,
+                       created_at: ctime
+    end
+    let(:entity) { klass.to_entity impl }
+
+    describe 'produces a Post' do
+
+      it 'with basic content fields' do
+        expect(entity.author_name).to eq author.name
+        expect(entity.title).to eq impl.title
+        expect(entity.body).to eq impl.body
+        expect(entity.image_url).to eq impl.image_url
+        expect(entity.created_at).to be_within(0.5.seconds).of ctime
+      end
+
+      it_behaves_like "entity '#{persist_str} post' fields"
+
+      it_behaves_like "entity '#{visible_str} post' fields"
+
+      # it_behaves_like "entity 'unattached post' fields"
+
+      # it_behaves_like "entity 'valid post' fields"
+    end # describe 'produces a Post'
+  end # context "for a #{persist_str} #{visible_str} post"
+end
+
 # Cross-layer conversion objects (CCOs).
 module CCO
   describe PostCCO2 do
+    let(:author) { FactoryGirl.build :user_datum }
+    let(:ctime) { DateTime.now.to_time }
     let(:klass) { PostCCO2 }
 
     describe :to_entity.to_s do
       context 'specifying only the implementation object' do
+
+        it_behaves_like 'a converted entity', :new_post, :draft_post
+
         context 'for a valid new draft Post' do
           it_behaves_like 'an unattached entity', [:new_post, :draft_post]
           it_behaves_like 'a draft entity', [:new_post]
