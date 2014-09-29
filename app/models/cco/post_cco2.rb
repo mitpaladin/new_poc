@@ -32,7 +32,7 @@ module CCO
       private
 
       def attrib_names
-        [:author_name, :body, :image_url, :slug, :title]
+        [:author_name, :body, :image_url, :pubdate, :slug, :title]
       end
 
       def build_attribs
