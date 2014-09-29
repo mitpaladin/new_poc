@@ -59,12 +59,13 @@ module CCO
 
         let(:post_count) { 5 }
         let(:entity) do
-          e = Blog.new
-          # Why #create_list rather than #attributes_for_list as before? Slugs.
-          FactoryGirl.create_list(:post_datum, post_count).each do |p|
-            e.add_entry p
+          Blog.new.tap do |blog|
+            # Why #create_list and not #attributes_for_list as before? Slugs.
+            FactoryGirl.create_list(:post_datum, post_count).each do |p|
+              post_entity = PostCCO.to_entity p, blog: blog, add_to_blog: false
+              blog.add_entry post_entity
+            end
           end
-          e
         end
 
         # Note that we can't add the PostData instances directly into the

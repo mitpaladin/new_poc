@@ -1,7 +1,8 @@
 
+require 'blog_post_adder'
 require 'blog_selector'
 require 'permissive_post_creator'
-require 'post_publisher'
+
 require_relative 'support/post_data_lambda'
 
 # Module containing domain service-level objects, aka DSOs or interactors.
@@ -18,7 +19,7 @@ module DSO
 
     def execute
       post = PermissivePostCreator.run! create_params
-      PostPublisher.run!(post: post) if post.valid?
+      BlogPostAdder.run!(post: post) if post.valid?
       post
     end
 
