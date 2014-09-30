@@ -11,12 +11,12 @@ module DSO
     let(:post) { blog.new_post FactoryGirl.attributes_for(:post_datum) }
     let(:klass) { BlogPostAdder }
 
-    describe 'succeeds when called with' do
+    describe 'succeeds when called with a valid Post instance' do
 
-      it 'a valid Post instance' do
-        expect { klass.run! post: post }.to_not raise_error
+      it 'and returns the (updated) "post" parameter instance' do
+        expect(klass.run! post: post).to be post
       end
-    end # describe 'succeeds when called with'
+    end # describe 'succeeds when called with a valid Post instance'
 
     describe 'reports failure when called with' do
 
@@ -38,5 +38,44 @@ module DSO
         end
       end # context 'an invalid Post, by'
     end # describe 'fails when called with'
+
+    describe 'supports setting publication status of Post to' do
+
+      context 'draft' do
+        let(:actual) { klass.run! post: post, status: 'draft' }
+
+        it 'and adds the post to the blog' do
+          expect(blog).to include actual
+        end
+
+        it 'and does not publish the post' do
+          expect(actual).not_to be_published
+        end
+      end # context 'draft'
+
+      context 'public' do
+        let(:actual) { klass.run! post: post, status: 'public' }
+
+        it 'and adds the post to the blog' do
+          expect(blog).to include actual
+        end
+
+        it 'and publishes the post' do
+          expect(actual).to be_published
+        end
+      end # context 'public'
+
+      context 'the default status (draft)' do
+        let(:actual) { klass.run! post: post }
+
+        it 'and adds the post to the blog' do
+          expect(blog).to include actual
+        end
+
+        it 'and does not publish the post' do
+          expect(actual).not_to be_published
+        end
+      end # context 'the default status (draft)'
+    end # describe 'supports setting publication status of Post to'
   end # describe DSO::BlogPostAdder
 end # module DSO
