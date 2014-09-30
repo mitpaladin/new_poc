@@ -16,7 +16,10 @@ class PostsController < ApplicationController
   end
 
   def create
-    post = DSO::PostCreatorAndPublisher.run! params: tweak_create_params(params)
+    post_params = tweak_create_params params
+    post_status = params['post_data']['post_status']
+    post = DSO::PostCreatorAndPublisher.run! params: post_params,
+                                             post_status: post_status
     @post = CCO::PostCCO.from_entity post
     @post.valid?
     authorize @post

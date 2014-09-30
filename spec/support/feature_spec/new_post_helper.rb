@@ -41,6 +41,7 @@ class FeatureSpecNewPostHelper < FeatureSpecHelperBase
       fill_in 'Title', with: @post_title
       fill_in 'Body', with: @post_body
       fill_in 'Image URL', with: @image_url if image_post
+      select 'public', from: 'post_data[post_status]'
       click_on 'Create Post'
     end
   end
