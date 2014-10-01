@@ -41,7 +41,7 @@ class FeatureSpecNewPostHelper < FeatureSpecHelperBase
       fill_in 'Title', with: @post_title
       fill_in 'Body', with: @post_body
       fill_in 'Image URL', with: @image_url if image_post
-      select 'public', from: 'post_data[post_status]'
+      select @post_status, from: 'post_data[post_status]'
       click_on 'Create Post'
     end
   end
@@ -53,6 +53,7 @@ class FeatureSpecNewPostHelper < FeatureSpecHelperBase
       @post_body = data.post_body
       @image_url ||= 'http://fc01.deviantart.net/fs70/f/2014/113/e/6/' \
           'dreaming_of_another_reality_by_razielmb-d7fgl3s.png'
+      @post_status = data.post_status
     end
   end
 end
