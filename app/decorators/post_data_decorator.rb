@@ -30,7 +30,11 @@ class PostDataDecorator < Draper::Decorator
   end
 
   def pubdate_str
-    timestamp_for pubdate
+    if published?
+      timestamp_for pubdate
+    else
+      'DRAFT'
+    end
   end
 
   def published?
