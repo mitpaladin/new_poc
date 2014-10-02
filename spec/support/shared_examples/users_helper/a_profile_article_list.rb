@@ -21,6 +21,7 @@ shared_examples 'a profile article list' do |fragment_builder|
     expect(fragment).to have(5).children
   end
 
+  # FIXME: Why don't these get run?
   # FIXME: There's *got* to be a better way to do this.
   describe 'for each child element of the ul.list-group element' do
     it 'is a li.list-group-item element' do
