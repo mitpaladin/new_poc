@@ -43,7 +43,7 @@ FactoryGirl.define do
     end
 
     trait :public_post do
-      pubdate { DateTime.now }
+      pubdate { Time.now }
       after(:build) { |p| p.post_status = 'public' }
     end
   end

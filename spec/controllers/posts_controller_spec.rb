@@ -233,19 +233,16 @@ describe PostsController do
     end # context 'when the logged-in user is the post author'
   end # describe "GET 'edit'"
 
-  # Currently, *all* published articles are public, so no branching for that.
-  # Whether the requesting user is the author or not is irrelevant to the
-  # controller; it just retrieves the article.
   describe "GET 'show'" do
     let(:author) { FactoryGirl.create :user_datum }
     let(:blog) { BlogData.first }
-    let(:article) do
-      FactoryGirl.create :post_datum,
-                         author_name: author.name,
-                         pubdate: Chronic.parse('3 PM yesterday')
-    end
 
-    context 'for a valid post' do
+    context 'for a valid public post' do
+      let(:article) do
+        FactoryGirl.create :post_datum, :saved_post, :public_post,
+                           author_name: author.name
+      end
+
       before :each do
         get :show, id: article.slug
       end
@@ -261,7 +258,58 @@ describe PostsController do
       it 'renders the :show template' do
         expect(response).to render_template :show
       end
-    end # context 'for a valid post'
+    end # context 'for a valid public post'
+
+    context 'for a draft post' do
+      context 'by the current user' do
+        let(:article) do
+          FactoryGirl.create :post_datum, :saved_post, :draft_post,
+                             author_name: author.name
+        end
+
+        before :each do
+          session[:user_id] = author.id
+          get :show, id: article.slug
+        end
+
+        it 'responds with an HTTP status of :ok' do
+          expect(response).to be_ok
+        end
+
+        it 'assigns an object to Post' do
+          expect(assigns[:post]).to be_a PostData
+        end
+
+        it 'renders the :show template' do
+          expect(response).to render_template :show
+        end
+      end # context 'by the current user
+
+      context 'by a different user' do
+        let(:article) do
+          FactoryGirl.create :post_datum, :saved_post, :draft_post
+        end
+        let(:user) { FactoryGirl.create :user_datum }
+
+        before :each do
+          session[:user_id] = user.id
+          get :show, id: article.slug
+        end
+
+        it 'responds with an HTTP redirect' do
+          expect(response).to be_redirect
+        end
+
+        it 'redirects to the root URL' do
+          expect(response).to redirect_to root_url
+        end
+
+        it 'renders the correct flash error message' do
+          expected = 'You are not authorized to perform this action.'
+          expect(flash[:error]).to eq expected
+        end
+      end
+    end # context 'for a draft post'
 
     context 'for an invalid post' do
       let(:bad_slug) { 'this-is-a-bogus-article-slug' }
