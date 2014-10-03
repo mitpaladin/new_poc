@@ -1,4 +1,6 @@
 
+require_relative 'profile_article_list_builder/user_post_selector'
+
 # Builds a list of articles (with links and publication date) for a user.
 class ProfileArticleListBuilder
   def initialize(user_name, h)
@@ -6,20 +8,20 @@ class ProfileArticleListBuilder
   end
 
   def to_html
-    h.content_tag :ul, nil, { class: 'list-group' }, false do
-      posts_for_user.map do |post|
-        ProfilePostItemBuilder.new(h, post).to_html
-      end.join.html_safe
+    @h.content_tag :ul, nil, { class: 'list-group' }, false do
+      build_inner_content_item_markup
     end
   end
 
-  protected
-
-  attr_reader :h, :user_name
-
   private
 
+  def build_inner_content_item_markup
+    posts_for_user.map do |post|
+      ProfilePostItemBuilder.new(@h, post).to_html
+    end.join.html_safe
+  end
+
   def posts_for_user
-    PostData.select { |post| post.author_name == user_name }.map(&:decorate)
+    UserPostSelector.new(@user_name, @h).build_list
   end
 end

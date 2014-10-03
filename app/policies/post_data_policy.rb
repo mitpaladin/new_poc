@@ -13,4 +13,9 @@ class PostDataPolicy < ApplicationPolicy
   def update?
     edit?
   end
+
+  def show?
+    return true if record.published?
+    record.author_name == user.name
+  end
 end # class PostDataPolicy

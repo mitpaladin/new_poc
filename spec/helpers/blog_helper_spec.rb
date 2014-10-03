@@ -66,15 +66,41 @@ describe BlogHelper do
 
     end # describe 'returns a list of a valid length specified by a parameter'
 
-    it 'includes only published entries' do
-      published_post_count = 8
-      build_and_publish_posts published_post_count
-      unpublished_posts = bhs_build_example_posts(10 - published_post_count)
-      unpublished_posts.each(&:save!)
-      entries = summarise_blog
-      expect(entries.count).to eq published_post_count
-      entries.each { |post| expect(post).to be_published }
-    end
+    describe 'includes both published and draft entries such that it' do
+      let(:total_entry_count) { 10 }
+      let(:published_post_count) { 8 }
+      let(:draft_post_count) { total_entry_count - published_post_count }
+      let(:entries) do
+        build_and_publish_posts published_post_count
+        unpublished_posts = bhs_build_example_posts draft_post_count
+        unpublished_posts.each(&:save!)
+        summarise_blog
+      end
+
+      it 'has the correct total number of entries' do
+        expect(entries.count).to eq total_entry_count
+      end
+
+      it 'has the correct number of draft entries' do
+        drafts = entries.reject(&:published?)
+        expect(drafts).to have(draft_post_count).entries
+      end
+
+      it 'has the draft entries at the start of the summary' do
+        drafts = entries.take draft_post_count
+        drafts.each { |post| expect(post).not_to be_published }
+      end
+
+      it 'has the correct number of published entries' do
+        posts = entries.select(&:published?)
+        expect(posts).to have(published_post_count).entries
+      end
+
+      it 'has the published entries at the end of the summary' do
+        posts = entries.drop draft_post_count
+        posts.each { |post| expect(post).to be_published }
+      end
+    end # describe 'includes both published and draft entries such that it'
 
     it 'sorts the entries in reverse order by pubdate' do
       build_and_publish_posts

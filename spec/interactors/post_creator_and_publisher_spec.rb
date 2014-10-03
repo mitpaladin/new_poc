@@ -35,11 +35,46 @@ module DSO
         it 'the correct image URL' do
           expect(post.image_url).to eq post_params[:image_url]
         end
-
-        it 'been published' do
-          expect(post).to be_published
-        end
       end # describe 'returns a Post instance that has'
+
+      describe 'when called with a "status" parameter of' do
+
+        context '"draft"' do
+          let(:post) { klass.run! params: params, post_status: 'draft' }
+
+          it ' the post is valid' do
+            expect(post).to be_valid
+          end
+
+          it ' the post is not published' do
+            expect(post).not_to be_published
+          end
+        end # context '"draft"'
+
+        context '"public"' do
+          let(:post) { klass.run! params: params, post_status: 'public' }
+
+          it 'the post is valid' do
+            expect(post).to be_valid
+          end
+
+          it 'the post is published' do
+            expect(post).to be_published
+          end
+        end # context '"public"'
+
+        context 'nil, or the default' do
+          let(:post) { klass.run! params: params }
+
+          it 'the post is valid' do
+            expect(post).to be_valid
+          end
+
+          it 'the post is not published' do
+            expect(post).not_to be_published
+          end
+        end # context 'nil, or the default'
+      end # describe 'when called with a "status" parameter of'
     end # describe 'succeeds when called with valid parameters, such that'
 
     describe 'reports errors when called with' do

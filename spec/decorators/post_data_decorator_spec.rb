@@ -86,11 +86,22 @@ describe PostDataDecorator do
   end # describe :build_byline
 
   describe :pubdate_str do
-    it 'returns the correctly-formatted string equivalent of #pubdate' do
-      post.publish
-      expect(post.pubdate_str).to eq post.timestamp_for(post.pubdate)
-    end
-  end
+    context 'for a published post' do
+      before :each do
+        post.publish
+      end
+
+      it 'returns the correctly-formatted string equivalent of #pubdate' do
+        expect(post.pubdate_str).to eq post.timestamp_for(post.pubdate)
+      end
+    end # context 'for a published post'
+
+    context 'for a draft post' do
+      it 'returns the string "DRAFT"' do
+        expect(post.pubdate_str).to eq 'DRAFT'
+      end
+    end # context 'for a draft post'
+  end # describe :pubdate_str
 
   describe :published? do
     let(:post) { FactoryGirl.build(:post_datum).decorate }

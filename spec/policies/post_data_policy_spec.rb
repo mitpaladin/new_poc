@@ -6,11 +6,20 @@ describe PostDataPolicy do
   let(:guest_user) { UserData.first }
   let(:registered_user) { FactoryGirl.build :user_datum }
   let(:author) { FactoryGirl.build :user_datum }
-  let(:instance) { FactoryGirl.create :post_datum, author_name: author.name }
+  let(:instance) do
+    FactoryGirl.create(:post_datum,
+                       :public_post,
+                       author_name: author.name).decorate
+  end
+  let(:draft_instance) do
+    FactoryGirl.create(:post_datum,
+                       :draft_post,
+                       author_name: author.name).decorate
+  end
 
   permissions :create? do
 
-    it 'prohibits the Guest User from invokuing the :create action' do
+    it 'prohibits the Guest User from invoking the :create action' do
       expect(subject).not_to permit(guest_user, instance)
     end
 
@@ -52,4 +61,34 @@ describe PostDataPolicy do
       expect(subject).to permit(author, instance)
     end
   end # permissions :update?
+
+  permissions :show? do
+    describe 'permits viewing of a published post by' do
+      it 'the post author' do
+        expect(subject).to permit(author, instance)
+      end
+
+      it 'a registered user' do
+        expect(subject).to permit(registered_user, instance)
+      end
+
+      it 'the Guest User' do
+        expect(subject).to permit(guest_user, instance)
+      end
+    end # describe 'permits viewing of a published post by'
+
+    it 'permits viewing of a draft post by its author' do
+      expect(subject).to permit(author, draft_instance)
+    end
+
+    describe 'prohibits viewing of a draft post by' do
+      it 'the Guest User' do
+        expect(subject).not_to permit(guest_user, draft_instance)
+      end
+
+      it 'a registered user' do
+        expect(subject).not_to permit(registered_user, draft_instance)
+      end
+    end # describe 'prohibits viewing of a draft post by'
+  end # permissions :show?
 end # describe PostDataPolicy

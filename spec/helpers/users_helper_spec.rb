@@ -11,12 +11,21 @@ describe UsersHelper do
     fragment_builder = lambda do |markup|
       Nokogiri.parse(markup).children.first
     end
+
+    before :each do
+      allow(controller).to receive(:authorize).and_return true
+    end
+
     it_behaves_like 'a profile article list', fragment_builder
   end # describe :profile_article_list
 
   describe :profile_articles_row.to_s do
     let(:fragment) do
       Nokogiri.parse(profile_articles_row user.name).children.first
+    end
+
+    before :each do
+      allow(controller).to receive(:authorize).and_return true
     end
 
     it 'is a div.row#contrib-row element' do
