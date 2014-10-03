@@ -7,6 +7,10 @@ require 'post_creator_and_publisher'
 class PostsController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, with: :article_not_found
 
+  def index
+    @posts = PostData.all
+  end
+
   def new
     post = DSO::PermissivePostCreator.run!
     # The DSO hands back an entity; Rails needs to see an implementation model

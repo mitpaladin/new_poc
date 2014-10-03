@@ -1,50 +1,15 @@
 
 require 'spec_helper'
 
-shared_examples 'an attempt to create an invalid Post' do
-  describe 'with an invalid title, the returned PostData instance is' do
-
-    before :each do
-      params[:title] = ''
-      post :create, post_data: params, blog: blog
-      @post = assigns[:post]
-    end
-
-    it 'a new record' do
-      expect(@post).to be_a_new_record
-    end
-
-    it 'is invalid' do
-      expect(@post).to_not be_valid
-    end
-
-    it 'provides the correct error message' do
-      expect(@post.errors.full_messages).to include "Title can't be blank"
-    end
-  end # describe 'with an invalid title, the returned PostData instance is'
-end # shared_examples 'an attempt to create an invalid Post'
-
-shared_examples 'an unauthorised user for this post' do
-  it 'redirects to the root path' do
-    expect(response).to redirect_to root_path
-  end
-
-  it 'sets the correct flash error message' do
-    message = 'You are not authorized to perform this action.'
-    expect(flash[:error]).to eq message
-  end
-
-  it 'does not assign an object to :post' do
-    expect(assigns[:post]).to be nil
-  end
-end # shared_examples 'an unauthorised user for this post'
+require_relative 'posts_controller/an_attempt_to_create_an_invalid_post'
+require_relative 'posts_controller/an_unauthorised_user_for_this_post'
 
 # Posts controller dispatches post-specific actions
 describe PostsController do
   describe :routing.to_s, type: :routing do
+    it { expect(get posts_path).to route_to 'posts#index' }
     it { expect(get new_post_path).to route_to 'posts#new' }
     it { expect(post posts_path).to route_to 'posts#create' }
-    it { expect(get posts_path).to_not be_routable }
     it do
       expect(get post_path('the-title'))
           .to route_to controller: 'posts', action: 'show', id: 'the-title'
@@ -64,10 +29,29 @@ describe PostsController do
   end
 
   describe :helpers.to_s do
+    it { expect(posts_path).to eq '/posts' }
     it { expect(new_post_path).to eq '/posts/new' }
     it { expect(posts_path).to eq '/posts' }
     it { expect(post_path(42)).to eq '/posts/42' }
   end
+
+  describe "GET 'index'" do
+    before :each do
+      get :index
+    end
+
+    it 'returns http success' do
+      expect(response).to be_success
+    end
+
+    it 'assigns the :posts variable' do
+      expect(assigns[:posts]).not_to be_nil
+    end
+
+    it 'renders the index template' do
+      expect(response).to render_template 'index'
+    end
+  end # describe "GET 'index'"
 
   describe "GET 'new'" do
 
