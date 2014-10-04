@@ -36,21 +36,85 @@ describe PostsController do
   end
 
   describe "GET 'index'" do
-    before :each do
-      get :index
+    let(:author) { FactoryGirl.create :user_datum }
+    let(:public_post_count) { 6 }
+    let(:draft_post_count) { 4 }
+    let!(:draft_posts) do
+      FactoryGirl.create_list :post_datum, draft_post_count, :saved_post,
+                              :draft_post, author_name: author.name
+    end
+    let!(:public_posts) do
+      FactoryGirl.create_list :post_datum, public_post_count, :saved_post,
+                              :public_post
     end
 
-    it 'returns http success' do
-      expect(response).to be_success
-    end
+    describe 'does the basics:' do
+      before :each do
+        get :index
+        @posts = assigns[:posts]
+      end
 
-    it 'assigns the :posts variable' do
-      expect(assigns[:posts]).not_to be_nil
-    end
+      it 'returns http success' do
+        expect(response).to be_success
+      end
 
-    it 'renders the index template' do
-      expect(response).to render_template 'index'
-    end
+      it 'assigns the :posts variable' do
+        expect(@posts).not_to be nil
+      end
+
+      it 'renders the index template' do
+        expect(response).to render_template 'index'
+      end
+    end # describe 'does the basics:'
+
+    context 'for the guest user' do
+      before :each do
+        get :index
+        @posts = assigns[:posts]
+      end
+
+      it 'assigns only the public posts to :posts' do
+        expect(@posts).to have(public_post_count).entries
+        @posts.each do |post|
+          expect(public_posts).to include post
+        end
+      end
+    end # context 'for the guest user'
+
+    context 'for a registered user owning no draft posts' do
+      before :each do
+        user = FactoryGirl.create :user_datum
+        session[:user_id] = user.id
+        get :index
+        @posts = assigns[:posts]
+      end
+
+      it 'assigns only the public posts to :posts' do
+        expect(@posts).to have(public_post_count).entries
+        @posts.each do |post|
+          expect(public_posts).to include post
+        end
+      end
+    end # context 'for a registered user owning no draft posts'
+
+    context 'for a registered user owning draft posts' do
+      before :each do
+        session[:user_id] = author.id
+        get :index
+        @posts = assigns[:posts]
+      end
+
+      it 'assigns all public posts and drafts by the current user to :posts' do
+        expected_count = public_post_count + draft_post_count
+        expect(@posts).to have(expected_count).entries
+        public_posts.each do |post|
+          expect(@posts).to include post
+        end
+        draft_posts.each do |post|
+          expect(@posts).to include post
+        end
+      end
+    end # context 'for a registered user owning no draft posts'
   end # describe "GET 'index'"
 
   describe "GET 'new'" do
