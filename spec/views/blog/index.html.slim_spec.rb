@@ -3,6 +3,8 @@ require 'spec_helper'
 
 describe 'blog/index.slim' do
   before :each do
+    user = assign :user, FactoryGirl.build_stubbed(:user_datum)
+    allow(view).to receive(:pundit_user).and_return user
     @blog = BlogData.first
     render
   end

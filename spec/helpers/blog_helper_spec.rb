@@ -5,7 +5,7 @@ require 'spec_helper'
 #       You Have Been Warned.
 
 def bhs_build_example_posts(entry_count)
-  FactoryGirl.build_list :post_datum, entry_count
+  FactoryGirl.build_list :post_datum, entry_count, author_name: 'John Smith'
 end
 
 def random_ages(sample, back_to_limit = 180)
@@ -23,6 +23,12 @@ end
 
 describe BlogHelper do
   describe 'summarise_blog' do
+
+    before :each do
+      user = FactoryGirl.build_stubbed(:user_datum, name: 'John Smith')
+      assign :user, user
+      allow(self).to receive(:pundit_user).and_return user
+    end
 
     it 'returns a list of 10 entries by default' do
       build_and_publish_posts 11
@@ -66,7 +72,9 @@ describe BlogHelper do
 
     end # describe 'returns a list of a valid length specified by a parameter'
 
-    describe 'includes both published and draft entries such that it' do
+    description = 'includes both published and authored draft entries such' \
+        ' that it'
+    describe description do
       let(:total_entry_count) { 10 }
       let(:published_post_count) { 8 }
       let(:draft_post_count) { total_entry_count - published_post_count }
@@ -100,7 +108,7 @@ describe BlogHelper do
         posts = entries.drop draft_post_count
         posts.each { |post| expect(post).to be_published }
       end
-    end # describe 'includes both published and draft entries such that it'
+    end # describe 'includes both published and authored draft entries such...'
 
     it 'sorts the entries in reverse order by pubdate' do
       build_and_publish_posts
