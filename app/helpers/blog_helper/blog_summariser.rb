@@ -8,7 +8,7 @@ module BlogHelper
     def initialize(&block)
       @count = 10
       @aggregator = -> { PostData.all }
-      @selector = -> (data) { data.select(&:published?) }
+      @selector = -> (data) { data }
       @sorter = -> (data) { data.sort_by(&:pubdate) }
       @orderer = -> (data) { data.reverse }
       @chunker = -> (data) { data.take count }
@@ -25,15 +25,12 @@ module BlogHelper
     end
 
     def summarise
-      @chunker.call(
-          @orderer.call(
-              @sorter.call(
-                  @selector.call(
-                      @aggregator.call.map(&:decorate)
-                  )
-              )
-          )
-      )
+      data = PostDataDecorator.decorate_collection @aggregator.call
+      summary_steps.each do |op|
+        step = ('@' + op.to_s).to_sym
+        data = instance_variable_get(step).call data
+      end
+      data
     end
 
     private
@@ -46,6 +43,10 @@ module BlogHelper
 
     def dsl_methods
       [:aggregator, :selector, :sorter, :orderer, :chunker]
+    end
+
+    def summary_steps
+      dsl_methods.drop(1)
     end
   end # class BlogHelper::BlogSummariser
 end # module BlogHelper
