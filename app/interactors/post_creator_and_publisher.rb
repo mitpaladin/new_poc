@@ -1,6 +1,5 @@
 
 require 'blog_post_adder'
-require 'blog_selector'
 require 'permissive_post_creator'
 
 require_relative 'support/post_data_lambda'
@@ -10,8 +9,6 @@ module DSO
   # Create and publish a new post on a blog, using other DSOs as workers.
   class PostCreatorAndPublisher < ActiveInteraction::Base
     hash :params do
-      # NOTE: This is the blog ID as a Rails controller parameter (string).
-      string :blog, default: '1'
       hash :post_data do
         POST_DATA_LAMBDA.call self
       end
@@ -36,7 +33,6 @@ module DSO
 
     def create_params
       {
-        blog_params: { id: params[:blog] },
         post_data:  params[:post_data]
       }
     end

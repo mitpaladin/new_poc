@@ -1,11 +1,14 @@
 
-require 'blog_selector'   # only needed for #new_post_params
 require 'permissive_post_creator'
 require 'post_creator_and_publisher'
 
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, with: :article_not_found
+
+  def index
+    @posts = policy_scope(PostData.all)
+  end
 
   def new
     post = DSO::PermissivePostCreator.run!
@@ -89,4 +92,4 @@ class PostsController < ApplicationController
     params[:post_data][:author_name] = user.name if user.registered?
     params
   end
-end # class Blog::PostsController
+end # class PostsController

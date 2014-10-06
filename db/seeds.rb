@@ -5,11 +5,6 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
-title = 'Watching Paint Dry'
-subtitle = 'The trusted source for drying paint news and opinion'
-BlogData.delete_all
-BlogData.create title: title, subtitle: subtitle
-
 password = SecureRandom.base64
 name = 'Guest User'
 email = 'guest@example.com'
