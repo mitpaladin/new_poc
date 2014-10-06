@@ -5,5 +5,5 @@ Rails.application.routes.draw do
   resources :users, except: [:destroy]
   resources :sessions, only: [:new, :create, :destroy]
 
-  root to: 'blog#index'
+  root to: 'posts#index'
 end
