@@ -11,12 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140729070256) do
-
-  create_table "blog_data", force: true do |t|
-    t.string "title",    null: false
-    t.string "subtitle"
-  end
+ActiveRecord::Schema.define(version: 20141006191249) do
 
   create_table "bootsy_image_galleries", force: true do |t|
     t.integer  "bootsy_resource_id"

@@ -4,7 +4,7 @@ shared_examples 'an attempt to create an invalid Post' do
 
     before :each do
       params[:title] = ''
-      post :create, post_data: params, blog: blog
+      post :create, post_data: params
       @post = assigns[:post]
     end
 

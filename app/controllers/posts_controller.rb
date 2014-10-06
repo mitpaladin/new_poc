@@ -1,5 +1,4 @@
 
-require 'blog_selector'   # only needed for #new_post_params
 require 'permissive_post_creator'
 require 'post_creator_and_publisher'
 
@@ -93,4 +92,4 @@ class PostsController < ApplicationController
     params[:post_data][:author_name] = user.name if user.registered?
     params
   end
-end # class Blog::PostsController
+end # class PostsController

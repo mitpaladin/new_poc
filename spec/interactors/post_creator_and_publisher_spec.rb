@@ -8,9 +8,8 @@ module DSO
   describe PostCreatorAndPublisher do
 
     let(:klass) { PostCreatorAndPublisher }
-    let(:blog) { BlogData.first.to_param }
     let(:post_params) { FactoryGirl.attributes_for :post_datum }
-    let(:params) { { post_data: post_params, blog: blog } }
+    let(:params) { { post_data: post_params } }
 
     describe 'succeeds when called with valid parameters, such that' do
       it 'no error is raised' do

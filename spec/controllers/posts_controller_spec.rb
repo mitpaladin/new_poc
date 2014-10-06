@@ -169,8 +169,6 @@ describe PostsController do
   end # describe "GET 'new'"
 
   describe "POST 'create'" do
-
-    let(:blog) { BlogData.first.to_param }
     let(:params) { FactoryGirl.attributes_for :post_datum }
 
     context 'for a Registered User' do
@@ -178,7 +176,7 @@ describe PostsController do
         before :each do
           @user = FactoryGirl.create :user_datum
           session[:user_id] = @user.id
-          post :create, post_data: params, blog: blog
+          post :create, post_data: params
         end
 
         after :each do
@@ -213,7 +211,7 @@ describe PostsController do
 
       describe 'with valid parameters' do
         before :each do
-          post :create, post_data: params, blog: blog
+          post :create, post_data: params
         end
 
         it 'assigns the :post item as a new PostData instance' do
@@ -283,7 +281,6 @@ describe PostsController do
 
   describe "GET 'show'" do
     let(:author) { FactoryGirl.create :user_datum }
-    let(:blog) { BlogData.first }
 
     context 'for a valid public post' do
       let(:article) do
