@@ -4,13 +4,12 @@ require_relative 'blog_helper/blog_summariser'
 # Old-style junk drawer of view-helper functions, etc.
 module BlogHelper
   def summarise_blog(count = 10)
-    allowed_posts = data_policy_scope
-    sorter = sorter_hack
+    allowed_posts = PostDataDecorator.decorate_collection data_policy_scope
+    the_sorter = sorter_hack
     BlogSummariser.new do |s|
       s.count = count
-      aggregator { allowed_posts }
-      sorter { |data| sorter.call data }
-    end.summarise
+      sorter -> (data) { the_sorter.call data }
+    end.summarise(allowed_posts)
   end
 
   private
