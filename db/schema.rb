@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141006191249) do
+ActiveRecord::Schema.define(version: 20141007171345) do
 
   create_table "bootsy_image_galleries", force: true do |t|
     t.integer  "bootsy_resource_id"
@@ -59,6 +59,16 @@ ActiveRecord::Schema.define(version: 20141006191249) do
     t.datetime "updated_at"
     t.string   "password_digest"
     t.string   "slug"
+  end
+
+  create_table "users", force: true do |t|
+    t.string   "name"
+    t.string   "slug"
+    t.string   "password_digest"
+    t.string   "email"
+    t.text     "profile"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
 end
