@@ -381,44 +381,81 @@ describe PostsController do
 
   describe "PATCH 'update'" do
     let(:author) { FactoryGirl.create :user_datum }
-    let(:post) do
-      FactoryGirl.create(:post_datum, author_name: author.name).decorate
-    end
-    let(:post_data) { { body: 'Updated ' + post.body } }
 
-    context 'for the post author' do
-      before :each do
+    context 'when the post status is unaffected' do
+      let(:post) do
+        FactoryGirl.create(:post_datum, author_name: author.name).decorate
+      end
+      let(:post_data) { { body: 'Updated ' + post.body } }
+
+      context 'for the post author' do
+        before :each do
+          session[:user_id] = author.id
+          patch :update, id: post.slug, post_data: post_data
+        end
+
+        it 'redirects to the post page' do
+          expect(response).to redirect_to post_path(post)
+        end
+
+        it 'assigns the updated post' do
+          actual = assigns[:post]
+          expect(actual).to eq post
+          expect(actual.body).to eq post_data[:body]
+        end
+      end # context 'for the post author'
+
+      context 'for a registered user other than the post author' do
+        before :each do
+          user = FactoryGirl.create :user_datum
+          session[:user_id] = user.id
+          patch :update, id: post.slug, post_data: post_data
+        end
+
+        it_behaves_like 'an unauthorised user for this post'
+      end # context 'for a registered user other than the post author'
+
+      context 'for the Guest User' do
+        before :each do
+          patch :update, id: post.slug, post_data: post_data
+        end
+
+        it_behaves_like 'an unauthorised user for this post'
+      end # context 'for the Guest User'
+    end # context 'when the post status is unaffected'
+
+    context 'for an existing draft post' do
+      let(:post) do
+        FactoryGirl.create(:post_datum,
+                           :draft_post,
+                           :saved_post,
+                           author_name: author.name
+          ).decorate
+      end
+
+      it 'that updates the post status to "public"' do
+        post_data = { post_status: 'public' }
         session[:user_id] = author.id
         patch :update, id: post.slug, post_data: post_data
+        expect(assigns[:post].post_status).to eq 'public'
+      end
+    end # context 'for an existing draft post'
+
+    context 'for an existing public post' do
+      let(:post) do
+        FactoryGirl.create(:post_datum,
+                           :public_post,
+                           :saved_post,
+                           author_name: author.name
+          ).decorate
       end
 
-      it 'redirects to the post page' do
-        expect(response).to redirect_to post_path(post)
-      end
-
-      it 'assigns the updated post' do
-        actual = assigns[:post]
-        expect(actual).to eq post
-        expect(actual.body).to eq post_data[:body]
-      end
-    end # context 'for the post author'
-
-    context 'for a registered user other than the post author' do
-      before :each do
-        user = FactoryGirl.create :user_datum
-        session[:user_id] = user.id
+      it 'that updates the post status to "draft"' do
+        post_data = { post_status: 'draft' }
+        session[:user_id] = author.id
         patch :update, id: post.slug, post_data: post_data
+        expect(assigns[:post].post_status).to eq 'draft'
       end
-
-      it_behaves_like 'an unauthorised user for this post'
-    end # context 'for a registered user other than the post author'
-
-    context 'for the Guest User' do
-      before :each do
-        patch :update, id: post.slug, post_data: post_data
-      end
-
-      it_behaves_like 'an unauthorised user for this post'
-    end # context 'for the Guest User'
+    end # context 'for an existing public post'
   end # describe "PATCH 'update'"
 end # describe PostsController

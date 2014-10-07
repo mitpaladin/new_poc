@@ -65,6 +65,10 @@ class PostsController < ApplicationController
     { flash: { alert: %(There is no article with an ID of "#{slug}"!) } }
   end
 
+  def post_status_updated?
+    params[:post_data].key? :post_status
+  end
+
   def process_create_result
     # NOTE: It Would Be Very Nice If this used MQs or etc. to be more direct.
     if @post.valid?
@@ -75,16 +79,21 @@ class PostsController < ApplicationController
     end
   end
 
+  def pubdate_for(post_data)
+    return nil if post_data[:post_status] == 'draft'
+    Time.now
+  end
+
   def redirect_params
     { flash: { success:  'Post added!' } }
   end
 
   def select_updates
+    field_update_keys = %w(body image_url)
+    post_data = params[:post_data]
     updates = {}
-    [:body, :image_url].each do |field|
-      updates[field] = params[:post_data][field]
-    end
-    updates
+    updates[:pubdate] = pubdate_for(post_data) if post_status_updated?
+    updates.merge! post_data.keep_if { |k, _v| field_update_keys.include? k }
   end
 
   def tweak_create_params(params)
