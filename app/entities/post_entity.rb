@@ -26,8 +26,4 @@ class PostEntity
   def persisted?
     !slug.nil?
   end
-
-  def inspect
-    [self.class.name, 'with attributes', attributes.to_s].join ' '
-  end
 end # class PostEntity
