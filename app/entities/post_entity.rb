@@ -1,28 +1,25 @@
 
 require 'active_model'
+require 'instance_variable_setter'
 
 # Persistence entity-layer representation for Post. Not a domain object; used to
 # communicate across the repository/DAO boundary.
 class PostEntity
   include ActiveModel::Serializers::JSON
 
-  attr_reader :author_name,
-              :body,
-              :image_url,
-              :slug,
-              :title,
-              :pubdate,
-              :created_at,
-              :updated_at
-
   def initialize(attribs)
-    attribs.each do |k, v|
-      instance_variable_set "@#{k}".to_sym, v if can_initialise? k
-    end
+    init_attrib_keys.each { |attrib| class_eval { attr_reader attrib } }
+    InstanceVariableSetter.new(self).set attribs
   end
 
   def attributes
     instance_values.symbolize_keys
+  end
+
+  # callback used by InstanceVariableSetter
+  def init_attrib_keys
+    %w(author_name body image_url slug title pubdate created_at updated_at)
+        .map(&:to_sym)
   end
 
   # we're using FriendlyID for slugs, so...
@@ -30,10 +27,7 @@ class PostEntity
     !slug.nil?
   end
 
-  private
-
-  def can_initialise?(key)
-    %w(author_name body image_url slug title pubdate created_at updated_at)
-        .map(&:to_sym).include? key
+  def inspect
+    [self.class.name, 'with attributes', attributes.to_s].join ' '
   end
 end # class PostEntity
