@@ -4,15 +4,16 @@ require 'spec_helper'
 require_relative 'shared_examples/a-data-mapping-entity'
 
 # Specs for persistence entity-layer representation for User.
-describe UserEntity do
-  let(:klass) { UserEntity }
-  let(:user_name) { 'Joe Palooka' }
-  let(:user_profile) { 'Whatever.' }
+describe PostEntity do
+  let(:klass) { PostEntity }
+  let(:author_name) { 'Joe Palooka' }
+  let(:title) { 'The Title' }
   let(:valid_subset) do
     {
-      name: user_name,
-      slug: user_name.parameterize,
-      profile: user_profile
+      title: title,
+      slug: title.parameterize,
+      author_name: author_name,
+      body: 'The Body'
     }
   end
   let(:invalid_attribs) do
@@ -22,9 +23,9 @@ describe UserEntity do
     }
   end
   let(:all_attrib_keys) do
-    %w(created_at email name password password_confirmation profile slug
-       updated_at).map(&:to_sym).to_a
+    %w(author_name body image_url slug title pubdate created_at updated_at)
+       .map(&:to_sym).to_a
   end
 
   it_behaves_like 'a data-mapping entity'
-end # describe UserEntity
+end # describe PostEntity
