@@ -11,7 +11,11 @@ describe ErrorFactory do
 
     describe 'returns an array of Hashes with each Hash having' do
       let(:errors) do
-        { field1: 'message 1', field2: 'message 2', field3: 'message 3' }
+        [
+          { field: 'f1', message: 'm1' },
+          { field: 'f1', message: 'm2' },
+          { field: 'f2', message: 'm3' }
+        ]
       end
       let(:actual) { klass.create errors }
 

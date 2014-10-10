@@ -4,8 +4,8 @@
 class ErrorFactory
   class << self
     def create(errors)
-      errors.map do |field, message|
-        { field: field.to_s, message: message }
+      errors.map do |error|
+        { field: error[:field].to_s, message: error[:message] }
       end
     end
   end
