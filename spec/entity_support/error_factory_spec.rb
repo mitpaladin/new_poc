@@ -25,6 +25,12 @@ describe ErrorFactory do
       it 'one :field key and one :message key' do
         actual.each { |item| expect(item.keys).to eq [:field, :message] }
       end
+
+      it 'string-like values for both keys' do
+        actual.each do |item|
+          item.values.each { |value| expect(value).to respond_to :to_str }
+        end
+      end
     end # describe 'returns an array of Hashes with each Hash having'
   end # describe :create
 end # describe ErrorFactory
