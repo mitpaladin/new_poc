@@ -28,6 +28,10 @@ class UserRepository
     successful_result record
   end
 
+  def all
+    dao.all.map { |record| factory.create record }
+  end
+
   private
 
   attr_reader :dao, :factory

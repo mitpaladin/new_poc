@@ -198,4 +198,55 @@ describe UserRepository do
     end # context 'record exists'
   end # describe :find_by_slug
 
+  describe :all.to_s do
+
+    context 'when users have been added' do
+      let(:user_count) { 3 }
+      let(:result) do
+        attrib_list = FactoryGirl.attributes_for_list :user, user_count,
+                                                      :saved_user
+        attrib_list.each { |attribs| obj.add UserEntity.new(attribs) }
+        obj.all
+      end
+
+      describe 'returns an array' do
+        it 'whose length is the number of records in the User DAO' do
+          expect(result.count).to eq UserDao.all.count
+        end
+
+        describe 'with items' do
+
+          it 'that are UserEntity instances' do
+            result.each { |record| expect(record).to be_a UserEntity }
+          end
+
+          describe 'where each UserEntity' do
+            it 'corresponds to a valid UserDao instance' do
+              result.each do |record|
+                dao_record = UserDao.find_by_slug record.slug
+                expect(dao_record).to be_valid
+              end
+            end
+
+            it 'has a unique slug' do
+              slugs = []
+              result.each do |record|
+                slugs << record.slug unless slugs.include?(record.slug)
+              end
+              expect(slugs.count).to eq result.count
+            end
+          end # describe 'where each UserEntity'
+        end # describe 'with items'
+      end # describe 'returns an array'
+    end # context 'when users have been added'
+
+    context 'when no users have yet been added' do
+      let(:result) { obj.all }
+
+      it 'returns an empty Array' do
+        expect(result).to be_an Array
+        expect(result).to be_empty
+      end
+    end
+  end # describe :all
 end # describe UserRepository
