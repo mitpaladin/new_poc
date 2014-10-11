@@ -12,17 +12,20 @@ class UserRepository
   end
 
   def find_by_slug(slug)
-    dao.where(slug: slug).first
+    found_user = dao.where(slug: slug).first
+    return successful_result(found_user) if found_user
+    failed_result slug
   end
 
   def update(entity)
-    record = find_by_slug entity.slug
-    if record && record.update_attributes(entity.attributes)
-      return successful_result(record)
-    end
+    result = find_by_slug entity.slug
+    return result unless result.success?
 
-    return failed_result_with_errors(record.errors) if record
-    failed_result entity.slug
+    record = dao.where(slug: entity.slug).first
+    unless record.update_attributes(entity.attributes)
+      return failed_result_with_errors record.errors
+    end
+    successful_result record
   end
 
   private

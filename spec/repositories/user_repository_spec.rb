@@ -132,9 +132,16 @@ describe UserRepository do
     end # context 'on failure'
 
     context 'on the record not being found' do
+      let(:bad_slug_return) do
+        errors = ActiveModel::Errors.new UserDao.new
+        errors.add :base, "A record with 'slug'=#{user_name.parameterize} was" \
+            ' not found.'
+        StoreResult.new entity: nil, success: false,
+            errors: ErrorFactory.create(errors)
+      end
       let(:obj) do
         ret = klass.new
-        allow(ret).to receive(:find_by_slug).and_return nil
+        allow(ret).to receive(:find_by_slug).and_return bad_slug_return
         ret
       end
       let!(:result) do
@@ -160,4 +167,35 @@ describe UserRepository do
       end
     end # context 'on the record not being found'
   end
+
+  describe :find_by_slug.to_s do
+
+    context 'record not found' do
+
+      it 'returns the expected StoreResult' do
+        result = obj.find_by_slug :nothing_here
+        expect(result).not_to be_success
+        expect(result.entity).to be nil
+        expect(result).to have(1).error
+        expected_message = "A record with 'slug'=nothing_here was not found."
+        expect(result.errors.first)
+            .to be_an_error_hash_for :base, expected_message
+      end
+    end # context 'record not found'
+
+    context 'record exists' do
+      let(:result) do
+        obj.add entity
+        obj.find_by_slug entity.slug
+      end
+
+      it 'returns the expected StoreResult' do
+        expect(result).to be_success
+        expect(result.errors).to be nil
+        expect(result.entity).to be_a UserEntity
+        expect(result.entity).to be_saved_entity_for entity
+      end
+    end # context 'record exists'
+  end # describe :find_by_slug
+
 end # describe UserRepository
