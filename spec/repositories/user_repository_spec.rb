@@ -3,6 +3,21 @@ require 'spec_helper'
 
 describe UserRepository do
   let(:klass) { UserRepository }
+  let(:obj) { klass.new }
+  let(:user_name) { 'Joe Blow' }
+  let(:email) { 'jblow@example.com' }
+  let(:password) { 'password' }
+  let(:entity) do
+    UserEntity.new name: user_name, slug: user_name.parameterize,
+                   email: email, profile: '*This* is a profile?!?',
+                   password: password, password_confirmation: password
+  end
+  let(:save_error_data) { { frobulator: 'is busted' } }
+  let(:record_errors) do
+    e = ActiveModel::Errors.new(obj)
+    e.add save_error_data.keys.first, save_error_data.values.first
+    e
+  end
 
   describe :initialize.to_s do
     it 'can be called without parameters' do
@@ -11,15 +26,6 @@ describe UserRepository do
   end # describe :initialize
 
   describe :add.to_s do
-    let(:obj) { klass.new }
-    let(:user_name) { 'Joe Blow' }
-    let(:email) { 'jblow@example.com' }
-    let(:password) { 'password' }
-    let(:entity) do
-      UserEntity.new name: user_name, slug: user_name.parameterize,
-                     email: email, profile: '*This* is a profile?!?',
-                     password: password, password_confirmation: password
-    end
 
     context 'on success' do
       let!(:result) { obj.add entity }
@@ -36,17 +42,18 @@ describe UserRepository do
     end # context 'on success'
 
     context 'on failure' do
-      let(:record_errors) do
-        [{ field: 'defrobulator', message: 'Save attempt blew it up. Sorry.' }]
+      let(:mockDao) do
+        Class.new(UserDao) do
+          def save
+            errors.add :frobulator, 'is busted'
+            false
+          end
+        end
       end
-      let(:bad_record) do
-        FancyOpenStruct.new save: false, errors: record_errors
+      let(:obj) do
+        klass.new UserFactory, mockDao
       end
       let(:result) { obj.add entity }
-
-      before :each do
-        allow(UserDao).to receive(:new).and_return bad_record
-      end
 
       it 'does not add a new record to the database' do
         expect(UserDao.all).to have(0).records
@@ -56,8 +63,101 @@ describe UserRepository do
         expect(result).not_to be_success
         expect(result.entity).to be nil
         expect(result).to have(1).error
-        expect(result.errors).to eq record_errors
+        error = result.errors.first
+        expect(error[:field]).to eq save_error_data.keys.first.to_s
+        expect(error[:message]).to eq save_error_data.values.first
       end
     end # context 'on failure'
-  end # describe add
+  end # describe :add
+
+  describe :update.to_s do
+    let(:updated_profile) { '*Updated* meaningless profile.' }
+
+    context 'on success' do
+      let!(:result) do
+        r = obj.add entity
+        entity = r.entity
+        attribs = entity.attributes
+        attribs[:profile] = updated_profile
+        entity = UserEntity.new attribs
+        obj.update entity
+      end
+
+      it 'updates the stored record' do
+        expect(UserDao.last.profile).to eq updated_profile
+      end
+
+      it 'returns the expected StoreResult' do
+        expect(result).to be_success
+        expect(result.errors).to be nil
+        expect(result.entity.profile).to eq updated_profile
+      end
+    end # context 'on success'
+
+    context 'on failure' do
+      let(:error_key) { :frobulator }
+      let(:error_message) { 'is busted' }
+      let(:mockDao) do
+        Class.new(UserDao) do
+          def update_attributes(_attribs)
+            # And no, this can't use RSpec variables declared earlier. Pffft.
+            errors.add :frobulator, 'is busted'
+            false
+          end
+        end
+      end
+      let(:obj) do
+        klass.new UserFactory, mockDao
+      end
+      let!(:result) do
+        r = obj.add entity
+        entity = r.entity
+        attribs = entity.attributes
+        attribs[:profile] = updated_profile
+        entity = UserEntity.new attribs
+        obj.update entity
+      end
+
+      it 'does not update the stored record' do
+        expect(UserDao.last.profile).not_to eq updated_profile
+      end
+
+      it 'returns the expected StoreResult' do
+        expect(result).not_to be_success
+        expect(result.entity).to be nil
+        expect(result).to have(1).error
+        expect(result.errors.first)
+            .to be_an_error_hash_for error_key, error_message
+      end
+    end # context 'on failure'
+
+    context 'on the record not being found' do
+      let(:obj) do
+        ret = klass.new
+        allow(ret).to receive(:find_by_slug).and_return nil
+        ret
+      end
+      let!(:result) do
+        r = obj.add entity
+        entity = r.entity
+        attribs = entity.attributes
+        attribs[:profile] = updated_profile
+        entity = UserEntity.new attribs
+        obj.update entity
+      end
+
+      it 'does not update the stored record' do
+        expect(UserDao.last.profile).not_to eq updated_profile
+      end
+
+      it 'returns the expected StoreResult' do
+        expect(result).not_to be_success
+        expect(result.entity).to be nil
+        expect(result).to have(1).error
+        expected_message = "A record with 'slug'=joe-blow was not found."
+        expect(result.errors.first)
+            .to be_an_error_hash_for :base, expected_message
+      end
+    end # context 'on the record not being found'
+  end
 end # describe UserRepository

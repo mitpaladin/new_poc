@@ -11,6 +11,20 @@ class UserRepository
     failed_result_with_errors record.errors
   end
 
+  def find_by_slug(slug)
+    dao.where(slug: slug).first
+  end
+
+  def update(entity)
+    record = find_by_slug entity.slug
+    if record && record.update_attributes(entity.attributes)
+      return successful_result(record)
+    end
+
+    return failed_result_with_errors(record.errors) if record
+    failed_result entity.slug
+  end
+
   private
 
   attr_reader :dao, :factory
@@ -28,5 +42,11 @@ class UserRepository
   def failed_result_with_errors(errors)
     StoreResult.new entity: nil, success: false,
                     errors: ErrorFactory.create(errors)
+  end
+
+  def failed_result(slug)
+    errors = ActiveModel::Errors.new dao
+    errors.add :base, "A record with 'slug'=#{slug} was not found."
+    failed_result_with_errors errors
   end
 end

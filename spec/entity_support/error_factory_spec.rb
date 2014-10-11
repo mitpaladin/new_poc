@@ -5,36 +5,42 @@ describe ErrorFactory do
   let(:klass) { ErrorFactory }
 
   describe :create.to_s do
-    it 'returns an empty Array when an empty Hash is passed in' do
-      expect(klass.create({})).to eq []
+    it 'returns an empty Array when an empty Errors object is passed in' do
+      expect(klass.create ActiveModel::Errors.new self).to eq []
     end
 
-    describe 'returns an array of Hashes with each Hash having' do
-      let(:errors) do
+    describe 'returns an array of Hashes' do
+      let(:message_pairs) do
         [
-          { field: 'f1', message: 'm1' },
-          { field: 'f1', message: 'm2' },
-          { field: 'f2', message: 'm3' }
+          { field1: 'message1' },
+          { field1: 'message2' },
+          { field2: 'message3' }
         ]
+      end
+      let(:errors) do
+        e = ActiveModel::Errors.new self
+        message_pairs.each do |entry|
+          e.add entry.keys.first, entry.values.first
+        end
+        e
       end
       let(:actual) { klass.create errors }
 
-      it 'two key/value pairs' do
-        actual.each do |item|
-          expect(item).to be_a Hash
-          expect(item).to have(2).entries
-        end
+      it 'with one Hash for each message added' do
+        expect(actual.count).to eq message_pairs.count
       end
 
-      it 'one :field key and one :message key' do
-        actual.each { |item| expect(item.keys).to eq [:field, :message] }
-      end
-
-      it 'string-like values for both keys' do
-        actual.each do |item|
-          item.values.each { |value| expect(value).to respond_to :to_str }
+      describe 'with each Hash having' do
+        it 'one :field key and one :message key' do
+          actual.each { |item| expect(item.keys).to eq [:field, :message] }
         end
-      end
-    end # describe 'returns an array of Hashes with each Hash having'
+
+        it 'string-like values for both keys' do
+          actual.each do |item|
+            item.values.each { |value| expect(value).to respond_to :to_str }
+          end
+        end
+      end # describe 'with each Hash having'
+    end # describe 'returns an array of Hashes'
   end # describe :create
 end # describe ErrorFactory
