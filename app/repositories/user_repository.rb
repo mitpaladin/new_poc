@@ -11,6 +11,21 @@ class UserRepository
     failed_result_with_errors record.errors
   end
 
+  def all
+    dao.all.map { |record| factory.create record }
+  end
+
+  def delete(slug)
+    # We pass in a slug; UserRepository (and UserEntity) don't know what an 'id'
+    # is. UserDao, however, is ActiveRecord, and seems to need an ID
+    record = dao.find_by_slug(slug)
+    return failed_result(slug) unless record
+    destroyed_record_count = dao.delete(record.id)
+    # This should never happen; if we can see it, we should be able to delete it
+    return failed_result(record.id) if destroyed_record_count.zero?
+    successful_result
+  end
+
   def find_by_slug(slug)
     found_user = dao.where(slug: slug).first
     return successful_result(found_user) if found_user
@@ -28,10 +43,6 @@ class UserRepository
     successful_result record
   end
 
-  def all
-    dao.all.map { |record| factory.create record }
-  end
-
   private
 
   attr_reader :dao, :factory
@@ -39,11 +50,6 @@ class UserRepository
   def entity_if_record?(record)
     return nil unless record
     factory.create record
-  end
-
-  def successful_result(record)
-    StoreResult.new success: true, errors: nil,
-                    entity: entity_if_record?(record)
   end
 
   def failed_result_with_errors(errors)
@@ -55,5 +61,10 @@ class UserRepository
     errors = ActiveModel::Errors.new dao
     errors.add :base, "A record with 'slug'=#{slug} was not found."
     failed_result_with_errors errors
+  end
+
+  def successful_result(record = nil)
+    StoreResult.new success: true, errors: nil,
+                    entity: entity_if_record?(record)
   end
 end
