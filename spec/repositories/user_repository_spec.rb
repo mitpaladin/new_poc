@@ -1,6 +1,8 @@
 
 require 'spec_helper'
 
+require_relative 'shared_examples/the_initialize_method_for_a_repository'
+
 describe UserRepository do
   let(:klass) { UserRepository }
   let(:obj) { klass.new }
@@ -20,9 +22,7 @@ describe UserRepository do
   end
 
   describe :initialize.to_s do
-    it 'can be called without parameters' do
-      expect { klass.new }.not_to raise_error
-    end
+    it_behaves_like 'the #initialize method for a Repository'
   end # describe :initialize
 
   describe :add.to_s do
@@ -37,7 +37,7 @@ describe UserRepository do
       it 'returns the expected StoreResult' do
         expect(result).to be_success
         expect(result.errors).to be nil
-        expect(result.entity).to be_saved_entity_for entity
+        expect(result.entity).to be_saved_user_entity_for entity
       end
     end # context 'on success'
 
@@ -175,7 +175,7 @@ describe UserRepository do
         expect(result).to be_success
         expect(result.errors).to be nil
         expect(result.entity).to be_a UserEntity
-        expect(result.entity).to be_saved_entity_for entity
+        expect(result.entity).to be_saved_user_entity_for entity
       end
     end # context 'record exists'
   end # describe :find_by_slug

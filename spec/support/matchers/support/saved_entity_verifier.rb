@@ -5,7 +5,8 @@ class SavedEntityVerifier
 
   def initialize(source, actual, &block)
     @source, @actual = source, actual
-    @required_in_source, @required_in_actual, @reasons = [], [], []
+    @required_in_both, @required_in_source, @required_in_actual = [], [], []
+    @reasons = []
     instance_eval(&block) if block
   end
 
@@ -40,6 +41,10 @@ class SavedEntityVerifier
     [which.capitalize, must_str, 'have a', field_str, 'field'].join(' ')
   end
 
+  def required_in_both(*attrs)
+    @required_in_both = Array(attrs)
+  end
+
   def required_in_source(*attrs)
     @required_in_source = Array(attrs)
   end
@@ -58,16 +63,22 @@ class SavedEntityVerifier
   end
 
   def verify_required_common_fields
-    [:name, :email, :profile].each { |field| add_reason_if field }
+    @required_in_both.each { |field| add_reason_if field }
+  end
+
+  def direction_for_musts(in_source)
+    must, must_not = if in_source
+                       [source, actual]
+                     else
+                       [actual, source]
+                     end
+    [must, must_not]
   end
 
   def verify_required_exclusive_fields(in_source)
     fields = in_source ? @required_in_source : @required_in_actual
-    if in_source
-      must_have, must_not_have = source, actual
-    else
-      must_have, must_not_have = actual, source
-    end
+    return if fields.nil? || fields.empty?
+    must_have, must_not_have = direction_for_musts(in_source)
     fields.each do |field|
       check_required_field must_have, field, in_source
       check_prohibited_field must_not_have, field, in_source
