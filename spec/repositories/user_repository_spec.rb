@@ -2,17 +2,21 @@
 require 'spec_helper'
 
 require_relative 'shared_examples/the_initialize_method_for_a_repository'
+require_relative 'shared_examples/the_add_method_for_a_repository'
 
 describe UserRepository do
   let(:klass) { UserRepository }
+  let(:be_entity_for) do
+    ->(entity) { be_saved_user_entity_for(entity) }
+  end
+  let(:dao_class) { UserDao }
+  let(:factory_class) { UserFactory }
   let(:obj) { klass.new }
   let(:user_name) { 'Joe Blow' }
   let(:email) { 'jblow@example.com' }
   let(:password) { 'password' }
   let(:entity) do
-    UserEntity.new name: user_name, slug: user_name.parameterize,
-                   email: email, profile: '*This* is a profile?!?',
-                   password: password, password_confirmation: password
+    UserEntity.new FactoryGirl.attributes_for(:user, :saved_user)
   end
   let(:save_error_data) { { frobulator: 'is busted' } }
   let(:record_errors) do
@@ -26,48 +30,7 @@ describe UserRepository do
   end # describe :initialize
 
   describe :add.to_s do
-
-    context 'on success' do
-      let!(:result) { obj.add entity }
-
-      it 'adds a new record to the database' do
-        expect(UserDao.all).to have(1).record
-      end
-
-      it 'returns the expected StoreResult' do
-        expect(result).to be_success
-        expect(result.errors).to be nil
-        expect(result.entity).to be_saved_user_entity_for entity
-      end
-    end # context 'on success'
-
-    context 'on failure' do
-      let(:mockDao) do
-        Class.new(UserDao) do
-          def save
-            errors.add :frobulator, 'is busted'
-            false
-          end
-        end
-      end
-      let(:obj) do
-        klass.new UserFactory, mockDao
-      end
-      let(:result) { obj.add entity }
-
-      it 'does not add a new record to the database' do
-        expect(UserDao.all).to have(0).records
-      end
-
-      it 'returns the expected StoreResult' do
-        expect(result).not_to be_success
-        expect(result.entity).to be nil
-        expect(result).to have(1).error
-        error = result.errors.first
-        expect(error[:field]).to eq save_error_data.keys.first.to_s
-        expect(error[:message]).to eq save_error_data.values.first
-      end
-    end # context 'on failure'
+    it_behaves_like 'the #add method for a Repository'
   end # describe :add
 
   describe :all.to_s do
@@ -83,7 +46,7 @@ describe UserRepository do
 
       describe 'returns an array' do
         it 'whose length is the number of records in the User DAO' do
-          expect(result.count).to eq UserDao.all.count
+          expect(result.count).to eq dao_class.all.count
         end
 
         describe 'with items' do
@@ -95,7 +58,7 @@ describe UserRepository do
           describe 'where each UserEntity' do
             it 'corresponds to a valid UserDao instance' do
               result.each do |record|
-                dao_record = UserDao.find_by_slug record.slug
+                dao_record = dao_class.find_by_slug record.slug
                 expect(dao_record).to be_valid
               end
             end
@@ -194,7 +157,7 @@ describe UserRepository do
       end
 
       it 'updates the stored record' do
-        expect(UserDao.last.profile).to eq updated_profile
+        expect(dao_class.last.profile).to eq updated_profile
       end
 
       it 'returns the expected StoreResult' do
@@ -208,7 +171,7 @@ describe UserRepository do
       let(:error_key) { :frobulator }
       let(:error_message) { 'is busted' }
       let(:mockDao) do
-        Class.new(UserDao) do
+        Class.new(dao_class) do
           def update_attributes(_attribs)
             # And no, this can't use RSpec variables declared earlier. Pffft.
             errors.add :frobulator, 'is busted'
@@ -229,7 +192,7 @@ describe UserRepository do
       end
 
       it 'does not update the stored record' do
-        expect(UserDao.last.profile).not_to eq updated_profile
+        expect(dao_class.last.profile).not_to eq updated_profile
       end
 
       it 'returns the expected StoreResult' do
@@ -243,7 +206,7 @@ describe UserRepository do
 
     context 'on the record not being found' do
       let(:bad_slug_return) do
-        errors = ActiveModel::Errors.new UserDao.new
+        errors = ActiveModel::Errors.new dao_class.new
         errors.add :base, "A record with 'slug'=#{user_name.parameterize} was" \
             ' not found.'
         StoreResult.new entity: nil, success: false,
@@ -264,7 +227,7 @@ describe UserRepository do
       end
 
       it 'does not update the stored record' do
-        expect(UserDao.last.profile).not_to eq updated_profile
+        expect(dao_class.last.profile).not_to eq updated_profile
       end
 
       it 'returns the expected StoreResult' do
