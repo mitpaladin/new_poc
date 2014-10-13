@@ -4,6 +4,7 @@ require 'spec_helper'
 require_relative 'shared_examples/the_initialize_method_for_a_repository'
 require_relative 'shared_examples/the_add_method_for_a_repository'
 require_relative 'shared_examples/the_all_method_for_a_repository'
+require_relative 'shared_examples/the_delete_method_for_a_repository'
 
 describe PostRepository do
   let(:be_entity_for) do
@@ -14,9 +15,11 @@ describe PostRepository do
   let(:factory_class) { PostFactory }
   let(:klass) { PostRepository }
   let(:obj) { klass.new }
+  let(:entity_attributes) do
+    FactoryGirl.attributes_for :post, :saved_post, :published_post
+  end
   let(:entity) do
-    entity_class.new FactoryGirl
-        .attributes_for(:post, :saved_post, :published_post)
+    entity_class.new entity_attributes
   end
   let(:be_entity_for) { ->(entity) { be_saved_post_entity_for entity } }
   let(:saved_entity_matcher) do
@@ -38,8 +41,12 @@ describe PostRepository do
     it_behaves_like 'the #add method for a Repository'
   end # describe :add
 
-  fdescribe :all.to_s do
+  describe :all.to_s do
     it_behaves_like 'the #all method for a Repository'
   end # decribe :all
+
+  describe :delete.to_s do
+    it_behaves_like 'the #delete method for a Repository'
+  end # decribe :delete
 
 end # describe PostRepository

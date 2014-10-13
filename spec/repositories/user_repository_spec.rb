@@ -4,6 +4,7 @@ require 'spec_helper'
 require_relative 'shared_examples/the_initialize_method_for_a_repository'
 require_relative 'shared_examples/the_add_method_for_a_repository'
 require_relative 'shared_examples/the_all_method_for_a_repository'
+require_relative 'shared_examples/the_delete_method_for_a_repository'
 
 describe UserRepository do
   let(:klass) { UserRepository }
@@ -17,8 +18,11 @@ describe UserRepository do
   let(:user_name) { 'Joe Blow' }
   let(:email) { 'jblow@example.com' }
   let(:password) { 'password' }
+  let(:entity_attributes) do
+    FactoryGirl.attributes_for :user, :saved_user
+  end
   let(:entity) do
-    UserEntity.new FactoryGirl.attributes_for(:user, :saved_user)
+    entity_class.new entity_attributes
   end
   let(:save_error_data) { { frobulator: 'is busted' } }
   let(:record_errors) do
@@ -44,31 +48,7 @@ describe UserRepository do
   end # describe :all
 
   describe :delete.to_s do
-
-    context 'for an existing user' do
-      let(:result) do
-        attribs = FactoryGirl.attributes_for :user, :saved_user
-        obj.add UserEntity.new attribs
-        obj.delete attribs[:slug]
-      end
-
-      it 'returns the expected StoreResult' do
-        expect(result).to be_success
-        expect(result.entity).to be nil
-        expect(result.errors).to be nil
-      end
-    end # context 'for an existing user'
-
-    context 'for a nonexistent user' do
-      let(:result) { obj.delete 'nothing-here' }
-
-      it 'returns the expected StoreResult' do
-        expect(result).not_to be_success
-        expect(result.entity).to be nil
-        message = "A record with 'slug'=nothing-here was not found."
-        expect(result.errors.first).to be_an_error_hash_for :base, message
-      end
-    end # context 'for a nonexistent user'
+    it_behaves_like 'the #delete method for a Repository'
   end # describe :delete
 
   describe :find_by_slug.to_s do
