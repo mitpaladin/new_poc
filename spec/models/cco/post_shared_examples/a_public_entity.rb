@@ -27,4 +27,3 @@ shared_examples 'a public entity' do |specifier_traits|
     end # describe 'values returned from instance methods'
   end # describe 'with correct'
 end # shared_examples 'a draft entity'
-

@@ -1,7 +1,7 @@
 
 require 'spec_helper'
 
-require_relative 'shared_examples/a-data-mapping-entity'
+require_relative 'shared_examples/a_data_mapping_entity'
 
 # Specs for persistence entity-layer representation for User.
 describe PostEntity do

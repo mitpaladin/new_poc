@@ -43,4 +43,3 @@ shared_examples 'the #add method for a Repository' do
     end
   end # context 'on failure'
 end # shared_examples 'the #add method for a Repository'
-
