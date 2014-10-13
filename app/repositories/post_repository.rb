@@ -11,6 +11,10 @@ class PostRepository
     failed_result_with_errors record.errors
   end
 
+  def all
+    dao.all.map { |record| factory.create record }
+  end
+
   private
 
   attr_reader :dao, :factory

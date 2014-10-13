@@ -3,6 +3,7 @@ require 'spec_helper'
 
 require_relative 'shared_examples/the_initialize_method_for_a_repository'
 require_relative 'shared_examples/the_add_method_for_a_repository'
+require_relative 'shared_examples/the_all_method_for_a_repository'
 
 describe UserRepository do
   let(:klass) { UserRepository }
@@ -11,6 +12,7 @@ describe UserRepository do
   end
   let(:dao_class) { UserDao }
   let(:factory_class) { UserFactory }
+  let(:entity_class) { UserEntity }
   let(:obj) { klass.new }
   let(:user_name) { 'Joe Blow' }
   let(:email) { 'jblow@example.com' }
@@ -24,6 +26,10 @@ describe UserRepository do
     e.add save_error_data.keys.first, save_error_data.values.first
     e
   end
+  let(:all_list_count) { 3 }
+  let(:all_attributes_list) do
+    FactoryGirl.attributes_for_list :user, all_list_count, :saved_user
+  end
 
   describe :initialize.to_s do
     it_behaves_like 'the #initialize method for a Repository'
@@ -34,55 +40,7 @@ describe UserRepository do
   end # describe :add
 
   describe :all.to_s do
-
-    context 'when users have been added' do
-      let(:user_count) { 3 }
-      let(:result) do
-        attrib_list = FactoryGirl.attributes_for_list :user, user_count,
-                                                      :saved_user
-        attrib_list.each { |attribs| obj.add UserEntity.new(attribs) }
-        obj.all
-      end
-
-      describe 'returns an array' do
-        it 'whose length is the number of records in the User DAO' do
-          expect(result.count).to eq dao_class.all.count
-        end
-
-        describe 'with items' do
-
-          it 'that are UserEntity instances' do
-            result.each { |record| expect(record).to be_a UserEntity }
-          end
-
-          describe 'where each UserEntity' do
-            it 'corresponds to a valid UserDao instance' do
-              result.each do |record|
-                dao_record = dao_class.find_by_slug record.slug
-                expect(dao_record).to be_valid
-              end
-            end
-
-            it 'has a unique slug' do
-              slugs = []
-              result.each do |record|
-                slugs << record.slug unless slugs.include?(record.slug)
-              end
-              expect(slugs.count).to eq result.count
-            end
-          end # describe 'where each UserEntity'
-        end # describe 'with items'
-      end # describe 'returns an array'
-    end # context 'when users have been added'
-
-    context 'when no users have yet been added' do
-      let(:result) { obj.all }
-
-      it 'returns an empty Array' do
-        expect(result).to be_an Array
-        expect(result).to be_empty
-      end
-    end
+    it_behaves_like 'the #all method for a Repository'
   end # describe :all
 
   describe :delete.to_s do
