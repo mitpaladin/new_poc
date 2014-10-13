@@ -5,6 +5,7 @@ require_relative 'shared_examples/the_initialize_method_for_a_repository'
 require_relative 'shared_examples/the_add_method_for_a_repository'
 require_relative 'shared_examples/the_all_method_for_a_repository'
 require_relative 'shared_examples/the_delete_method_for_a_repository'
+require_relative 'shared_examples/the_find_by_slug_method_for_a_repository'
 
 describe UserRepository do
   let(:klass) { UserRepository }
@@ -52,33 +53,7 @@ describe UserRepository do
   end # describe :delete
 
   describe :find_by_slug.to_s do
-
-    context 'record not found' do
-
-      it 'returns the expected StoreResult' do
-        result = obj.find_by_slug :nothing_here
-        expect(result).not_to be_success
-        expect(result.entity).to be nil
-        expect(result).to have(1).error
-        expected_message = "A record with 'slug'=nothing_here was not found."
-        expect(result.errors.first)
-            .to be_an_error_hash_for :base, expected_message
-      end
-    end # context 'record not found'
-
-    context 'record exists' do
-      let(:result) do
-        obj.add entity
-        obj.find_by_slug entity.slug
-      end
-
-      it 'returns the expected StoreResult' do
-        expect(result).to be_success
-        expect(result.errors).to be nil
-        expect(result.entity).to be_a UserEntity
-        expect(result.entity).to be_saved_user_entity_for entity
-      end
-    end # context 'record exists'
+    it_behaves_like 'the #find_by_slug method for a Repository'
   end # describe :find_by_slug
 
   describe :update.to_s do

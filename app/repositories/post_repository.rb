@@ -26,6 +26,12 @@ class PostRepository
     successful_result
   end
 
+  def find_by_slug(slug)
+    found_post = dao.where(slug: slug).first
+    return successful_result(found_post) if found_post
+    failed_result slug
+  end
+
   private
 
   attr_reader :dao, :factory

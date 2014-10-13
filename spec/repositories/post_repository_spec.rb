@@ -5,6 +5,7 @@ require_relative 'shared_examples/the_initialize_method_for_a_repository'
 require_relative 'shared_examples/the_add_method_for_a_repository'
 require_relative 'shared_examples/the_all_method_for_a_repository'
 require_relative 'shared_examples/the_delete_method_for_a_repository'
+require_relative 'shared_examples/the_find_by_slug_method_for_a_repository'
 
 describe PostRepository do
   let(:be_entity_for) do
@@ -48,5 +49,9 @@ describe PostRepository do
   describe :delete.to_s do
     it_behaves_like 'the #delete method for a Repository'
   end # decribe :delete
+
+  describe :find_by_slug.to_s do
+    it_behaves_like 'the #find_by_slug method for a Repository'
+  end # describe :find_by_slug
 
 end # describe PostRepository
