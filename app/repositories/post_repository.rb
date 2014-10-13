@@ -32,6 +32,17 @@ class PostRepository
     failed_result slug
   end
 
+  def update(entity)
+    result = find_by_slug entity.slug
+    return result unless result.success?
+
+    record = dao.where(slug: entity.slug).first
+    unless record.update_attributes(entity.attributes)
+      return failed_result_with_errors record.errors
+    end
+    successful_result record
+  end
+
   private
 
   attr_reader :dao, :factory

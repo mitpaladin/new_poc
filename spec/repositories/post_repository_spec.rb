@@ -6,6 +6,7 @@ require_relative 'shared_examples/the_add_method_for_a_repository'
 require_relative 'shared_examples/the_all_method_for_a_repository'
 require_relative 'shared_examples/the_delete_method_for_a_repository'
 require_relative 'shared_examples/the_find_by_slug_method_for_a_repository'
+require_relative 'shared_examples/the_update_method_for_a_repository'
 
 describe PostRepository do
   let(:be_entity_for) do
@@ -54,4 +55,10 @@ describe PostRepository do
     it_behaves_like 'the #find_by_slug method for a Repository'
   end # describe :find_by_slug
 
+  describe :update.to_s do
+    let(:attribute_to_update) { :title }
+    let(:updated_attribute) { '*Updated* meaningless title.' }
+
+    it_behaves_like 'the #update method for a Repository'
+  end # describe :update
 end # describe PostRepository
