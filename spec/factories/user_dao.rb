@@ -23,5 +23,15 @@ FactoryGirl.define do
     trait :saved_user do
       slug { name.parameterize }
     end
+
+    # not to be used with :new_user
+    trait :guest_user do
+      name 'Guest User'
+      email 'guest@example.com'
+      profile %(This is the un-authenticated Guest User for the system.)
+      password 'password'
+      password_confirmation { password }
+      slug { name.parameterize }
+    end
   end
 end

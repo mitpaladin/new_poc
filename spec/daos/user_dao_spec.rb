@@ -2,7 +2,6 @@
 require 'spec_helper'
 
 describe UserDao do
-
   describe 'validates' do
 
     describe :name do
@@ -88,4 +87,24 @@ describe UserDao do
       end # context 'for an invalid email address' do
     end # describe :email
   end # describe 'validates'
+
+  fdescribe :all.to_s do
+    let(:klass) { UserDao }
+    let(:obj) { klass.new }
+    let(:result) { obj.all }
+    let(:user_attrs) { FactoryGirl.attributes_for :user, :saved_user }
+
+    before :each do
+      FactoryGirl.create :user, user_attrs
+    end
+
+    it 'includes registered users added into the system' do
+      expect(result.select { |u| u.name == user_attrs[:name] }).not_to be_empty
+    end
+
+    it 'does not include the Guest User' do
+      expect(result.select { |u| u.name == 'Guest User' }).to be_empty
+      expect(klass.where 'name = ?', 'Guest User').not_to be_empty
+    end
+  end # describe :all
 end # describe User

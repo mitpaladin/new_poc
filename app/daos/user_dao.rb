@@ -21,4 +21,9 @@ class UserDao < ActiveRecord::Base
 
   # NOTE: Set check_mx to true for production?
   validates_email_format_of :email, check_mx: false
+
+  # Do *NOT* include the Guest User in queries using '#all'
+  def all
+    self.class.where 'name != ?', 'Guest User'
+  end
 end # class UserDao

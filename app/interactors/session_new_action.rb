@@ -8,7 +8,13 @@ class SessionNewAction < ActiveInteraction::Base
 
   def execute
     auth_params = [params[:user].to_s.parameterize, params[:password]]
-    UserRepository.new.authenticate(*auth_params)
+    repo = UserRepository.new
+    ret = repo.authenticate(*auth_params)
+    unless ret.success?
+      ret = StoreResult.new success: false, errors: ret.errors,
+                            entity: repo.guest_user.entity
+    end
+    ret
   end
 end # class SessionNewAction
 # end # module DSO2

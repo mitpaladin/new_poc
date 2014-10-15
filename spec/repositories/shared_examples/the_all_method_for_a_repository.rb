@@ -7,8 +7,13 @@ shared_examples 'the #all method for a Repository' do
     end
 
     describe 'returns an array' do
-      it 'whose length is the number of records in the User DAO' do
-        expect(result.count).to eq dao_class.all.count
+      description = %(whose length is the number of non-Guest User records in
+          the User DAO).squeeze
+      it description do
+        # records not added until `result` lazy-evaluated
+        _ = result
+        dao_records = dao_class.all.reject { |u| u.slug == 'guest-user' }
+        expect(result.count).to eq dao_records.count
       end
 
       describe 'with items' do
@@ -37,7 +42,7 @@ shared_examples 'the #all method for a Repository' do
     end # describe 'returns an array'
   end # context 'when records have been added'
 
-  context 'when no users have yet been added' do
+  context 'when no records have yet been added' do
     let(:result) { obj.all }
 
     it 'returns an empty Array' do

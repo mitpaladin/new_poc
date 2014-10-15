@@ -6,9 +6,6 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 password = SecureRandom.base64
-name = 'Guest User'
-email = 'guest@example.com'
-profile = %q(This is the un-authenticated Guest User for the system.)
 attrs = {
   name:     'Guest User',
   email:    'guest@example.com',
@@ -18,3 +15,5 @@ attrs = {
 }
 UserData.delete_all
 UserData.create attrs
+UserDao.delete_all
+UserDao.create attrs

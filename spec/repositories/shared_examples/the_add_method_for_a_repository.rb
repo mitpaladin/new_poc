@@ -1,10 +1,12 @@
 
 shared_examples 'the #add method for a Repository' do
   context 'on success' do
+    let!(:initial_count) { dao_class.all.count }
     let!(:result) { obj.add entity }
 
     it 'adds a new record to the database' do
-      expect(dao_class.all).to have(1).record
+      added_records = dao_class.all.count - initial_count
+      expect(added_records).to eq 1
     end
 
     it 'returns the expected StoreResult' do
@@ -27,10 +29,11 @@ shared_examples 'the #add method for a Repository' do
     let(:obj) do
       klass.new factory_class, mockDao
     end
+    let!(:initial_count) { mockDao.all.count }
     let(:result) { obj.add entity }
 
     it 'does not add a new record to the database' do
-      expect(dao_class.all).to have(0).records
+      expect(dao_class.all.count).to eq initial_count
     end
 
     it 'returns the expected StoreResult' do

@@ -28,31 +28,71 @@ describe SessionNewAction do
     end # describe 'and raises an error when called'
   end # describe 'requires a :params hash'
 
-  context 'with valid input params containing a user name and pasword' do
-    let(:user) { FactoryGirl.create :user, :saved_user }
-    let(:params) { { user: user.name, password: user.password } }
+  describe 'with input params containing' do
+    let!(:user) { FactoryGirl.create :user, :saved_user }
+    context 'a valid user name and password' do
+      let(:params) { { user: user.name, password: user.password } }
 
-    describe 'it returns a StoreResult with' do
-      let(:result) { SessionNewAction.run! params: params }
-      let(:entity_attributes) do
-        [:created_at, :email, :name, :profile, :slug, :updated_at]
-      end
-
-      it 'a truthy "success" field' do
-        expect(result).to be_success
-      end
-
-      it 'an empty "errors" field' do
-        expect(result.errors).to be_empty
-      end
-
-      it 'an "entity" field with correct attributes' do
-        dao = UserDao.find_by_slug user.name.parameterize
-        entity_attributes.each do |attr|
-          expect(result.entity.send attr).to eq dao[attr]
+      describe 'it returns a StoreResult with' do
+        let(:result) { SessionNewAction.run! params: params }
+        let(:entity_attributes) do
+          [:created_at, :email, :name, :profile, :slug, :updated_at]
         end
-      end
-    end # describe 'it returns a StoreResult with'
-  end # context 'with valid input params containing a user name and pasword'
+
+        it 'a truthy "success" field' do
+          expect(result).to be_success
+        end
+
+        it 'an empty "errors" field' do
+          expect(result.errors).to be_empty
+        end
+
+        it 'an "entity" field with correct attributes' do
+          dao = UserDao.find_by_slug user.name.parameterize
+          entity_attributes.each do |attr|
+            expect(result.entity.send attr).to eq dao[attr]
+          end
+        end
+      end # describe 'it returns a StoreResult with'
+    end # context 'a valid user name and password'
+
+    context 'a valid user name and invalid password' do
+      let(:params) { { user: user.name, password: 'Bogus Password' } }
+
+      describe 'it returns a StoreResult with' do
+        let(:result) { SessionNewAction.run! params: params }
+
+        it 'a falsy "success" field' do
+          expect(result).not_to be_success
+        end
+
+        it 'an "invalid user name or password" error message' do
+          expect(result).to have(1).error
+          error = result.errors.first
+          expect(error[:field]).to eq 'base'
+          expect(error[:message]).to eq 'Invalid user name or password'
+        end
+      end # describe 'it returns a StoreResult with'
+    end # context 'a valid user name and invalid password'
+
+    fcontext 'an invalid user name' do
+      let(:params) { { user: 'nobody here', password: 'Bogus Password' } }
+
+      describe 'it returns a StoreResult with' do
+        let(:result) { SessionNewAction.run! params: params }
+
+        it 'a falsy "success" field' do
+          expect(result).not_to be_success
+        end
+
+        it 'an "invalid user name or password" error message' do
+          expect(result).to have(1).error
+          error = result.errors.first
+          expect(error[:field]).to eq 'base'
+          expect(error[:message]).to eq 'Invalid user name or password'
+        end
+      end # describe 'it returns a StoreResult with'
+    end # context 'an invalid user name'
+  end # describe 'with input params containing'
 end # describe SessionNewAction
 # end # module DSO2

@@ -37,6 +37,16 @@ describe UserRepository do
     FactoryGirl.attributes_for_list :user, all_list_count, :saved_user
   end
 
+  before :each do
+    password = SecureRandom.base64
+    profile = %(This is the un-authenticated Guest User for the system.)
+    UserDao.create name:  'Guest User',
+                   email: 'guest@example.com',
+                   profile:  profile,
+                   password: password,
+                   password_confirmation: password
+  end
+
   describe :initialize.to_s do
     it_behaves_like 'the #initialize method for a Repository'
   end # describe :initialize
@@ -47,6 +57,13 @@ describe UserRepository do
 
   describe :all.to_s do
     it_behaves_like 'the #all method for a Repository'
+
+    it 'does not return the Guest User in a call to :all' do
+      find_guest_user = ->(u) { u.slug == 'guest-user' }
+      expect(obj.all.select { |u| find_guest_user.call u }).to be_empty
+      dao = obj.instance_variable_get :@dao
+      expect(dao.all.select { |u| find_guest_user.call u }).to have(1).entry
+    end
   end # describe :all
 
   describe :delete.to_s do
@@ -95,4 +112,14 @@ describe UserRepository do
       end # context 'with a correct password'
     end # context 'for an existing user'
   end # describe :authenticate
+
+  describe :guest_user do
+    let(:result) { obj.guest_user }
+
+    it 'returns the Guest User in a successful StoreResult' do
+      expect(result).to be_success
+      expect(result).to have(0).errors
+      expect(result.entity.name).to eq 'Guest User'
+    end
+  end # describe :guest_user
 end # describe UserRepository
