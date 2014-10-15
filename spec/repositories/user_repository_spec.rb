@@ -62,5 +62,37 @@ describe UserRepository do
     let(:updated_attribute) { '*Updated* meaningless profile.' }
 
     it_behaves_like 'the #update method for a Repository'
-  end # describe :update
+  end # describe :update'
+
+  describe :authenticate.to_s do
+    context 'for an existing user' do
+      let(:dao) { FactoryGirl.create :user, :saved_user }
+      let(:user) { dao.name }
+
+      context 'with a correct password' do
+        let(:password) { dao.password }
+
+        describe 'it returns a StoreResult with' do
+          let(:result) { obj.authenticate user, password }
+          let(:entity_attributes) do
+            [:created_at, :email, :name, :profile, :slug, :updated_at]
+          end
+
+          it 'the "success" field set to true' do
+            expect(result).to be_success
+          end
+
+          it 'an empty "errors" field' do
+            expect(result.errors).to be_empty
+          end
+
+          it 'an "entity" field with the correct attributes' do
+            entity_attributes.each do |attr|
+              expect(result.entity.send attr).to eq dao[attr]
+            end
+          end
+        end # describe 'it returns a StoreResult with'
+      end # context 'with a correct password'
+    end # context 'for an existing user'
+  end # describe :authenticate
 end # describe UserRepository
