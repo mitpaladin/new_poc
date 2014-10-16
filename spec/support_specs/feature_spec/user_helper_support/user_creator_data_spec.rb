@@ -1,7 +1,5 @@
 
-require 'pry'
-
-require_relative 'user_creator_data.rb'
+require 'support/feature_spec/user_helper_support/user_creator_data.rb'
 
 # Internal support-code module for FeatureSpecLoginHelper class.
 module UserHelperSupport

@@ -30,6 +30,7 @@ if %w(development test).include? Rails.env
       'spec/repositories/**/*.rb',
       'spec/services/**/*.rb',
       'spec/support/**/*.rb',
+      'spec/support_specs/**/*.rb'
     ]
     task.formatters = ['simple', 'd']
     task.fail_on_error = true

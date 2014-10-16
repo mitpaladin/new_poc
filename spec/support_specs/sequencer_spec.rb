@@ -1,5 +1,5 @@
 
-require_relative 'sequencer'
+require_relative '../support/sequencer'
 
 require 'pry'
 

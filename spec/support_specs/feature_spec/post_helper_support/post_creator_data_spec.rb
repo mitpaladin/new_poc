@@ -1,7 +1,5 @@
 
-require 'pry'
-
-require_relative 'post_creator_data'
+require 'support/feature_spec/post_helper_support/post_creator_data'
 
 # Internal support-code module for FeatureSpecNewPostHelper class.
 module PostHelperSupport
