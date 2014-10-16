@@ -1,4 +1,5 @@
 # New POC
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/jdickey/new_poc?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 [![Code Climate](https://codeclimate.com/github/jdickey/new_poc.png)](https://codeclimate.com/github/jdickey/new_poc)
 
