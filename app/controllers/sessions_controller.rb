@@ -4,11 +4,16 @@ require 'pundit'
 # SessionsController: actions related to Sessions (logging in and out)
 class SessionsController < ApplicationController
   def new
+    # result = DSO2::SessionNewAction.run!
+    # result.success?
     authorise_current_user
     true
   end
 
   def create
+    # result = DSO2::SessionCreateAction.run! params: params
+    # return setup_failed_login(result.errors) unless result.success?
+    # setup_successful_login result.entity
     requesting_user = UserData.find_by_name params[:name]
     authorise_current_user
     if user_can_sign_in requesting_user, params[:password]
@@ -19,6 +24,9 @@ class SessionsController < ApplicationController
   end
 
   def destroy
+    # result = DSO2::SessionDestroyAction.run!
+    # clear_current_user_id
+    # redirect_to root_url, flash: flash_for_successful_logout
     authorise_current_user
     update_current_user_id
     redirect_to root_url, flash: flash_for_successful_logout

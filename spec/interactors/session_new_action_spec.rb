@@ -2,6 +2,8 @@
 require 'spec_helper'
 
 require 'session_new_action'
+require_relative 'shared_examples/a_storeresult_with_a_guest_user_entity'
+require_relative 'shared_examples/a_successful_storeresult'
 
 # Module DSO2 contains our second-generation Domain Service Objects, aka
 #   "interactors".
@@ -16,30 +18,8 @@ module DSO2
     describe 'returns a StoreResult instance with' do
       let(:result) { klass.run! }
 
-      it 'a :success field of "true"' do
-        expect(result).to be_success
-      end
-
-      it 'an empty :errors field' do
-        expect(result.errors).to be_empty
-      end
-
-      describe 'an :entity field matching the Guest User settings for' do
-        let(:entity) { result.entity }
-
-        it 'name' do
-          expect(entity.name).to eq 'Guest User'
-        end
-
-        it 'dummy password for testing' do
-          expect(entity.password).to eq 'password'
-          expect(entity.password_confirmation).to eq entity.password
-        end
-
-        it 'slug' do
-          expect(entity.slug).to eq 'guest-user'
-        end
-      end # describe 'an :entity field matching the Guest User settings for'
+      it_behaves_like 'a successful StoreResult'
+      it_behaves_like 'a StoreResult with a Guest User entity'
     end # describe 'returns a StoreResult instance with'
   end # describe DSO2::SessionNewAction
 end # module DSO2
