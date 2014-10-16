@@ -3,7 +3,7 @@ require_relative 'sequencer'
 
 require 'pry'
 
-describe Sequencer do
+describe Sequencer, support: true do
   context 'by default' do
     let(:obj) { Sequencer.new 'This is a Test %d' }
 

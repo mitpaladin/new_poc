@@ -6,7 +6,7 @@ require_relative 'post_creator_data'
 # Internal support-code module for FeatureSpecNewPostHelper class.
 module PostHelperSupport
   # Specs for class that encapsulates/sequences data for post generation.
-  describe PostCreatorData do
+  describe PostCreatorData, support: true do
     let(:default_status) { 'public' }
 
     describe 'has a method returning a String or equivalent for' do

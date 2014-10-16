@@ -6,7 +6,7 @@ require_relative 'user_creator_data.rb'
 # Internal support-code module for FeatureSpecLoginHelper class.
 module UserHelperSupport
   # Specs for class that encapsulates/sequences data for user generation.
-  describe UserCreatorData do
+  describe UserCreatorData, support: true do
     describe 'has a method returning a String or equivalent for' do
       let(:obj) { UserCreatorData.new }
 
