@@ -24,12 +24,22 @@ class UserRepository < RepositoryBase
   def guest_user
     user_dao = dao.first
     errors = ErrorFactory.create(user_dao.errors)
-    StoreResult.new entity: factory.create(user_dao.attributes),
+    StoreResult.new entity: factory.create(attributes_for user_dao),
                     errors: errors,
                     success: errors.empty?
   end
 
   private
+
+  def attributes_for(user_dao)
+    attribs = OpenStruct.new user_dao.attributes
+    # set dummy password for testing
+    if test_environment?
+      attribs.password = 'password'
+      attribs.password_confirmation = attribs.password
+    end
+    attribs
+  end
 
   def entity_for(user)
     return factory.create(user.attributes) if user
@@ -50,5 +60,9 @@ class UserRepository < RepositoryBase
     StoreResult.new entity: guest_user.entity,
                     errors: invalid_user_name_or_password,
                     success: false
+  end
+
+  def test_environment?
+    Rails.env.test?
   end
 end
