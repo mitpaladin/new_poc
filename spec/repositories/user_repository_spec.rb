@@ -8,6 +8,14 @@ require_relative 'shared_examples/the_delete_method_for_a_repository'
 require_relative 'shared_examples/the_find_by_slug_method_for_a_repository'
 require_relative 'shared_examples/the_update_method_for_a_repository'
 
+shared_examples 'a result with a Guest User entity' do
+  it 'is a successful result with a Guest User entity' do
+    expect(result).to be_success
+    expect(result).to have(0).errors
+    expect(result.entity.name).to eq 'Guest User'
+  end
+end
+
 describe UserRepository do
   let(:klass) { UserRepository }
   let(:be_entity_for) do
@@ -114,12 +122,26 @@ describe UserRepository do
   end # describe :authenticate
 
   describe :guest_user do
-    let(:result) { obj.guest_user }
+    context 'with default/no parameter specified' do
+      let(:result) { obj.guest_user }
 
-    it 'returns the Guest User in a successful StoreResult' do
-      expect(result).to be_success
-      expect(result).to have(0).errors
-      expect(result.entity.name).to eq 'Guest User'
-    end
+      it_behaves_like 'a result with a Guest User entity'
+
+      it 'includes the password fields in the Guest User entity' do
+        expect(result.entity.password).not_to be_empty
+        expect(result.entity.password_confirmation).not_to be_empty
+      end
+    end # context 'with default/no parameter specified'
+
+    context 'with :no_password option specified' do
+      let(:result) { obj.guest_user :no_password }
+
+      it_behaves_like 'a result with a Guest User entity'
+
+      it 'does NOT include the password fields in the Guest User entity' do
+        expect(result.entity.password).to be_nil
+        expect(result.entity.password_confirmation).to be_nil
+      end
+    end # context 'with :no_password option specified' do
   end # describe :guest_user
 end # describe UserRepository

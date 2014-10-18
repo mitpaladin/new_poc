@@ -21,20 +21,20 @@ class UserRepository < RepositoryBase
                     success: errors.empty?
   end
 
-  def guest_user
+  def guest_user(*options)
     user_dao = dao.first
     errors = ErrorFactory.create(user_dao.errors)
-    StoreResult.new entity: factory.create(attributes_for user_dao),
+    StoreResult.new entity: factory.create(attributes_for user_dao, options),
                     errors: errors,
                     success: errors.empty?
   end
 
   private
 
-  def attributes_for(user_dao)
+  def attributes_for(user_dao, options)
     attribs = OpenStruct.new user_dao.attributes
     # set dummy password for testing
-    if test_environment?
+    if test_environment? && include_password?(options)
       attribs.password = 'password'
       attribs.password_confirmation = attribs.password
     end
@@ -49,6 +49,10 @@ class UserRepository < RepositoryBase
   def errors_for(user)
     return [] if user
     invalid_user_name_or_password
+  end
+
+  def include_password?(options)
+    !options.include?(:no_password)
   end
 
   def invalid_user_name_or_password
