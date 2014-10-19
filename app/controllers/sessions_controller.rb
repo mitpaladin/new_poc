@@ -3,6 +3,9 @@ require 'pundit'
 
 # SessionsController: actions related to Sessions (logging in and out)
 class SessionsController < ApplicationController
+  after_action :verify_authorized,  except: :index
+  after_action :verify_policy_scoped, only: :index
+
   def new
     # result = DSO2::SessionNewAction.run!
     # result.success?
@@ -28,7 +31,8 @@ class SessionsController < ApplicationController
     # clear_current_user_id
     # redirect_to root_url, flash: flash_for_successful_logout
     authorise_current_user
-    update_current_user_id
+    self.current_user = nil
+    # update_current_user_id
     redirect_to root_url, flash: flash_for_successful_logout
   end
 
@@ -58,7 +62,7 @@ class SessionsController < ApplicationController
   end
 
   def setup_successful_login(user)
-    update_current_user_id user.id
+    self.current_user = user
     redirect_to root_url, flash: flash_for_successful_login
   end
 
@@ -66,21 +70,21 @@ class SessionsController < ApplicationController
     @policy = Pundit.policy(active_user, SessionData.new(id: 0))
   end
 
-  def update_current_user_id(id = UserData.first.id)
-    session[:user_id] = id
-  end
+  # def update_current_user_id(id = UserData.first.id)
+  #   session[:user_id] = id
+  # end
 
   def user_can_sign_in(user, password)
     user && user.authenticate(password)
   end
 
   def user_with_policy_class
-    user = current_user       # remember, #current_user is a query method
+    user = current_user
     user.instance_eval do
       def self.policy_class
         SessionDataPolicy
       end
     end
-    user
+    self.current_user = user
   end
 end

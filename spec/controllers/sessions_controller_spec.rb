@@ -15,8 +15,7 @@ shared_examples 'invalid login credentials' do |invalid_field_sym|
 
   describe description_str do
     before :each do
-      @starting_id = UserData.first.id
-      session[:user_id] = @starting_id
+      subject.current_user = UserData.first
       post :create, name: name, password: password
     end
 
@@ -25,7 +24,8 @@ shared_examples 'invalid login credentials' do |invalid_field_sym|
     end
 
     it 'does not change the session data item for the user ID' do
-      expect(session[:user_id]).to be @starting_id
+      expect(subject.current_user.attributes).to eq UserData.first.attributes
+      # expect(session[:user_id]).to be @starting_id
     end
 
     it 'sets the "Invalid user name or password" flash alert message' do
@@ -59,13 +59,14 @@ describe SessionsController do
 
     context 'for the Guest User' do
       before :each do
-        session[:user_id] = nil
+        # session[:user_id] = nil
+        subject.logged_in_user_id = nil
         get :new
       end
 
-      it 'assigns a SessionDataPolicy instance to :policy' do
-        expect(assigns[:policy]).to be_a SessionDataPolicy
-      end
+      # it 'assigns a SessionDataPolicy instance to :policy' do
+      #   expect(assigns[:policy]).to be_a SessionDataPolicy
+      # end
 
       it 'renders the :new template' do
         expect(response).to render_template :new
@@ -79,12 +80,14 @@ describe SessionsController do
     context 'for a Registered User' do
       before :each do
         @user = FactoryGirl.create :user_datum
-        session[:user_id] = @user.id
+        subject.logged_in_user_id = @user.slug
+        # session[:user_id] = @user.id
         get :new
       end
 
       after :each do
-        session[:user_id] = nil
+        # session[:user_id] = nil
+        subject.logged_in_user_id = nil
         @user.destroy
       end
 
@@ -110,7 +113,8 @@ describe SessionsController do
         let(:user) { FactoryGirl.create :user_datum }
 
         before :each do
-          session[:user_id] = UserData.first.id
+          # session[:user_id] = UserData.first.id
+          subject.logged_in_user_id = UserData.first.slug
           post :create, name: user.name, password: user.password
         end
 
@@ -118,8 +122,9 @@ describe SessionsController do
           expect(response).to redirect_to root_url
         end
 
-        it 'saves the user ID number in the session data' do
-          expect(session[:user_id]).to eq user.id
+        fit 'sets the current logged-in user to the specified user' do
+          # expect(session[:user_id]).to eq user.id
+          expect(subject.current_user.attributes).to eq user.attributes
         end
 
         it 'sets the logged-in flash message' do
@@ -139,16 +144,14 @@ describe SessionsController do
   describe "DELETE 'destroy'" do
 
     before :each do
-      @guest_user_id = UserData.first.id
-      @user = FactoryGirl.create :user_datum
-      session[:user_id] = @guest_user_id
-      post :create, name: @user.name, password: @user.password
-      expect(session[:user_id]).to be @user.id
-      delete :destroy, id: @user.id
+      @guest_user = UserData.first
+      user = FactoryGirl.create :user_datum
+      subject.current_user = user
+      post :destroy, id: user.slug
     end
 
     it 'sets the session data item for the user ID to the Guest User' do
-      expect(session[:user_id]).to be @guest_user_id
+      expect(subject.current_user.attributes).to eq @guest_user.attributes
     end
 
     it 'redirects to the root URL' do
