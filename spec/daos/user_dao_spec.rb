@@ -88,7 +88,7 @@ describe UserDao do
     end # describe :email
   end # describe 'validates'
 
-  fdescribe :all.to_s do
+  describe :all.to_s do
     let(:klass) { UserDao }
     let(:obj) { klass.new }
     let(:result) { obj.all }

@@ -122,7 +122,7 @@ describe SessionsController do
           expect(response).to redirect_to root_url
         end
 
-        fit 'sets the current logged-in user to the specified user' do
+        it 'sets the current logged-in user to the specified user' do
           # expect(session[:user_id]).to eq user.id
           expect(subject.current_user.attributes).to eq user.attributes
         end
