@@ -1,6 +1,8 @@
 
 require 'spec_helper'
 
+require 'current_user_identity'
+
 require 'support/shared_examples/users_helper/a_profile_article_list'
 require 'support/shared_examples/users_helper/a_profile_bio_panel'
 
@@ -124,11 +126,12 @@ describe UsersHelper do
     end # context 'for the Guest User'
 
     context 'for a logged-in user that is' do
+      let(:identity) { CurrentUserIdentity.new session }
 
       context 'NOT the user whose record is being shown, it' do
         let(:user2) { FactoryGirl.create :user_datum }
         let(:fragment) do
-          session[:user_id] = user2.id
+          identity.current_user = user2
           Nokogiri.parse(profile_bio_header user.name).children.first
         end
 
@@ -141,7 +144,7 @@ describe UsersHelper do
 
       context 'the user whose record is being shown' do
         let(:fragment) do
-          session[:user_id] = user.id
+          identity.current_user = user
           Nokogiri.parse(profile_bio_header user.name).children.first
         end
 

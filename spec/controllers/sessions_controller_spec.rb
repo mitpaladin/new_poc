@@ -25,7 +25,6 @@ shared_examples 'invalid login credentials' do |invalid_field_sym|
 
     it 'does not change the session data item for the user ID' do
       expect(subject.current_user.attributes).to eq UserData.first.attributes
-      # expect(session[:user_id]).to be @starting_id
     end
 
     it 'sets the "Invalid user name or password" flash alert message' do
@@ -59,8 +58,6 @@ describe SessionsController do
 
     context 'for the Guest User' do
       before :each do
-        # session[:user_id] = nil
-        subject.logged_in_user_id = nil
         get :new
       end
 
@@ -79,16 +76,8 @@ describe SessionsController do
 
     context 'for a Registered User' do
       before :each do
-        @user = FactoryGirl.create :user_datum
-        subject.logged_in_user_id = @user.slug
-        # session[:user_id] = @user.id
+        subject.current_user = FactoryGirl.create :user_datum
         get :new
-      end
-
-      after :each do
-        # session[:user_id] = nil
-        subject.logged_in_user_id = nil
-        @user.destroy
       end
 
       it 'returns HTTP Redirection' do
@@ -113,8 +102,6 @@ describe SessionsController do
         let(:user) { FactoryGirl.create :user_datum }
 
         before :each do
-          # session[:user_id] = UserData.first.id
-          subject.logged_in_user_id = UserData.first.slug
           post :create, name: user.name, password: user.password
         end
 
@@ -123,7 +110,6 @@ describe SessionsController do
         end
 
         it 'sets the current logged-in user to the specified user' do
-          # expect(session[:user_id]).to eq user.id
           expect(subject.current_user.attributes).to eq user.attributes
         end
 

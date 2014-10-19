@@ -1,6 +1,8 @@
 
 require 'spec_helper'
 
+require 'current_user_identity'
+
 # Users controller dispatches user- (rather, UserData-)specific actions
 describe UsersController do
   describe :routing.to_s, type: :routing do
@@ -119,7 +121,7 @@ describe UsersController do
     context 'for the logged-in user' do
       let(:user) { FactoryGirl.create :user_datum }
       before :each do
-        session[:user_id] = user.id
+        CurrentUserIdentity.new(session).current_user = user
       end
 
       it 'assigns the user object with the slugged name to :user' do
@@ -154,7 +156,7 @@ describe UsersController do
     context 'for the logged-in user' do
       let(:user) { FactoryGirl.create :user_datum }
       before :each do
-        session[:user_id] = user.name.parameterize
+        CurrentUserIdentity.new(session).current_user = user
         get :edit, id: user.name.parameterize
       end
 
@@ -172,14 +174,17 @@ describe UsersController do
     # Why #create rather than just #attributes_for ? So the slug gets built.
     let(:user) { FactoryGirl.create :user_datum }
     let(:updated_profile) { 'UPDATED ' + user[:profile] }
+    let(:identity) { CurrentUserIdentity.new session }
 
     context 'for a logged-in user' do
+      before :each do
+        identity.current_user = user
+      end
 
       context 'whose record is being updated' do
         before :each do
-          session[:user_id] = user.name.parameterize
           params = {
-            id:         session[:user_id],
+            id:         identity.ident_for(identity.current_user),
             user_data:  {
               name:     user.name,
               email:    user.email,
@@ -217,7 +222,7 @@ describe UsersController do
           }
         end
         before :each do
-          session[:user_id] = logged_in_user.name.parameterize
+          identity.current_user = logged_in_user
           patch :update, params
         end
 

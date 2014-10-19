@@ -21,8 +21,7 @@ describe ApplicationController do
 
       it 'returns the logged-in user' do
         @expected = FactoryGirl.create :user_datum
-        # Look, Ma! No `@expected.authenticate(@expected.password)` !
-        session[:user_id] = @expected.id
+        subject.current_user = @expected
       end
     end
   end # describe :current_user.to_s

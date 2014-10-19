@@ -70,10 +70,6 @@ class SessionsController < ApplicationController
     @policy = Pundit.policy(active_user, SessionData.new(id: 0))
   end
 
-  # def update_current_user_id(id = UserData.first.id)
-  #   session[:user_id] = id
-  # end
-
   def user_can_sign_in(user, password)
     user && user.authenticate(password)
   end

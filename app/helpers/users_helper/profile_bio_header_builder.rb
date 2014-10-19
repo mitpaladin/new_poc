@@ -1,4 +1,6 @@
 
+require 'current_user_identity'
+
 # Builds a header element. It contains a button if the named user is logged in.
 class ProfileBioHeaderBuilder
   def initialize(user_name, h)
@@ -18,10 +20,14 @@ class ProfileBioHeaderBuilder
 
   private
 
+  def identity
+    @identity ||= CurrentUserIdentity.new(h.session)
+  end
+
   def current_user
-    default = FancyOpenStruct.new name: ''
-    return default unless h.session.keys.include? 'user_id'
-    @current_user ||= UserData.find h.session[:user_id]
+    default = Struct.new(:name).new ''
+    return default if identity.guest_user?
+    identity.current_user
   end
 
   def make_button

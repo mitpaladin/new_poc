@@ -6,6 +6,8 @@ require_relative 'posts_controller/an_unauthorised_user_for_this_post'
 
 # Posts controller dispatches post-specific actions
 describe PostsController do
+  let(:identity) { CurrentUserIdentity.new session }
+
   describe :routing.to_s, type: :routing do
     it { expect(get posts_path).to route_to 'posts#index' }
     it { expect(get new_post_path).to route_to 'posts#new' }
@@ -84,7 +86,7 @@ describe PostsController do
     context 'for a registered user owning no draft posts' do
       before :each do
         user = FactoryGirl.create :user_datum
-        session[:user_id] = user.id
+        identity.current_user = user
         get :index
         @posts = assigns[:posts]
       end
@@ -99,7 +101,7 @@ describe PostsController do
 
     context 'for a registered user owning draft posts' do
       before :each do
-        session[:user_id] = author.id
+        identity.current_user = author
         get :index
         @posts = assigns[:posts]
       end
@@ -118,17 +120,11 @@ describe PostsController do
   end # describe "GET 'index'"
 
   describe "GET 'new'" do
-
     context 'for a Registered User' do
       before :each do
-        @user = FactoryGirl.create :user_datum
-        session[:user_id] = @user.id
+        user = FactoryGirl.create :user_datum
+        identity.current_user = user
         get :new
-      end
-
-      after :each do
-        session[:user_id] = nil
-        @user.destroy
       end
 
       it 'returns http success' do
@@ -148,7 +144,6 @@ describe PostsController do
 
     context 'for the Guest User' do
       before :each do
-        session[:user_id] = nil
         get :new
       end
 
@@ -174,14 +169,9 @@ describe PostsController do
     context 'for a Registered User' do
       describe 'with valid parameters' do
         before :each do
-          @user = FactoryGirl.create :user_datum
-          session[:user_id] = @user.id
+          user = FactoryGirl.create :user_datum
+          identity.current_user = user
           post :create, post_data: params
-        end
-
-        after :each do
-          session[:user_id] = nil
-          @user.destroy
         end
 
         it 'assigns the :post item as a PostData instance' do
@@ -205,10 +195,6 @@ describe PostsController do
     end # context 'for a Registered User'
 
     context 'for the Guest User' do
-      before :each do
-        session[:user_id] = nil
-      end
-
       describe 'with valid parameters' do
         before :each do
           post :create, post_data: params
@@ -252,7 +238,7 @@ describe PostsController do
       let(:user) { FactoryGirl.create :user_datum }
 
       before :each do
-        session[:user_id] = user.id
+        identity.current_user = user
         get :edit, id: post.slug
       end
 
@@ -261,7 +247,7 @@ describe PostsController do
 
     context 'when the logged-in user is the post author' do
       before :each do
-        session[:user_id] = author.id
+        identity.current_user = author
         get :edit, id: post.slug
       end
 
@@ -313,7 +299,7 @@ describe PostsController do
         end
 
         before :each do
-          session[:user_id] = author.id
+          identity.current_user = author
           get :show, id: article.slug
         end
 
@@ -337,7 +323,7 @@ describe PostsController do
         let(:user) { FactoryGirl.create :user_datum }
 
         before :each do
-          session[:user_id] = user.id
+          identity.current_user = user
           get :show, id: article.slug
         end
 
@@ -390,7 +376,7 @@ describe PostsController do
 
       context 'for the post author' do
         before :each do
-          session[:user_id] = author.id
+          identity.current_user = author
           patch :update, id: post.slug, post_data: post_data
         end
 
@@ -408,7 +394,7 @@ describe PostsController do
       context 'for a registered user other than the post author' do
         before :each do
           user = FactoryGirl.create :user_datum
-          session[:user_id] = user.id
+          identity.current_user = user
           patch :update, id: post.slug, post_data: post_data
         end
 
@@ -435,7 +421,7 @@ describe PostsController do
 
       it 'that updates the post status to "public"' do
         post_data = { post_status: 'public' }
-        session[:user_id] = author.id
+        identity.current_user = author
         patch :update, id: post.slug, post_data: post_data
         expect(assigns[:post].post_status).to eq 'public'
       end
@@ -452,7 +438,7 @@ describe PostsController do
 
       it 'that updates the post status to "draft"' do
         post_data = { post_status: 'draft' }
-        session[:user_id] = author.id
+        identity.current_user = author
         patch :update, id: post.slug, post_data: post_data
         expect(assigns[:post].post_status).to eq 'draft'
       end
