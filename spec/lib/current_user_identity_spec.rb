@@ -13,7 +13,7 @@ describe CurrentUserIdentity do
   let(:klass) { CurrentUserIdentity }
   let(:store) { Hash.new }
   let(:invalid_user_id) { 'bogus-bogus-bogus' }
-  let(:guest_user) { UserData.first }
+  let(:guest_user) { UserDao.first }
   let(:guest_user_id) { guest_user.slug }
   let(:obj) { klass.new store }
 
@@ -56,7 +56,7 @@ describe CurrentUserIdentity do
 
   describe :current_user=.to_s do
     context 'when setting an existing user' do
-      let(:the_user) { FactoryGirl.create :user_datum }
+      let(:the_user) { FactoryGirl.create :user, :saved_user }
 
       before :each do
         obj.current_user = the_user
@@ -84,7 +84,7 @@ describe CurrentUserIdentity do
     end # context 'without a current user having previously been defined'
 
     context 'after an existing user has been deined as logged-in' do
-      let(:the_user) { FactoryGirl.create :user_datum }
+      let(:the_user) { FactoryGirl.create :user, :saved_user }
 
       before :each do
         obj.current_user = the_user

@@ -2,11 +2,12 @@
 # Identify/define "current", i.e., logged-in, user. This isn't just for
 # controllers!
 class CurrentUserIdentity
-  attr_reader :store
+  attr_reader :store, :user_class
 
-  def initialize(store)
+  def initialize(store, user_class = UserDao)
     @identifier = nil
     @store = store
+    @user_class = user_class
   end
 
   def current_user
@@ -38,10 +39,6 @@ class CurrentUserIdentity
 
   def guest_user_identifier
     ident_for user_class.first
-  end
-
-  def user_class
-    UserData
   end
 
   def validate_identifier(ident)

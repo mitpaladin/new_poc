@@ -148,7 +148,7 @@ describe UsersHelper do
           Nokogiri.parse(profile_bio_header user.name).children.first
         end
 
-        it 'returns a button-styled link linking to the user edit path' do
+        xit 'returns a button-styled link linking to the user edit path' do
           expect(fragment.children.length).to eq 2
           link = fragment.children.last
           expect(link.name).to eq 'button'

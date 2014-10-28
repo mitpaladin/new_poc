@@ -54,7 +54,7 @@ describe SessionsController do
     it { expect(session_path(1)).to eq '/sessions/1' }
   end
 
-  describe "GET 'new'" do
+  xdescribe "GET 'new'" do
 
     context 'for the Guest User' do
       before :each do
@@ -95,7 +95,7 @@ describe SessionsController do
     end # context 'for a Registered User'
   end # describe "GET 'new'"
 
-  describe "POST 'create'" do
+  xdescribe "POST 'create'" do
 
     context 'for the Guest User' do
       describe 'with valid params' do
@@ -127,7 +127,7 @@ describe SessionsController do
     end # context 'for the Guest User'
   end # describe "POST 'create'"
 
-  describe "DELETE 'destroy'" do
+  xdescribe "DELETE 'destroy'" do
 
     before :each do
       @guest_user = UserData.first
