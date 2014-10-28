@@ -3,7 +3,7 @@ require 'spec_helper'
 
 require 'support/feature_spec/login_helper'
 
-describe 'Member cannot create post without' do
+xdescribe 'Member cannot create post without' do
 
   let(:error_detail)    { "Title can't be blank" }
   let(:error_message)   { '1 error prevented this PostData from being saved:' }

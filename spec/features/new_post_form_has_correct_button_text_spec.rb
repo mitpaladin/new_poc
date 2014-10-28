@@ -3,7 +3,7 @@ require 'spec_helper'
 
 require 'support/feature_spec/login_helper'
 
-describe '"New Post" form has correct' do
+xdescribe '"New Post" form has correct' do
   before :each do
     FeatureSpecLoginHelper.new(self).register_and_login
     visit new_post_path

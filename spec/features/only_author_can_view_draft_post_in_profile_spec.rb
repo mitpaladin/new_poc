@@ -16,7 +16,7 @@ def link_css(title)
   "a[href='/posts/#{title.parameterize}']"
 end
 
-describe 'a draft post' do
+xdescribe 'a draft post' do
   before :each do
     @login_helper = FeatureSpecLoginHelper.new(self)
     @login_helper.register_and_login

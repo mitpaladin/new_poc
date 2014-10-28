@@ -3,7 +3,7 @@ require 'spec_helper'
 
 require 'support/feature_spec/login_helper'
 
-describe 'Member can view own profile page' do
+xdescribe 'Member can view own profile page' do
   before :each do
     FeatureSpecLoginHelper.new(self).register_and_login
     @profile_header = ['Profile Page for', @user_name].join ' '

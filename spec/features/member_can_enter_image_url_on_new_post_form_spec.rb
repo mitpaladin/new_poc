@@ -3,7 +3,7 @@ require 'spec_helper'
 
 require 'support/feature_spec/login_helper'
 
-describe 'Member can enter' do
+xdescribe 'Member can enter' do
 
   let(:error_message)   { '1 error prevented this PostData from being saved:' }
   let(:post_body)       { 'The Body is six feet under, nine edge down.' }

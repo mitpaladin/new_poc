@@ -1,7 +1,7 @@
 
 require 'spec_helper'
 
-describe 'User can view article from landing page' do
+xdescribe 'User can view article from landing page' do
 
   before :each do
     FeatureSpecLoginHelper.new(self).register_and_login

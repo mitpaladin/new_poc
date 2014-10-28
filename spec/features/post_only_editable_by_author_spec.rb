@@ -19,7 +19,7 @@ shared_examples 'cannot edit the post' do
   end
 end
 
-describe 'A published post is' do
+xdescribe 'A published post is' do
 
   before :each do
     @login_helper = FeatureSpecLoginHelper.new(self)

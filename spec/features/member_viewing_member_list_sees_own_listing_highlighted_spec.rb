@@ -1,7 +1,7 @@
 
 require 'spec_helper'
 
-describe 'A member viewing the member list' do
+xdescribe 'A member viewing the member list' do
   let(:user_count) { 3 }
 
   before :each do

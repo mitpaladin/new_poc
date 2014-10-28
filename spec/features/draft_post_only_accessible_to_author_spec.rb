@@ -13,7 +13,7 @@ shared_examples 'cannot visit the post' do
   end
 end
 
-describe 'a draft post is' do
+xdescribe 'a draft post is' do
   before :each do
     @login_helper = FeatureSpecLoginHelper.new(self)
     @login_helper.register_and_login
