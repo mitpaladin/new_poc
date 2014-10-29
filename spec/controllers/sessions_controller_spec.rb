@@ -2,7 +2,7 @@
 require 'spec_helper'
 
 shared_examples 'invalid login credentials' do |invalid_field_sym|
-  user = FactoryGirl.create :user_datum
+  user = FactoryGirl.create :user, :saved_user
   if invalid_field_sym == :name
     name = 'An Invalid User Name'
     password = user.password
@@ -15,7 +15,7 @@ shared_examples 'invalid login credentials' do |invalid_field_sym|
 
   describe description_str do
     before :each do
-      subject.current_user = UserData.first
+      subject.current_user = UserRepository.new.guest_user.entity
       post :create, name: name, password: password
     end
 
@@ -24,7 +24,7 @@ shared_examples 'invalid login credentials' do |invalid_field_sym|
     end
 
     it 'does not change the session data item for the user ID' do
-      expect(subject.current_user.attributes).to eq UserData.first.attributes
+      expect(subject.current_user.attributes).to eq UserDao.first.attributes
     end
 
     it 'sets the "Invalid user name or password" flash alert message' do
@@ -96,11 +96,11 @@ describe SessionsController do
     end # context 'for a Registered User'
   end # describe "GET 'new'"
 
-  xdescribe "POST 'create'" do
+  describe "POST 'create'" do
 
     context 'for the Guest User' do
       describe 'with valid params' do
-        let(:user) { FactoryGirl.create :user_datum }
+        let(:user) { FactoryGirl.create :user, :saved_user }
 
         before :each do
           post :create, name: user.name, password: user.password

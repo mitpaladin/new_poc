@@ -1,4 +1,5 @@
 
+require 'create_session'
 require 'new_session'
 
 # SessionsController: actions related to Sessions (logging in and out)
@@ -10,13 +11,9 @@ class SessionsController < ApplicationController
   end
 
   def create
-    requesting_user = UserData.find_by_name params[:name]
-    authorise_current_user
-    if user_can_sign_in requesting_user, params[:password]
-      setup_successful_login requesting_user
-    else
-      setup_failed_login requesting_user
-    end
+    Actions::CreateSession.new(params[:name], params[:password])
+        .subscribe(self, prefix: :on_create)
+        .execute
   end
 
   def destroy
@@ -31,6 +28,18 @@ class SessionsController < ApplicationController
 
   # Action responders must be public to receive Wisper notifications; see
   # https://github.com/krisleech/wisper/issues/75 for relevant detail. Pffft.
+
+  def on_create_success(payload)
+    @errors = ErrorFactory.create []
+    @user = payload.entity
+    self.current_user = payload.entity
+    redirect_to root_url, flash: flash_for_successful_login
+  end
+
+  def on_create_failure(payload)
+    @user = payload.entity  # should be the Guest User
+    redirect_to new_session_path, flash: flash_for_failed_login
+  end
 
   def on_new_success(payload)
     @user = payload.entity

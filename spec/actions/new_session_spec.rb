@@ -1,45 +1,14 @@
 
 require 'spec_helper'
+require 'support/broadcast_success_tester'
 
 require 'new_session'
-
-# Why the @internals? So Rubocop doesn't kvetch about how `#success`
-# "ought to be" `#success=`. Pfffft.
-class SuccessTester
-  def initialize
-    @internals = { success: nil, failure: nil }
-  end
-
-  def successful?
-    @internals[:success].present?
-  end
-
-  def failure?
-    @internals[:failure].present?
-  end
-
-  def success(*payload)
-    @internals[:success] = payload
-  end
-
-  def failure(*payload)
-    @internals[:failure] = payload
-  end
-
-  def payload_for(which)
-    if which == :success
-      @internals[:success]
-    else
-      @internals[:failure]
-    end
-  end
-end # class SuccessTester
 
 module Actions
   describe NewSession do
     let(:klass) { NewSession }
     let(:guest_user) { UserRepository.new.guest_user.entity }
-    let(:subscriber) { SuccessTester.new }
+    let(:subscriber) { BroadcastSuccessTester.new }
 
     # Regardless of expected success or failure, these are the steps...
     before :each do
