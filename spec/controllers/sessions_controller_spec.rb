@@ -128,11 +128,11 @@ describe SessionsController do
     end # context 'for the Guest User'
   end # describe "POST 'create'"
 
-  xdescribe "DELETE 'destroy'" do
+  describe "DELETE 'destroy'" do
 
     before :each do
-      @guest_user = UserData.first
-      user = FactoryGirl.create :user_datum
+      @guest_user = UserDao.first
+      user = FactoryGirl.create :user, :saved_user
       subject.current_user = user
       post :destroy, id: user.slug
     end
