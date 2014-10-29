@@ -1,22 +1,15 @@
 
-require 'pundit'
+require 'new_session'
 
 # SessionsController: actions related to Sessions (logging in and out)
 class SessionsController < ApplicationController
-  after_action :verify_authorized,  except: :index
-  after_action :verify_policy_scoped, only: :index
-
   def new
-    # result = DSO2::SessionNewAction.run!
-    # result.success?
-    authorise_current_user
-    true
+    Actions::NewSession.new(current_user)
+        .subscribe(self, prefix: :on_new)
+        .execute
   end
 
   def create
-    # result = DSO2::SessionCreateAction.run! params: params
-    # return setup_failed_login(result.errors) unless result.success?
-    # setup_successful_login result.entity
     requesting_user = UserData.find_by_name params[:name]
     authorise_current_user
     if user_can_sign_in requesting_user, params[:password]
@@ -36,7 +29,18 @@ class SessionsController < ApplicationController
     redirect_to root_url, flash: flash_for_successful_logout
   end
 
-  private
+  # Action responders must be public to receive Wisper notifications; see
+  # https://github.com/krisleech/wisper/issues/75 for relevant detail. Pffft.
+
+  def on_new_success(payload)
+    @user = payload.entity
+  end
+
+  def on_new_failure(_payload)
+    redirect_to root_path, flash: flash_for_logged_in_user
+  end
+
+  private # ################################################################## #
 
   # TODO: This should be a DSO, or at least a self-contained class.
   def authorise_current_user
@@ -47,6 +51,10 @@ class SessionsController < ApplicationController
 
   def flash_for_failed_login
     { alert: 'Invalid user name or password' }
+  end
+
+  def flash_for_logged_in_user
+    { alert: "User '#{current_user.name}' is already logged in!" }
   end
 
   def flash_for_successful_login

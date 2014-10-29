@@ -37,6 +37,11 @@ end # shared_examples 'invalid login credentials'
 
 # SessionsController: responsible for logging users in and out.
 describe SessionsController do
+  let(:registered_user) do
+    user = UserEntity.new FactoryGirl.attributes_for(:user, :saved_user)
+    UserRepository.new.add user
+    user
+  end
 
   describe :routing.to_s, type: :routing do
     it { expect(get '/sessions/new').to route_to 'sessions#new' }
@@ -54,16 +59,12 @@ describe SessionsController do
     it { expect(session_path(1)).to eq '/sessions/1' }
   end
 
-  xdescribe "GET 'new'" do
+  describe "GET 'new'" do
 
     context 'for the Guest User' do
       before :each do
         get :new
       end
-
-      # it 'assigns a SessionDataPolicy instance to :policy' do
-      #   expect(assigns[:policy]).to be_a SessionDataPolicy
-      # end
 
       it 'renders the :new template' do
         expect(response).to render_template :new
@@ -76,7 +77,7 @@ describe SessionsController do
 
     context 'for a Registered User' do
       before :each do
-        subject.current_user = FactoryGirl.create :user_datum
+        subject.current_user = registered_user
         get :new
       end
 
@@ -89,8 +90,8 @@ describe SessionsController do
       end
 
       it 'has the correct flash error message' do
-        message = 'You are not authorized to perform this action.'
-        expect(flash[:error]).to eq message
+        message = "User '#{registered_user.name}' is already logged in!"
+        expect(flash[:alert]).to eq message
       end
     end # context 'for a Registered User'
   end # describe "GET 'new'"
