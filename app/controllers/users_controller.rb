@@ -2,16 +2,12 @@
 require 'permissive_user_creator'
 require 'user_updater'
 
+require 'index_users'
+
 # UsersController: actions related to Users within our "fancy" blog.
 class UsersController < ApplicationController
-  after_action :verify_authorized,  except: :index
-  after_action :verify_policy_scoped, only: :index
-
   def index
-    users = UserData.registered
-    @users = policy_scope users
-    authorize @users
-    @users = UserDataDecorator.decorate_collection(@users)
+    Actions::IndexUsers.new.subscribe(self, prefix: :on_index).execute
   end
 
   def new
@@ -52,6 +48,13 @@ class UsersController < ApplicationController
     else
       render 'edit'
     end
+  end
+
+  # Action responders must be public to receive Wisper notifications; see
+  # https://github.com/krisleech/wisper/issues/75 for relevant detail.
+
+  def on_index_success(payload)
+    @users = payload.entity
   end
 
   private

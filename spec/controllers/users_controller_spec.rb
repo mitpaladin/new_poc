@@ -28,13 +28,34 @@ describe UsersController do
     it { expect(new_user_path).to eq('/users/new') }
   end
 
-  xdescribe "GET 'index'" do
+  describe "GET 'index'" do
+    let(:repo) { UserRepository.new }
+    let(:user_count) { 5 }
+    let(:users) { [] }
+
     before :each do
+      user_count.times do
+        attribs = FactoryGirl.attributes_for :user, :saved_user
+        user = UserEntity.new attribs
+        repo.add user
+        users << user
+      end
       get :index
     end
 
     it 'returns http success' do
       expect(response).to be_success
+    end
+
+    it 'renders the :index template' do
+      expect(response).to render_template :index
+    end
+
+    it 'assigns the non-Guest users to the :users item' do
+      index_users = assigns[:users]
+      users.each_with_index do |user, index|
+        expect(index_users[index]).to be_saved_user_entity_for user
+      end
     end
   end # describe "GET 'index'"
 
