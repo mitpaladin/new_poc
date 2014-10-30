@@ -61,6 +61,11 @@ class UsersController < ApplicationController
     @user = payload.entity
   end
 
+  def on_new_failure(payload)
+    @user = nil
+    redirect_to root_path, flash: { alert: payload.errors.first[:message] }
+  end
+
   private
 
   def update_and_redirect_with(attribs)

@@ -64,17 +64,40 @@ describe UsersController do
       get :new
     end
 
-    it 'returns http success' do
-      expect(response).to be_success
-    end
+    context 'with no user logged in' do
+      it 'returns http success' do
+        expect(response).to be_success
+      end
 
-    it 'assigns a UserEntity instance to :user' do
-      expect(assigns[:user]).to be_a UserEntity
-    end
+      it 'assigns a UserEntity instance to :user' do
+        expect(assigns[:user]).to be_a UserEntity
+      end
 
-    it 'renders the :new template' do
-      expect(response).to render_template :new
-    end
+      it 'renders the :new template' do
+        expect(response).to render_template :new
+      end
+    end # context 'with no user logged in'
+
+    context 'with a user logged in' do
+      let(:user) do
+        ret = UserEntity.new FactoryGirl.attributes_for :user, :saved_user
+        UserRepository.new.add ret
+        ret
+      end
+
+      before :each do
+        subject.current_user = user
+        get :new
+      end
+
+      it 'redirects to the root path' do
+        expect(response).to redirect_to root_path
+      end
+
+      it 'has the correct flash message' do
+        expect(flash[:alert]).to eq "Already logged in as #{user.name}!"
+      end
+    end # context 'with a user logged in'
   end # describe "GET 'new'"
 
   xdescribe "POST 'create'" do
