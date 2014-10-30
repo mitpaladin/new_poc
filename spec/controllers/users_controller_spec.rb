@@ -59,7 +59,7 @@ describe UsersController do
     end
   end # describe "GET 'index'"
 
-  xdescribe "GET 'new'" do
+  describe "GET 'new'" do
     before :each do
       get :new
     end
@@ -68,8 +68,8 @@ describe UsersController do
       expect(response).to be_success
     end
 
-    it 'assigns a UserData instance to :user' do
-      expect(assigns[:user]).to be_a UserData
+    it 'assigns a UserEntity instance to :user' do
+      expect(assigns[:user]).to be_a UserEntity
     end
 
     it 'renders the :new template' do

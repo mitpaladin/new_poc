@@ -3,6 +3,7 @@ require 'permissive_user_creator'
 require 'user_updater'
 
 require 'index_users'
+require 'new_user'
 
 # UsersController: actions related to Users within our "fancy" blog.
 class UsersController < ApplicationController
@@ -11,8 +12,7 @@ class UsersController < ApplicationController
   end
 
   def new
-    @user = UserData.new
-    authorize @user
+    Actions::NewUser.new(current_user).subscribe(self, prefix: :on_new).execute
   end
 
   def create
@@ -55,6 +55,10 @@ class UsersController < ApplicationController
 
   def on_index_success(payload)
     @users = payload.entity
+  end
+
+  def on_new_success(payload)
+    @user = payload.entity
   end
 
   private
