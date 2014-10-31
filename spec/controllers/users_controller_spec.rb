@@ -100,7 +100,7 @@ describe UsersController do
     end # context 'with a user logged in'
   end # describe "GET 'new'"
 
-  xdescribe "POST 'create'" do
+  describe "POST 'create'" do
     let(:params) { FactoryGirl.attributes_for :user_datum }
 
     describe 'with valid parameters' do
@@ -108,12 +108,12 @@ describe UsersController do
         post :create, user_data: params
       end
 
-      it 'assigns the :user item as a UserData instance' do
-        expect(assigns[:user]).to be_a UserData
+      it 'assigns the :user item as a UserEntity instance' do
+        expect(assigns[:user]).to be_a UserEntity
       end
 
       it 'persists the UserData instance corresponding to the :user' do
-        expect(assigns[:user]).to_not be_a_new_record
+        expect(assigns[:user]).to be_persisted
       end
 
       it 'redirects to the root path' do
@@ -130,32 +130,36 @@ describe UsersController do
       after :each do
         post :create, user_data: params
         user = assigns[:user]
-        expect(user).to be_a_new_record
-        expect(user).to_not be_valid
-        messages = user.errors.full_messages
-        @messages.each { |expected| expect(messages).to include expected }
+        errors = assigns[:errors]
+        expect(user).not_to be_persisted
+        # expect(user).to_not be_valid
+        expect(errors.count).to eq @messages.count
+        @messages.each do |k, v|
+          expected = { field: k.to_s, message: v }
+          expect(errors).to include expected
+        end
       end
 
       it 'an empty name' do
         params[:name] = ''
-        @messages = ['Name is invalid', "Name can't be blank"]
+        @messages = { name: 'may not be missing or blank' }
       end
 
       it 'a duplicate name' do
         post :create, user_data: params
-        expect(assigns[:user]).to be_valid
-        @messages = ['Name has already been taken']
+        expect(assigns[:user]).to be_persisted
+        @messages = { name: 'is not available' }
       end
 
       it 'an invalid email address' do
         params[:email] = 'jruser at example dot com'
-        @messages = ['Email does not appear to be a valid e-mail address']
+        @messages = { email: 'does not appear to be a valid e-mail address' }
       end
 
       it 'mismatched passwords' do
         params[:password] = 'password'
         params[:password_confirmation] = 'Password'
-        @messages = ["Password confirmation doesn't match Password"]
+        @messages = { password: 'and password confirmation do not match' }
       end
     end # describe 'with invalid parameters, such as'
   end # describe "POST 'create'"

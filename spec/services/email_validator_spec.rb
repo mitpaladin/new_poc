@@ -38,8 +38,9 @@ module UserDataValidation
         end
 
         it 'reports the expected error message' do
-          message = 'Email does not appear to be a valid e-mail address'
-          expect(validator.errors.first).to eq message
+          message = 'does not appear to be a valid e-mail address'
+          expected = { email: message }
+          expect(validator.errors.first).to eq expected
         end
       end # describe 'reports the address as invalid by'
     end # context 'for an invalid email address, it'

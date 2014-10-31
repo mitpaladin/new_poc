@@ -10,7 +10,7 @@ module UserDataValidation
 
     def errors
       valid?  # ensure that validation is performed
-      @errors.map { |message| ['Email', message].join ' ' }
+      @errors.flatten.map { |message| { email: message } }
     end
 
     def valid?

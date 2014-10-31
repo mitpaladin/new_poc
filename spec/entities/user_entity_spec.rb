@@ -27,4 +27,26 @@ describe UserEntity do
   end
 
   it_behaves_like 'a data-mapping entity'
+
+  describe :sort.to_s do
+    let(:low_user) do
+      klass.new FactoryGirl.attributes_for :user, name: 'Abe Zonker'
+    end
+    let(:high_user) do
+      klass.new FactoryGirl.attributes_for :user, nme: 'Zig Adler'
+    end
+
+    it 'returns the sorted array when source is not in order by name' do
+      items = [high_user, low_user]
+      expect(items.sort).to eq [low_user, high_user]
+    end
+
+    it 'returns a copy of the original array when in order by name' do
+      items = [low_user, high_user]
+      items.sort.each_with_index do |item, index|
+        expect(item).to be items[index]
+      end
+      expect(items.sort).not_to be items
+    end
+  end # describe :sort
 end # describe UserEntity

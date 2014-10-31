@@ -1,6 +1,7 @@
 
+# Support classes for UserDataValidator.
 module UserDataValidation
-  # Validates user password, per current rules e.g. from create-user form input.
+  # Validates user password, per current rules eg, from create-user form input.
   class PasswordValidator
     def initialize(password, password_confirmation)
       @errors = []
@@ -10,7 +11,7 @@ module UserDataValidation
 
     def errors
       valid?  # ensure that validation is performed
-      @errors.map { |message| ['Password', message].join ' ' }
+      @errors.flatten.map { |message| { password: message } }
     end
 
     def valid?

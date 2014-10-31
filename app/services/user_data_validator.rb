@@ -1,24 +1,23 @@
 
+require 'email_validator'
 require 'name_validator'
 require 'password_validator'
 
 # Validate user data, e.g., from create-user form input. Includes passwords.
 class UserDataValidator
   def initialize(user_data = {})
-    @name_validator = UserDataValidation::NameValidator.new user_data[:name]
+    @validators = []
+    @validators << UserDataValidation::EmailValidator.new(user_data[:email])
+    @validators << UserDataValidation::NameValidator.new(user_data[:name])
     validator_params = [user_data[:password], user_data[:password_confirmation]]
-    @password_validator = UserDataValidation::PasswordValidator
-        .new(*validator_params)
+    @validators << UserDataValidation::PasswordValidator.new(*validator_params)
   end
 
   def valid?
-    @name_validator.valid? && @password_validator.valid?
+    @validators.select { |validator| !validator.valid? }.empty?
   end
 
   def errors
-    [
-      @name_validator.errors,
-      @password_validator.errors
-    ].flatten
+    @validators.map(&:errors).flatten
   end
 end # class UserDataValidator

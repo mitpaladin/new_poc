@@ -18,12 +18,13 @@ shared_examples 'an invalid password' do |description, password_in, confirm_in,
     end
 
     it 'has the correct error message' do
-      expect(validator.errors.first).to eq message
+      expected = { password: message }
+      expect(validator.errors.first).to eq expected
     end
   end # context description
 end # shared_examples 'aan invalid name'
 
-# Support for UserDataValidator class.
+# Support classes for UserDataValidator.
 module UserDataValidation
   describe PasswordValidator do
     let(:klass) { PasswordValidator }
@@ -47,9 +48,9 @@ module UserDataValidation
       it_behaves_like 'an invalid password',
                       "password and confirmation don't match",
                       'password', 'confirmation',
-                      'Password and password confirmation do not match'
+                      'and password confirmation do not match'
 
-      message = 'Password may not contain leading or trailing whitespace'
+      message = 'may not contain leading or trailing whitespace'
       it_behaves_like 'an invalid password', 'it contains leading whitespace',
                       '  password', '  password', message
 
@@ -57,7 +58,7 @@ module UserDataValidation
                       'password ', 'password ', message
 
       it_behaves_like 'an invalid password', 'it is not long enough',
-                      'bogus', 'bogus', 'Password is not long enough'
+                      'bogus', 'bogus', 'is not long enough'
     end # context 'for a name that is invalid because'
   end # describe UserDataValidation::PasswordValidator
 end # module UserDataValidation

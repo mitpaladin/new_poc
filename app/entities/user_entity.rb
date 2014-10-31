@@ -6,6 +6,7 @@ require 'instance_variable_setter'
 # communicate across the repository/DAO boundary.
 class UserEntity
   include ActiveModel::Serializers::JSON
+  include Comparable
 
   attr_reader :email,
               :name,
@@ -34,5 +35,9 @@ class UserEntity
   # we're using FriendlyID for slugs, so...
   def persisted?
     !slug.nil?
+  end
+
+  def <=>(other)
+    name <=> other.name
   end
 end # class UserEntity

@@ -41,11 +41,18 @@ module Actions
         expect(payload.errors).to be_empty
       end
 
-      it 'an :entity value of an array of saved UserEntity values' do
-        users.each_with_index do |user, index|
-          expect(payload.entity[index]).to be_saved_user_entity_for user
+      describe 'an :entity value of an array of saved UserEntity values' do
+
+        it 'that has the correct number of entities' do
+          expect(payload.entity.count).to eq users.count
         end
-      end
+
+        it 'with the correct entities' do
+          users.each_with_index do |user, index|
+            expect(payload.entity[index]).to be_saved_user_entity_for user
+          end
+        end
+      end # describe 'an :entity value of an array of saved UserEntity values'
     end # describe 'is successful, broadcasting a StoreResult payload with'
   end # describe Actions::IndexUsers
 end # module Actions

@@ -16,7 +16,8 @@ shared_examples 'an invalid name' do |description, name_in, message|
     end
 
     it 'has the correct error message' do
-      expect(validator.errors.first).to eq message
+      expect(validator.errors.first.keys.first).to be :name
+      expect(validator.errors.first.values.first).to eq message
     end
   end # context description
 end # shared_examples 'aan invalid name'
@@ -41,7 +42,7 @@ module UserDataValidation
 
     context 'for a name that is invalid because' do
 
-      message = 'Name may not be missing or blank'
+      message = 'may not be missing or blank'
 
       it_behaves_like 'an invalid name', 'it is missing', nil, message
 
@@ -61,7 +62,8 @@ module UserDataValidation
         end
 
         it 'has the correct error message' do
-          expect(validator.errors.first).to eq 'Name is not available'
+          expect(validator.errors.first.keys.first).to be :name
+          expect(validator.errors.first.values.first).to eq 'is not available'
         end
       end # context 'it is unavailable'
 
@@ -74,10 +76,10 @@ module UserDataValidation
       # record.destroy
 
       it_behaves_like 'an invalid name', 'it is improperly formatted',
-                      "   Joe \nBlow  ", 'Name is not properly formatted'
+                      "   Joe \nBlow  ", 'is not properly formatted'
 
       it_behaves_like 'an invalid name', 'it has repeated whitespace',
-                      'Joe  Blow', 'Name may not contain adjacent whitespace'
+                      'Joe  Blow', 'may not contain adjacent whitespace'
     end # context 'for a name that is invalid because'
   end # describe UserDataValidation::NameValidator
 end # module UserDataValidation

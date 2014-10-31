@@ -2,6 +2,7 @@
 require 'permissive_user_creator'
 require 'user_updater'
 
+require 'create_user'
 require 'index_users'
 require 'new_user'
 
@@ -16,14 +17,8 @@ class UsersController < ApplicationController
   end
 
   def create
-    result = DSO::PermissiveUserCreator.run user_data: params[:user_data]
-    @user = result.result
-    authorize @user
-    if result.valid? && @user.save
-      redirect_to root_url, flash: { success: 'Thank you for signing up!' }
-    else
-      render 'new'
-    end
+    Actions::CreateUser.new(current_user, params[:user_data])
+        .subscribe(self, prefix: :on_create).execute
   end
 
   def edit
@@ -52,6 +47,17 @@ class UsersController < ApplicationController
 
   # Action responders must be public to receive Wisper notifications; see
   # https://github.com/krisleech/wisper/issues/75 for relevant detail.
+
+  def on_create_success(payload)
+    @user = payload.entity
+    redirect_to root_url, flash: { success: 'Thank you for signing up!' }
+  end
+
+  def on_create_failure(payload)
+    @user = payload.entity
+    @errors = payload.errors
+    render 'new'
+  end
 
   def on_index_success(payload)
     @users = payload.entity
