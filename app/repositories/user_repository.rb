@@ -21,6 +21,12 @@ class UserRepository < RepositoryBase
                     success: errors.empty?
   end
 
+  def find_by_name(name)
+    found_user = dao.where(name: name).first
+    return successful_result(found_user) if found_user
+    failed_name_result name
+  end
+
   def guest_user(*options)
     user_dao = dao.first
     errors = ErrorFactory.create(user_dao.errors)
@@ -49,6 +55,12 @@ class UserRepository < RepositoryBase
   def errors_for(user)
     return [] if user
     invalid_user_name_or_password
+  end
+
+  def failed_name_result(name)
+    errors = ActiveModel::Errors.new dao
+    errors.add :base, "A record with 'name'=#{name} was not found."
+    failed_result_with_errors errors
   end
 
   def include_password?(options)

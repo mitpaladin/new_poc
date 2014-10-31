@@ -78,6 +78,35 @@ describe UserRepository do
     it_behaves_like 'the #delete method for a Repository'
   end # describe :delete
 
+  describe :find_by_name.to_s do
+    context 'record not found' do
+
+      it 'returns the expected StoreResult' do
+        result = obj.find_by_name 'Nobody Home'
+        expect(result).not_to be_success
+        expect(result.entity).to be nil
+        expect(result).to have(1).error
+        expected_message = "A record with 'name'=Nobody Home was not found."
+        expect(result.errors.first)
+            .to be_an_error_hash_for :base, expected_message
+      end
+    end # context 'record not found'
+
+    context 'record exists' do
+      let(:result) do
+        obj.add entity
+        obj.find_by_name entity.name
+      end
+
+      it 'returns the expected StoreResult' do
+        expect(result).to be_success
+        expect(result.errors).to be nil
+        expect(result.entity).to be_a entity_class
+        expect(result.entity).to be_entity_for.call(entity)
+      end
+    end # context 'record exists'
+  end # describe :find_by_name
+
   describe :find_by_slug.to_s do
     it_behaves_like 'the #find_by_slug method for a Repository'
   end # describe :find_by_slug
