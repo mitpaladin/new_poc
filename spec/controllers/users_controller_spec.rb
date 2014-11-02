@@ -164,24 +164,6 @@ describe UsersController do
     end # describe 'with invalid parameters, such as'
   end # describe "POST 'create'"
 
-  xdescribe "GET 'show'" do
-
-    context 'for the logged-in user' do
-      let(:user) { FactoryGirl.create :user_datum }
-      before :each do
-        CurrentUserIdentity.new(session).current_user = user
-      end
-
-      it 'assigns the user object with the slugged name to :user' do
-        get :show, id: user.name.parameterize
-        expect(assigns[:user]).to eq user
-      end
-    end # context 'for the logged-in user'
-
-    context 'for the Guest User' do
-    end # context 'for the Guest User'
-  end # describe "GET 'show'"
-
   describe "GET 'edit'" do
     let(:not_auth_message) { "Not logged in as #{user.slug}!" }
     let(:user) { FactoryGirl.create :user, :saved_user }
@@ -235,7 +217,6 @@ describe UsersController do
 
         it 'redirects to the root path' do
           expect(response).to redirect_to root_path
-          ap [:line_237, flash]
         end
 
         it 'displays the authorisation-failure flash message' do
@@ -244,6 +225,46 @@ describe UsersController do
       end
     end # context 'for the logged-in user'
   end # describe "GET 'edit'"
+
+  # As yet, oblivious to current-user status.
+  describe "GET 'show'" do
+    before :each do
+      get :show, id: target_user.slug
+    end
+
+    describe 'succeeds in requesting any existing public profile, so that it' do
+      let(:target_user) do
+        entity = UserEntity.new FactoryGirl.attributes_for(:user, :saved_user)
+        UserRepository.new.add entity
+        entity
+      end
+
+      it 'assigns the target user to the :user variable' do
+        expect(assigns[:user]).to eq target_user
+      end
+
+      it 'has an HTTP status response of OK' do
+        expect(response).to be_ok
+      end
+
+      it 'renders the :show template' do
+        expect(response).to render_template :show
+      end
+    end # describe 'succeeds in requesting any existing public profile, ...'
+
+    describe 'when attempting to view a profile which does not exist,' do
+      let(:target_user) { FancyOpenStruct.new slug: 'invalid-user-slug' }
+
+      it 'is redirected to the user-index page' do
+        expect(response).to redirect_to users_path
+      end
+
+      it 'is shown the correct flash error message' do
+        message = "Cannot find user with slug #{target_user.slug}!"
+        expect(flash[:alert]).to eq message
+      end
+    end # describe 'when attempting to view a profile which does not exist,'
+  end # describe "GET 'show'"
 
   xdescribe "PATCH 'update'" do
     # Why #create rather than just #attributes_for ? So the slug gets built.

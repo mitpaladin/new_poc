@@ -5,6 +5,7 @@ require 'user_updater'
 require 'create_user'
 require 'index_users'
 require 'new_user'
+require 'show_user'
 
 # UsersController: actions related to Users within our "fancy" blog.
 class UsersController < ApplicationController
@@ -27,8 +28,7 @@ class UsersController < ApplicationController
   end
 
   def show
-    @user = UserData.friendly.find(params[:id]).decorate
-    authorize @user
+    Actions::ShowUser.new(params[:id]).subscribe(self, prefix: :on_show).execute
   end
 
   # FIXME: Needs a DSO. When calling #update_attributes, raises an error.
@@ -79,6 +79,14 @@ class UsersController < ApplicationController
   def on_new_failure(payload)
     @user = nil
     redirect_to root_path, flash: { alert: payload.errors.first[:message] }
+  end
+
+  def on_show_success(payload)
+    @user = payload.entity
+  end
+
+  def on_show_failure(payload)
+    redirect_to users_path, flash: { alert: payload.errors.first[:message] }
   end
 
   private

@@ -18,8 +18,6 @@ module Actions
 
     private
 
-    attr_reader :user
-
     def broadcast_failure
       broadcast :failure, failure_result
     end
