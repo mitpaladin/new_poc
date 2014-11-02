@@ -9,7 +9,7 @@ shared_examples 'the #delete method for a Repository' do
     it 'returns the expected StoreResult' do
       expect(result).to be_success
       expect(result.entity).to be nil
-      expect(result.errors).to be nil
+      expect(result.errors).to be_empty
     end
   end # context 'for an existing record'
 

@@ -11,7 +11,7 @@ shared_examples 'the #add method for a Repository' do
 
     it 'returns the expected StoreResult' do
       expect(result).to be_success
-      expect(result.errors).to be nil
+      expect(result.errors).to be_empty
       expect(result.entity).to be_entity_for.call(entity)
     end
   end # context 'on success'

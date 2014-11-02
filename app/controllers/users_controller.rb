@@ -22,8 +22,8 @@ class UsersController < ApplicationController
   end
 
   def edit
-    @user = UserData.find params[:id]
-    authorize @user
+    Actions::EditUser.new(params[:id], current_user)
+        .subscribe(self, prefix: :on_edit).execute
   end
 
   def show
@@ -57,6 +57,15 @@ class UsersController < ApplicationController
     @user = payload.entity
     @errors = payload.errors
     render 'new'
+  end
+
+  def on_edit_success(payload)
+    @user = payload.entity
+  end
+
+  def on_edit_failure(payload)
+    @errors = payload.errors
+    redirect_to root_url, flash: { alert: payload.errors.first[:message] }
   end
 
   def on_index_success(payload)

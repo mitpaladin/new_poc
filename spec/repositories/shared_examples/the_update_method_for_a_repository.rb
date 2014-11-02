@@ -16,7 +16,7 @@ shared_examples 'the #update method for a Repository' do
 
     it 'returns the expected StoreResult' do
       expect(result).to be_success
-      expect(result.errors).to be nil
+      expect(result.errors).to be_empty
       expect(result.entity.send attribute_to_update).to eq updated_attribute
     end
   end # context 'on success'

@@ -64,7 +64,7 @@ class RepositoryBase
   end
 
   def successful_result(record = nil)
-    StoreResult.new success: true, errors: nil,
+    StoreResult.new success: true, errors: ErrorFactory.create([]),
                     entity: entity_if_record?(record)
   end
 end # class RepositoryBase

@@ -182,9 +182,9 @@ describe UsersController do
     end # context 'for the Guest User'
   end # describe "GET 'show'"
 
-  xdescribe "GET 'edit'" do
-    let(:user) { FactoryGirl.create :user_datum }
-    let(:not_auth_message) { 'You are not authorized to perform this action.' }
+  describe "GET 'edit'" do
+    let(:not_auth_message) { "Not logged in as #{user.slug}!" }
+    let(:user) { FactoryGirl.create :user, :saved_user }
 
     context 'for the Guest User' do
 
@@ -193,7 +193,7 @@ describe UsersController do
       end
 
       it 'displays the authorisation-failure flash message' do
-        expect(request.flash[:error]).to eq not_auth_message
+        expect(request.flash[:alert]).to eq not_auth_message
       end
 
       it 'redirects to the root path' do
@@ -202,18 +202,45 @@ describe UsersController do
     end # context 'for the Guest User'
 
     context 'for the logged-in user' do
-      let(:user) { FactoryGirl.create :user_datum }
       before :each do
         CurrentUserIdentity.new(session).current_user = user
-        get :edit, id: user.name.parameterize
       end
 
-      describe 'editing his own record' do
+      context 'editing his own record' do
+
+        before :each do
+          get :edit, id: user.slug
+        end
 
         it 'is successful' do
           expect(response).to be_ok
         end
 
+        it 'renders the :edit template' do
+          expect(response).to render_template :edit
+        end
+
+        it 'assigns the :user variable to the logged-in user entity' do
+          expect(assigns[:user]).to eq user
+        end
+      end # context 'editing his own record'
+
+      context 'attempting to edit the record of another user' do
+        let(:not_auth_message) { "Not logged in as #{other_user.slug}!" }
+        let(:other_user) { FactoryGirl.create :user, :saved_user }
+
+        before :each do
+          get :edit, id: other_user.slug
+        end
+
+        it 'redirects to the root path' do
+          expect(response).to redirect_to root_path
+          ap [:line_237, flash]
+        end
+
+        it 'displays the authorisation-failure flash message' do
+          expect(request.flash[:alert]).to eq not_auth_message
+        end
       end
     end # context 'for the logged-in user'
   end # describe "GET 'edit'"
