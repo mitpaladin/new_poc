@@ -36,15 +36,6 @@ class UsersController < ApplicationController
   def update
     Actions::UpdateUser.new(params[:user_data], current_user)
         .subscribe(self, prefix: :on_update).execute
-    # @user = UserData.find params[:id]
-    # authorize @user
-    # entity = CCO::UserCCO.to_entity @user
-    # result = DSO::UserUpdater.run user: entity, user_data: params[:user_data]
-    # if result.valid?
-    #   update_and_redirect_with result.result
-    # else
-    #   render 'edit'
-    # end
   end
 
   # Action responders must be public to receive Wisper notifications; see
@@ -104,12 +95,4 @@ class UsersController < ApplicationController
   def on_update_failure(payload)
     redirect_to root_path, flash: { alert: payload.errors.first[:message] }
   end
-
-  # private
-  #
-  # def update_and_redirect_with(attribs)
-  #   @user.update_attributes attribs
-  #   message = 'You successfully updated your profile'
-  #   redirect_to user_path(@user.slug), flash: { success: message }
-  # end
 end # class UsersController
