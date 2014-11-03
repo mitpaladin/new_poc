@@ -3,9 +3,11 @@ require 'permissive_user_creator'
 require 'user_updater'
 
 require 'create_user'
+require 'edit_user'
 require 'index_users'
 require 'new_user'
 require 'show_user'
+require 'update_user'
 
 # UsersController: actions related to Users within our "fancy" blog.
 class UsersController < ApplicationController
@@ -31,22 +33,24 @@ class UsersController < ApplicationController
     Actions::ShowUser.new(params[:id]).subscribe(self, prefix: :on_show).execute
   end
 
-  # FIXME: Needs a DSO. When calling #update_attributes, raises an error.
-  # The error is ActiveModel::ForbiddenAttributesError.
   def update
-    @user = UserData.find params[:id]
-    authorize @user
-    entity = CCO::UserCCO.to_entity @user
-    result = DSO::UserUpdater.run user: entity, user_data: params[:user_data]
-    if result.valid?
-      update_and_redirect_with result.result
-    else
-      render 'edit'
-    end
+    Actions::UpdateUser.new(params[:user_data], current_user)
+        .subscribe(self, prefix: :on_update).execute
+    # @user = UserData.find params[:id]
+    # authorize @user
+    # entity = CCO::UserCCO.to_entity @user
+    # result = DSO::UserUpdater.run user: entity, user_data: params[:user_data]
+    # if result.valid?
+    #   update_and_redirect_with result.result
+    # else
+    #   render 'edit'
+    # end
   end
 
   # Action responders must be public to receive Wisper notifications; see
-  # https://github.com/krisleech/wisper/issues/75 for relevant detail.
+  # https://github.com/krisleech/wisper/issues/75 for relevant detail. (Needless
+  # to say that, even though these are public methods, they should never be
+  # called directly.)
 
   def on_create_success(payload)
     @user = payload.entity
@@ -89,11 +93,23 @@ class UsersController < ApplicationController
     redirect_to users_path, flash: { alert: payload.errors.first[:message] }
   end
 
-  private
-
-  def update_and_redirect_with(attribs)
-    @user.update_attributes attribs
+  # FIXME! FIXME! FIXME! Where's the DAO abstraction? FIXME! FIXME! FIXME!
+  def on_update_success(payload)
+    dao = UserRepository.new.instance_variable_get(:@dao)
+    @user = dao.find_by_slug payload.entity.slug
     message = 'You successfully updated your profile'
     redirect_to user_path(@user.slug), flash: { success: message }
   end
+
+  def on_update_failure(payload)
+    redirect_to root_path, flash: { alert: payload.errors.first[:message] }
+  end
+
+  # private
+  #
+  # def update_and_redirect_with(attribs)
+  #   @user.update_attributes attribs
+  #   message = 'You successfully updated your profile'
+  #   redirect_to user_path(@user.slug), flash: { success: message }
+  # end
 end # class UsersController
