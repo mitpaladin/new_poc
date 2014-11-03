@@ -2,6 +2,8 @@
 require 'permissive_post_creator'
 require 'post_creator_and_publisher'
 
+require 'index_posts'
+
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
   after_action :verify_authorized,  except: :index
@@ -10,7 +12,7 @@ class PostsController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, with: :article_not_found
 
   def index
-    @posts = policy_scope(PostData.all)
+    Actions::IndexPosts.new.subscribe(self, prefix: :on_index).execute
   end
 
   def new
