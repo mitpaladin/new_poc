@@ -6,13 +6,11 @@ require 'index_posts'
 
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
-  after_action :verify_authorized,  except: :index
-  after_action :verify_policy_scoped, only: :index
-
   rescue_from ActiveRecord::RecordNotFound, with: :article_not_found
 
   def index
-    Actions::IndexPosts.new.subscribe(self, prefix: :on_index).execute
+    Actions::IndexPosts.new(current_user)
+        .subscribe(self, prefix: :on_index).execute
   end
 
   def new
@@ -57,6 +55,15 @@ class PostsController < ApplicationController
     else
       render 'edit'
     end
+  end
+
+  # Action responders must be public to receive Wisper notifications; see
+  # https://github.com/krisleech/wisper/issues/75 for relevant detail. (Needless
+  # to say that, even though these are public methods, they should never be
+  # called directly.)
+
+  def on_index_success(payload)
+    @posts = payload.entity
   end
 
   private

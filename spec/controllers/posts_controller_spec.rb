@@ -37,21 +37,22 @@ describe PostsController do
     it { expect(post_path(42)).to eq '/posts/42' }
   end
 
-  xdescribe "GET 'index'" do
-    let(:author) { FactoryGirl.create :user_datum }
+  fdescribe "GET 'index'" do
+    let(:author) { FactoryGirl.create :user, :saved_user }
     let(:public_post_count) { 6 }
     let(:draft_post_count) { 4 }
     let!(:draft_posts) do
-      FactoryGirl.create_list :post_datum, draft_post_count, :saved_post,
-                              :draft_post, author_name: author.name
+      FactoryGirl.create_list :post, draft_post_count, :saved_post,
+                              author_name: author.name
     end
     let!(:public_posts) do
-      FactoryGirl.create_list :post_datum, public_post_count, :saved_post,
-                              :public_post
+      FactoryGirl.create_list :post, public_post_count, :saved_post,
+                              :published_post
     end
 
     describe 'does the basics:' do
       before :each do
+        _ = [public_posts, draft_posts]
         get :index
         @posts = assigns[:posts]
       end
@@ -77,15 +78,15 @@ describe PostsController do
 
       it 'assigns only the public posts to :posts' do
         expect(@posts).to have(public_post_count).entries
-        @posts.each do |post|
-          expect(public_posts).to include post
+        @posts.each_with_index do |post, index|
+          expect(post).to be_saved_post_entity_for public_posts[index]
         end
       end
     end # context 'for the guest user'
 
     context 'for a registered user owning no draft posts' do
       before :each do
-        user = FactoryGirl.create :user_datum
+        user = FactoryGirl.create :user, :saved_user
         identity.current_user = user
         get :index
         @posts = assigns[:posts]
@@ -93,8 +94,8 @@ describe PostsController do
 
       it 'assigns only the public posts to :posts' do
         expect(@posts).to have(public_post_count).entries
-        @posts.each do |post|
-          expect(public_posts).to include post
+        @posts.each_with_index do |post, index|
+          expect(post).to be_saved_post_entity_for public_posts[index]
         end
       end
     end # context 'for a registered user owning no draft posts'
@@ -109,11 +110,12 @@ describe PostsController do
       it 'assigns all public posts and drafts by the current user to :posts' do
         expected_count = public_post_count + draft_post_count
         expect(@posts).to have(expected_count).entries
-        public_posts.each do |post|
-          expect(@posts).to include post
+        draft_posts.each_with_index do |post, index|
+          expect(@posts[index]).to be_saved_post_entity_for post
         end
-        draft_posts.each do |post|
-          expect(@posts).to include post
+        public_posts.each_with_index do |post, index|
+          post_index = index + draft_post_count
+          expect(@posts[post_index]).to be_saved_post_entity_for post
         end
       end
     end # context 'for a registered user owning no draft posts'
