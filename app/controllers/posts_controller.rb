@@ -26,10 +26,8 @@ class PostsController < ApplicationController
   end
 
   def edit
-    # FIXME: DSO? Input validity check?
-    post = PostData.find(params['id']).decorate
-    authorize post
-    @post = post
+    Actions::EditPost.new(params['id'], current_user)
+        .subscribe(self, prefix: :on_edit).execute
   end
 
   def show
@@ -62,6 +60,14 @@ class PostsController < ApplicationController
 
   def on_create_failure(payload)
     redirect_to posts_path, flash: { alert: payload.errors.first[:message] }
+  end
+
+  def on_edit_success(payload)
+    @post = payload.entity
+  end
+
+  def on_post_failure(payload)
+    ap [:line_74, payload]
   end
 
   def on_index_success(payload)

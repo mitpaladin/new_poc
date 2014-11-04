@@ -202,25 +202,21 @@ describe PostsController do
     end # context 'for a Registered User'
 
     context 'for the Guest User' do
-      describe 'with valid parameters' do
-        before :each do
-          post :create, post_data: params
-        end
+      before :each do
+        post :create, post_data: params
+      end
 
-        it 'does not assign a value to the  :post item' do
-          expect(assigns).not_to have_key :post
-        end
+      it 'does not assign a value to the  :post item' do
+        expect(assigns).not_to have_key :post
+      end
 
-        it 'redirects to the post-listing path' do
-          expect(response).to redirect_to posts_path
-        end
+      it 'redirects to the post-listing path' do
+        expect(response).to redirect_to posts_path
+      end
 
-        it 'renders the correct flash alert message' do
-          expect(flash[:alert]).to eq 'Not logged in as a registered user!'
-        end
-      end # describe 'with valid parameters'
-
-      # it_behaves_like 'an attempt to create an invalid Post'
+      it 'renders the correct flash alert message' do
+        expect(flash[:alert]).to eq 'Not logged in as a registered user!'
+      end
     end # context 'for the Guest User'
   end # describe "POST 'create'"
 
