@@ -2,6 +2,7 @@
 require 'permissive_post_creator'
 require 'post_creator_and_publisher'
 
+require 'create_post'
 require 'index_posts'
 require 'new_post'
 
@@ -20,14 +21,8 @@ class PostsController < ApplicationController
   end
 
   def create
-    post_params = tweak_create_params params
-    post_status = params['post_data']['post_status']
-    post = DSO::PostCreatorAndPublisher.run! params: post_params,
-                                             post_status: post_status
-    @post = CCO::PostCCO.from_entity post
-    @post.valid?
-    authorize @post
-    process_create_result
+    Actions::CreatePost.new(current_user, params[:post_data])
+        .subscribe(self, prefix: :on_create).execute
   end
 
   def edit
@@ -59,6 +54,15 @@ class PostsController < ApplicationController
   # https://github.com/krisleech/wisper/issues/75 for relevant detail. (Needless
   # to say that, even though these are public methods, they should never be
   # called directly.)
+
+  def on_create_success(payload)
+    @post = payload.entity
+    redirect_to root_path, flash: { success: 'Post added!' }
+  end
+
+  def on_create_failure(payload)
+    redirect_to posts_path, flash: { alert: payload.errors.first[:message] }
+  end
 
   def on_index_success(payload)
     @posts = payload.entity

@@ -149,7 +149,7 @@ describe PostsController do
         get :new
       end
 
-      fit 'does not assign a value to the :post variable' do
+      it 'does not assign a value to the :post variable' do
         expect(assigns).not_to have_key(:post)
       end
 
@@ -165,23 +165,28 @@ describe PostsController do
     end # context 'for the Guest User'
   end # describe "GET 'new'"
 
-  xdescribe "POST 'create'" do
-    let(:params) { FactoryGirl.attributes_for :post_datum }
+  describe "POST 'create'" do
+    let(:params) { FactoryGirl.attributes_for :post }
 
     context 'for a Registered User' do
       describe 'with valid parameters' do
         before :each do
-          user = FactoryGirl.create :user_datum
+          user = FactoryGirl.create :user, :saved_user
           identity.current_user = user
           post :create, post_data: params
         end
 
-        it 'assigns the :post item as a PostData instance' do
-          expect(assigns[:post]).to be_a PostData
+        it 'assigns the :post item as a PostEntity instance' do
+          expect(assigns[:post]).to be_a PostEntity
         end
 
         it 'persists the PostData instance corresponding to the :post' do
-          expect(assigns[:post]).to_not be_a_new_record
+          post = assigns[:post]
+          expect(post).to be_persisted
+          dao = PostDao.find_by_slug post.slug
+          [:body, :image_url, :title].each do |attrib|
+            expect(post.attributes[attrib]).to eq dao[attrib]
+          end
         end
 
         it 'redirects to the root path' do
@@ -202,19 +207,16 @@ describe PostsController do
           post :create, post_data: params
         end
 
-        it 'assigns the :post item as a new PostData instance' do
-          post = assigns[:post]
-          expect(post).to be_a PostData
-          expect(post).to be_a_new_record
+        it 'does not assign a value to the  :post item' do
+          expect(assigns).not_to have_key :post
         end
 
-        it 'redirects to the root path' do
-          expect(response).to redirect_to root_path
+        it 'redirects to the post-listing path' do
+          expect(response).to redirect_to posts_path
         end
 
-        it 'renders the correct flash error message' do
-          expected = 'You are not authorized to perform this action.'
-          expect(flash[:error]).to eq expected
+        it 'renders the correct flash alert message' do
+          expect(flash[:alert]).to eq 'Not logged in as a registered user!'
         end
       end # describe 'with valid parameters'
 
