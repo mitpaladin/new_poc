@@ -8,7 +8,7 @@ RSpec::Matchers.define :be_an_error_hash_for do |field, message|
       msg = "Actual must have 2 key/value pairs; found #{actual.count}"
       @reasons << msg
     end
-    if actual[:field] != field.to_s
+    if actual[:field].to_s != field.to_s
       msg = "Actual must have a :field key with value '#{field}'; found " \
           "'#{actual[:field]}'"
       @reasons << msg

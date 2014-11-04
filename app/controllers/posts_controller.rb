@@ -3,6 +3,7 @@ require 'permissive_post_creator'
 require 'post_creator_and_publisher'
 
 require 'index_posts'
+require 'new_post'
 
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
@@ -14,11 +15,8 @@ class PostsController < ApplicationController
   end
 
   def new
-    post = DSO::PermissivePostCreator.run!
-    # The DSO hands back an entity; Rails needs to see an implementation model
-    @post = CCO::PostCCO.from_entity post
-    authorize @post
-    @post
+    Actions::NewPost.new(current_user)
+        .subscribe(self, prefix: :on_new).execute
   end
 
   def create
@@ -64,6 +62,14 @@ class PostsController < ApplicationController
 
   def on_index_success(payload)
     @posts = payload.entity
+  end
+
+  def on_new_success(payload)
+    @post = payload.entity
+  end
+
+  def on_new_failure(payload)
+    redirect_to root_path, flash: { alert: payload.errors.first[:message] }
   end
 
   private

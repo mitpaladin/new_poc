@@ -37,7 +37,7 @@ describe PostsController do
     it { expect(post_path(42)).to eq '/posts/42' }
   end
 
-  fdescribe "GET 'index'" do
+  describe "GET 'index'" do
     let(:author) { FactoryGirl.create :user, :saved_user }
     let(:public_post_count) { 6 }
     let(:draft_post_count) { 4 }
@@ -121,10 +121,10 @@ describe PostsController do
     end # context 'for a registered user owning no draft posts'
   end # describe "GET 'index'"
 
-  xdescribe "GET 'new'" do
+  describe "GET 'new'" do
     context 'for a Registered User' do
       before :each do
-        user = FactoryGirl.create :user_datum
+        user = FactoryGirl.create :user, :saved_user
         identity.current_user = user
         get :new
       end
@@ -133,10 +133,10 @@ describe PostsController do
         expect(response).to be_success
       end
 
-      it 'assigns a new PostData instance to :post' do
+      it 'assigns a new PostEntity instance to :post' do
         post = assigns[:post]
-        expect(post).to be_a PostData
-        expect(post).to be_a_new_record
+        expect(post).to be_a PostEntity
+        expect(post).not_to be_persisted
       end
 
       it 'renders the :new template' do
@@ -149,8 +149,8 @@ describe PostsController do
         get :new
       end
 
-      it 'assigns a new PostData instance to :post' do
-        expect(assigns[:post]).to be_a_new_record
+      fit 'does not assign a value to the :post variable' do
+        expect(assigns).not_to have_key(:post)
       end
 
       it 'redirects to the landing page' do
@@ -159,8 +159,8 @@ describe PostsController do
       end
 
       it 'renders the correct flash error message' do
-        expected = 'You are not authorized to perform this action.'
-        expect(flash[:error]).to eq expected
+        expected = 'Not logged in as a registered user!'
+        expect(flash[:alert]).to eq expected
       end
     end # context 'for the Guest User'
   end # describe "GET 'new'"
