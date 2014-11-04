@@ -5,6 +5,7 @@ require 'post_creator_and_publisher'
 require 'create_post'
 require 'index_posts'
 require 'new_post'
+require 'show_post'
 
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
@@ -31,9 +32,8 @@ class PostsController < ApplicationController
   end
 
   def show
-    post = PostData.find params[:id]
-    @post = PostDataDecorator.new(post)
-    authorize @post
+    Actions::ShowPost.new(params[:id], current_user)
+        .subscribe(self, prefix: :on_show).execute
   end
 
   def update
@@ -66,10 +66,6 @@ class PostsController < ApplicationController
     @post = payload.entity
   end
 
-  def on_post_failure(payload)
-    ap [:line_74, payload]
-  end
-
   def on_index_success(payload)
     @posts = payload.entity
   end
@@ -80,6 +76,14 @@ class PostsController < ApplicationController
 
   def on_new_failure(payload)
     redirect_to root_path, flash: { alert: payload.errors.first[:message] }
+  end
+
+  def on_show_success(payload)
+    @post = payload.entity
+  end
+
+  def on_show_failure(payload)
+    redirect_to posts_path, flash: { alert: payload.errors.first[:message] }
   end
 
   private

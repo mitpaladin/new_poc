@@ -265,12 +265,12 @@ describe PostsController do
     end # context 'when the logged-in user is the post author'
   end # describe "GET 'edit'"
 
-  xdescribe "GET 'show'" do
-    let(:author) { FactoryGirl.create :user_datum }
+  describe "GET 'show'" do
+    let(:author) { FactoryGirl.create :user, :saved_user }
 
     context 'for a valid public post' do
       let(:article) do
-        FactoryGirl.create :post_datum, :saved_post, :public_post,
+        FactoryGirl.create :post, :saved_post, :published_post,
                            author_name: author.name
       end
 
@@ -283,7 +283,8 @@ describe PostsController do
       end
 
       it 'assigns an object to Post' do
-        expect(assigns[:post]).to be_a PostData
+        expect(assigns[:post]).to be_a PostEntity
+        expect(assigns[:post].title).to eq article.title
       end
 
       it 'renders the :show template' do
@@ -292,12 +293,11 @@ describe PostsController do
     end # context 'for a valid public post'
 
     context 'for a draft post' do
-      context 'by the current user' do
-        let(:article) do
-          FactoryGirl.create :post_datum, :saved_post, :draft_post,
-                             author_name: author.name
-        end
+      let(:article) do
+        FactoryGirl.create :post, :saved_post, author_name: author.name
+      end
 
+      context 'by the current user' do
         before :each do
           identity.current_user = author
           get :show, id: article.slug
@@ -308,7 +308,8 @@ describe PostsController do
         end
 
         it 'assigns an object to Post' do
-          expect(assigns[:post]).to be_a PostData
+          expect(assigns[:post]).to be_a PostEntity
+          expect(assigns[:post].title).to eq article.title
         end
 
         it 'renders the :show template' do
@@ -317,9 +318,6 @@ describe PostsController do
       end # context 'by the current user
 
       context 'by a different user' do
-        let(:article) do
-          FactoryGirl.create :post_datum, :saved_post, :draft_post
-        end
         let(:user) { FactoryGirl.create :user_datum }
 
         before :each do
@@ -331,13 +329,13 @@ describe PostsController do
           expect(response).to be_redirect
         end
 
-        it 'redirects to the root URL' do
-          expect(response).to redirect_to root_url
+        it 'redirects to the post-listing page' do
+          expect(response).to redirect_to posts_path
         end
 
         it 'renders the correct flash error message' do
-          expected = 'You are not authorized to perform this action.'
-          expect(flash[:error]).to eq expected
+          expected = "Cannot find post with slug #{article.slug}!"
+          expect(flash[:alert]).to eq expected
         end
       end
     end # context 'for a draft post'
@@ -352,15 +350,12 @@ describe PostsController do
         expect(response).to be_redirect
       end
 
-      it 'redirects to the root URL' do
-        expect(response).to redirect_to root_url
+      it 'redirects to the post-listing page' do
+        expect(response).to redirect_to posts_path
       end
 
       it 'renders the correct flash error message' do
-        expected = [
-          'There is no article with an ID of "',
-          '"!'].join bad_slug
-        expect(flash[:alert]).to eq expected
+        expect(flash[:alert]).to eq "Cannot find post with slug #{bad_slug}!"
       end
     end # context 'for an invalid post'
   end # describe "GET 'show'"
