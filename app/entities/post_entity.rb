@@ -26,4 +26,12 @@ class PostEntity
   def persisted?
     !slug.nil?
   end
+
+  def published?
+    pubdate.present?
+  end
+
+  def draft?
+    pubdate.nil?
+  end
 end # class PostEntity

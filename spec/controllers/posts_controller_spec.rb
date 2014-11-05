@@ -360,12 +360,13 @@ describe PostsController do
     end # context 'for an invalid post'
   end # describe "GET 'show'"
 
-  xdescribe "PATCH 'update'" do
-    let(:author) { FactoryGirl.create :user_datum }
+  describe "PATCH 'update'" do
+    let(:author) { FactoryGirl.create :user, :saved_user }
 
     context 'when the post status is unaffected' do
       let(:post) do
-        FactoryGirl.create(:post_datum, author_name: author.name).decorate
+        FactoryGirl.create :post, :saved_post, :published_post,
+                           author_name: author.name
       end
       let(:post_data) { { body: 'Updated ' + post.body } }
 
@@ -381,8 +382,12 @@ describe PostsController do
 
         it 'assigns the updated post' do
           actual = assigns[:post]
-          expect(actual).to eq post
           expect(actual.body).to eq post_data[:body]
+          comparison_keys = [:author_name, :imaage_url, :slug, :title, :pubdate,
+                             :created_at]
+          comparison_keys.each do |attrib_key|
+            expect(actual.attributes[attrib_key]).to eq post[attrib_key.to_s]
+          end
         end
       end # context 'for the post author'
 
@@ -407,35 +412,31 @@ describe PostsController do
 
     context 'for an existing draft post' do
       let(:post) do
-        FactoryGirl.create(:post_datum,
-                           :draft_post,
-                           :saved_post,
+        FactoryGirl.create :post, :saved_post,
                            author_name: author.name
-          ).decorate
       end
 
-      it 'that updates the post status to "public"' do
-        post_data = { post_status: 'public' }
+      it 'that publishes the post' do
+        post_data = { pubdate: Time.now }
         identity.current_user = author
+        expect(post.pubdate).to be nil  # draft, unpublished
         patch :update, id: post.slug, post_data: post_data
-        expect(assigns[:post].post_status).to eq 'public'
+        expect(assigns[:post]).to be_published
+        expect(assigns[:post]).not_to be_draft
       end
     end # context 'for an existing draft post'
 
     context 'for an existing public post' do
       let(:post) do
-        FactoryGirl.create(:post_datum,
-                           :public_post,
-                           :saved_post,
+        FactoryGirl.create :post, :saved_post, :published_post,
                            author_name: author.name
-          ).decorate
       end
 
       it 'that updates the post status to "draft"' do
-        post_data = { post_status: 'draft' }
+        post_data = { pubdate: nil }
         identity.current_user = author
         patch :update, id: post.slug, post_data: post_data
-        expect(assigns[:post].post_status).to eq 'draft'
+        expect(assigns[:post]).to be_draft
       end
     end # context 'for an existing public post'
   end # describe "PATCH 'update'"
