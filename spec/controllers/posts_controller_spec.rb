@@ -220,10 +220,11 @@ describe PostsController do
     end # context 'for the Guest User'
   end # describe "POST 'create'"
 
-  xdescribe "GET 'edit'" do
-    let(:author) { FactoryGirl.create :user_datum }
+  describe "GET 'edit'" do
+    let(:author) { FactoryGirl.create :user, :saved_user }
     let!(:post) do
-      FactoryGirl.create(:post_datum, author_name: author.name).decorate
+      FactoryGirl.create :post, :saved_post, :published_post,
+                         author_name: author.name
     end
 
     context 'for the Guest User' do
@@ -231,18 +232,19 @@ describe PostsController do
         get :edit, id: post.slug
       end
 
-      # it_behaves_like 'an unauthorised user for this post'
+      it_behaves_like 'an unauthorised user for this post'
     end # context 'for the Guest User'
 
     context 'when a user other than the post author is logged in' do
-      let(:user) { FactoryGirl.create :user_datum }
+      let(:user) { FactoryGirl.create :user, :saved_user }
 
       before :each do
         identity.current_user = user
         get :edit, id: post.slug
       end
 
-      it_behaves_like 'an unauthorised user for this post'
+      message = 'User J Random User Number .+? is not the author of this post!'
+      it_behaves_like 'an unauthorised user for this post', message
     end # context 'when a user other than the post author is logged in'
 
     context 'when the logged-in user is the post author' do
@@ -260,7 +262,10 @@ describe PostsController do
       end
 
       it 'assigns the :post variable' do
-        expect(assigns[:post]).to eq post.decorate
+        assigned = assigns[:post]
+        [:body, :image_url, :pubdate, :slug, :title].each do |attrib|
+          expect(assigned.attributes[attrib]).to eq post[attrib]
+        end
       end
     end # context 'when the logged-in user is the post author'
   end # describe "GET 'edit'"

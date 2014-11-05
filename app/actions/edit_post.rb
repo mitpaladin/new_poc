@@ -30,7 +30,7 @@ module Actions
 
     def broadcast_guest_not_authorised
       errors = errors_object
-      errors.add :user, 'Not logged in as a registered user'
+      errors.add :user, 'Not logged in as a registered user!'
       result = StoreResult.new entity: nil, success: false,
                                errors: ErrorFactory.create(errors)
       broadcast_failure result

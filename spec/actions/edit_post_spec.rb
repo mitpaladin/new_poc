@@ -105,7 +105,7 @@ module Actions
 
         it 'an :errors field containing the correct error information' do
           expect(payload).to have(1).error
-          message = "Not logged in as a registered user"
+          message = "Not logged in as a registered user!"
           expect(payload.errors.first).to be_an_error_hash_for :user, message
         end
 

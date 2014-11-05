@@ -57,6 +57,10 @@ class PostsController < ApplicationController
     @post = payload.entity
   end
 
+  def on_edit_failure(payload)
+    redirect_to posts_path, flash: { alert: payload.errors.first[:message] }
+  end
+
   def on_index_success(payload)
     @posts = payload.entity
   end
