@@ -21,7 +21,7 @@ module PostsHelper
   end
 
   def summarise_posts(count = 10)
-    allowed_posts = PostDataDecorator.decorate_collection data_policy_scope
+    allowed_posts = PostDataDecorator.decorate_collection PostData.all
     the_sorter = sorter_hack
     PostsSummariser.new do |s|
       s.count = count
@@ -30,10 +30,6 @@ module PostsHelper
   end
 
   private
-
-  def data_policy_scope
-    Pundit.policy_scope! pundit_user, PostData.all
-  end
 
   def shared_post_form_attributes(which)
     {

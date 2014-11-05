@@ -46,7 +46,7 @@ shared_examples 'it supports entity initialisation' do
         invalid_attribs.each_key do |attrib|
           message = "`#{attrib}' is not allowed as an instance variable name"
           expect { obj.instance_variable_get attrib }
-              .to raise_error NameError, message
+            .to raise_error NameError, message
         end
       end
     end # describe 'invalid attribute names'

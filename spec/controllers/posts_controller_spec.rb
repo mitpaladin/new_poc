@@ -14,18 +14,18 @@ describe PostsController do
     it { expect(post posts_path).to route_to 'posts#create' }
     it do
       expect(get post_path('the-title'))
-          .to route_to controller: 'posts', action: 'show', id: 'the-title'
+        .to route_to controller: 'posts', action: 'show', id: 'the-title'
     end
     # Can't disable ID-based routing but enable slug-based. This has to be
     # restricted at the controller/DSO level.
     # it { expect(get '/posts/:id').to_not be_routable }
     it do
       expect(get edit_post_path('the-title'))
-          .to route_to controller: 'posts', action: 'edit', id: 'the-title'
+        .to route_to controller: 'posts', action: 'edit', id: 'the-title'
     end
     it do
       expect(put post_path 'the-title')
-          .to route_to controller: 'posts', action: 'update', id: 'the-title'
+        .to route_to controller: 'posts', action: 'update', id: 'the-title'
     end
     it { expect(delete post_path(1)).to_not be_routable }
   end

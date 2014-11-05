@@ -58,7 +58,7 @@ class SavedEntityVerifier
     source_field = source.send field_sym
     return if actual_field == source_field
     message = %(#{field_sym} fields do not match: got #{actual_field} but ) +
-        %(expected #{source_field})
+              %(expected #{source_field})
     @reasons << message
   end
 

@@ -11,32 +11,32 @@ require 'show_post'
 class PostsController < ApplicationController
   def index
     Actions::IndexPosts.new(current_user)
-        .subscribe(self, prefix: :on_index).execute
+      .subscribe(self, prefix: :on_index).execute
   end
 
   def new
     Actions::NewPost.new(current_user)
-        .subscribe(self, prefix: :on_new).execute
+      .subscribe(self, prefix: :on_new).execute
   end
 
   def create
     Actions::CreatePost.new(current_user, params[:post_data])
-        .subscribe(self, prefix: :on_create).execute
+      .subscribe(self, prefix: :on_create).execute
   end
 
   def edit
     Actions::EditPost.new(params['id'], current_user)
-        .subscribe(self, prefix: :on_edit).execute
+      .subscribe(self, prefix: :on_edit).execute
   end
 
   def show
     Actions::ShowPost.new(params[:id], current_user)
-        .subscribe(self, prefix: :on_show).execute
+      .subscribe(self, prefix: :on_show).execute
   end
 
   def update
     Actions::UpdatePost.new(params[:id], params[:post_data], current_user)
-        .subscribe(self, prefix: :on_update).execute
+      .subscribe(self, prefix: :on_update).execute
   end
 
   # Action responders must be public to receive Wisper notifications; see

@@ -15,9 +15,9 @@ module UserDataValidation
 
     def valid?
       !name_is_missing_or_blank? &&
-          name_is_available? &&
-          name_is_properly_formatted? &&
-          !name_has_repeated_whitespace?
+        name_is_available? &&
+        name_is_properly_formatted? &&
+        !name_has_repeated_whitespace?
     end
 
     private

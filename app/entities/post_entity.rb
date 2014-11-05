@@ -19,7 +19,7 @@ class PostEntity
   # callback used by InstanceVariableSetter
   def init_attrib_keys
     %w(author_name body image_url slug title pubdate created_at updated_at)
-        .map(&:to_sym)
+      .map(&:to_sym)
   end
 
   # we're using FriendlyID for slugs, so...

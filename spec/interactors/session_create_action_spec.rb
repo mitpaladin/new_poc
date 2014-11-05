@@ -46,7 +46,7 @@ module DSO2
         it 'with a :user param but without a password' do
           message = 'Params has an invalid nested value ("password" => nil)'
           expect { klass.run! params: { user: 'duck' } }
-              .to raise_error error_class, message
+            .to raise_error error_class, message
         end
       end # describe 'and raises an error when called'
     end # describe 'requires a :params hash'

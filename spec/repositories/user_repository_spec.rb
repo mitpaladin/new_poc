@@ -88,7 +88,7 @@ describe UserRepository do
         expect(result).to have(1).error
         expected_message = "A record with 'name'=Nobody Home was not found."
         expect(result.errors.first)
-            .to be_an_error_hash_for :base, expected_message
+          .to be_an_error_hash_for :base, expected_message
       end
     end # context 'record not found'
 

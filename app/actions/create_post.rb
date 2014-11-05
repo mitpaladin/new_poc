@@ -10,6 +10,7 @@ module Actions
       @post_data = filter_post_data post_data
     end
 
+    # rubocop:disable Metrics/AbcSize
     def execute
       guest_user = user_repo.guest_user.entity
       return broadcast_auth_failure if current_user.name == guest_user.name
@@ -21,6 +22,7 @@ module Actions
       return broadcast_failure(result) unless result.success?
       broadcast_success result
     end
+    # rubocop:enable Metrics/AbcSize
 
     private
 
@@ -50,6 +52,7 @@ module Actions
       [{ field: key.to_s, message: message }]
     end
 
+    # rubocop:disable Metrics/AbcSize
     def filter_post_data(post_data)
       return {} unless post_data.respond_to? :to_h
       ret = Struct.new(*post_attributes).new
@@ -59,6 +62,7 @@ module Actions
       end
       OpenStruct.new ret.to_h.reject { |_k, v| v.nil? }
     end
+    # rubocop:enable Metrics/AbcSize
 
     def post_attributes
       %w(title body image_url slug created_at updated_at).map(&:to_sym)
@@ -70,7 +74,7 @@ module Actions
 
     def valid_post_data?
       (post_data.image_url.present? || post_data.body.present?) &&
-          post_data.title.present?
+        post_data.title.present?
     end
   end # class Actions::CreatePost
 end # module Actions

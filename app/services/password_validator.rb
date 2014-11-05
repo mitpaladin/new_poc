@@ -16,8 +16,8 @@ module UserDataValidation
 
     def valid?
       password_and_confirmation_match? &&
-          !password_has_whitespace_at_ends? &&
-          password_is_long_enough?
+        !password_has_whitespace_at_ends? &&
+        password_is_long_enough?
     end
 
     private

@@ -24,7 +24,7 @@ describe PostEntity do
   end
   let(:all_attrib_keys) do
     %w(author_name body image_url slug title pubdate created_at updated_at)
-       .map(&:to_sym).to_a
+      .map(&:to_sym).to_a
   end
   let(:draft_post) { klass.new valid_subset }
   let(:published_attribs) { valid_subset.merge pubdate: Time.now }

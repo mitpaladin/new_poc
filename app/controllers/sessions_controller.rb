@@ -7,14 +7,14 @@ require 'new_session'
 class SessionsController < ApplicationController
   def new
     Actions::NewSession.new(current_user)
-        .subscribe(self, prefix: :on_new)
-        .execute
+      .subscribe(self, prefix: :on_new)
+      .execute
   end
 
   def create
     Actions::CreateSession.new(params[:name], params[:password])
-        .subscribe(self, prefix: :on_create)
-        .execute
+      .subscribe(self, prefix: :on_create)
+      .execute
   end
 
   def destroy

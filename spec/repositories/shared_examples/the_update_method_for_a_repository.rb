@@ -47,7 +47,7 @@ shared_examples 'the #update method for a Repository' do
 
     it 'does not update the stored record' do
       expect(dao_class.last.send attribute_to_update)
-          .not_to eq updated_attribute
+        .not_to eq updated_attribute
     end
 
     it 'returns the expected StoreResult' do
@@ -55,7 +55,7 @@ shared_examples 'the #update method for a Repository' do
       expect(result.entity).to be nil
       expect(result).to have(1).error
       expect(result.errors.first)
-          .to be_an_error_hash_for error_key, error_message
+        .to be_an_error_hash_for error_key, error_message
     end
   end # context 'on failure'
 
@@ -65,7 +65,7 @@ shared_examples 'the #update method for a Repository' do
       errors.add :base, "A record with 'slug'=#{entity.slug} was" \
           ' not found.'
       StoreResult.new entity: nil, success: false,
-          errors: ErrorFactory.create(errors)
+                      errors: ErrorFactory.create(errors)
     end
     let(:obj) do
       ret = klass.new
@@ -83,7 +83,7 @@ shared_examples 'the #update method for a Repository' do
 
     it 'does not update the stored record' do
       expect(dao_class.last.send attribute_to_update)
-          .not_to eq updated_attribute
+        .not_to eq updated_attribute
     end
 
     it 'returns the expected StoreResult' do
@@ -92,7 +92,7 @@ shared_examples 'the #update method for a Repository' do
       expect(result).to have(1).error
       expected_message = "A record with 'slug'=#{entity.slug} was not found."
       expect(result.errors.first)
-          .to be_an_error_hash_for :base, expected_message
+        .to be_an_error_hash_for :base, expected_message
     end
   end # context 'on the record not being found'
 end # shared_examples 'the #update method for a Repository'

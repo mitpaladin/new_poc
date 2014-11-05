@@ -11,6 +11,7 @@ module Actions
     end
 
     # FIXME: Validation rules for post_data?
+    # rubocop:disable Metrics/AbcSize
     def execute
       return broadcast_failure(guest_user_prohibited) unless logged_in?
       return broadcast_failure(only_author_permitted) unless by_author?
@@ -20,6 +21,7 @@ module Actions
       return broadcast_failure(result) unless result.success?
       broadcast_success result
     end
+    # rubocop:enable Metrics/AbcSize
 
     private
 
@@ -93,7 +95,7 @@ module Actions
 
     def valid_attributes?(entity)
       entity.title.present? &&
-          (entity.body.present? || entity.image_url.present?)
+        (entity.body.present? || entity.image_url.present?)
     end
   end # class Actions::UpdatePost
 end # module Actions

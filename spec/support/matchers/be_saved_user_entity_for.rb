@@ -19,6 +19,6 @@ RSpec::Matchers.define :be_saved_user_entity_for do |source|
 
   failure_message do
     %(Expected a source and target(post-save) entity to #{description}, but ) +
-        @reasons.join('; and ')
+      @reasons.join('; and ')
   end
 end # RSpec::Matchers.define :be_saved_user_entity_for

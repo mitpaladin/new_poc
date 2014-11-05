@@ -21,12 +21,12 @@ class UsersController < ApplicationController
 
   def create
     Actions::CreateUser.new(current_user, params[:user_data])
-        .subscribe(self, prefix: :on_create).execute
+      .subscribe(self, prefix: :on_create).execute
   end
 
   def edit
     Actions::EditUser.new(params[:id], current_user)
-        .subscribe(self, prefix: :on_edit).execute
+      .subscribe(self, prefix: :on_edit).execute
   end
 
   def show
@@ -35,7 +35,7 @@ class UsersController < ApplicationController
 
   def update
     Actions::UpdateUser.new(params[:user_data], current_user)
-        .subscribe(self, prefix: :on_update).execute
+      .subscribe(self, prefix: :on_update).execute
   end
 
   # Action responders must be public to receive Wisper notifications; see

@@ -11,15 +11,15 @@ describe UsersController do
     it { expect(get '/users').to route_to 'users#index' }
     it do
       expect(get '/users/john-doe')
-          .to route_to controller: 'users', action: 'show', id: 'john-doe'
+        .to route_to controller: 'users', action: 'show', id: 'john-doe'
     end
     it do
       expect(get '/users/john-doe/edit')
-          .to route_to 'users#edit', id: 'john-doe'
+        .to route_to 'users#edit', id: 'john-doe'
     end
     it do
       expect(put '/users/john-doe')
-          .to route_to 'users#update', id: 'john-doe'
+        .to route_to 'users#update', id: 'john-doe'
     end
     it { expect(delete '/users/1').to_not be_routable }
   end

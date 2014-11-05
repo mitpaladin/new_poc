@@ -23,7 +23,7 @@ RSpec::Matchers.define :be_an_error_hash_for do |field, message|
 
   description do
     %(be an error-reporting field/message pair as returned by ) +
-        %(`ErrorFactory.create')
+      %(`ErrorFactory.create')
   end
 
   failure_message do
