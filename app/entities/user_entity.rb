@@ -5,7 +5,8 @@ require 'instance_variable_setter'
 # Persistence entity-layer representation for User. Not a domain object; used to
 # communicate across the repository/DAO boundary.
 class UserEntity
-  include ActiveModel::Serializers::JSON
+  include ActiveAttr::BasicModel
+  include ActiveAttr::Serialization
   include Comparable
 
   attr_reader :email,

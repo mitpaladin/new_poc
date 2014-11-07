@@ -7,7 +7,7 @@ module Actions
 
     def initialize(current_user, user_data)
       @current_user = current_user
-      @user_data = user_data
+      @user_data = user_data.to_h.symbolize_keys
       @user_data.delete :slug # will be recreated on successful save
       @errors = []
     end
@@ -15,7 +15,6 @@ module Actions
     def execute
       validate_inputs
       return broadcast_failure unless @errors.empty?
-      _entity = UserEntity.new user_data
       result = user_repo.add UserEntity.new(user_data)
       return broadcast_failure(result) unless result.success? # needed?
       broadcast_success result

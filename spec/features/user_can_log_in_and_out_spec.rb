@@ -3,7 +3,7 @@ require 'spec_helper'
 
 require 'support/feature_spec/login_helper'
 
-xdescribe 'User can' do
+describe 'User can' do
   let(:landing_page_header) { 'Watching Paint Dry' }
 
   before :each do

@@ -109,7 +109,7 @@ GIT
 
 GIT
   remote: git://github.com/troessner/reek.git
-  revision: 4ebaf12b5ceecc152d5a518d41d17e1a9d48ecfb
+  revision: 591dc98ed412654d60d7fce50880ac3964887456
   specs:
     reek (1.3.8)
       rainbow (>= 1.99, < 3.0)
@@ -264,7 +264,7 @@ GEM
     minitest (5.4.2)
     multi_json (1.10.1)
     netrc (0.8.0)
-    nokogiri (1.6.4)
+    nokogiri (1.6.4.1)
       mini_portile (~> 0.6.0)
     numerizer (0.2.0)
     parser (2.2.0.pre.7)
@@ -325,7 +325,7 @@ GEM
     rails-assets-jquery (2.1.1)
     rails-assets-sugar (1.4.2)
     rails-assets-underscore (1.7.0)
-    rails-footnotes (4.1.2)
+    rails-footnotes (4.1.3)
       rails (>= 3.2)
     rails_best_practices (1.15.4)
       activesupport

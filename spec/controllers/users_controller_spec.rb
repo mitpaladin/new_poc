@@ -112,7 +112,8 @@ describe UsersController do
         expect(assigns[:user]).to be_a UserEntity
       end
 
-      it 'persists the UserData instance corresponding to the :user' do
+      fit 'persists the UserData instance corresponding to the :user' do
+        ap [:spec_116, assigns[:user].inspect]
         expect(assigns[:user]).to be_persisted
       end
 
