@@ -1,7 +1,7 @@
 
 require 'spec_helper'
 
-xdescribe 'New user can sign up by visiting the "Sign Up" page and' do
+describe 'New user can sign up by visiting the "Sign Up" page and' do
   let(:landing_page_header) { 'Watching Paint Dry' }
   let(:text_of_button)      { 'Sign Up' }
   let(:text_of_navbar_link) { 'Sign up' }
