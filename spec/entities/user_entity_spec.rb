@@ -28,6 +28,16 @@ describe UserEntity do
 
   it_behaves_like 'a data-mapping entity'
 
+  describe :formatted_profile.to_s do
+    let(:profile) { 'This *is* a test.' }
+    let(:user) { klass.new FactoryGirl.attributes_for :user, profile: profile }
+
+    it 'returns the profile string, parsing Markdown to HTML' do
+      expected = "<p>This <em>is</em> a test.</p>\n"
+      expect(user.formatted_profile).to eq expected
+    end
+  end # describe :formatted_profile
+
   describe :sort.to_s do
     let(:low_user) do
       klass.new FactoryGirl.attributes_for :user, name: 'Abe Zonker'

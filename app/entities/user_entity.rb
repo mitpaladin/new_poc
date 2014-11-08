@@ -27,6 +27,10 @@ class UserEntity
     instance_values.symbolize_keys
   end
 
+  def formatted_profile
+    MarkdownHtmlConverter.new.to_html profile
+  end
+
   # callback used by InstanceVariableSetter
   def init_attrib_keys
     %w(created_at email name password password_confirmation profile slug
