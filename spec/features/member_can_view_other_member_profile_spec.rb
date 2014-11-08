@@ -3,7 +3,7 @@ require 'spec_helper'
 
 require 'support/feature_spec/login_helper'
 
-xdescribe 'Member can view the profile of another member' do
+describe 'Member can view the profile of another member' do
   before :each do
     login_helper = FeatureSpecLoginHelper.new(self)
     login_helper.register_and_login
