@@ -1,7 +1,7 @@
 
 require 'spec_helper'
 
-xdescribe 'User can view the member-list page' do
+describe 'User can view the member-list page' do
 
   before :each do
     visit root_path

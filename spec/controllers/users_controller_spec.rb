@@ -113,7 +113,6 @@ describe UsersController do
       end
 
       fit 'persists the UserData instance corresponding to the :user' do
-        ap [:spec_116, assigns[:user].inspect]
         expect(assigns[:user]).to be_persisted
       end
 
