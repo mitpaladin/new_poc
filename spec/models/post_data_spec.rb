@@ -62,7 +62,7 @@ describe PostData do
 
       it 'neither a body nor an image URL' do
         expect(FactoryGirl.build :post_datum, body: nil, image_url: nil)
-          .to_not be_valid
+            .to_not be_valid
       end
     end # context 'is invalid with'
   end # describe 'reports validation correctly, showing that an instance'

@@ -92,7 +92,7 @@ describe Post do
         setter = [attr_sym.to_s, '='].join.to_sym
         error_match = Regexp.new("undefined method `#{setter}' for .*?")
         expect { saved_post.send setter, 'anything at all' }
-          .to raise_error NoMethodError, error_match
+            .to raise_error NoMethodError, error_match
       end
     end
   end # describe 'DOES NOT support modifying the attribute'

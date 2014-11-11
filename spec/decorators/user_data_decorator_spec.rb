@@ -111,9 +111,9 @@ describe UserDataDecorator do
     it 'returns a paragraph wrapping the user profile string' do
       # @user_bio currently has one italicised content fragment in ordinary text
       parts = user[:profile]
-              .match(/(.+?)\s+?\*(.+?)\*\s+?(.+)/)
-              .to_a
-              .slice(1..3)
+          .match(/(.+?)\s+?\*(.+?)\*\s+?(.+)/)
+          .to_a
+          .slice(1..3)
       expected = format "<p>%s <em>%s</em> %s</p>\n", *parts
       expect(user.build_profile).to eq expected
     end

@@ -31,7 +31,7 @@ describe 'Member can publish articles and' do
     end
     # Posts on page are in reverse chrono order, ergo indexes reversed also...
     indexes
-      .reverse
-      .each_with_index { |value, index| expect(value - 1).to eq index }
+        .reverse
+        .each_with_index { |value, index| expect(value - 1).to eq index }
   end
 end # describe 'Member can publish articles and'

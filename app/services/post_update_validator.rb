@@ -42,7 +42,6 @@ class PostUpdateValidator
     @messages[field_sym] = message
   end
 
-  # rubocop:disable Metrics/AbcSize
   def validate_either_or_fields(data, field1_sym, field2_sym)
     field1 = data.send field1_sym
     field2 = data.send field2_sym
@@ -54,7 +53,6 @@ class PostUpdateValidator
     @messages[field1_sym] = format format_str, str1.capitalize, str2
     @messages[field2_sym] = format format_str, str2.capitalize, str1
   end
-  # rubocop:enable Metrics/AbcSize
 
   def validate(data)
     @messages = {}

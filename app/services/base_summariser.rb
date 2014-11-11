@@ -3,7 +3,6 @@
 class BaseSummariser
   attr_writer :count
 
-  # rubocop:disable Metrics/AbcSize
   def initialize(&block)
     @count ||= 10
     @data_class ||= 'UNKNOWN DATA CLASS; SOME CLASS SHOULD BE ASSIGNED HERE'
@@ -14,7 +13,6 @@ class BaseSummariser
     @chunker ||= -> (data) { data.take @count }
     instance_eval(&block) if block
   end
-  # rubocop:enable Metrics/AbcSize
 
   # The initial value of `data` was originally supplied via an :aggregator step
   # (with matching DSL method). Removing that and supplying the initial data
