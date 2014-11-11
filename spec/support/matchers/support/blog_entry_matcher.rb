@@ -10,6 +10,7 @@ module MatcherSupport
       @other_blog = other_blog
     end
 
+    # rubocop:disable Metrics/AbcSize
     def run
       ret = true
       actual_blog.entries.each_with_index do |entry, index|
@@ -18,5 +19,6 @@ module MatcherSupport
       end
       ret
     end
+    # rubocop:enable Metrics/AbcSize
   end
 end # module MatcherSupport

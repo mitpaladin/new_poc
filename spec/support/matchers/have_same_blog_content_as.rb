@@ -6,7 +6,7 @@ RSpec::Matchers.define :have_same_blog_content_as do |other_blog|
       true
     else
       verifier = MatcherSupport::BasicAttributeVerifier
-          .new(actual_blog, other_blog).run
+                 .new(actual_blog, other_blog).run
       if verifier.valid?
         MatcherSupport::BlogEntryMatcher.new(actual_blog, other_blog).run
       else
@@ -23,6 +23,6 @@ RSpec::Matchers.define :have_same_blog_content_as do |other_blog|
 
   failure_message do
     'Expected two blogs to have identical content, but ' +
-        @reasons.join('; and ')
+      @reasons.join('; and ')
   end
 end

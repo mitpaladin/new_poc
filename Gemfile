@@ -1,4 +1,5 @@
 
+ruby '2.1.4'  # CircleCI defaults to 1.9.3 unless specified :-P
 source 'https://rubygems.org'
 source 'https://rails-assets.org'
 

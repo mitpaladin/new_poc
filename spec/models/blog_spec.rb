@@ -167,7 +167,7 @@ describe Blog do
       post_source = double 'post_source'
       params_in = { x: 42, y: 'z' }
       expect(post_source).to receive(:call)
-          .with(params_in).and_return @new_post
+        .with(params_in).and_return @new_post
       blog.post_source = post_source
       blog.new_post x: 42, y: 'z'
     end
