@@ -140,9 +140,14 @@ describe UserRepository do
             expect(result.errors).to be_empty
           end
 
+          # FIXME: This ought to have a a custom matcher.
           it 'an "entity" field with the correct attributes' do
-            entity_attributes.each do |attr|
+            [:email, :name, :profile, :slug].each do |attr|
               expect(result.entity.send attr).to eq dao[attr]
+            end
+            [:created_at, :updated_at].each do |attr|
+              actual = result.entity.send attr
+              expect(actual).to be_within(5.seconds).of dao[attr]
             end
           end
         end # describe 'it returns a StoreResult with'

@@ -25,11 +25,6 @@ class PostDataDecorator < Draper::Decorator
     convert_body fragment
   end
 
-  def build_byline
-    ## Ave, Caesar! Nos morituri te salutamus!
-    # BylineBuilder.new(self).to_html
-  end
-
   def pubdate_str
     if published?
       timestamp_for pubdate

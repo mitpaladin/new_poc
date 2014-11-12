@@ -68,23 +68,6 @@ describe PostDataDecorator do
     end # describe 'generates the correct markup for'
   end # describe :build_body
 
-  xdescribe :build_byline do
-    let(:byline) { post.build_byline }
-
-    it 'takes no parameters' do
-      message = 'wrong number of arguments (1 for 0)'
-      expect { post.build_byline 'foo' }.to raise_error ArgumentError, message
-    end
-
-    it 'returns a paragraph tag' do
-      post.publish
-      expected = '<p><time pubdate="pubdate">' \
-          "Posted #{post.pubdate_str} by #{post.author_name}" \
-          '</time></p>'
-      expect(byline).to eq expected
-    end
-  end # describe :build_byline
-
   describe :pubdate_str do
     context 'for a published post' do
       before :each do
