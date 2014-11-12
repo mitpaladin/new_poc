@@ -17,6 +17,7 @@ module Actions
       return broadcast_content_failure unless valid_post_data?
       data = FancyOpenStruct.new post_data.to_h
       data.author_name = current_user.name
+      data.pubdate = Time.now
       entity = PostEntity.new data.to_h
       result = PostRepository.new.add entity
       return broadcast_failure(result) unless result.success?
@@ -65,7 +66,7 @@ module Actions
     # rubocop:enable Metrics/AbcSize
 
     def post_attributes
-      %w(title body image_url slug created_at updated_at).map(&:to_sym)
+      %w(title body image_url slug created_at updated_at pubdaate).map(&:to_sym)
     end
 
     def user_repo

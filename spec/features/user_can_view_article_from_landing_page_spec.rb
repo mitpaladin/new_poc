@@ -1,7 +1,7 @@
 
 require 'spec_helper'
 
-xdescribe 'User can view article from landing page' do
+describe 'User can view article from landing page' do
 
   before :each do
     FeatureSpecLoginHelper.new(self).register_and_login
@@ -17,5 +17,4 @@ xdescribe 'User can view article from landing page' do
     click_link @post_title
     expect(page).to have_css 'dl > dd', @user_name
   end
-
 end # describe 'User can view article from landing page'

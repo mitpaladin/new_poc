@@ -4,6 +4,7 @@ module PostsHelper
   def new_post_form_attributes(_params = {})
     attribs = shared_post_form_attributes 'new_post'
     attribs[:url] = posts_path
+    attribs[:as] = :post_data
     attribs
   end
 
@@ -16,17 +17,17 @@ module PostsHelper
   def status_select_options(post)
     option_items = [%w(draft draft), %w(public public)]
     # `status` appears to be an existing ActiveRecord::Base field. :(
-    current_status = post.post_status || 'draft'
+    current_status = post.draft? ? 'draft' : 'public'
     options_for_select option_items, current_status
   end
 
-  def summarise_posts(count = 10)
-    allowed_posts = PostDataDecorator.decorate_collection PostData.all
+  def summarise_posts(count_in = 10)
     the_sorter = sorter_hack
-    PostsSummariser.new do |s|
-      s.count = count
+    summ = PostsSummariser.new do |s|
+      s.count = count_in
       sorter -> (data) { the_sorter.call data }
-    end.summarise(allowed_posts)
+    end
+    summ.summarise(@posts)
   end
 
   private
@@ -43,7 +44,7 @@ module PostsHelper
 
   def sorter_hack
     lambda do |data|
-      drafts = data.reject(&:published?).sort_by(&:updated_at)
+      drafts = data.select(&:draft?).sort_by(&:updated_at)
       posts = data.select(&:published?).sort_by(&:pubdate)
       [posts, drafts].flatten
     end

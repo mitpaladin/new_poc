@@ -63,6 +63,7 @@ class PostsController < ApplicationController
 
   def on_index_success(payload)
     @posts = payload.entity
+    @posts
   end
 
   def on_new_success(payload)

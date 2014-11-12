@@ -7,7 +7,8 @@ class RepositoryBase
 
   def add(entity)
     record = dao.new entity.attributes
-    return successful_result(record) if record.save
+    record_saved = record.save
+    return successful_result(record) if record_saved
     failed_result_with_errors record.errors
   end
 

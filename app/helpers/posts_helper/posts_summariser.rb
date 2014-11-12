@@ -6,6 +6,7 @@ module PostsHelper
   # Support class for #summarise_blog method; builds list of Posts.
   class PostsSummariser < BaseSummariser
     def initialize(&block)
+      @data_class = PostDao
       @count = 10
       @sorter = -> (data) { data.sort_by(&:pubdate) }
       @orderer = -> (data) { data.reverse }

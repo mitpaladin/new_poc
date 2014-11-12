@@ -32,6 +32,46 @@ describe PostEntity do
 
   it_behaves_like 'a data-mapping entity'
 
+  describe :build_body do
+    let(:post) { published_post }
+    let(:text_post) do
+      attribs = post.attributes
+      attribs.delete :image_url
+      klass.new attribs
+    end
+
+    it 'takes no parameters' do
+      message = 'wrong number of arguments (1 for 0)'
+      expect { post.build_body post }.to raise_error ArgumentError, message
+    end
+
+    # The method should NOT "render" *anything*. It should build either the
+    # `figure` tag and contents, or the `p` tag and contents, as appropriate for
+    # this instance of the model.
+    describe 'generates the correct markup for' do
+
+      # One issue with using RedCarpet as we are in our MarkdownHtmlConverter
+      # class is that a simple string, e.g., 'foo', will always get converted to
+      # aa paragraph with a trailing newline, e.g., "<p>foo</p>\n". This is,
+      # AFAICT, acceptable within a <figcaption> tag per Mozilla's reference
+      # (https://developer.mozilla.org/en-US/docs/Web/HTML/Element/figcaption).
+      # It *is* "new behaviour" that broke this existing spec.
+      it 'an image post' do
+        post_attribs = post.attributes
+        post_attribs[:image_url] = 'http://www.example.com/foo.png'
+        post = klass.new post_attribs
+        body_markup = "<p>#{post.body}</p>\n"
+        expected = %(<figure><img src="#{post.image_url}">)
+        expected += %(<figcaption>#{body_markup}</figcaption></figure>\n)
+        expect(post.build_body).to eq expected
+      end
+
+      it 'a text post' do
+        expect(text_post.build_body).to eq %(<p>#{post.body}</p>\n)
+      end
+    end # describe 'generates the correct markup for'
+  end # describe :build_body
+
   describe :draft?.to_s do
     it 'returns false for a published post' do
       expect(published_post).not_to be_draft
@@ -51,4 +91,15 @@ describe PostEntity do
       expect(draft_post).not_to be_published
     end
   end
+
+  describe :post_status.to_s do
+
+    it 'returns "draft" for a draft post' do
+      expect(draft_post.post_status).to eq 'draft'
+    end
+
+    it 'returns "public" for a published post' do
+      expect(published_post.post_status).to eq 'public'
+    end
+  end # describe :post_status
 end # describe PostEntity

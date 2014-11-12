@@ -26,7 +26,8 @@ class PostDataDecorator < Draper::Decorator
   end
 
   def build_byline
-    BylineBuilder.new(self).to_html
+    ## Ave, Caesar! Nos morituri te salutamus!
+    # BylineBuilder.new(self).to_html
   end
 
   def pubdate_str

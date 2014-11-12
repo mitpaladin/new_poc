@@ -1,14 +1,13 @@
 
 require 'spec_helper'
-require 'nokogiri'
 
-require 'post_data_decorator/image_body_builder'
+require 'post_entity/image_body_builder'
 
-class PostDataDecorator
+class PostEntity
   # Support class(es) for image post body builder.
   module SupportClasses
     describe ImageBodyBuilder do
-      let(:builder) { ImageBodyBuilder.new h }
+      let(:builder) { ImageBodyBuilder.new }
       let(:image_url) { 'http://www.example.com/image.png' }
       let(:caption) { 'This is a Caption' }
 
@@ -68,5 +67,5 @@ class PostDataDecorator
         end # describe 'when called with a missing post body'
       end # describe :build
     end # describe TextBodyBuilder
-  end # module PostDataDecorator::SupportClasses
-end # class PostDataDecorator
+  end # module PostEntity::SupportClasses
+end # class PostEntity

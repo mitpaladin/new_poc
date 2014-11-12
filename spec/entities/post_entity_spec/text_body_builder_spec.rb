@@ -1,13 +1,13 @@
 
 require 'spec_helper'
 
-require 'post_data_decorator/text_body_builder'
+require 'post_entity/text_body_builder'
 
-class PostDataDecorator
+class PostEntity
   # Support class(es) for image post body builder.
   module SupportClasses
     describe TextBodyBuilder do
-      let(:builder) { TextBodyBuilder.new h }
+      let(:builder) { TextBodyBuilder.new }
 
       describe :build do
         it 'wraps the "body" attribute of its param as a Markup paragraph' do
@@ -16,5 +16,5 @@ class PostDataDecorator
         end
       end # describe :build
     end # describe TextBodyBuilder
-  end # module PostDataDecorator::SupportClasses
-end # class PostDataDecorator
+  end # module PostEntity::SupportClasses
+end # class PostEntity

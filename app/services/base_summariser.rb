@@ -16,14 +16,10 @@ class BaseSummariser
   end
   # rubocop:enable Metrics/AbcSize
 
-  # The initial value of `data` was originally supplied via an :aggregator step
-  # (with matching DSL method). Removing that and supplying the initial data
-  # explicitly *significantly* simplifies the logic, particularly when dealing
-  # with Rails 4.1+.
   def summarise_data(data)
     summary_steps.each do |op|
-      step = ('@' + op.to_s).to_sym
-      data = instance_variable_get(step).call data
+      step = instance_variable_get('@' + op.to_s)
+      data = step.call data
     end
     data
   end

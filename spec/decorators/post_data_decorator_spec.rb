@@ -68,7 +68,7 @@ describe PostDataDecorator do
     end # describe 'generates the correct markup for'
   end # describe :build_body
 
-  describe :build_byline do
+  xdescribe :build_byline do
     let(:byline) { post.build_byline }
 
     it 'takes no parameters' do

@@ -1,12 +1,11 @@
 
 require 'spec_helper'
 
-require 'decorator_shared/timestamp_builder'
+require 'post_entity/timestamp_builder'
 
-# Dummy test class for testing the DecoratorShared#timestamp_for function.
+# Dummy test class for testing the EntityShared#timestamp_for function.
 class DummyTestClass
-  extend DecoratorShared
-  include DecoratorShared
+  extend EntityShared
 end
 
 describe DummyTestClass do
