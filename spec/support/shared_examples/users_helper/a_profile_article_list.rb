@@ -1,10 +1,10 @@
 
 shared_examples 'a profile article list' do |fragment_builder|
   let(:post_count) { 5 }
-  let(:user) { FactoryGirl.create :user_datum }
+  let(:user) { FactoryGirl.create :user, :saved_user }
   let(:pubdate) { Chronic.parse '3 days ago at 3 PM' }
   let!(:posts) do
-    FactoryGirl.create_list :post_datum, post_count,
+    FactoryGirl.create_list :post, post_count, :saved_post, :published_post,
                             author_name: user.name,
                             pubdate: pubdate
   end
@@ -21,7 +21,6 @@ shared_examples 'a profile article list' do |fragment_builder|
     expect(fragment).to have(5).children
   end
 
-  # FIXME: Why don't these get run?
   # FIXME: There's *got* to be a better way to do this.
   describe 'for each child element of the ul.list-group element' do
     it 'is a li.list-group-item element' do

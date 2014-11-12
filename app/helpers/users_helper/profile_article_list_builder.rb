@@ -22,6 +22,6 @@ class ProfileArticleListBuilder
   end
 
   def posts_for_user
-    UserPostSelector.new(@user_name, @h).build_list
+    UserPostSelector.new(@user_name).build_list
   end
 end

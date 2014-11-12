@@ -7,15 +7,11 @@ require 'support/shared_examples/users_helper/a_profile_article_list'
 require 'support/shared_examples/users_helper/a_profile_bio_panel'
 
 describe UsersHelper do
-  let(:user) { FactoryGirl.create :user_datum }
+  let(:user) { FactoryGirl.create :user, :saved_user }
 
   describe :profile_article_list.to_s do
     fragment_builder = lambda do |markup|
       Nokogiri.parse(markup).children.first
-    end
-
-    before :each do
-      allow(controller).to receive(:authorize).and_return true
     end
 
     it_behaves_like 'a profile article list', fragment_builder
@@ -148,7 +144,7 @@ describe UsersHelper do
           Nokogiri.parse(profile_bio_header user.name).children.first
         end
 
-        xit 'returns a button-styled link linking to the user edit path' do
+        it 'returns a button-styled link linking to the user edit path' do
           expect(fragment.children.length).to eq 2
           link = fragment.children.last
           expect(link.name).to eq 'button'
