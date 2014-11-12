@@ -1,6 +1,4 @@
 
-require 'permissive_post_creator'
-
 require 'create_post'
 require 'index_posts'
 require 'new_post'
