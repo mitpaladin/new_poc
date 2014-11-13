@@ -1,6 +1,4 @@
 
-require 'permissive_user_creator'
-
 require 'create_user'
 require 'edit_user'
 require 'index_users'

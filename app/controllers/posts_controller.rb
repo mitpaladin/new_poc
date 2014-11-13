@@ -1,8 +1,10 @@
 
 require 'create_post'
+require 'edit_post'
 require 'index_posts'
 require 'new_post'
 require 'show_post'
+require 'update_post'
 
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController

@@ -25,7 +25,7 @@ describe CurrentUserIdentity do
     end # context 'without a current user having previously been defined'
 
     context 'after a current user has been defined' do
-      let(:the_user) { FactoryGirl.create :user_datum }
+      let(:the_user) { FactoryGirl.create :user }
 
       before :each do
         store[:user_id] = obj.ident_for the_user

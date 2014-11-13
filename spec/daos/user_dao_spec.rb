@@ -28,7 +28,7 @@ describe UserDao do
 
         describe 'invalid names' do
           after :each do
-            user = FactoryGirl.build :user_datum, name: @name
+            user = FactoryGirl.build :user, name: @name
             expect(user).to_not be_valid
           end
 

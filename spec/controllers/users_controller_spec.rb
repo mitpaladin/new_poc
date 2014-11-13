@@ -3,7 +3,7 @@ require 'spec_helper'
 
 require 'current_user_identity'
 
-# Users controller dispatches user- (rather, UserData-)specific actions
+# Users controller dispatches user-specific actions
 describe UsersController do
   describe :routing.to_s, type: :routing do
     it { expect(get '/users/new').to route_to 'users#new' }
@@ -101,7 +101,7 @@ describe UsersController do
   end # describe "GET 'new'"
 
   describe "POST 'create'" do
-    let(:params) { FactoryGirl.attributes_for :user_datum }
+    let(:params) { FactoryGirl.attributes_for :user }
 
     describe 'with valid parameters' do
       before :each do
@@ -112,7 +112,7 @@ describe UsersController do
         expect(assigns[:user]).to be_a UserEntity
       end
 
-      it 'persists the UserData instance corresponding to the :user' do
+      it 'persists the User entity corresponding to the :user' do
         expect(assigns[:user]).to be_persisted
       end
 

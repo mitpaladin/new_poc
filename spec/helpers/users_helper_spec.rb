@@ -125,7 +125,7 @@ describe UsersHelper do
       let(:identity) { CurrentUserIdentity.new session }
 
       context 'NOT the user whose record is being shown, it' do
-        let(:user2) { FactoryGirl.create :user_datum }
+        let(:user2) { FactoryGirl.create :user, :saved_user }
         let(:fragment) do
           identity.current_user = user2
           Nokogiri.parse(profile_bio_header user.name).children.first

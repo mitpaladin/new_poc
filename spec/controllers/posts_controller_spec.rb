@@ -323,7 +323,9 @@ describe PostsController do
       end # context 'by the current user
 
       context 'by a different user' do
-        let(:user) { FactoryGirl.create :user_datum }
+        let(:user) do
+          UserEntity.new FactoryGirl.attributes_for :user, :saved_user
+        end
 
         before :each do
           identity.current_user = user
@@ -398,12 +400,13 @@ describe PostsController do
 
       context 'for a registered user other than the post author' do
         before :each do
-          user = FactoryGirl.create :user_datum
+          user = FactoryGirl.create :user, :saved_user
           identity.current_user = user
           patch :update, id: post.slug, post_data: post_data
         end
 
-        it_behaves_like 'an unauthorised user for this post'
+        message = 'Not logged in as the author of this post!'
+        it_behaves_like 'an unauthorised user for this post', message
       end # context 'for a registered user other than the post author'
 
       context 'for the Guest User' do

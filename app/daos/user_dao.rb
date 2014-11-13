@@ -11,6 +11,7 @@ class UserDao < ActiveRecord::Base
             uniqueness: true,
             presence: true,
             format: { with: /\A\S+?.+?\S+?\z/ }
+  validate :verify_no_repeated_spaces_in_name
 
   validates :password,
             length: { minimum: 8 },
@@ -25,5 +26,13 @@ class UserDao < ActiveRecord::Base
   # Do *NOT* include the Guest User in queries using '#all'
   def all
     self.class.where 'name != ?', 'Guest User'
+  end
+
+  private
+
+  def verify_no_repeated_spaces_in_name
+    rebuilt_name = name.to_s.split.join(' ')
+    message = 'may not contain adjacent whitespace'
+    errors.add :name, message unless name == rebuilt_name
   end
 end # class UserDao

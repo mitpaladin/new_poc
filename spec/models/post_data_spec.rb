@@ -127,8 +127,8 @@ describe PostData do
 
   describe :authored_by do
     let(:user) do
-      ret = FactoryGirl.build :user_datum
-      ret.send :set_slug  # private method normally used as AR callback
+      ret = FactoryGirl.build :user, :saved_user
+      # ret.send :set_slug  # private method normally used as AR callback
       ret
     end
 
@@ -159,7 +159,7 @@ describe PostData do
       it 'who is one of multiple published authors returns only her posts' do
         new_post_count = 5
         new_post_count.times do
-          new_author = FactoryGirl.create :user_datum
+          new_author = FactoryGirl.create :user
           FactoryGirl.create :post_datum, author_name: new_author.name
           FactoryGirl.create :post_datum, author_name: user.name
         end
