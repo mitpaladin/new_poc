@@ -3,7 +3,7 @@
 class Post
   # include ActiveAttr::BasicModel
   include Comparable
-  attr_accessor :blog, :body, :title, :image_url, :pubdate, :created_at
+  attr_accessor :body, :title, :image_url, :pubdate, :created_at
   attr_reader :author_name, :slug
 
   def initialize(attrs = {})
@@ -14,20 +14,17 @@ class Post
     @created_at ||= Time.now
   end
 
-  def add_to_blog
-    blog.add_entry self
-  end
-
   def error_messages
     validator = PostUpdateValidator.new self
     return [] if validator.valid?
     validator.messages.values
   end
 
+  # rubocop:disable TrivialAccessors
   def publish(published_at = Time.now)
-    add_to_blog
     @pubdate = published_at
   end
+  # rubocop:enable TrivialAccessors
 
   def published?
     pubdate.present?

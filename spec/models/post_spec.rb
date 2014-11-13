@@ -28,7 +28,6 @@ describe Post do
       it 'blank (nil) values for all other properties' do
         expect(post.title).to be_nil
         expect(post.body).to be_nil
-        expect(post.blog).to be_nil
         expect(post.image_url).to be_nil
         expect(post.pubdate).to be_nil
       end
@@ -69,11 +68,6 @@ describe Post do
       expected = /2014-07-01 10:55:00 [\+\-]\d{4}/
       expect(new_post.created_at.to_s).to match expected
     end
-
-    it 'a blog reference' do
-      new_post.blog = blog
-      expect(new_post.blog).to be blog
-    end
   end # describe 'supports reading and writing'
 
   describe 'supports reading the attribute' do
@@ -100,26 +94,10 @@ describe Post do
     expect(saved_post.slug).to eq saved_post_attribs[:slug]
   end
 
-  describe :add_to_blog do
-    let(:post) { new_post.tap { |p| p.blog = blog } }
-
-    it 'adds the post to the blog' do
-      expect(blog.entry? post).to be false
-      post.add_to_blog
-      expect(blog.entry? post).to be true
-    end
-
-    it 'does not change any attributes of the post other than the blog ref' do
-      old_attribs = post.to_h
-      post.add_to_blog
-      expect(post.to_h).to eq old_attribs
-    end
-  end
-
   describe :error_messages do
 
     context 'when called on a valid post' do
-      let(:post) { blog.new_post saved_post_attribs }
+      let(:post) { Post.new saved_post_attribs }
 
       it_behaves_like 'error-message list empty-state check'
     end # context 'when called on a valid post'
@@ -138,13 +116,7 @@ describe Post do
   end # describe :error_messages
 
   describe :publish do
-    let(:post) { blog.new_post new_post_attribs }
-
-    it 'adds the post to the blog' do
-      expect(blog.entry? post).to be false
-      post.publish
-      expect(blog.entry? post).to be true
-    end
+    let(:post) { Post.new new_post_attribs }
 
     describe 'sets the "pubdate" attribute on a newly-published post' do
 
@@ -166,11 +138,11 @@ describe Post do
   describe :published? do
 
     it 'returns false for a newly-created Post' do
-      expect(Blog.new.new_post).to_not be_published
+      expect(Post.new).to_not be_published
     end
 
     it 'returns true after a post has been publsihed' do
-      post = blog.new_post title: 'A Title', body: 'A Body'
+      post = Post.new title: 'A Title', body: 'A Body'
       post.publish
       expect(post).to be_published
     end
