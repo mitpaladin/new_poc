@@ -1,5 +1,5 @@
 
-require 'decorator_shared/timestamp_builder'
+require 'timestamp_builder'
 
 include Forwardable
 
@@ -8,7 +8,7 @@ class PostEntity
   # Build article byline markup. Called on behalf of
   # PostDataDecorator#build_byline.
   class BylineBuilder
-    extend DecoratorShared
+    extend TimestampBuilder
     extend Forwardable
 
     def_delegator :@entry, :h, :h
