@@ -9,20 +9,12 @@ class UserDataDecorator < Draper::Decorator
   delegate_all
   include DecoratorShared
 
-  def build_profile
-    MarkdownHtmlConverter.new.to_html @object[:profile]
-  end
-
   def build_index_row_for(post_count)
     h.content_tag :tr, nil, build_index_row_attrs, false do
       h.concat build_name_item
       h.concat build_posts_item(post_count)
       h.concat build_member_since_item
     end
-  end
-
-  def self.policy_class
-    UserDataPolicy
   end
 
   private
