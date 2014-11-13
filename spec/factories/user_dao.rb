@@ -1,13 +1,12 @@
 
 FactoryGirl.define do
-  # FIXME: Uncomment these when we eliminate :user_data factory.
-  # sequence :name do |n|
-  #   "J Random User Number #{n}"
-  # end
+  sequence :name do |n|
+    "J Random User Number #{n}"
+  end
 
-  # sequence :email do |n|
-  #   "jruser#{n}@example.com"
-  # end
+  sequence :email do |n|
+    "jruser#{n}@example.com"
+  end
 
   factory :user, class: 'UserDao' do
     name { generate :name }

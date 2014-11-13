@@ -13,7 +13,5 @@ attrs = {
   password: password,
   password_confirmation: password
 }
-UserData.delete_all
-UserData.create attrs
 UserDao.delete_all
 UserDao.create attrs
