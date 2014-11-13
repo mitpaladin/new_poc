@@ -1,3 +1,0 @@
-
-require_relative 'a_converted_entity'
-require_relative 'a_converted_implementation_object'
