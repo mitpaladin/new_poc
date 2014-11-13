@@ -31,6 +31,10 @@ class UserEntity
     MarkdownHtmlConverter.new.to_html profile
   end
 
+  def guest_user?
+    slug == guest_user_entity.slug
+  end
+
   # callback used by InstanceVariableSetter
   def init_attrib_keys
     %w(created_at email name password password_confirmation profile slug
@@ -42,7 +46,18 @@ class UserEntity
     !slug.nil?
   end
 
+  def registered?
+    !guest_user?
+  end
+
   def <=>(other)
     name <=> other.name
+  end
+
+  private
+
+  # FIXME: Wrong-way dependency; better way to fix?
+  def guest_user_entity
+    UserRepository.new.guest_user.entity
   end
 end # class UserEntity

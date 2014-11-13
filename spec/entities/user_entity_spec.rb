@@ -38,6 +38,19 @@ describe UserEntity do
     end
   end # describe :formatted_profile
 
+  describe :guest_user?.to_s do
+
+    it 'returns true for a guest user' do
+      user = UserRepository.new.guest_user.entity
+      expect(user).to be_guest_user
+    end
+
+    it 'returns false for a registered user' do
+      user = UserEntity.new valid_subset
+      expect(user).not_to be_guest_user
+    end
+  end # describe :guest_user?
+
   describe :sort.to_s do
     let(:low_user) do
       klass.new FactoryGirl.attributes_for :user, name: 'Abe Zonker'
