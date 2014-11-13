@@ -5,7 +5,7 @@ require shared_support_dir + 'guest_user_menu_items'
 
 description = 'a valid menu for a Guest User, of a specified style'
 shared_examples description do |menu_sym|
-  current_user = UserData.first
+  current_user = UserRepository.new.guest_user.entity
 
   it_behaves_like 'a valid menu for either a Guest or Registered User',
                   current_user,

@@ -86,6 +86,4 @@ shared_examples description do |current_user, menu_sym|
       end
     end # describe 'contains a top-level `ul` element that'
   end # context "when called passing in :#{menu_sym} for a Registered User"
-
-  current_user.destroy
 end # shared_examples 'a menu containing ... items for a Registered User'
