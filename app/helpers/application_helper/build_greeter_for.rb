@@ -1,6 +1,4 @@
 
-require 'user'
-
 module ApplicationHelper
   # Module containing the `#build_greeter_for` application-helper method.
   module BuildGreeterFor

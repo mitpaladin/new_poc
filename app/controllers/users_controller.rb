@@ -1,6 +1,5 @@
 
 require 'permissive_user_creator'
-require 'user_updater'
 
 require 'create_user'
 require 'edit_user'
