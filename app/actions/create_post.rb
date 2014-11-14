@@ -2,30 +2,92 @@
 module Actions
   # Wisper-based command object called by Posts controller #new action.
   class CreatePost
+    # Filters incoming post_data parameter and makes an OpenStruct of it.
+    class PostDataFilter
+      attr_reader :draft_post
+
+      def initialize(post_data)
+        @data = post_data.to_h.symbolize_keys
+        @draft_post = false
+      end
+
+      def filter
+        attribs = copy_attributes
+        @draft_post = check_draft_status
+        OpenStruct.new attribs.to_h.reject { |_k, v| v.nil? }
+      end
+
+      private
+
+      attr_reader :data
+
+      def check_draft_status
+        data[:post_status] == 'draft'
+      end
+
+      def copy_attributes
+        ret = Struct.new(*post_attributes).new
+        post_attributes.each do |attrib|
+          ret[attrib] = data[attrib].to_s.strip if data[attrib].present?
+        end
+        ret
+      end
+
+      def post_attributes
+        %w(title body image_url slug created_at updated_at pubdate)
+          .map(&:to_sym)
+      end
+    end
+
+    # Builds error messages for post validation.
+    class PostValidation
+      def self.errors_for(post)
+        ret = []
+        unless post.body.present? || post.image_url.present?
+          ret << _body_and_image_url_both_missing_error
+        end
+        ret << _missing_title_error unless post.title.present?
+        ret
+      end
+
+      def self._body_and_image_url_both_missing_error
+        {
+          field: 'body',
+          message: 'must be specified if no image URL is specified'
+        }
+      end
+
+      def self._missing_title_error
+        { field: 'title', message: 'must be present' }
+      end
+    end # class CreatePost::PostValidation
+
     include Wisper::Publisher
     attr_reader :current_user, :draft_post, :post_data
 
     def initialize(current_user, post_data)
       @current_user = current_user
       @post_data = filter_post_data post_data
+      @errors = []
     end
 
-    # rubocop:disable Metrics/AbcSize
     def execute
-      guest_user = user_repo.guest_user.entity
-      return broadcast_auth_failure if current_user.name == guest_user.name
-      return broadcast_content_failure unless valid_post_data?
-      data = FancyOpenStruct.new post_data.to_h
-      data.author_name = current_user.name
-      data.pubdate = Time.now unless draft_post
-      entity = PostEntity.new data.to_h
-      result = PostRepository.new.add entity
-      return broadcast_failure(result) unless result.success?
+      validate_current_user
+      validate_post_data
+      entity = package_data_as_entity
+      result = add_to_repository entity
       broadcast_success result
+    rescue
+      return broadcast_failure_for_errors
     end
-    # rubocop:enable Metrics/AbcSize
 
     private
+
+    def broadcast_failure_for_errors
+      result = StoreResult.new success: false, entity: nil,
+                               errors: @errors
+      broadcast_failure result
+    end
 
     def broadcast_failure(payload)
       broadcast :failure, payload
@@ -35,48 +97,43 @@ module Actions
       broadcast :success, payload
     end
 
-    def broadcast_auth_failure
-      broadcast_failure_for :user, 'Not logged in as a registered user!'
+    def add_to_repository(entity)
+      result = PostRepository.new.add entity
+      fail Marshal.dump(result.errors) unless result.success?
+      result
     end
 
-    def broadcast_content_failure
-      broadcast_failure_for :post, 'Post data must include all required fields'
-    end
-
-    def broadcast_failure_for(key, message)
-      result = StoreResult.new success: false, entity: nil,
-                               errors: build_errors_for(key, message)
-      broadcast_failure result
-    end
-
-    def build_errors_for(key, message)
-      [{ field: key.to_s, message: message }]
-    end
-
-    # rubocop:disable Metrics/AbcSize
     def filter_post_data(post_data)
-      return {} unless post_data.respond_to? :to_h
-      ret = Struct.new(*post_attributes).new
-      data = post_data.symbolize_keys
-      post_attributes.each do |attrib|
-        ret[attrib] = data[attrib].to_s.strip if data[attrib].present?
-      end
-      @draft_post = data[:post_status] == 'draft'
-      OpenStruct.new ret.to_h.reject { |_k, v| v.nil? }
+      filter = PostDataFilter.new(post_data)
+      ret = filter.filter
+      @draft_post = filter.draft_post
+      ret
     end
-    # rubocop:enable Metrics/AbcSize
+
+    def package_data_as_entity
+      data = FancyOpenStruct.new post_data.to_h
+      data.author_name = current_user.name
+      data.pubdate = Time.now unless draft_post
+      PostEntity.new data.to_h
+    end
 
     def post_attributes
       %w(title body image_url slug created_at updated_at pubdaate).map(&:to_sym)
     end
 
-    def user_repo
-      @user_repo ||= UserRepository.new
+    def validate_current_user
+      guest_user = UserRepository.new.guest_user.entity
+      return if current_user.name != guest_user.name
+      @errors += [
+        { field: 'user', message: 'not logged in as a registered user!' }
+      ]
+      fail Marshal.dump(@errors) unless @errors.empty?
     end
 
-    def valid_post_data?
-      (post_data.image_url.present? || post_data.body.present?) &&
-        post_data.title.present?
+    def validate_post_data
+      @errors += PostValidation.errors_for post_data
+      return if @errors.empty?
+      fail Marshal.dump(@errors)
     end
   end # class Actions::CreatePost
 end # module Actions

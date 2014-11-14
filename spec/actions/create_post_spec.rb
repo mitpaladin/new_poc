@@ -93,7 +93,7 @@ module Actions
       let(:command) { klass.new repo.guest_user.entity, post_data }
       let(:post_data) { { title: 'A Title', body: 'A Body' } }
 
-      message = 'Not logged in as a registered user!'
+      message = 'not logged in as a registered user!'
       it_behaves_like 'an unsuccessful post', :user, message
     end # context 'with the Guest User as the current user'
 
@@ -170,8 +170,7 @@ module Actions
       context 'with insufficient valid post data' do
         let(:post_data) { { body: 'A Body' } }
 
-        message = 'Post data must include all required fields'
-        it_behaves_like 'an unsuccessful post', :post, message
+        it_behaves_like 'an unsuccessful post', :title, 'must be present'
       end # context 'with insufficient valid post data'
     end # context 'with a Registered User as the current user'
   end # describe Actions::CreatePost

@@ -49,7 +49,12 @@ class PostsController < ApplicationController
   end
 
   def on_create_failure(payload)
-    redirect_to posts_path, flash: { alert: payload.errors.first[:message] }
+    parts = []
+    payload.errors.each do |error|
+      parts << [error[:field].to_s.capitalize, error[:message]].join(' ')
+    end
+    alert = parts.join '<br/>'
+    redirect_to posts_path, flash: { alert: alert }
   end
 
   def on_edit_success(payload)

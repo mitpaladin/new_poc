@@ -215,7 +215,7 @@ describe PostsController do
       end
 
       it 'renders the correct flash alert message' do
-        expect(flash[:alert]).to eq 'Not logged in as a registered user!'
+        expect(flash[:alert]).to eq 'User not logged in as a registered user!'
       end
     end # context 'for the Guest User'
   end # describe "POST 'create'"
