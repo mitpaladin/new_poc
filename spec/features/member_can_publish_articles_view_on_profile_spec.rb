@@ -5,7 +5,7 @@ require 'support/feature_spec/login_helper'
 require 'support/feature_spec/new_post_helper'
 require 'support/feature_spec/timestamp_helper'
 
-xdescribe 'Member can publish articles and' do
+describe 'Member can publish articles and' do
 
   before :each do
     FeatureSpecLoginHelper.new(self).register_and_login
