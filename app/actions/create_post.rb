@@ -3,7 +3,7 @@ module Actions
   # Wisper-based command object called by Posts controller #new action.
   class CreatePost
     include Wisper::Publisher
-    attr_reader :current_user, :post_data
+    attr_reader :current_user, :draft_post, :post_data
 
     def initialize(current_user, post_data)
       @current_user = current_user
@@ -17,7 +17,7 @@ module Actions
       return broadcast_content_failure unless valid_post_data?
       data = FancyOpenStruct.new post_data.to_h
       data.author_name = current_user.name
-      data.pubdate = Time.now
+      data.pubdate = Time.now unless draft_post
       entity = PostEntity.new data.to_h
       result = PostRepository.new.add entity
       return broadcast_failure(result) unless result.success?
@@ -61,6 +61,7 @@ module Actions
       post_attributes.each do |attrib|
         ret[attrib] = data[attrib].to_s.strip if data[attrib].present?
       end
+      @draft_post = data[:post_status] == 'draft'
       OpenStruct.new ret.to_h.reject { |_k, v| v.nil? }
     end
     # rubocop:enable Metrics/AbcSize

@@ -23,9 +23,20 @@ shared_examples 'a successful post' do
     description = 'a PostEntity instance for an :entity value, with the' \
         ' correct field values set'
     it description do
-      expected_attributes = post_data.merge({ author_name: current_user.name })
+      acceptable_keys = [
+        :body,
+        :created_at,
+        :image_url,
+        :slug,
+        :title,
+        :updated_at
+      ]
+      expected = post_data
+        .select { |k, _v| acceptable_keys.include? k }
+        .merge author_name: current_user.name
+
       expect(payload.entity).to be_a PostEntity
-      expected_attributes.each do |attrib, value|
+      expected.each do |attrib, value|
         expect(payload.entity.attributes[attrib]).to eq value
       end
     end
@@ -118,33 +129,43 @@ module Actions
         let(:invalid_data) { { bogus: 'an invalid post data attribute' } }
         let(:post_data) { valid_data.merge invalid_data }
 
-        it 'is successful' do
-          expect(subscriber).to be_successful
-          expect(subscriber).not_to be_failure
+        it_behaves_like 'a successful post'
+
+        it 'does not include any invalid initialiser settings' do
+          payload = subscriber.payload_for(:success).first.entity
+          invalid_data.each_key do |k|
+            expect(payload.attributes).not_to include k
+          end
         end
-
-        describe 'is successful, broadcasting a StoreResult payload with' do
-          let(:payload) { subscriber.payload_for(:success).first }
-
-          it 'a :success value of true' do
-            expect(payload).to be_success
-          end
-
-          it 'an empty :errors item' do
-            expect(payload.errors).to be_empty
-          end
-
-          description = 'a PostEntity instance for an :entity value, with the' \
-              ' correct field values set'
-          it description do
-            expected = valid_data.merge({ author_name: current_user.name })
-            expect(payload.entity).to be_a PostEntity
-            expected.each do |attrib, value|
-              expect(payload.entity.attributes[attrib]).to eq value
-            end
-          end
-        end # describe 'is successful, broadcasting a StoreResult payload with'
       end # context 'with additional but invalid post data'
+
+      context 'with post status set to' do
+        let(:actual) { subscriber.payload_for(:success).first.entity }
+
+        context 'draft' do
+          let(:post_data) do
+            { title: 'A Title', body: 'A Body', post_status: 'draft' }
+          end
+
+          it_behaves_like 'a successful post'
+
+          it 'is a draft post' do
+            expect(actual).to be_draft
+          end
+        end # context 'draft'
+
+        context 'public' do
+          let(:post_data) do
+            { title: 'A Title', body: 'A Body', post_status: 'public' }
+          end
+
+          it_behaves_like 'a successful post'
+
+          it 'is not a draft post' do
+            expect(actual).not_to be_draft
+          end
+        end # context 'public'
+      end # context 'with post status set to'
 
       context 'with insufficient valid post data' do
         let(:post_data) { { body: 'A Body' } }

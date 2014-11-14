@@ -7,13 +7,13 @@ require 'support/feature_spec/new_post_helper'
 shared_examples 'cannot visit the post' do
   it 'by directly visiting the post path' do
     visit post_path(@post_slug)
-    expected = 'You are not authorized to perform this action.'
+    expected = 'Cannot find post with slug ' + @post_slug + '!'
     selector = 'div.alert.alert-error.alert-dismissable'
     expect(page).to have_selector selector, text: expected
   end
 end
 
-xdescribe 'a draft post is' do
+describe 'a draft post is' do
   before :each do
     @login_helper = FeatureSpecLoginHelper.new(self)
     @login_helper.register_and_login
