@@ -4,7 +4,7 @@ require 'spec_helper'
 require 'support/feature_spec/login_helper'
 require 'support/feature_spec/new_post_helper'
 
-xdescribe 'Member can create a draft post and' do
+describe 'Member can create a draft post and' do
 
   before :each do
     FeatureSpecLoginHelper.new(self).register_and_login
