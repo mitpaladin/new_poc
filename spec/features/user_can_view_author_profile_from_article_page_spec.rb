@@ -1,7 +1,7 @@
 
 require 'spec_helper'
 
-xdescribe 'User can view author profile from article page' do
+describe 'User can view author profile from article page' do
 
   before :each do
     FeatureSpecLoginHelper.new(self).register_and_login
