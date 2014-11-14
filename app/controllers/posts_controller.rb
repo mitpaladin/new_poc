@@ -83,7 +83,7 @@ class PostsController < ApplicationController
 
   def on_update_success(payload)
     @post = payload.entity
-    message = "Post '#{post_path @post.slug}' successfully updated."
+    message = "Post '#{@post.title}' successfully updated."
     redirect_to post_path(@post.slug), flash: { success: message }
   end
 

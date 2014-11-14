@@ -10,7 +10,12 @@ module PostsHelper
 
   def edit_post_form_attributes(post)
     attribs = shared_post_form_attributes 'edit_post'
-    attribs[:url] = post_path(post)
+    # NOTE: `post_path(post) works Just Fine in RSpec helper specs, but fails in
+    #       RSpec *feature* specs (no matching controller action with id=nil).
+    #       If anyone can enlighten me on how to make such code fail in helper
+    #       unit specs, *please* send a pull request.
+    attribs[:url] = post_path(post.slug)
+    attribs[:as] = :post_data
     attribs
   end
 
