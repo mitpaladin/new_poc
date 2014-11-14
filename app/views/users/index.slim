@@ -13,5 +13,5 @@ div class='page-content'
             th Member Since
         tbody
           - @users.each do |user|
-            - post_count = PostData.authored_by(user.name).count
+            - post_count = PostDao.authored_by(user.name).count
             build_index_row_for user, post_count

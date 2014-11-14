@@ -4,7 +4,7 @@ shared_examples 'Post field comparison' do |field_sym, values|
 
   it "compares two posts correctly when their :#{field_sym} field differs" do
     assign_sym = "#{field_sym}=".to_sym
-    post = Post.new FactoryGirl.attributes_for(:post_datum)
+    post = Post.new FactoryGirl.attributes_for(:post)
     post2 = Marshal.load(Marshal.dump post)
 
     post.send assign_sym, values[:lower]

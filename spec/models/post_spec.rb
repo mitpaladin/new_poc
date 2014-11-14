@@ -7,9 +7,9 @@ require 'support/shared_examples/models/post_field_priority'
 
 describe Post do
   let(:blog) { Blog.new }
-  let(:new_post_attribs) { FactoryGirl.attributes_for :post_datum, :new_post }
+  let(:new_post_attribs) { FactoryGirl.attributes_for :post }
   let(:saved_post_attribs) do
-    attrs = FactoryGirl.attributes_for :post_datum, :saved_post
+    attrs = FactoryGirl.attributes_for :post, :saved_post
     attrs[:created_at] = DateTime.now
     attrs
   end

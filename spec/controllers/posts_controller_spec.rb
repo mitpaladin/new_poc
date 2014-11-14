@@ -180,7 +180,7 @@ describe PostsController do
           expect(assigns[:post]).to be_a PostEntity
         end
 
-        it 'persists the PostData instance corresponding to the :post' do
+        it 'persists the PostDao instance corresponding to the :post' do
           post = assigns[:post]
           expect(post).to be_persisted
           dao = PostDao.find_by_slug post.slug

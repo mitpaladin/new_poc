@@ -5,7 +5,7 @@ require 'support/feature_spec/login_helper'
 
 xdescribe 'Member can enter' do
 
-  let(:error_message)   { '1 error prevented this PostData from being saved:' }
+  let(:error_message)   { '1 error prevented this PostDao from being saved:' }
   let(:post_body)       { 'The Body is six feet under, nine edge down.' }
   let(:post_title)      { 'Clear Title to This Post' }
   let(:post_url)        { 'http://www.example.com/foo.png' }

@@ -19,7 +19,7 @@ shared_examples 'Post field priority' do |params|
   description.sub(/, (^[,]+)$/, ' and \1')
 
   it description do
-    post = Post.new FactoryGirl.attributes_for(:post_datum)
+    post = Post.new FactoryGirl.attributes_for(:post)
     post2 = post.clone
 
     post.send priority, lower

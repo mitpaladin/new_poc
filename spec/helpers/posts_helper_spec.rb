@@ -91,7 +91,7 @@ describe PostsHelper do
   end # describe :new_post_form_attributes
 
   describe :edit_post_form_attributes.to_s do
-    let(:post_data) { FactoryGirl.create :post_datum }
+    let(:post_data) { FactoryGirl.create :post }
     subject { helper.send :edit_post_form_attributes, post_data }
     let(:form_name) { 'edit_post' }
 
