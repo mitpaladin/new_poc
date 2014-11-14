@@ -14,4 +14,4 @@ div class='page-content'
         tbody
           - @users.each do |user|
             - post_count = PostDao.authored_by(user.name).count
-            build_index_row_for user, post_count
+            == build_index_row_for user, post_count
