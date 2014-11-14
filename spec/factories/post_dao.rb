@@ -1,8 +1,8 @@
 
 FactoryGirl.define do
-  # sequence :title do |n|
-  #   "Test Title Number #{n}"
-  # end
+  sequence :title do |n|
+    "Test Title Number #{n}"
+  end
 
   factory :post, class: 'PostDao' do
     title { generate :title }
