@@ -9,12 +9,16 @@ shared_examples 'a profile article list' do |fragment_builder|
                             pubdate: pubdate
   end
   let(:fragment) do
-    fragment_builder.call profile_article_list(user.name)
+    fragment_builder.call helper.profile_article_list(user.name)
+  end
+
+  before :each do
+    allow(helper).to receive(:current_user).and_return user
   end
 
   it 'generates an outermost ul.list-group element' do
     expected = Regexp.new '\A<ul class="list-group">.*?</ul>\z'
-    expect(profile_article_list user.name).to match expected
+    expect(helper.profile_article_list user.name).to match expected
   end
 
   it 'contains the correct number of child elements' do

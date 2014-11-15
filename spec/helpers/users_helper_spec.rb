@@ -19,11 +19,8 @@ describe UsersHelper do
 
   describe :profile_articles_row.to_s do
     let(:fragment) do
-      Nokogiri.parse(profile_articles_row user.name).children.first
-    end
-
-    before :each do
-      allow(controller).to receive(:authorize).and_return true
+      allow(helper).to receive(:current_user).and_return true
+      Nokogiri.parse(helper.profile_articles_row user.name).children.first
     end
 
     it 'is a div.row#contrib-row element' do
