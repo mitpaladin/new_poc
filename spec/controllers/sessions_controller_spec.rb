@@ -2,7 +2,7 @@
 require 'spec_helper'
 
 shared_examples 'invalid login credentials' do |invalid_field_sym|
-  user = FactoryGirl.create :user_datum
+  user = FactoryGirl.create :user, :saved_user
   if invalid_field_sym == :name
     name = 'An Invalid User Name'
     password = user.password
@@ -15,8 +15,7 @@ shared_examples 'invalid login credentials' do |invalid_field_sym|
 
   describe description_str do
     before :each do
-      @starting_id = UserData.first.id
-      session[:user_id] = @starting_id
+      subject.current_user = UserRepository.new.guest_user.entity
       post :create, name: name, password: password
     end
 
@@ -25,7 +24,7 @@ shared_examples 'invalid login credentials' do |invalid_field_sym|
     end
 
     it 'does not change the session data item for the user ID' do
-      expect(session[:user_id]).to be @starting_id
+      expect(subject.current_user.attributes).to eq UserDao.first.attributes
     end
 
     it 'sets the "Invalid user name or password" flash alert message' do
@@ -38,6 +37,11 @@ end # shared_examples 'invalid login credentials'
 
 # SessionsController: responsible for logging users in and out.
 describe SessionsController do
+  let(:registered_user) do
+    user = UserEntity.new FactoryGirl.attributes_for(:user, :saved_user)
+    UserRepository.new.add user
+    user
+  end
 
   describe :routing.to_s, type: :routing do
     it { expect(get '/sessions/new').to route_to 'sessions#new' }
@@ -59,12 +63,7 @@ describe SessionsController do
 
     context 'for the Guest User' do
       before :each do
-        session[:user_id] = nil
         get :new
-      end
-
-      it 'assigns a SessionDataPolicy instance to :policy' do
-        expect(assigns[:policy]).to be_a SessionDataPolicy
       end
 
       it 'renders the :new template' do
@@ -78,14 +77,8 @@ describe SessionsController do
 
     context 'for a Registered User' do
       before :each do
-        @user = FactoryGirl.create :user_datum
-        session[:user_id] = @user.id
+        subject.current_user = registered_user
         get :new
-      end
-
-      after :each do
-        session[:user_id] = nil
-        @user.destroy
       end
 
       it 'returns HTTP Redirection' do
@@ -97,8 +90,8 @@ describe SessionsController do
       end
 
       it 'has the correct flash error message' do
-        message = 'You are not authorized to perform this action.'
-        expect(flash[:error]).to eq message
+        message = "User '#{registered_user.name}' is already logged in!"
+        expect(flash[:alert]).to eq message
       end
     end # context 'for a Registered User'
   end # describe "GET 'new'"
@@ -107,10 +100,9 @@ describe SessionsController do
 
     context 'for the Guest User' do
       describe 'with valid params' do
-        let(:user) { FactoryGirl.create :user_datum }
+        let(:user) { FactoryGirl.create :user, :saved_user }
 
         before :each do
-          session[:user_id] = UserData.first.id
           post :create, name: user.name, password: user.password
         end
 
@@ -118,8 +110,8 @@ describe SessionsController do
           expect(response).to redirect_to root_url
         end
 
-        it 'saves the user ID number in the session data' do
-          expect(session[:user_id]).to eq user.id
+        it 'sets the current logged-in user to the specified user' do
+          expect(subject.current_user.attributes).to eq user.attributes
         end
 
         it 'sets the logged-in flash message' do
@@ -139,16 +131,14 @@ describe SessionsController do
   describe "DELETE 'destroy'" do
 
     before :each do
-      @guest_user_id = UserData.first.id
-      @user = FactoryGirl.create :user_datum
-      session[:user_id] = @guest_user_id
-      post :create, name: @user.name, password: @user.password
-      expect(session[:user_id]).to be @user.id
-      delete :destroy, id: @user.id
+      @guest_user = UserDao.first
+      user = FactoryGirl.create :user, :saved_user
+      subject.current_user = user
+      post :destroy, id: user.slug
     end
 
     it 'sets the session data item for the user ID to the Guest User' do
-      expect(session[:user_id]).to be @guest_user_id
+      expect(subject.current_user.attributes).to eq @guest_user.attributes
     end
 
     it 'redirects to the root URL' do

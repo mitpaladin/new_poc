@@ -1,78 +1,56 @@
 
-require 'pundit'
+require 'create_session'
+require 'destroy_session'
+require 'new_session'
 
 # SessionsController: actions related to Sessions (logging in and out)
 class SessionsController < ApplicationController
   def new
-    authorise_current_user
-    true
+    Actions::NewSession.new(current_user)
+      .subscribe(self, prefix: :on_new)
+      .execute
   end
 
   def create
-    requesting_user = UserData.find_by_name params[:name]
-    authorise_current_user
-    if user_can_sign_in requesting_user, params[:password]
-      setup_successful_login requesting_user
-    else
-      setup_failed_login requesting_user
-    end
+    Actions::CreateSession.new(params[:name], params[:password])
+      .subscribe(self, prefix: :on_create)
+      .execute
   end
 
   def destroy
-    authorise_current_user
-    update_current_user_id
-    redirect_to root_url, flash: flash_for_successful_logout
+    Actions::DestroySession.new.subscribe(self, prefix: :on_destroy).execute
   end
 
-  private
+  # Action responders must be public to receive Wisper notifications; see
+  # https://github.com/krisleech/wisper/issues/75 for relevant detail.
 
-  # TODO: This should be a DSO, or at least a self-contained class.
-  def authorise_current_user
-    active_user = user_with_policy_class
-    update_active_policy active_user
-    authorize active_user
+  def on_create_success(payload)
+    @errors = ErrorFactory.create []
+    @user = payload.entity
+    self.current_user = payload.entity
+    redirect_to root_url, flash: { success: 'Logged in!' }
   end
 
-  def flash_for_failed_login
-    { alert: 'Invalid user name or password' }
+  def on_create_failure(_payload)
+    @user = nil
+    flash_alert = { alert: 'Invalid user name or password' }
+    redirect_to new_session_path, flash: flash_alert
   end
 
-  def flash_for_successful_login
-    { success: 'Logged in!' }
+  def on_destroy_success(_payload)
+    self.current_user = UserRepository.new.guest_user.entity
+    redirect_to root_url, flash: { success: 'Logged out!' }
   end
 
-  def flash_for_successful_logout
-    { success: 'Logged out!' }
+  # No #on_destroy_failure. Can't happen and, even if it does, we don't want to
+  # know about it. So there.
+
+  def on_new_success(payload)
+    @user = payload.entity
   end
 
-  def setup_failed_login(_user)
-    redirect_to new_session_url, flash: flash_for_failed_login
-  end
-
-  def setup_successful_login(user)
-    update_current_user_id user.id
-    redirect_to root_url, flash: flash_for_successful_login
-  end
-
-  def update_active_policy(active_user)
-    @policy = Pundit.policy(active_user, SessionData.new(id: 0))
-  end
-
-  def update_current_user_id(id = UserData.first.id)
-    session[:user_id] = id
-  end
-
-  def user_can_sign_in(user, password)
-    user && user.authenticate(password)
-  end
-
-  def user_with_policy_class
-    user = current_user       # remember, #current_user is a query method
-    user.instance_eval do
-      def self.policy_class
-        SessionDataPolicy
-      end
-    end
-    user
+  def on_new_failure(_payload)
+    alert_flash = { alert: "User '#{current_user.name}' is already logged in!" }
+    redirect_to root_path, flash: alert_flash
   end
 end

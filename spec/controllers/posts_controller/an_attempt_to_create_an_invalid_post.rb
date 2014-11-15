@@ -1,6 +1,6 @@
 
 shared_examples 'an attempt to create an invalid Post' do
-  describe 'with an invalid title, the returned PostData instance is' do
+  describe 'with an invalid title, the returned post instance is' do
 
     before :each do
       params[:title] = ''
@@ -19,5 +19,5 @@ shared_examples 'an attempt to create an invalid Post' do
     it 'provides the correct error message' do
       expect(@post.errors.full_messages).to include "Title can't be blank"
     end
-  end # describe 'with an invalid title, the returned PostData instance is'
+  end # describe 'with an invalid title, the returned post instance is'
 end # shared_examples 'an attempt to create an invalid Post'

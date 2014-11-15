@@ -1,6 +1,7 @@
 
 # Helper functions for ApplicationHelper#build_menu_for specs.
 
+# rubocop:disable Metrics/AbcSize
 def it_behaves_like_a_menu_list_item(params)
   text, index, path, current_el, data_method = params.values
   current_li = current_el.children[index]
@@ -23,6 +24,7 @@ def it_behaves_like_a_menu_separator(params)
   expect(inner_text).to be_text
   expect(inner_text.inner_text).to eq HTMLEntities.new.decode('&nbsp;')
 end
+# rubocop:enable Metrics/AbcSize
 
 def separator_style_for(menu_sym)
   if menu_sym == :navbar

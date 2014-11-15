@@ -30,7 +30,7 @@ describe 'Member can publish articles and' do
     click_link "Edit '#{@post_title}'"
     fill_in 'post_data_body', with: new_caption
     click_button 'Update Post'
-    expected = "Article '#{@post_title}' successfully updated."
+    expected = "Post '#{@post_title}' successfully updated."
     selector = 'div.alert.alert-success.alert-dismissable'
     expect(page).to have_selector selector, text: expected
     expect(page).to have_selector 'figcaption > p', text: new_caption

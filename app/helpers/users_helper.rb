@@ -5,9 +5,14 @@ require_relative 'users_helper/profile_articles_row_builder'
 require_relative 'users_helper/profile_bio_header_builder'
 require_relative 'users_helper/profile_bio_panel_builder'
 require_relative 'users_helper/profile_bio_row_builder'
+require 'index_row_builder'
 
 # Old-style junk drawer of view-helper functions, etc.
 module UsersHelper
+  def build_index_row_for(user, post_count)
+    IndexRowBuilder.new(post_count, controller.current_user).build user
+  end
+
   def profile_article_list(user_name)
     ProfileArticleListBuilder.new(user_name, self).to_html
   end

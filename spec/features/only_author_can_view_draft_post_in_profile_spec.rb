@@ -39,11 +39,7 @@ describe 'a draft post' do
       visit user_path(author_name.parameterize)
     end
 
-    it 'the Guest User' do
-      expect(page).not_to have_content @post_title
-    end
-
-    it 'another registered user' do
+    it 'a user other than the author, such as the Guest User' do
       expect(page).not_to have_content @post_title
     end
   end # describe "is not shown in the author's profile page article history to"

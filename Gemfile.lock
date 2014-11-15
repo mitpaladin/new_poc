@@ -1,18 +1,18 @@
 GIT
   remote: git://github.com/DatabaseCleaner/database_cleaner.git
-  revision: 5d85717975107e64521e943c8cac338eff080bab
+  revision: 84cabcaa4f8b4682cea1bf4cd1cb137f9eaececc
   specs:
     database_cleaner (1.3.0)
 
 GIT
   remote: git://github.com/avdi/naught.git
-  revision: 7aab7b3f4b3af3312adae6f3aeb48c32329fddd3
+  revision: 4397306e973f35ccb1974fc7ded881bfa14ce5b7
   specs:
     naught (1.0.0)
 
 GIT
   remote: git://github.com/brianmario/yajl-ruby.git
-  revision: d2e4ddee0158be330bd92dd79e42d15e3abfc3e5
+  revision: bbf7596d609c06f97f1500d8384b518681c46233
   specs:
     yajl-ruby (1.2.1)
 
@@ -26,7 +26,7 @@ GIT
 
 GIT
   remote: git://github.com/danmayer/churn.git
-  revision: 2a03510d2b761812a36eac62b2d3e2858cc8ea59
+  revision: 00dc2c4e00180ba0f8911a25714a6d40282f6be1
   specs:
     churn (1.0.2)
       chronic (>= 0.2.3)
@@ -53,7 +53,7 @@ GIT
 
 GIT
   remote: git://github.com/modeset/teaspoon.git
-  revision: 32d3385042f2c5295e8f74955559e29c155b93e5
+  revision: 615690c2059a7397188bc9c8d76ef4c2894f2d4e
   specs:
     teaspoon (0.8.0)
       railties (>= 3.2.5, < 5)
@@ -67,7 +67,7 @@ GIT
 
 GIT
   remote: git://github.com/rails/web-console.git
-  revision: 285f89f29ec8ee36a5d4c6d26915d4155d862f4a
+  revision: b16d595a096712bd5415a15d4d2e177584b08f44
   specs:
     web-console (2.0.0.beta4)
       activemodel (~> 4.0)
@@ -77,7 +77,7 @@ GIT
 
 GIT
   remote: git://github.com/rspec/rspec-rails.git
-  revision: 18675c8f3eda744f7a704068d00dde839520f42e
+  revision: c420c1d64c417481560043e4be0bc67be4a76a41
   branch: 3-1-maintenance
   specs:
     rspec-rails (3.1.0)
@@ -109,9 +109,9 @@ GIT
 
 GIT
   remote: git://github.com/troessner/reek.git
-  revision: 1c0cfb27640ccd8e6d0810958c5515f298f556fe
+  revision: af66ef171e1910c6a8022260278008d3d07a2f0a
   specs:
-    reek (1.3.8)
+    reek (1.4.0)
       rainbow (>= 1.99, < 3.0)
       ruby2ruby (>= 2.0.8, < 3.0)
       ruby_parser (>= 3.5.0, < 4.0)
@@ -137,8 +137,6 @@ GEM
     active_attr (0.8.4)
       activemodel (>= 3.0.2, < 4.2)
       activesupport (>= 3.0.2, < 4.2)
-    active_interaction (1.3.0)
-      activemodel (>= 3.2, < 5)
     activemodel (4.1.6)
       activesupport (= 4.1.6)
       builder (~> 3.1)
@@ -159,7 +157,7 @@ GEM
     astrolabe (1.3.0)
       parser (>= 2.2.0.pre.3, < 3.0)
     awesome_print (1.2.0)
-    bcrypt (3.1.7)
+    bcrypt (3.1.9)
     bcrypt-ruby (3.1.5)
       bcrypt (>= 3.1.3)
     binding_of_caller (0.7.3.pre1)
@@ -175,19 +173,19 @@ GEM
       debugger-linecache (~> 1.2)
       slop (~> 3.6)
     callsite (0.0.11)
-    capybara (2.4.3)
+    capybara (2.4.4)
       mime-types (>= 1.16)
       nokogiri (>= 1.3.3)
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
-    capybara-webkit (1.3.0)
+    capybara-webkit (1.3.1)
       capybara (>= 2.0.2, < 2.5.0)
       json
     code_analyzer (0.4.5)
       sexp_processor
     coderay (1.1.0)
-    coffee-rails (4.0.1)
+    coffee-rails (4.1.0)
       coffee-script (>= 2.2.0)
       railties (>= 4.0.0, < 5.0)
     coffee-script (2.3.0)
@@ -200,20 +198,15 @@ GEM
     debug_inspector (0.0.2)
     debugger-linecache (1.2.0)
     diff-lcs (1.2.5)
-    diffy (3.0.6)
+    diffy (3.0.7)
     docile (1.1.5)
-    draper (1.4.0)
-      actionpack (>= 3.0)
-      activemodel (>= 3.0)
-      activesupport (>= 3.0)
-      request_store (~> 1.0)
     erubis (2.7.0)
     eventmachine (1.0.3)
-    execjs (2.2.1)
-    factory_girl (4.4.0)
+    execjs (2.2.2)
+    factory_girl (4.5.0)
       activesupport (>= 3.0.0)
-    factory_girl_rails (4.4.1)
-      factory_girl (~> 4.4.0)
+    factory_girl_rails (4.5.0)
+      factory_girl (~> 4.5.0)
       railties (>= 3.0.0)
     fancy-open-struct (0.4.0)
       awesome_print
@@ -235,7 +228,7 @@ GEM
     htmlentities (4.3.2)
     i18n (0.6.11)
     interception (0.5)
-    jbuilder (2.2.1)
+    jbuilder (2.2.4)
       activesupport (>= 3.0.0, < 5)
       multi_json (~> 1.2)
     jquery-rails (3.1.2)
@@ -245,9 +238,9 @@ GEM
     json_pure (1.8.1)
     macaddr (1.7.1)
       systemu (~> 2.6.2)
-    mail (2.6.1)
+    mail (2.6.3)
       mime-types (>= 1.16, < 3)
-    main (6.0.0)
+    main (6.1.0)
       arrayfields (>= 4.7.4)
       chronic (>= 0.6.2)
       fattr (>= 2.2.0)
@@ -260,14 +253,14 @@ GEM
     method_source (0.8.2)
     metric_fu-Saikuro (1.1.3)
     mime-types (1.25.1)
-    mini_portile (0.6.0)
-    minitest (5.4.2)
+    mini_portile (0.6.1)
+    minitest (5.4.3)
     multi_json (1.10.1)
-    netrc (0.7.7)
-    nokogiri (1.6.3.1)
-      mini_portile (= 0.6.0)
+    netrc (0.8.0)
+    nokogiri (1.6.4.1)
+      mini_portile (~> 0.6.0)
     numerizer (0.2.0)
-    parser (2.2.0.pre.5)
+    parser (2.2.0.pre.7)
       ast (>= 1.1, < 3.0)
       slop (~> 3.4, >= 3.4.5)
     posix-spawn (0.3.9)
@@ -301,12 +294,10 @@ GEM
     pry-theme (1.1.3)
       coderay (~> 1.1)
       json (~> 1.8)
-    pundit (0.3.0)
-      activesupport (>= 3.0.0)
     quiet_assets (1.0.3)
       railties (>= 3.1, < 5.0)
     rack (1.5.2)
-    rack-contrib (1.1.0)
+    rack-contrib (1.2.0)
       rack (>= 0.9.1)
     rack-test (0.6.2)
       rack (>= 1.0)
@@ -327,7 +318,7 @@ GEM
     rails-assets-jquery (2.1.1)
     rails-assets-sugar (1.4.2)
     rails-assets-underscore (1.7.0)
-    rails-footnotes (4.1.1)
+    rails-footnotes (4.1.4)
       rails (>= 3.2)
     rails_best_practices (1.15.4)
       activesupport
@@ -348,8 +339,7 @@ GEM
     rake (10.3.2)
     rdoc (4.1.2)
       json (~> 1.4)
-    redcarpet (3.1.2)
-    request_store (1.1.0)
+    redcarpet (3.2.0)
     require_all (1.3.2)
     rest-client (1.7.2)
       mime-types (>= 1.16, < 3.0)
@@ -361,35 +351,35 @@ GEM
       rspec-core (~> 3.1.0)
       rspec-expectations (~> 3.1.0)
       rspec-mocks (~> 3.1.0)
-    rspec-collection_matchers (1.0.0)
+    rspec-collection_matchers (1.1.2)
       rspec-expectations (>= 2.99.0.beta1)
-    rspec-core (3.1.5)
+    rspec-core (3.1.7)
       rspec-support (~> 3.1.0)
     rspec-expectations (3.1.2)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.1.0)
-    rspec-mocks (3.1.2)
+    rspec-mocks (3.1.3)
       rspec-support (~> 3.1.0)
-    rspec-support (3.1.1)
-    rubocop (0.26.1)
+    rspec-support (3.1.2)
+    rubocop (0.27.1)
       astrolabe (~> 1.3)
-      parser (>= 2.2.0.pre.4, < 3.0)
+      parser (>= 2.2.0.pre.7, < 3.0)
       powerpack (~> 0.0.6)
       rainbow (>= 1.99.1, < 3.0)
       ruby-progressbar (~> 1.4)
     ruby-growl (4.1)
       uuid (~> 2.3, >= 2.3.5)
-    ruby-progressbar (1.6.0)
+    ruby-progressbar (1.7.0)
     ruby2ruby (2.1.3)
       ruby_parser (~> 3.1)
       sexp_processor (~> 4.0)
     ruby_parser (3.6.3)
       sexp_processor (~> 4.1)
     sass (3.2.19)
-    sass-rails (4.0.3)
+    sass-rails (4.0.4)
       railties (>= 4.0.0, < 5.0)
-      sass (~> 3.2.0)
-      sprockets (~> 2.8, <= 2.11.0)
+      sass (~> 3.2.2)
+      sprockets (~> 2.8, < 2.12)
       sprockets-rails (~> 2.0)
     sdoc (0.4.1)
       json (~> 1.7, >= 1.7.7)
@@ -400,26 +390,26 @@ GEM
       multi_json (~> 1.0)
       simplecov-html (~> 0.8.0)
     simplecov-html (0.8.0)
-    slim (2.0.3)
-      temple (~> 0.6.6)
+    slim (2.1.0)
+      temple (~> 0.6.9)
       tilt (>= 1.3.3, < 2.1)
     slop (3.6.0)
     spring (1.1.3)
-    sprockets (2.11.0)
+    sprockets (2.11.3)
       hike (~> 1.2)
       multi_json (~> 1.0)
       rack (~> 1.0)
       tilt (~> 1.1, != 1.3.0)
-    sprockets-rails (2.1.4)
+    sprockets-rails (2.2.0)
       actionpack (>= 3.0)
       activesupport (>= 3.0)
-      sprockets (~> 2.8)
-    sqlite3 (1.3.9)
+      sprockets (>= 2.8, < 4.0)
+    sqlite3 (1.3.10)
     systemu (2.6.4)
     tapout (0.4.5)
       ansi
       json
-    temple (0.6.8)
+    temple (0.6.10)
     thin (1.6.3)
       daemons (~> 1.0, >= 1.0.9)
       eventmachine (~> 1.0)
@@ -437,7 +427,7 @@ GEM
       macaddr (~> 1.0)
     validates_email_format_of (1.6.1)
       i18n
-    wisper (1.5.0)
+    wisper (1.6.0)
     xpath (2.0.0)
       nokogiri (~> 1.3)
 
@@ -446,7 +436,6 @@ PLATFORMS
 
 DEPENDENCIES
   active_attr
-  active_interaction
   annotate!
   awesome_print
   bcrypt-ruby
@@ -459,7 +448,6 @@ DEPENDENCIES
   churn!
   coffee-rails
   database_cleaner!
-  draper
   factory_girl_rails
   fancy-open-struct
   flay
@@ -482,7 +470,6 @@ DEPENDENCIES
   pry-rails
   pry-rescue
   pry-theme
-  pundit
   quiet_assets
   rails (= 4.1.6)
   rails-assets-bootstrap (~> 3.2.0)

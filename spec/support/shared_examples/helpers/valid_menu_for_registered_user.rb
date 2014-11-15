@@ -5,7 +5,7 @@ require shared_support_dir + 'registered_user_menu_items'
 
 description = 'a valid menu for a Registered User, of a specified style'
 shared_examples description do |menu_sym, current_user|
-  current_user = FactoryGirl.create :user_datum
+  current_user = UserEntity.new FactoryGirl.attributes_for(:user, :saved_user)
 
   it_behaves_like 'a valid menu for either a Guest or Registered User',
                   current_user,
@@ -14,6 +14,4 @@ shared_examples description do |menu_sym, current_user|
   it_behaves_like 'a menu containing appropriate items for a Registered User',
                   current_user,
                   menu_sym
-
-  current_user.destroy
 end # shared_examples 'a valid menu for a Registered User, of a specified style'

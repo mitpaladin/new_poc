@@ -1,19 +1,17 @@
 
 require 'spec_helper'
 
+require 'current_user_identity'
+
 require 'support/shared_examples/users_helper/a_profile_article_list'
 require 'support/shared_examples/users_helper/a_profile_bio_panel'
 
 describe UsersHelper do
-  let(:user) { FactoryGirl.create :user_datum }
+  let(:user) { FactoryGirl.create :user, :saved_user }
 
   describe :profile_article_list.to_s do
     fragment_builder = lambda do |markup|
       Nokogiri.parse(markup).children.first
-    end
-
-    before :each do
-      allow(controller).to receive(:authorize).and_return true
     end
 
     it_behaves_like 'a profile article list', fragment_builder
@@ -21,11 +19,8 @@ describe UsersHelper do
 
   describe :profile_articles_row.to_s do
     let(:fragment) do
-      Nokogiri.parse(profile_articles_row user.name).children.first
-    end
-
-    before :each do
-      allow(controller).to receive(:authorize).and_return true
+      allow(helper).to receive(:current_user).and_return true
+      Nokogiri.parse(helper.profile_articles_row user.name).children.first
     end
 
     it 'is a div.row#contrib-row element' do
@@ -124,11 +119,12 @@ describe UsersHelper do
     end # context 'for the Guest User'
 
     context 'for a logged-in user that is' do
+      let(:identity) { CurrentUserIdentity.new session }
 
       context 'NOT the user whose record is being shown, it' do
-        let(:user2) { FactoryGirl.create :user_datum }
+        let(:user2) { FactoryGirl.create :user, :saved_user }
         let(:fragment) do
-          session[:user_id] = user2.id
+          identity.current_user = user2
           Nokogiri.parse(profile_bio_header user.name).children.first
         end
 
@@ -141,7 +137,7 @@ describe UsersHelper do
 
       context 'the user whose record is being shown' do
         let(:fragment) do
-          session[:user_id] = user.id
+          identity.current_user = user
           Nokogiri.parse(profile_bio_header user.name).children.first
         end
 

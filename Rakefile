@@ -7,11 +7,30 @@ if %w(development test).include? Rails.env
   require 'rubocop/rake_task'
 
   RuboCop::RakeTask.new(:rubocop) do |task|
+    # 'spec/**/_spec*.rb',
     task.patterns = [
       'app/**/*.rb',
       'lib/**/*.rb',
-      'spec/**/*_spec.rb',
-      'spec/support/**/*.rb'
+      'spec/spec_helper.rb',
+      'spec/controllers/**/*.rb',
+      'spec/daos/**/*.rb',
+      'spec/decorators/**/*.rb',
+      'spec/entities/**/*.rb',
+      'spec/entity_factories/**/*.rb',
+      'spec/entity_support/**/*.rb',
+      'spec/exploration/**/*.rb',
+      'spec/factories/**/*.rb',
+      'spec/features/**/*.rb',
+      'spec/helpers/**/*.rb',
+      'spec/interactors/**/*.rb',
+      'spec/javascripts/**/*.rb',
+      'spec/lib/**/*.rb',
+      'spec/models/**/*.rb',
+      'spec/policies/**/*.rb',
+      'spec/repositories/**/*.rb',
+      'spec/services/**/*.rb',
+      'spec/support/**/*.rb',
+      'spec/support_specs/**/*.rb'
     ]
     task.formatters = ['simple', 'd']
     task.fail_on_error = true

@@ -15,6 +15,8 @@ class ProfileArticleListBuilder
 
   private
 
+  attr_reader :h
+
   def build_inner_content_item_markup
     posts_for_user.map do |post|
       ProfilePostItemBuilder.new(@h, post).to_html
@@ -22,6 +24,6 @@ class ProfileArticleListBuilder
   end
 
   def posts_for_user
-    UserPostSelector.new(@user_name, @h).build_list
+    UserPostSelector.new(@user_name, h.current_user).build_list
   end
 end

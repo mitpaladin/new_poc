@@ -1,6 +1,6 @@
 
 shared_examples 'a profile bio panel' do |fragment_builder|
-  let(:user) { FactoryGirl.create :user_datum }
+  let(:user) { UserEntity.new FactoryGirl.attributes_for(:user) }
   let(:fragment) do
     fragment_builder.call profile_bio_panel(user.profile.squish)
   end

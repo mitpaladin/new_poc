@@ -27,8 +27,8 @@ class Sequencer
 
   def <=>(other)
     (@next_index == other.instance_variable_get(:@next_index)) &&
-        (@format_str == other.instance_variable_get(:@format_str)) &&
-        (@auto_step == other.instance_variable_get(:@auto_step))
+      (@format_str == other.instance_variable_get(:@format_str)) &&
+      (@auto_step == other.instance_variable_get(:@auto_step))
   end
 
   protected

@@ -34,8 +34,30 @@ shared_examples 'a form-attributes helper' do |form_name|
   end # describe ":#{form_name}_form_attributes"
 end
 
+shared_examples 'a status-selection control' do
+  it 'returns two HTML <option> tags' do
+    expect(options.count).to eq 2
+  end
+
+  describe 'returns <option> tags for' do
+
+    %w(draft public).each do |status|
+      it status do
+        regex = Regexp.new "value=\"#{status}\""
+        match = options.select { |s| s.match regex }
+        expect(match).not_to be nil
+      end
+    end
+  end # describe 'returns <option> tags for'
+end
+
 def new_bhs_build_example_posts(entry_count)
-  FactoryGirl.build_list :post_datum, entry_count, author_name: 'John Smith'
+  ret = []
+  entry_count.times do
+    attribs = FactoryGirl.attributes_for :post, author_name: 'John Smith'
+    ret.push PostEntity.new(attribs)
+  end
+  ret
 end
 
 def new_random_ages(sample, back_to_limit = 180)
@@ -45,10 +67,15 @@ end
 
 def new_build_and_publish_posts(count = 10)
   ages = new_random_ages(count)
+  repo = PostRepository.new
+  ret = []
   new_bhs_build_example_posts(count).each_with_index do |post, index|
-    post.pubdate = ages[index]
-    post.save!
+    attributes = post.attributes.merge pubdate: ages[index]
+    published_post = post.class.new attributes
+    result = repo.add published_post
+    ret.push result.entity
   end
+  ret
 end
 
 describe PostsHelper do
@@ -64,7 +91,7 @@ describe PostsHelper do
   end # describe :new_post_form_attributes
 
   describe :edit_post_form_attributes.to_s do
-    let(:post_data) { FactoryGirl.create :post_datum }
+    let(:post_data) { FactoryGirl.create :post }
     subject { helper.send :edit_post_form_attributes, post_data }
     let(:form_name) { 'edit_post' }
 
@@ -79,27 +106,15 @@ describe PostsHelper do
   end # describe :edit_post_form_attributes
 
   describe :status_select_options.to_s do
+    let(:post) { PostEntity.new post_attribs }
+    let(:actual) { status_select_options post }
+    let(:options) { actual.scan(Regexp.new '<option.+?</option>') }
+    let(:selected) { options.select { |s| s.match(/selected\=/) } }
 
     context 'for an unpublished post' do
-      let(:post) { FactoryGirl.build :post_datum, :new_post }
-      let(:actual) { status_select_options post }
-      let(:options) { actual.scan(Regexp.new '<option.+?</option>') }
-      let(:selected) { options.select { |s| s.match(/selected\=/) } }
+      let(:post_attribs) { FactoryGirl.attributes_for :post }
 
-      it 'returns two HTML <option> tags' do
-        expect(options.count).to eq 2
-      end
-
-      describe 'returns <option> tags for' do
-
-        %w(draft public).each do |status|
-          it status do
-            regex = Regexp.new "value=\"#{status}\""
-            match = options.select { |s| s.match regex }
-            expect(match).not_to be nil
-          end
-        end
-      end # describe 'returns <option> tags for'
+      it_behaves_like 'a status-selection control'
 
       it 'has "draft" as the selected option' do
         expect(selected.first).to match(/value="draft"/)
@@ -107,25 +122,9 @@ describe PostsHelper do
     end # context 'for an unpublished post'
 
     context 'for a published post' do
-      let(:post) { FactoryGirl.build :post_datum, :saved_post, :public_post }
-      let(:actual) { status_select_options post }
-      let(:options) { actual.scan(Regexp.new '<option.+?</option>') }
-      let(:selected) { options.select { |s| s.match(/selected\=/) } }
+      let(:post_attribs) { FactoryGirl.attributes_for :post, :published_post }
 
-      it 'returns two HTML <option> tags' do
-        expect(options.count).to eq 2
-      end
-
-      describe 'returns <option> tags for' do
-
-        %w(draft public).each do |status|
-          it status do
-            regex = Regexp.new "value=\"#{status}\""
-            match = options.select { |s| s.match regex }
-            expect(match).not_to be nil
-          end
-        end
-      end # describe 'returns <option> tags for'
+      it_behaves_like 'a status-selection control'
 
       it 'has "public" as the selected option' do
         expect(selected.first).to match(/value="public"/)
@@ -134,15 +133,8 @@ describe PostsHelper do
   end # describe :status_select_options
 
   describe 'summarise_posts' do
-
-    before :each do
-      user = FactoryGirl.build_stubbed(:user_datum, name: 'John Smith')
-      assign :user, user
-      allow(self).to receive(:pundit_user).and_return user
-    end
-
     it 'returns a list of 10 entries by default' do
-      new_build_and_publish_posts 11
+      @posts = new_build_and_publish_posts 11
       post_entries = summarise_posts
       expect(post_entries.count).to eq 10
     end
@@ -150,23 +142,13 @@ describe PostsHelper do
     describe 'returns a list of a valid length specified by a parameter' do
 
       context 'when the specified number of entries exist' do
-
-        after :each do
-          entry_count = Integer(RSpec.current_example.description)
-          new_build_and_publish_posts entry_count * 2
-          entries = summarise_posts entry_count
-          expect(entries.count).to eq entry_count
+        [1, 10, 50].each do |entry_count|
+          it entry_count.to_s do
+            @posts = new_build_and_publish_posts entry_count * 2
+            entries = summarise_posts entry_count
+            expect(entries.count).to eq entry_count
+          end
         end
-
-        it '1' do
-        end
-
-        it '10' do
-        end
-
-        it '50' do
-        end
-
       end # context 'when the specified number of entries exist'
 
       context 'when there are fewer than the specified number of entries' do
@@ -174,13 +156,11 @@ describe PostsHelper do
         it '5' do
           entry_count = Integer(RSpec.current_example.description)
           expected_count = entry_count / 2
-          new_build_and_publish_posts expected_count
+          @posts = new_build_and_publish_posts expected_count
           entries = summarise_posts entry_count
           expect(entries.count).to eq expected_count
         end
-
       end # context 'when there are fewer than the specified number of entries'
-
     end # describe 'returns a list of a valid length specified by a parameter'
 
     description = 'includes both published and authored draft entries such' \
@@ -189,11 +169,16 @@ describe PostsHelper do
       let(:total_entry_count) { 10 }
       let(:published_post_count) { 8 }
       let(:draft_post_count) { total_entry_count - published_post_count }
-      let(:entries) do
-        new_build_and_publish_posts published_post_count
+      let!(:entries) do
+        published_posts = new_build_and_publish_posts published_post_count
         unpublished_posts = new_bhs_build_example_posts draft_post_count
-        unpublished_posts.each(&:save!)
+        @posts = [unpublished_posts, published_posts].flatten
         summarise_posts
+      end
+      let(:user) { FactoryGirl.build :user, name: 'John Smith' }
+
+      before :each do
+        allow(helper).to receive(:current_user).and_return user
       end
 
       it 'has the correct total number of entries' do
@@ -222,7 +207,7 @@ describe PostsHelper do
     end # describe 'includes both published and authored draft entries such...'
 
     it 'sorts the entries in reverse order by pubdate' do
-      new_build_and_publish_posts
+      @posts = new_build_and_publish_posts
       entries = summarise_posts
       last_date = DateTime.now
       entries.each do |post|
@@ -230,14 +215,5 @@ describe PostsHelper do
         last_date = post.pubdate
       end
     end
-
-    it 'decorates each PostData entry with a PostDataDecorator' do
-      new_build_and_publish_posts
-      entries = summarise_posts
-      entries.each do |post|
-        expect(post).to be_decorated_with PostDataDecorator
-      end
-    end
   end # describe 'summarise_posts'
-
 end # describe PostsHelper

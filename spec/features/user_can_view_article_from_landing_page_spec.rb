@@ -17,5 +17,4 @@ describe 'User can view article from landing page' do
     click_link @post_title
     expect(page).to have_css 'dl > dd', @user_name
   end
-
 end # describe 'User can view article from landing page'

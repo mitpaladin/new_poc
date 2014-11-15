@@ -12,14 +12,14 @@ shared_examples 'Post field priority' do |params|
 
   # Write nice description
   others_str = others.each(&:to_s)
-      .join(', ')
-      .sub(/, (\S+)$/, ' or \1')
-      .sub(/image_url/, 'image URL')
+               .join(', ')
+               .sub(/, (\S+)$/, ' or \1')
+               .sub(/image_url/, 'image URL')
   description = "#{params[:priority]} has higher priority than " + others_str
   description.sub(/, (^[,]+)$/, ' and \1')
 
   it description do
-    post = Post.new FactoryGirl.attributes_for(:post_datum)
+    post = Post.new FactoryGirl.attributes_for(:post)
     post2 = post.clone
 
     post.send priority, lower
