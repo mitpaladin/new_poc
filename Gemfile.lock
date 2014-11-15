@@ -12,7 +12,7 @@ GIT
 
 GIT
   remote: git://github.com/brianmario/yajl-ruby.git
-  revision: e8401ec9495ba6cf0205ccf6a4beb7dd2fc323c0
+  revision: bbf7596d609c06f97f1500d8384b518681c46233
   specs:
     yajl-ruby (1.2.1)
 
@@ -53,7 +53,7 @@ GIT
 
 GIT
   remote: git://github.com/modeset/teaspoon.git
-  revision: 32d3385042f2c5295e8f74955559e29c155b93e5
+  revision: 615690c2059a7397188bc9c8d76ef4c2894f2d4e
   specs:
     teaspoon (0.8.0)
       railties (>= 3.2.5, < 5)
@@ -109,7 +109,7 @@ GIT
 
 GIT
   remote: git://github.com/troessner/reek.git
-  revision: 09bb84b5bf5eaae5e560ac9794e77fcc2d89431d
+  revision: af66ef171e1910c6a8022260278008d3d07a2f0a
   specs:
     reek (1.4.0)
       rainbow (>= 1.99, < 3.0)
@@ -137,8 +137,6 @@ GEM
     active_attr (0.8.4)
       activemodel (>= 3.0.2, < 4.2)
       activesupport (>= 3.0.2, < 4.2)
-    active_interaction (1.3.0)
-      activemodel (>= 3.2, < 5)
     activemodel (4.1.6)
       activesupport (= 4.1.6)
       builder (~> 3.1)
@@ -261,7 +259,7 @@ GEM
     metric_fu-Saikuro (1.1.3)
     mime-types (1.25.1)
     mini_portile (0.6.1)
-    minitest (5.4.2)
+    minitest (5.4.3)
     multi_json (1.10.1)
     netrc (0.8.0)
     nokogiri (1.6.4.1)
@@ -359,7 +357,7 @@ GEM
       rspec-core (~> 3.1.0)
       rspec-expectations (~> 3.1.0)
       rspec-mocks (~> 3.1.0)
-    rspec-collection_matchers (1.1.1)
+    rspec-collection_matchers (1.1.2)
       rspec-expectations (>= 2.99.0.beta1)
     rspec-core (3.1.7)
       rspec-support (~> 3.1.0)
@@ -444,7 +442,6 @@ PLATFORMS
 
 DEPENDENCIES
   active_attr
-  active_interaction
   annotate!
   awesome_print
   bcrypt-ruby
