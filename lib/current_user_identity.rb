@@ -43,7 +43,7 @@ class CurrentUserIdentity
 
   def validate_identifier(ident)
     ident_for(user_class.find ident)
-  rescue ActiveRecord::RecordNotFound
+  rescue # ActiveRecord::RecordNotFound
     nil
   end
 end
