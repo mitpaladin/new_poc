@@ -1,5 +1,5 @@
 
-ruby '2.1.4'
+ruby '2.1.5'
 
 source 'https://rubygems.org'
 source 'https://rails-assets.org'
@@ -15,8 +15,8 @@ gem 'jbuilder'
 gem 'jquery-rails'
 gem 'markdown-toolbar', github: 'fuksito/markdown-toolbar'
 gem 'naught', github: 'avdi/naught'
-gem 'rails', '4.1.6'
-# gem 'rails', '4.2.0.beta2'
+gem 'rails', '4.1.8'
+# gem 'rails', '4.2.0.beta4'
 gem 'rails-assets-bootstrap', '~> 3.2.0'
 gem 'rails-assets-bootswatch', '~> 3.2.0'
 gem 'rails-assets-sugar'
