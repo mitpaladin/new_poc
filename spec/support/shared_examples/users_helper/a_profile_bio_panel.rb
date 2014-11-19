@@ -1,8 +1,9 @@
 
-shared_examples 'a profile bio panel' do |fragment_builder|
+shared_examples 'a profile bio panel' do |fragment_builder, h|
   let(:user) { UserEntity.new FactoryGirl.attributes_for(:user) }
   let(:fragment) do
-    fragment_builder.call profile_bio_panel(user.profile.squish)
+    builder = ProfileBioPanelBuilder.new user.profile.squish, h
+    fragment_builder.call builder.to_html
   end
 
   it 'generates an outermost div.panel.panel-default element' do
