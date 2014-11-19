@@ -57,6 +57,9 @@ class SavedEntityVerifier
     actual_field = actual.send field_sym
     source_field = source.send field_sym
     return if actual_field == source_field
+    if actual_field.respond_to?(:usec) && source_field.respond_to?(:usec)
+      return if (actual_field - source_field).abs < 0.5
+    end
     message = %(#{field_sym} fields do not match: got #{actual_field} but ) +
               %(expected #{source_field})
     @reasons << message

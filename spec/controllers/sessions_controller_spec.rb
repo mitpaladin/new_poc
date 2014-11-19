@@ -111,7 +111,15 @@ describe SessionsController do
         end
 
         it 'sets the current logged-in user to the specified user' do
-          expect(subject.current_user.attributes).to eq user.attributes
+          actual = subject.current_user.attributes
+          expected = user.attributes
+          actual.keys.each do |key|
+            if key.match(/.+ated_at/)
+              expect(actual[key]).to be_within(0.5.seconds).of expected[key]
+            else
+              expect(actual[key]).to eq expected[key]
+            end
+          end
         end
 
         it 'sets the logged-in flash message' do

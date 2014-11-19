@@ -263,9 +263,10 @@ describe PostsController do
 
       it 'assigns the :post variable' do
         assigned = assigns[:post]
-        [:body, :image_url, :pubdate, :slug, :title].each do |attrib|
+        [:body, :image_url, :slug, :title].each do |attrib|
           expect(assigned.attributes[attrib]).to eq post[attrib]
         end
+        expect(assigned[:pubdate]).to be_within(0.5.seconds).of post[:pubdate]
       end
     end # context 'when the logged-in user is the post author'
   end # describe "GET 'edit'"
@@ -390,10 +391,14 @@ describe PostsController do
         it 'assigns the updated post' do
           actual = assigns[:post]
           expect(actual.body).to eq post_data[:body]
-          comparison_keys = [:author_name, :imaage_url, :slug, :title, :pubdate,
-                             :created_at]
+          comparison_keys = [:author_name, :imaage_url, :slug, :title]
           comparison_keys.each do |attrib_key|
             expect(actual.attributes[attrib_key]).to eq post[attrib_key.to_s]
+          end
+          comparison_keys = [:pubdate, :created_at]
+          comparison_keys.each do |attrib_key|
+            expect(actual.attributes[attrib_key])
+              .to be_within(0.5.seconds).of post[attrib_key]
           end
         end
       end # context 'for the post author'
