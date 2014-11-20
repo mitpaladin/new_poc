@@ -3,6 +3,7 @@
 
 [![Code Climate](https://codeclimate.com/github/jdickey/new_poc.png)](https://codeclimate.com/github/jdickey/new_poc)
 [ ![Codeship Status for jdickey/new_poc](https://codeship.com/projects/43f7a5b0-51d9-0132-3b5c-7a00f62ec16b/status)](https://codeship.com/projects/48457)
+[![security](https://hakiri.io/github/jdickey/new_poc/master.svg)](https://hakiri.io/github/jdickey/new_poc/master)
 
 This is an experiment in clean(er) architecture in Rails. It's not intended as a full, releasable application, but rather to answer some critical questions about how we will actually release such an app.
 
