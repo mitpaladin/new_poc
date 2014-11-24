@@ -1,5 +1,5 @@
 
-= form_for(@user, url: user_path(@user)) do |f|
+= form_for(@user, as: :user_data, url: user_path(@user.slug)) do |f|
   == explain_errors @user
   legend Edit your Profile
 
