@@ -18,7 +18,7 @@ describe 'Member can view own profile page' do
 
   it 'and see edit-profile link next to profile header' do
     href = edit_user_path(@user_name.parameterize)
-    assert_selector "h1 button[href='#{href}']",
+    assert_selector "h1 a[href='#{href}']",
                     text: 'Edit Your Profile'
   end
 

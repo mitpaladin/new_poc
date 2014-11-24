@@ -30,11 +30,16 @@ class ProfileBioHeaderBuilder
     identity.current_user
   end
 
+  def link_attribs
+    {
+      class: 'btn btn-xs pull-right',
+      href: h.edit_user_path(current_user.slug)
+    }
+  end
+
   def make_button
     return '' unless current_user.name == user_name
-    attribs = { class: 'btn btn-xs pull-right', type: 'button' }
-    attribs[:href] = h.edit_user_path(current_user.slug)
-    h.content_tag :button, nil, attribs, false do
+    h.content_tag :a, nil, link_attribs, false do
       'Edit Your Profile'
     end
   end
