@@ -14,3 +14,7 @@
  *= used_to require bootstrap # see application.html.slim for bootswatch
  *= require_self
  */
+
+div.app-container {
+  margin-top: 3em;
+}

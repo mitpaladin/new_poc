@@ -14,7 +14,7 @@ shared_examples 'cannot edit the post' do |expected|
   it 'by directly visiting the edit-post path' do
     visit edit_post_path(@post_slug)
     expected ||= "User #{@user_name} is not the author of this post!"
-    selector = 'div.alert.alert-error.alert-dismissable'
+    selector = 'div.alert.alert-danger.alert-dismissable'
     expect(page).to have_selector selector, text: expected
   end
 end

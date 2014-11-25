@@ -10,7 +10,7 @@ html
     = csrf_meta_tags
   body
     = render 'layouts/top_nav_header'
-    div class='container-fluid'
+    div class='container-fluid app-container'
       div class='row'
         div class='col-md-2 sidebar'
           == build_menu_for :sidebar, current_user

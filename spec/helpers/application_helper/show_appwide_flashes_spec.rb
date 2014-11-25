@@ -121,7 +121,7 @@ describe ApplicationHelper::AppwideFlashes do
       it :alert do
         @level = :alert
         @message = 'Be alert! The world needs more lerts!'
-        @expected_class = 'alert-error'
+        @expected_class = 'alert-danger'
       end
 
     end # describe 'contains level-specific CSS for a single cell with level'

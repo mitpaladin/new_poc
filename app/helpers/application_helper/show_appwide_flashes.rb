@@ -34,7 +34,7 @@ module ApplicationHelper
       end
 
       def class_for_level(level)
-        return 'alert-error' if level.to_s == 'alert'
+        return 'alert-danger' if level.to_s == 'alert'
         'alert-' + level.to_s
       end
 
