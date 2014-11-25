@@ -4,6 +4,11 @@ if ENV['RAILS_ENV'] == 'test'
   require 'simplecov'
   SimpleCov.start 'rails' do
     add_filter '/vendor/'
+    add_group 'Actions', 'app/actions'
+    add_group 'DAOs', 'app/daos'
+    add_group 'Entities', 'app/entities'
+    add_group 'Repositories', 'app/repositories'
+    add_group 'Services', 'app/services'
   end
 end
 
