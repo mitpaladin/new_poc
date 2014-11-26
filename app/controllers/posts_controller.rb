@@ -74,8 +74,13 @@ class PostsController < ApplicationController
     @post = payload.entity
   end
 
-  def on_new_failure(payload)
-    redirect_to root_path, flash: { alert: payload.errors.first[:message] }
+  def on_new_failure(payload, invalid_entity)
+    # @logger ||= MainLogger.log('log/posts_controller.log')
+    payload.errors.each do |error|
+      invalid_entity.errors.add error[:field].to_sym, error[:message]
+    end
+    @post = invalid_entity
+    render 'new'
   end
 
   def on_show_success(payload)

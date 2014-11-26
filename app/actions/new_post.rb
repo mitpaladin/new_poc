@@ -3,25 +3,27 @@ module Actions
   # Wisper-based command object called by Posts controller #new action.
   class NewPost
     include Wisper::Publisher
-    attr_reader :current_user
 
-    def initialize(current_user)
+    def initialize(current_user, post_attributes = {}, errors = [])
       @current_user = current_user
+      @post_attributes = post_attributes
+      @errors = errors
     end
 
     def execute
       guest_user = user_repo.guest_user.entity
       return broadcast_auth_failure if current_user.name == guest_user.name
-      entity = PostEntity.new author_name: current_user.name
-      result = StoreResult.new success: true, entity: entity,
-                               errors: ErrorFactory.create([])
-      broadcast_success result
+      build_and_broadcast_entity
     end
 
     private
 
-    def broadcast_failure(payload)
-      broadcast :failure, payload
+    attr_reader :current_user, :errors, :post_attributes
+
+    def broadcast_failure(payload, invalid_entity)
+      @logger ||= MainLogger.log('log/new_post.log')
+      @logger.debug [payload, invalid_entity, __FILE__, __LINE__]
+      broadcast :failure, payload, invalid_entity
     end
 
     def broadcast_success(payload)
@@ -29,13 +31,23 @@ module Actions
     end
 
     def broadcast_auth_failure
-      broadcast_failure_for :user, 'Not logged in as a registered user!'
+      message = 'not logged in as a registered user!'
+      result = StoreResult.new success: false, entity: nil,
+                               errors: build_errors_for(:user, message)
+      broadcast_failure result, PostEntity.new({})
     end
 
-    def broadcast_failure_for(key, message)
-      result = StoreResult.new success: false, entity: nil,
-                               errors: build_errors_for(key, message)
-      broadcast_failure result
+    def build_and_broadcast_entity
+      attribs = post_attributes.merge author_name: current_user.name
+      entity = PostEntity.new attribs
+      if errors.empty?
+        result = StoreResult.new success: true, entity: entity,
+                                 errors: ErrorFactory.create(errors)
+        broadcast_success result
+      else
+        result = StoreResult.new success: false, entity: nil, errors: errors
+        broadcast_failure result, entity
+      end
     end
 
     def build_errors_for(key, message)

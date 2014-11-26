@@ -36,7 +36,7 @@ module Actions
         end
 
         it 'a correct :errors item' do
-          message = 'Not logged in as a registered user!'
+          message = 'not logged in as a registered user!'
           expect(payload).to have(1).error
           expect(payload.errors.first)
               .to be_an_error_hash_for :user, message
@@ -67,11 +67,18 @@ module Actions
           expect(payload.errors).to be_empty
         end
 
+        # This little dance (filtering attributes) is because, since Issue #129,
+        # an entity has picked up error-information attributes -- which this
+        # spec doesn't, and shouldn't, care about. When it says "one attribute",
+        # it means "one attribute that corresponds to a field in the DAO".
         description = 'a PostEntity instance for an :entity value, with the' \
             ' author name as the only assigned attribute'
         it description do
           expect(payload.entity).to be_a PostEntity
-          expect(payload.entity).to have(1).attribute
+          assigned_attributes = payload.entity.attributes.select do |k, _v|
+            [:author_name, :title, :body, :image_url].include? k
+          end
+          expect(assigned_attributes).to have(1).entry
           expect(payload.entity.author_name).to eq current_user.name
         end
       end # describe 'is successful, broadcasting a StoreResult payload with'

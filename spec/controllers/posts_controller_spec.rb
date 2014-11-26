@@ -149,18 +149,24 @@ describe PostsController do
         get :new
       end
 
-      it 'does not assign a value to the :post variable' do
-        expect(assigns).not_to have_key(:post)
+      description = %w(has a post with all assigned fields nil for the assigned
+                       post).join ' '
+      it description do
+        post = assigns[:post]
+        attribs = [:title, :body, :image_url, :slug, :created_at, :updated_at]
+        attribs.each { |attrib| expect(post.attributes[attrib]).to be nil }
       end
 
-      it 'redirects to the landing page' do
-        expect(response).to be_redirection
-        expect(response).to redirect_to root_path
+      it 'renders the "new" template again' do
+        expect(response).to be_ok
+        expect(response).to render_template 'new'
       end
 
-      it 'renders the correct flash error message' do
-        expected = 'Not logged in as a registered user!'
-        expect(flash[:alert]).to eq expected
+      it 'has the author-not-logged-in error message' do
+        expected = 'User not logged in as a registered user!'
+        post = assigns[:post]
+        expect(post.errors.full_messages).to have(1).entry
+        expect(post.errors.full_messages.first).to eq expected
       end
     end # context 'for the Guest User'
   end # describe "GET 'new'"
