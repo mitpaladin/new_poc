@@ -23,8 +23,8 @@ module Actions
     attr_reader :current_user, :errors, :post_attributes
 
     def broadcast_failure(payload, invalid_entity)
-      @logger ||= MainLogger.log('log/new_post.log')
-      @logger.debug [payload, invalid_entity, __FILE__, __LINE__]
+      # @logger ||= MainLogger.log('log/new_post.log')
+      # @logger.debug [payload, invalid_entity, __FILE__, __LINE__]
       broadcast :failure, payload, invalid_entity
     end
 

@@ -159,7 +159,7 @@ describe PostsController do
       end
 
       it 'renders the correct flash error message' do
-        expected = 'Not logged in as a registered user!'
+        expected = 'User not logged in as a registered user!'
         expect(flash[:alert]).to eq expected
       end
     end # context 'for the Guest User'
@@ -210,8 +210,8 @@ describe PostsController do
         expect(assigns).not_to have_key :post
       end
 
-      it 'redirects to the post-listing path' do
-        expect(response).to redirect_to posts_path
+      it 'redirects to the root path' do
+        expect(response).to redirect_to root_path
       end
 
       it 'renders the correct flash alert message' do

@@ -90,7 +90,8 @@ module Actions
     end
 
     def broadcast_failure(payload)
-      broadcast :failure, payload
+      failed_attributes = PostDataFilter.new(post_data).filter
+      broadcast :failure, payload, OpenStruct.new(failed_attributes)
     end
 
     def broadcast_success(payload)

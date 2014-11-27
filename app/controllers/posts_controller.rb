@@ -48,13 +48,13 @@ class PostsController < ApplicationController
     redirect_to root_path, flash: { success: 'Post added!' }
   end
 
-  def on_create_failure(payload)
-    parts = []
-    payload.errors.each do |error|
-      parts << [error[:field].to_s.capitalize, error[:message]].join(' ')
-    end
-    alert = parts.join '<br/>'
-    redirect_to posts_path, flash: { alert: alert }
+  def on_create_failure(payload, failed_attributes)
+    prohibit_guest_user_from_proceeding(payload.errors)
+    attribs = failed_attributes.to_h.merge author_name: current_user.name
+    @post = invalid_post_with_errors PostEntity.new(attribs), payload.errors
+    render 'new'
+  rescue RuntimeError => e
+    redirect_to root_path, flash: { alert: e.message }
   end
 
   def on_edit_success(payload)
@@ -83,12 +83,11 @@ class PostsController < ApplicationController
 
   def on_new_failure(payload, invalid_entity)
     # @logger ||= MainLogger.log('log/posts_controller.log')
-    if guest_is_current_user?
-      redirect_to root_path, flash: { alert: payload.errors.first[:message] }
-    else
-      @post = invalid_post_with_errors invalid_entity, payload.errors
-      render 'new'
-    end
+    prohibit_guest_user_from_proceeding(payload.errors)
+    @post = invalid_post_with_errors invalid_entity, payload.errors
+    render 'new'
+  rescue RuntimeError => e
+    redirect_to root_path, flash: { alert: e.message }
   end
 
   def on_show_success(payload)
@@ -110,6 +109,12 @@ class PostsController < ApplicationController
   end
 
   private
+
+  def prohibit_guest_user_from_proceeding(errors)
+    return unless guest_is_current_user?
+    message = errors.first.values.join(' ').capitalize
+    fail message
+  end
 
   def guest_is_current_user?
     guest_user = UserRepository.new.guest_user.entity
