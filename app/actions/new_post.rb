@@ -1,4 +1,6 @@
 
+require 'main_logger'
+
 module Actions
   # Wisper-based command object called by Posts controller #new action.
   class NewPost
@@ -31,7 +33,7 @@ module Actions
     end
 
     def broadcast_auth_failure
-      message = 'not logged in as a registered user!'
+      message = 'Not logged in as a registered user!'
       result = StoreResult.new success: false, entity: nil,
                                errors: build_errors_for(:user, message)
       broadcast_failure result, PostEntity.new({})

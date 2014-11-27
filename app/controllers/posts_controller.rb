@@ -74,13 +74,21 @@ class PostsController < ApplicationController
     @post = payload.entity
   end
 
-  def on_new_failure(payload, invalid_entity)
-    # @logger ||= MainLogger.log('log/posts_controller.log')
+  def on_new_failure_invalid_content(payload, invalid_entity)
     payload.errors.each do |error|
       invalid_entity.errors.add error[:field].to_sym, error[:message]
     end
     @post = invalid_entity
     render 'new'
+  end
+
+  def on_new_failure(payload, invalid_entity)
+    # @logger ||= MainLogger.log('log/posts_controller.log')
+    if guest_is_current_user?
+      redirect_to root_path, flash: { alert: payload.errors.first[:message] }
+    else
+      on_new_failure_invalid_content payload, invalid_entity
+    end
   end
 
   def on_show_success(payload)
@@ -99,5 +107,12 @@ class PostsController < ApplicationController
 
   def on_update_failure(payload)
     redirect_to posts_path, flash: { alert: payload.errors.first[:message] }
+  end
+
+  private
+
+  def guest_is_current_user?
+    guest_user = UserRepository.new.guest_user.entity
+    current_user.name == guest_user.name
   end
 end # class PostsController

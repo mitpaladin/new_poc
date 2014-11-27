@@ -36,7 +36,7 @@ module Actions
         end
 
         it 'a correct :errors item' do
-          message = 'not logged in as a registered user!'
+          message = 'Not logged in as a registered user!'
           expect(payload).to have(1).error
           expect(payload.errors.first)
               .to be_an_error_hash_for :user, message
