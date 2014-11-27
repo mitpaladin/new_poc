@@ -13,6 +13,10 @@ class PostEntity
   include ActiveAttr::BasicModel
   include ActiveAttr::Serialization
 
+  validates :author_name, presence: true
+  validates :title, presence: true
+  validate :must_have_body_or_title
+
   def initialize(attribs)
     init_attrib_keys.each { |attrib| class_eval { attr_reader attrib } }
     InstanceVariableSetter.new(self).set attribs
@@ -80,6 +84,11 @@ class PostEntity
 
   def convert_body(fragment)
     MarkdownHtmlConverter.new.to_html(fragment)
+  end
+
+  def must_have_body_or_title
+    return if body.present? || image_url.present?
+    errors.add :body, 'must be specified if image URL is omitted'
   end
 
   def timestamp_for(the_time = Time.now)

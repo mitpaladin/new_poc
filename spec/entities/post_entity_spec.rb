@@ -7,13 +7,15 @@ require_relative 'shared_examples/a_data_mapping_entity'
 describe PostEntity do
   let(:klass) { PostEntity }
   let(:author_name) { 'Joe Palooka' }
+  let(:image_url) { 'http://www.example.com/foo.png' }
   let(:title) { 'The Title' }
+  let(:body) { 'The Body' }
   let(:valid_subset) do
     {
       title: title,
       slug: title.parameterize,
       author_name: author_name,
-      body: 'The Body'
+      body: body
     }
   end
   let(:invalid_attribs) do
@@ -31,6 +33,63 @@ describe PostEntity do
   let(:published_post) { klass.new published_attribs }
 
   it_behaves_like 'a data-mapping entity'
+
+  describe :valid?.to_s do
+
+    describe 'returns true when initialised with' do
+
+      after :each do
+        expect(klass.new @attribs).to be_valid
+      end
+
+      it 'an author name, title and body' do
+        @attribs = { author_name: author_name, title: title, body: body }
+      end
+
+      it 'an author name, title and image URL' do
+        @attribs = {
+          author_name: author_name,
+          title: title,
+          image_url: image_url
+        }
+      end
+
+      it 'an author name, title, image URL and body' do
+        @attribs = {
+          author_name: author_name,
+          title: title,
+          image_url: image_url,
+          body: body
+        }
+      end
+    end # describe 'returns true when initialised with'
+
+    describe 'returns false when initialised with' do
+
+      after :each do
+        expect(klass.new @attribs).not_to be_valid
+      end
+
+      it 'no author name' do
+        @attribs = { title: title, image_url: image_url, body: body }
+      end
+
+      it 'no title' do
+        @attribs = {
+          author_name: author_name,
+          image_url: image_url,
+          body: body
+        }
+      end
+
+      it 'no body and no image URL' do
+        @attribs = {
+          author_name: author_name,
+          title: title
+        }
+      end
+    end # describe 'returns false when initialised with'
+  end # describe :valid?
 
   describe :build_body do
     let(:post) { published_post }
@@ -58,7 +117,7 @@ describe PostEntity do
       # It *is* "new behaviour" that broke this existing spec.
       it 'an image post' do
         post_attribs = post.attributes
-        post_attribs[:image_url] = 'http://www.example.com/foo.png'
+        post_attribs[:image_url] = image_url
         post = klass.new post_attribs
         body_markup = "<p>#{post.body}</p>\n"
         expected = %(<figure><img src="#{post.image_url}">)
