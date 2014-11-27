@@ -74,12 +74,11 @@ class PostsController < ApplicationController
     @post = payload.entity
   end
 
-  def on_new_failure_invalid_content(payload, invalid_entity)
-    payload.errors.each do |error|
-      invalid_entity.errors.add error[:field].to_sym, error[:message]
+  def invalid_post_with_errors(source_post, errors)
+    errors.each do |error|
+      source_post.errors.add error[:field].to_sym, error[:message]
     end
-    @post = invalid_entity
-    render 'new'
+    source_post
   end
 
   def on_new_failure(payload, invalid_entity)
@@ -87,7 +86,8 @@ class PostsController < ApplicationController
     if guest_is_current_user?
       redirect_to root_path, flash: { alert: payload.errors.first[:message] }
     else
-      on_new_failure_invalid_content payload, invalid_entity
+      @post = invalid_post_with_errors invalid_entity, payload.errors
+      render 'new'
     end
   end
 
