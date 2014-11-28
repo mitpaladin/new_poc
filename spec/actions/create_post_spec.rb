@@ -66,7 +66,7 @@ shared_examples 'an unsuccessful post' do |error_field, error_message|
       expect(payload.entity).to be nil
     end
   end # describe 'is unsuccessful, broadcasting a StoreResult payload...'
-end
+end # shared_examples 'an unsuccessful post'
 
 # ############################################################################ #
 # ############################################################################ #
@@ -93,8 +93,8 @@ module Actions
       let(:command) { klass.new repo.guest_user.entity, post_data }
       let(:post_data) { { title: 'A Title', body: 'A Body' } }
 
-      message = 'not logged in as a registered user!'
-      it_behaves_like 'an unsuccessful post', :user, message
+      message = 'must be a registered user'
+      it_behaves_like 'an unsuccessful post', :author_name, message
     end # context 'with the Guest User as the current user'
 
     context 'with a Registered User as the current user' do
@@ -121,6 +121,7 @@ module Actions
       context 'with additional but invalid post data' do
         let(:valid_data) do
           {
+            author_name: current_user.name,
             title: 'A Title',
             body: 'A Body',
             image_url: 'http://example.com/image1.png'
@@ -170,7 +171,7 @@ module Actions
       context 'with insufficient valid post data' do
         let(:post_data) { { body: 'A Body' } }
 
-        it_behaves_like 'an unsuccessful post', :title, 'must be present'
+        it_behaves_like 'an unsuccessful post', :title, "can't be blank"
       end # context 'with insufficient valid post data'
     end # context 'with a Registered User as the current user'
   end # describe Actions::CreatePost

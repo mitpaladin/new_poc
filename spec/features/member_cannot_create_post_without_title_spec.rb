@@ -5,7 +5,7 @@ require 'support/feature_spec/login_helper'
 
 describe 'Member cannot create post without' do
 
-  let(:error_message)   { 'Title must be present' }
+  let(:error_message)   { "Title can't be blank" }
   let(:post_body)       { 'The Body is six feet under, nine edge down.' }
   let(:success_report)  { 'Post added!' }
 

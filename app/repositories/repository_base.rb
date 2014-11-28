@@ -6,7 +6,8 @@ class RepositoryBase
   end
 
   def add(entity)
-    record = dao.new entity.attributes
+    attribs = entity.attributes.reject { |k, _v| k == :errors }
+    record = dao.new attribs
     record_saved = record.save
     return successful_result(record) if record_saved
     failed_result_with_errors record.errors

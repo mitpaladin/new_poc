@@ -166,7 +166,11 @@ describe PostsController do
   end # describe "GET 'new'"
 
   describe "POST 'create'" do
-    let(:params) { FactoryGirl.attributes_for :post }
+    let(:params) do
+      attrs = FactoryGirl.attributes_for :post
+      [:author_name, :pubdate, :slug].each { |attr| attrs.delete attr }
+      attrs
+    end
 
     context 'for a Registered User' do
       describe 'with valid parameters' do
@@ -206,7 +210,7 @@ describe PostsController do
         post :create, post_data: params
       end
 
-      it 'does not assign a value to the  :post item' do
+      it 'does not assign a value to the :post item' do
         expect(assigns).not_to have_key :post
       end
 
@@ -215,7 +219,7 @@ describe PostsController do
       end
 
       it 'renders the correct flash alert message' do
-        expect(flash[:alert]).to eq 'User not logged in as a registered user!'
+        expect(flash[:alert]).to eq 'Author_name must be a registered user'
       end
     end # context 'for the Guest User'
   end # describe "POST 'create'"

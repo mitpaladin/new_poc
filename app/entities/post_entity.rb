@@ -16,10 +16,12 @@ class PostEntity
   validates :author_name, presence: true
   validates :title, presence: true
   validate :must_have_body_or_title
+  validate :author_must_be_a_registered_user
 
   def initialize(attribs)
     init_attrib_keys.each { |attrib| class_eval { attr_reader attrib } }
     InstanceVariableSetter.new(self).set attribs
+    @pubdate ||= Time.now if attribs[:post_status] == 'public'
     extend EntityShared
   end
 
@@ -73,6 +75,15 @@ class PostEntity
   end
 
   private
+
+  def guest_user_name
+    'Guest User'
+  end
+
+  def author_must_be_a_registered_user
+    return unless author_name == guest_user_name
+    errors.add :author_name, 'must be a registered user'
+  end
 
   def body_builder_class
     if image_url.present?

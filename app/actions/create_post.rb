@@ -34,33 +34,39 @@ module Actions
       end
 
       def post_attributes
-        %w(title body image_url slug created_at updated_at pubdate)
-          .map(&:to_sym)
+        %w(author_name title body image_url slug created_at updated_at pubdate
+           post_status).map(&:to_sym)
       end
-    end
+    end # class PostDataFilter
 
-    # Builds error messages for post validation.
-    class PostValidation
-      def self.errors_for(post)
-        ret = []
-        unless post.body.present? || post.image_url.present?
-          ret << _body_and_image_url_both_missing_error
-        end
-        ret << _missing_title_error unless post.title.present?
-        ret
+    # Verifies that the current user is not the Guest User
+    class CurrentUserValidator
+      def initialize(current_user, overrides = {})
+        @current_user = current_user
+        @entity_class = overrides.fetch :entity_class, default_entity_class
+        @guest_user_finder = overrides.fetch :guest_user_finder, find_guest_user
       end
 
-      def self._body_and_image_url_both_missing_error
-        {
-          field: 'body',
-          message: 'must be specified if no image URL is specified'
-        }
+      def validate
+        entity = entity_class.new author_name: current_user.name
+        guest_user = guest_user_finder.call
+        return entity if current_user.name != guest_user.name
+        entity.errors.add :author_name, 'not logged in as a registered user!'
+        entity
       end
 
-      def self._missing_title_error
-        { field: 'title', message: 'must be present' }
+      private
+
+      attr_reader :current_user, :entity_class, :guest_user_finder
+
+      def default_entity_class
+        PostEntity
       end
-    end # class CreatePost::PostValidation
+
+      def find_guest_user
+        -> { UserRepository.new.guest_user.entity }
+      end
+    end # class CurrentUserValidator
 
     include Wisper::Publisher
     attr_reader :current_user, :draft_post, :post_data
@@ -68,24 +74,27 @@ module Actions
     def initialize(current_user, post_data)
       @current_user = current_user
       @post_data = filter_post_data post_data
-      @errors = []
     end
 
     def execute
-      validate_current_user
+      @entity = CurrentUserValidator.new(current_user).validate
       validate_post_data
-      entity = package_data_as_entity
-      result = add_to_repository entity
+      @entity = package_data_as_entity
+      result = add_to_repository @entity
       broadcast_success result
-    rescue
-      return broadcast_failure_for_errors
+    rescue RuntimeError => bad_entity_json_error
+      broadcast_failure_for_errors(bad_entity_json_error)
     end
 
     private
 
-    def broadcast_failure_for_errors
+    def broadcast_failure_for_errors(bad_entity_json_error)
+      bad_entity_json = bad_entity_json_error.message
+      bad_entity = PostEntity.new JSON.parse(bad_entity_json).symbolize_keys
+      bad_entity.valid? # is false; builds error messages again
+      errors = JSON.parse(bad_entity.errors.to_json).symbolize_keys
       result = StoreResult.new success: false, entity: nil,
-                               errors: @errors
+                               errors: NewErrorFactory.create(errors)
       broadcast_failure result
     end
 
@@ -100,7 +109,7 @@ module Actions
 
     def add_to_repository(entity)
       result = PostRepository.new.add entity
-      fail Marshal.dump(result.errors) unless result.success?
+      fail entity.to_json unless result.success?
       result
     end
 
@@ -112,29 +121,17 @@ module Actions
     end
 
     def package_data_as_entity
-      data = FancyOpenStruct.new post_data.to_h
-      data.author_name = current_user.name
-      data.pubdate = Time.now unless draft_post
-      PostEntity.new data.to_h
-    end
-
-    def post_attributes
-      %w(title body image_url slug created_at updated_at pubdaate).map(&:to_sym)
-    end
-
-    def validate_current_user
-      guest_user = UserRepository.new.guest_user.entity
-      return if current_user.name != guest_user.name
-      @errors += [
-        { field: 'user', message: 'not logged in as a registered user!' }
-      ]
-      fail Marshal.dump(@errors) unless @errors.empty?
+      attrs = @entity.attributes.merge FancyOpenStruct.new(post_data.to_h)
+      @entity = PostEntity.new attrs
+      return @entity if @entity.valid?
+      fail @entity.to_json
     end
 
     def validate_post_data
-      @errors += PostValidation.errors_for post_data
-      return if @errors.empty?
-      fail Marshal.dump(@errors)
+      attrs = @entity.attributes.merge post_data.to_h.symbolize_keys
+      @entity = PostEntity.new attrs
+      return if @entity.valid?
+      fail @entity.to_json
     end
   end # class Actions::CreatePost
 end # module Actions
