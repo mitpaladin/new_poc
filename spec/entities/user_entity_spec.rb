@@ -7,6 +7,7 @@ require_relative 'shared_examples/a_data_mapping_entity'
 describe UserEntity do
   let(:klass) { UserEntity }
   let(:user_name) { 'Joe Palooka' }
+  let(:user_email) { 'joe@example.com' }
   let(:user_profile) { 'Whatever.' }
   let(:valid_subset) do
     {
@@ -27,6 +28,73 @@ describe UserEntity do
   end
 
   it_behaves_like 'a data-mapping entity'
+
+  describe :valid?.to_s do
+
+    describe 'returns true when initialised with' do
+      after :each do
+        expect(klass.new @attribs).to be_valid
+      end
+
+      it 'a name and an email address' do
+        @attribs = { name: user_name, email: user_email }
+      end
+
+      it 'a name, email address, and profile string' do
+        @attribs = {
+          name: user_name,
+          email: user_email,
+          profile: user_profile
+        }
+      end
+
+      it 'a name, email address, profile string and password pair' do
+        @attribs = {
+          name: user_name,
+          email: user_email,
+          profile: user_profile,
+          password: 'password',
+          password_confirmation: 'password'
+        }
+      end
+
+      it 'a name, email address, and password pair (no profile)' do
+        @attribs = {
+          name: user_name,
+          email: user_email,
+          password: 'password',
+          password_confirmation: 'password'
+        }
+      end
+    end # describe 'returns true when initialised with'
+
+    describe 'returns false when initialised with' do
+      after :each do
+        expect(klass.new @attribs).not_to be_valid
+      end
+
+      it 'no name' do
+        @attribs = { email: user_email, profile: user_profile }
+      end
+
+      it 'no email address' do
+        @attribs = { name: user_name, profile: user_profile }
+      end
+
+      it 'an invalid email address' do
+        @attribs = { name: user_name, email: 'joe at example dot com' }
+      end
+
+      it 'a mismatched password pair' do
+        @attribs = {
+          name: user_name,
+          email: user_email,
+          password: 'password',
+          password_confirmation: 'p@ssw0rD'
+        }
+      end
+    end # describe 'returns false when initialised with'
+  end # describe :valid?.to_s
 
   describe :formatted_profile.to_s do
     let(:profile) { 'This *is* a test.' }
