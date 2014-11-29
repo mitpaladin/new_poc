@@ -149,7 +149,7 @@ describe PostsController do
         get :new
       end
 
-      it 'does not assign a value to the :post variable' do
+      fit 'does not assign a value to the :post variable' do
         expect(assigns).not_to have_key(:post)
       end
 
@@ -159,7 +159,7 @@ describe PostsController do
       end
 
       it 'renders the correct flash error message' do
-        expected = 'User not logged in as a registered user!'
+        expected = 'You must be a registered user to author posts!'
         expect(flash[:alert]).to eq expected
       end
     end # context 'for the Guest User'
@@ -219,7 +219,8 @@ describe PostsController do
       end
 
       it 'renders the correct flash alert message' do
-        expect(flash[:alert]).to eq 'Author_name must be a registered user'
+        expected = 'You must be a registered user to author posts!'
+        expect(flash[:alert]).to eq expected
       end
     end # context 'for the Guest User'
   end # describe "POST 'create'"

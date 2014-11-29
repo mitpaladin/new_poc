@@ -3,6 +3,8 @@ require 'spec_helper'
 
 require 'create_post'
 
+require 'main_logger'
+
 shared_examples 'a successful post' do
   it 'is successful' do
     expect(subscriber).to be_successful
@@ -49,23 +51,15 @@ shared_examples 'an unsuccessful post' do |error_field, error_message|
     expect(subscriber).to be_failure
   end
 
-  describe 'is unsuccessful, broadcasting a StoreResult payload with' do
+  describe 'is unsuccessful, broadcasting a PostEntity with' do
     let(:payload) { subscriber.payload_for(:failure).first }
 
-    it 'a :success value of false' do
-      expect(payload).not_to be_success
-    end
-
-    it 'a correct :errors item' do
+    it 'the expected error' do
       expect(payload).to have(1).error
-      expect(payload.errors.first)
-          .to be_an_error_hash_for error_field, error_message
+      expected = error_field.to_s.humanize + ' ' + error_message
+      expect(payload.errors.full_messages.first).to eq expected
     end
-
-    it 'an :entity value of nil' do
-      expect(payload.entity).to be nil
-    end
-  end # describe 'is unsuccessful, broadcasting a StoreResult payload...'
+  end # describe 'is unsuccessful, broadcasting a PostEntity with'
 end # shared_examples 'an unsuccessful post'
 
 # ############################################################################ #

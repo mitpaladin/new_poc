@@ -91,16 +91,12 @@ module Actions
     def broadcast_failure_for_errors(bad_entity_json_error)
       bad_entity_json = bad_entity_json_error.message
       bad_entity = PostEntity.new JSON.parse(bad_entity_json).symbolize_keys
-      bad_entity.valid? # is false; builds error messages again
-      errors = JSON.parse(bad_entity.errors.to_json).symbolize_keys
-      result = StoreResult.new success: false, entity: nil,
-                               errors: NewErrorFactory.create(errors)
-      broadcast_failure result
+      broadcast_failure bad_entity
     end
 
-    def broadcast_failure(payload)
-      failed_attributes = PostDataFilter.new(post_data).filter
-      broadcast :failure, payload, OpenStruct.new(failed_attributes)
+    def broadcast_failure(entity)
+      entity.valid? # we know it's not; we want to ensure error messages are set
+      broadcast :failure, entity
     end
 
     def broadcast_success(payload)

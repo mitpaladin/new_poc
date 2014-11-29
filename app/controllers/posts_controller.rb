@@ -48,12 +48,11 @@ class PostsController < ApplicationController
     redirect_to root_path, flash: { success: 'Post added!' }
   end
 
-  def on_create_failure(payload, failed_attributes)
-    prohibit_guest_user_from_proceeding(payload.errors)
-    attribs = failed_attributes.to_h.merge author_name: current_user.name
-    @post = invalid_post_with_errors PostEntity.new(attribs), payload.errors
+  def on_create_failure(bad_entity)
+    prohibit_guest_user_from_proceeding
+    @post = bad_entity
     render 'new'
-  rescue RuntimeError => e
+  rescue RuntimeError => e # not logged in as a registered user
     redirect_to root_path, flash: { alert: e.message }
   end
 
@@ -74,16 +73,9 @@ class PostsController < ApplicationController
     @post = payload.entity
   end
 
-  def invalid_post_with_errors(source_post, errors)
-    errors.each do |error|
-      source_post.errors.add error[:field].to_sym, error[:message]
-    end
-    source_post
-  end
-
   def on_new_failure(payload, invalid_entity)
     # @logger ||= MainLogger.log('log/posts_controller.log')
-    prohibit_guest_user_from_proceeding(payload.errors)
+    prohibit_guest_user_from_proceeding
     @post = invalid_post_with_errors invalid_entity, payload.errors
     render 'new'
   rescue RuntimeError => e
@@ -110,10 +102,9 @@ class PostsController < ApplicationController
 
   private
 
-  def prohibit_guest_user_from_proceeding(errors)
+  def prohibit_guest_user_from_proceeding
     return unless guest_is_current_user?
-    message = errors.first.values.join(' ').capitalize
-    fail message
+    fail 'You must be a registered user to author posts!'
   end
 
   def guest_is_current_user?
