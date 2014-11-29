@@ -11,20 +11,14 @@ shared_examples 'a successful post' do
     expect(subscriber).not_to be_failure
   end
 
-  describe 'is successful, broadcasting a StoreResult payload with' do
+  describe 'is successful, broadcasting a PostEntity payload' do
     let(:payload) { subscriber.payload_for(:success).first }
 
-    it 'a :success value of true' do
-      expect(payload).to be_success
+    it 'which is valid' do
+      expect(payload).to be_valid
     end
 
-    it 'an empty :errors item' do
-      expect(payload.errors).to be_empty
-    end
-
-    description = 'a PostEntity instance for an :entity value, with the' \
-        ' correct field values set'
-    it description do
+    it 'with the correct field values set' do
       acceptable_keys = [
         :body,
         :created_at,
@@ -37,12 +31,12 @@ shared_examples 'a successful post' do
         .select { |k, _v| acceptable_keys.include? k }
         .merge author_name: current_user.name
 
-      expect(payload.entity).to be_a PostEntity
+      expect(payload).to be_a PostEntity
       expected.each do |attrib, value|
-        expect(payload.entity.attributes[attrib]).to eq value
+        expect(payload.attributes[attrib]).to eq value
       end
     end
-  end # describe 'is successful, broadcasting a StoreResult payload with'
+  end # describe 'is successful, broadcasting a PostEntity payloadh'
 end # shared_examples 'a successful post'
 
 shared_examples 'an unsuccessful post' do |error_field, error_message|
@@ -127,7 +121,7 @@ module Actions
         it_behaves_like 'a successful post'
 
         it 'does not include any invalid initialiser settings' do
-          payload = subscriber.payload_for(:success).first.entity
+          payload = subscriber.payload_for(:success).first
           invalid_data.each_key do |k|
             expect(payload.attributes).not_to include k
           end
@@ -135,7 +129,7 @@ module Actions
       end # context 'with additional but invalid post data'
 
       context 'with post status set to' do
-        let(:actual) { subscriber.payload_for(:success).first.entity }
+        let(:actual) { subscriber.payload_for(:success).first }
 
         context 'draft' do
           let(:post_data) do

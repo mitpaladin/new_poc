@@ -43,8 +43,8 @@ class PostsController < ApplicationController
   # to say that, even though these are public methods, they should never be
   # called directly.)
 
-  def on_create_success(payload)
-    @post = payload.entity
+  def on_create_success(entity)
+    @post = entity
     redirect_to root_path, flash: { success: 'Post added!' }
   end
 

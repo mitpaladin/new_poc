@@ -79,9 +79,8 @@ module Actions
     def execute
       @entity = CurrentUserValidator.new(current_user).validate
       validate_post_data
-      @entity = package_data_as_entity
-      result = add_to_repository @entity
-      broadcast_success result
+      @entity = add_to_repository(package_data_as_entity)
+      broadcast_success @entity
     rescue RuntimeError => bad_entity_json_error
       broadcast_failure_for_errors(bad_entity_json_error)
     end
@@ -106,7 +105,11 @@ module Actions
     def add_to_repository(entity)
       result = PostRepository.new.add entity
       fail entity.to_json unless result.success?
-      result
+      # DON'T just return the incoming entity; it (shouldn't) have its slug set,
+      # whereas the one that's been persisted and passed back through the
+      # `StoreResult` does. (That's how `PostEntity` determines whether it's
+      # been persisted or not; whether the `slug` attribute is set.)
+      result.entity
     end
 
     def filter_post_data(post_data)
