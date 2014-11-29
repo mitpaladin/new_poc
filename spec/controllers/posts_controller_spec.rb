@@ -119,7 +119,7 @@ describe PostsController do
         end
       end
     end # context 'for a registered user owning no draft posts'
-  end # describe "GET 'index'"
+  end # describe "GET 'index'" (StoreResult removed)
 
   describe "GET 'new'" do
     context 'for a Registered User' do

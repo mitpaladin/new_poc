@@ -10,8 +10,8 @@ module Actions
 
     def execute
       posts = filter_posts PostRepository.new.all
-      result = StoreResult.new success: true, errors: [], entity: posts
-      broadcast_success result
+      # result = StoreResult.new success: true, errors: [], entity: posts
+      broadcast_success posts
     end
 
     private

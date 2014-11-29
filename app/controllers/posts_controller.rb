@@ -64,9 +64,8 @@ class PostsController < ApplicationController
     redirect_to posts_path, flash: { alert: payload.errors.first[:message] }
   end
 
-  def on_index_success(payload)
-    @posts = payload.entity
-    @posts
+  def on_index_success(payload) # rubocop:disable Style/TrivialAccessors
+    @posts = payload
   end
 
   def on_new_success(payload) # rubocop:disable Style/TrivialAccessors
