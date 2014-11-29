@@ -28,24 +28,15 @@ module Actions
         expect(subscriber).to be_failure
       end
 
-      describe 'is unsuccessful, broadcasting a StoreResult payload with' do
+      describe 'is unsuccessful, broadcasting a PostEntity payload with' do
         let(:payload) { subscriber.payload_for(:failure).first }
 
-        it 'a :success value of false' do
-          expect(payload).not_to be_success
-        end
-
-        it 'a correct :errors item' do
-          message = 'Not logged in as a registered user!'
+        it 'one error with the correct error message' do
           expect(payload).to have(1).error
-          expect(payload.errors.first)
-              .to be_an_error_hash_for :user, message
+          expected = 'Author name must be that of a logged-in, registered user'
+          expect(payload.errors.full_messages.first).to eq expected
         end
-
-        it 'an :entity value of nil' do
-          expect(payload.entity).to be nil
-        end
-      end # describe 'is unsuccessful, broadcasting a StoreResult payload...'
+      end # describe 'is unsuccessful, broadcasting a PostEntity payload with'
     end # context 'with the Guest User as the current user'
 
     context 'with a Registered User as the current user' do
@@ -56,32 +47,29 @@ module Actions
         expect(subscriber).not_to be_failure
       end
 
-      describe 'is successful, broadcasting a StoreResult payload with' do
+      describe 'is successful, broadcasting a PostEntity payload' do
         let(:payload) { subscriber.payload_for(:success).first }
 
-        it 'a :success value of true' do
-          expect(payload).to be_success
+        it 'no existing errors' do
+          expect(payload).to be_a PostEntity
+          expect(payload).to have(0).errors
         end
 
-        it 'an empty :errors item' do
-          expect(payload.errors).to be_empty
+        it 'that is not valid without a title or' do
+          expect(payload).not_to be_valid
+          expect(payload).to have(2).errors
+          expected = [
+            "Title can't be blank",
+            "Body must be specified if image URL is omitted"
+          ]
+          expect(payload.errors.full_messages).to eq expected
         end
 
-        # This little dance (filtering attributes) is because, since Issue #129,
-        # an entity has picked up error-information attributes -- which this
-        # spec doesn't, and shouldn't, care about. When it says "one attribute",
-        # it means "one attribute that corresponds to a field in the DAO".
-        description = 'a PostEntity instance for an :entity value, with the' \
-            ' author name as the only assigned attribute'
-        it description do
-          expect(payload.entity).to be_a PostEntity
-          assigned_attributes = payload.entity.attributes.select do |k, _v|
-            [:author_name, :title, :body, :image_url].include? k
-          end
-          expect(assigned_attributes).to have(1).entry
-          expect(payload.entity.author_name).to eq current_user.name
+        it 'with the author name as the only assigned attribute' do
+          expect(payload).to have(1).attribute
+          expect(payload.author_name).to eq current_user.name
         end
-      end # describe 'is successful, broadcasting a StoreResult payload with'
+      end # describe 'is successful, broadcasting a PostEntity payload'
     end # context 'with a Registered User as the current user'
   end # describe Actions::NewPost
 end # module Actions

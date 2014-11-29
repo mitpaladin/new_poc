@@ -1,15 +1,11 @@
 
-require 'main_logger'
-
 module Actions
   # Wisper-based command object called by Posts controller #new action.
   class NewPost
     include Wisper::Publisher
 
-    def initialize(current_user, post_attributes = {}, errors = [])
+    def initialize(current_user)
       @current_user = current_user
-      @post_attributes = post_attributes
-      @errors = errors
     end
 
     def execute
@@ -20,12 +16,10 @@ module Actions
 
     private
 
-    attr_reader :current_user, :errors, :post_attributes
+    attr_reader :current_user
 
-    def broadcast_failure(payload, invalid_entity)
-      # @logger ||= MainLogger.log('log/new_post.log')
-      # @logger.debug [payload, invalid_entity, __FILE__, __LINE__]
-      broadcast :failure, payload, invalid_entity
+    def broadcast_failure(invalid_entity)
+      broadcast :failure, invalid_entity
     end
 
     def broadcast_success(payload)
@@ -33,27 +27,15 @@ module Actions
     end
 
     def broadcast_auth_failure
-      message = 'Not logged in as a registered user!'
-      result = StoreResult.new success: false, entity: nil,
-                               errors: build_errors_for(:user, message)
-      broadcast_failure result, PostEntity.new({})
+      message = 'must be that of a logged-in, registered user'
+      entity = PostEntity.new({})
+      entity.errors.add :author_name, message
+      broadcast_failure entity
     end
 
     def build_and_broadcast_entity
-      attribs = post_attributes.merge author_name: current_user.name
-      entity = PostEntity.new attribs
-      if errors.empty?
-        result = StoreResult.new success: true, entity: entity,
-                                 errors: ErrorFactory.create(errors)
-        broadcast_success result
-      else
-        result = StoreResult.new success: false, entity: nil, errors: errors
-        broadcast_failure result, entity
-      end
-    end
-
-    def build_errors_for(key, message)
-      [{ field: key.to_s, message: message }]
+      entity = PostEntity.new author_name: current_user.name
+      broadcast_success entity
     end
 
     def user_repo

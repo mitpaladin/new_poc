@@ -69,16 +69,15 @@ class PostsController < ApplicationController
     @posts
   end
 
-  def on_new_success(payload)
-    @post = payload.entity
+  def on_new_success(payload) # rubocop:disable Style/TrivialAccessors
+    @post = payload
   end
 
-  def on_new_failure(payload, invalid_entity)
-    # @logger ||= MainLogger.log('log/posts_controller.log')
+  def on_new_failure(invalid_entity)
     prohibit_guest_user_from_proceeding
-    @post = invalid_post_with_errors invalid_entity, payload.errors
+    @post = invalid_entity
     render 'new'
-  rescue RuntimeError => e
+  rescue RuntimeError => e  # Guest user is prohibited...
     redirect_to root_path, flash: { alert: e.message }
   end
 

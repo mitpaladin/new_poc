@@ -149,7 +149,7 @@ describe PostsController do
         get :new
       end
 
-      fit 'does not assign a value to the :post variable' do
+      it 'does not assign a value to the :post variable' do
         expect(assigns).not_to have_key(:post)
       end
 
@@ -163,7 +163,7 @@ describe PostsController do
         expect(flash[:alert]).to eq expected
       end
     end # context 'for the Guest User'
-  end # describe "GET 'new'"
+  end # describe "GET 'new'" (StoreResult removed)
 
   describe "POST 'create'" do
     let(:params) do
@@ -223,7 +223,7 @@ describe PostsController do
         expect(flash[:alert]).to eq expected
       end
     end # context 'for the Guest User'
-  end # describe "POST 'create'"
+  end # describe "POST 'create'" (StoreResult removed)
 
   describe "GET 'edit'" do
     let(:author) { FactoryGirl.create :user, :saved_user }
