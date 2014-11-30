@@ -347,7 +347,7 @@ describe PostsController do
         end
 
         it 'renders the correct flash error message' do
-          expected = "Cannot find post with slug #{article.slug}!"
+          expected = "Cannot find post identified by slug: '#{article.slug}'!"
           expect(flash[:alert]).to eq expected
         end
       end
@@ -368,7 +368,8 @@ describe PostsController do
       end
 
       it 'renders the correct flash error message' do
-        expect(flash[:alert]).to eq "Cannot find post with slug #{bad_slug}!"
+        expected = "Cannot find post identified by slug: '#{bad_slug}'!"
+        expect(flash[:alert]).to eq expected
       end
     end # context 'for an invalid post'
   end # describe "GET 'show'"

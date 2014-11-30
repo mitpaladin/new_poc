@@ -7,7 +7,7 @@ require 'support/feature_spec/new_post_helper'
 shared_examples 'cannot visit the post' do
   it 'by directly visiting the post path' do
     visit post_path(@post_slug)
-    expected = 'Cannot find post with slug ' + @post_slug + '!'
+    expected = "Cannot find post identified by slug: '#{@post_slug}'!"
     selector = 'div.alert.alert-danger.alert-dismissable'
     expect(page).to have_selector selector, text: expected
   end
