@@ -15,7 +15,7 @@ module Actions
       verify_authorisation
       broadcast_success @entity
     rescue RuntimeError => the_error
-      broadcast :failure, the_error.message
+      broadcast_failure the_error.message
     end
 
     private
@@ -23,8 +23,8 @@ module Actions
     attr_accessor :entity
     attr_reader :current_user, :target_slug
 
-    def broadcast_failure
-      broadcast :failure, failure_result
+    def broadcast_failure(message)
+      broadcast :failure, message
     end
 
     def broadcast_success(payload)

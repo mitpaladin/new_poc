@@ -56,12 +56,12 @@ class PostsController < ApplicationController
     redirect_to root_path, flash: { alert: e.message }
   end
 
-  def on_edit_success(payload)
-    @post = payload.entity
+  def on_edit_success(payload) # rubocop:disable Style/TrivialAccessors
+    @post = payload
   end
 
   def on_edit_failure(payload)
-    redirect_to posts_path, flash: { alert: payload.errors.first[:message] }
+    redirect_to posts_path, flash: { alert: payload }
   end
 
   def on_index_success(payload) # rubocop:disable Style/TrivialAccessors

@@ -3,22 +3,26 @@ module Actions
   # Wisper-based command object called by Posts controller #edit action.
   class EditPost
     include Wisper::Publisher
-    attr_reader :current_user, :slug
 
     def initialize(slug, current_user)
       @current_user = current_user
       @slug = slug
+      @entity = dummy_entity
     end
 
     def execute
-      return broadcast_guest_not_authorised if current_user_is_guest?
-      result = post_repo.find_by_slug slug
-      return broadcast_slug_failure(result) unless result.success?
-      return broadcast_user_not_author unless current_user_is_author?(result)
-      broadcast_success result
+      prohibit_guest_access
+      validate_slug
+      verify_user_is_author
+      broadcast_success entity
+    rescue RuntimeError => the_error
+      broadcast_failure the_error.message
     end
 
     private
+
+    attr_reader :current_user, :slug
+    attr_accessor :entity
 
     def broadcast_failure(payload)
       broadcast :failure, payload
@@ -28,45 +32,32 @@ module Actions
       broadcast :success, payload
     end
 
-    def broadcast_guest_not_authorised
-      errors = errors_object
-      errors.add :user, 'Not logged in as a registered user!'
-      result = StoreResult.new entity: nil, success: false,
-                               errors: ErrorFactory.create(errors)
-      broadcast_failure result
-    end
-
-    def broadcast_slug_failure(result)
-      errors = errors_object
-      message = "No post with a slug of '#{result.entity.slug}' found!"
-      errors.add :slug, message
-      result = StoreResult.new entity: nil, success: false,
-                               errors: ErrorFactory.create(errors)
-      broadcast_failure result
-    end
-
-    def broadcast_user_not_author
-      errors = errors_object
-      message = "User #{current_user.name} is not the author of this post!"
-      errors.add :post, message
-      result = StoreResult.new entity: nil, success: false,
-                               errors: ErrorFactory.create(errors)
-      broadcast_failure result
-    end
-
-    def current_user_is_author?(result)
-      result.entity.author_name == current_user.name
-    end
-
-    def current_user_is_guest?
+    def prohibit_guest_access
       guest_user = user_repo.guest_user.entity
-      current_user.name == guest_user.name
+      return unless guest_user.name == current_user.name
+      fail guest_user_not_authorised_message
     end
 
-    # dependencies; candidates for future injection
+    def validate_slug
+      result = post_repo.find_by_slug slug
+      @entity = result.entity
+      return if result.success?
+      fail error_message_for_slug
+    end
 
-    def errors_object
-      ActiveModel::Errors.new current_user
+    def verify_user_is_author
+      return if current_user.name == entity.author_name
+      fail error_message_for_non_author
+    end
+
+    def dummy_entity
+      Naught.build do |config|
+        config.impersonate PostEntity
+        config.predicates_return false
+        def author_name
+          'Guest User'
+        end
+      end.new
     end
 
     def post_repo
@@ -77,8 +68,16 @@ module Actions
       @user_repo ||= UserRepository.new
     end
 
-    def valid_result?(result)
-      result.success? && current_user.name == result.entity.author_name
+    def error_message_for_non_author
+      "User #{current_user.name} is not the author of this post!"
+    end
+
+    def error_message_for_slug
+      "Cannot find post identified by slug: '#{slug}'!"
+    end
+
+    def guest_user_not_authorised_message
+      'Not logged in as a registered user!'
     end
   end # class Actions::EditPost
 end # module Actions

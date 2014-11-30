@@ -274,7 +274,7 @@ describe PostsController do
         expect(assigned[:pubdate]).to be_within(0.5.seconds).of post[:pubdate]
       end
     end # context 'when the logged-in user is the post author'
-  end # describe "GET 'edit'"
+  end # describe "GET 'edit'" (StoreResult removed)
 
   describe "GET 'show'" do
     let(:author) { FactoryGirl.create :user, :saved_user }
@@ -372,7 +372,7 @@ describe PostsController do
         expect(flash[:alert]).to eq expected
       end
     end # context 'for an invalid post'
-  end # describe "GET 'show'"
+  end # describe "GET 'show'" (StoreResult removed)
 
   describe "PATCH 'update'" do
     let(:author) { FactoryGirl.create :user, :saved_user }
