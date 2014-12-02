@@ -60,8 +60,8 @@ class UsersController < ApplicationController
     redirect_to root_url, flash: { alert: payload.errors.first[:message] }
   end
 
-  def on_index_success(payload)
-    @users = payload.entity
+  def on_index_success(payload) # rubocop:disable Style/TrivialAccessors
+    @users = payload
   end
 
   def on_new_success(payload)
