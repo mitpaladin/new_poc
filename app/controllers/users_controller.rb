@@ -64,13 +64,12 @@ class UsersController < ApplicationController
     @users = payload
   end
 
-  def on_new_success(payload)
-    @user = payload.entity
+  def on_new_success(payload) # rubocop:disable Style/TrivialAccessors
+    @user = payload
   end
 
   def on_new_failure(payload)
-    @user = nil
-    redirect_to root_path, flash: { alert: payload.errors.first[:message] }
+    redirect_to root_path, flash: { alert: payload }
   end
 
   def on_show_success(payload)
