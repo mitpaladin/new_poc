@@ -48,9 +48,12 @@ class PostsController < ApplicationController
     redirect_to root_path, flash: { success: 'Post added!' }
   end
 
-  def on_create_failure(bad_entity)
-    prohibit_guest_user_from_proceeding
-    @post = bad_entity
+  def on_create_failure(payload)
+    message_or_entity = JSON.load payload.message
+    fail message_or_entity if message_or_entity.is_a? String
+    invalid_entity = PostEntity.new message_or_entity.symbolize_keys
+    invalid_entity.valid?   # sets up error messages
+    @post = invalid_entity
     render 'new'
   rescue RuntimeError => e # not logged in as a registered user
     redirect_to root_path, flash: { alert: e.message }
@@ -72,12 +75,9 @@ class PostsController < ApplicationController
     @post = payload
   end
 
-  def on_new_failure(invalid_entity)
-    prohibit_guest_user_from_proceeding
-    @post = invalid_entity
-    render 'new'
-  rescue RuntimeError => e  # Guest user is prohibited...
-    redirect_to root_path, flash: { alert: e.message }
+  def on_new_failure(payload)
+    # Only supported error is for the guest user
+    redirect_to root_path, flash: { alert: payload }
   end
 
   def on_show_success(payload) # rubocop:disable Style/TrivialAccessors
@@ -89,24 +89,12 @@ class PostsController < ApplicationController
   end
 
   def on_update_success(payload)
-    @post = payload.entity
+    @post = payload
     message = "Post '#{@post.title}' successfully updated."
     redirect_to post_path(@post.slug), flash: { success: message }
   end
 
   def on_update_failure(payload)
-    redirect_to posts_path, flash: { alert: payload.errors.first[:message] }
-  end
-
-  private
-
-  def prohibit_guest_user_from_proceeding
-    return unless guest_is_current_user?
-    fail 'You must be a registered user to author posts!'
-  end
-
-  def guest_is_current_user?
-    guest_user = UserRepository.new.guest_user.entity
-    current_user.name == guest_user.name
+    redirect_to posts_path, flash: { alert: payload }
   end
 end # class PostsController

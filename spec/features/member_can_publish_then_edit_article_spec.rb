@@ -27,12 +27,17 @@ describe 'Member can publish articles and' do
 
   it 'then edit the new article' do
     new_caption = 'Updated Body Text'
-    click_link "Edit '#{@post_title}'"
+    button_caption = "Edit '#{@post_title}'"
+    click_link button_caption
     fill_in 'post_data_body', with: new_caption
     click_button 'Update Post'
     expected = "Post '#{@post_title}' successfully updated."
     selector = 'div.alert.alert-success.alert-dismissable'
     expect(page).to have_selector selector, text: expected
-    expect(page).to have_selector 'figcaption > p', text: new_caption
+    selector = format('a.btn[href="%s"]', edit_post_path(@post_slug))
+    expect(page).to have_selector selector, text: button_caption
+    click_link button_caption
+    expect(page).to have_selector '.main > h1', 'Edit Post'
+    expect(page).to have_selector '.main > form.edit_post'
   end
 end # describe 'Member can publish articles and'

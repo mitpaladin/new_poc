@@ -9,9 +9,10 @@ module Actions
     end
 
     def execute
-      guest_user = user_repo.guest_user.entity
-      return broadcast_auth_failure if current_user.name == guest_user.name
-      build_and_broadcast_entity
+      prohibit_guest_access
+      broadcast_success(build_entity)
+    rescue RuntimeError => the_error
+      broadcast_failure the_error.message
     end
 
     private
@@ -26,16 +27,18 @@ module Actions
       broadcast :success, payload
     end
 
-    def broadcast_auth_failure
-      message = 'must be that of a logged-in, registered user'
-      entity = PostEntity.new({})
-      entity.errors.add :author_name, message
-      broadcast_failure entity
+    def build_entity
+      PostEntity.new author_name: current_user.name
     end
 
-    def build_and_broadcast_entity
-      entity = PostEntity.new author_name: current_user.name
-      broadcast_success entity
+    def prohibit_guest_access
+      guest_user = user_repo.guest_user.entity
+      return unless guest_user.name == current_user.name
+      fail guest_user_not_authorised_message
+    end
+
+    def guest_user_not_authorised_message
+      'Not logged in as a registered user!'
     end
 
     def user_repo

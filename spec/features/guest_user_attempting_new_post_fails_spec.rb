@@ -2,7 +2,7 @@
 require 'spec_helper'
 
 describe 'Guest user attempting to create a new post fails and' do
-  let(:flash_alert) { 'You must be a registered user to author posts!' }
+  let(:flash_alert) { 'Not logged in as a registered user!' }
 
   before :each do
     visit new_post_path

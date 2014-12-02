@@ -28,15 +28,13 @@ module Actions
         expect(subscriber).to be_failure
       end
 
-      describe 'is unsuccessful, broadcasting a PostEntity payload with' do
+      describe 'is unsuccessful, broadcasting a payload with' do
         let(:payload) { subscriber.payload_for(:failure).first }
 
-        it 'one error with the correct error message' do
-          expect(payload).to have(1).error
-          expected = 'Author name must be that of a logged-in, registered user'
-          expect(payload.errors.full_messages.first).to eq expected
+        it 'the correct error message' do
+          expect(payload).to eq 'Not logged in as a registered user!'
         end
-      end # describe 'is unsuccessful, broadcasting a PostEntity payload with'
+      end # describe 'is unsuccessful, broadcasting a payload with'
     end # context 'with the Guest User as the current user'
 
     context 'with a Registered User as the current user' do

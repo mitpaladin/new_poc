@@ -13,7 +13,7 @@ shared_examples 'a successfully-retrieved post' do
     end
 
     it 'is a PostEntity with correct attributes' do
-      attrib_keys = target_post.attributes.keys.reject { |k| k == :pubdate }
+      attrib_keys = target_post.attributes.keys - [:pubdate]
       attrib_keys.each { |key| expect(payload[key]).to eq target_post[key] }
       if target_post.attributes.key? :pubdate
         expect(payload[:pubdate]).to be_within(0.5.seconds)
@@ -21,4 +21,4 @@ shared_examples 'a successfully-retrieved post' do
       end
     end
   end # describe 'is successful, broadcasting a payload which'
-end
+end # shared_examples 'a successfully-retrieved post'
