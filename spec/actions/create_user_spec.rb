@@ -30,16 +30,12 @@ module Actions
       describe 'broadcasts :success with a payload of a StoreResult, which' do
         let(:payload) { subscriber.payload_for(:success).first }
 
-        it 'is successful' do
-          expect(payload).to be_success
-        end
-
-        it 'has no errors' do
-          expect(payload.errors.to_a).to have(0).errors
+        it 'is a UserEntity' do
+          expect(payload).to be_a UserEntity
         end
 
         it 'has the new user entity attributes in its entity' do
-          expect(payload.entity).to be_saved_user_entity_for user_data
+          expect(payload).to be_saved_user_entity_for user_data
         end
       end # describe 'broadcasts :success with a payload of a StoreResult, ...'
     end # context 'is successful with valid parameters'
@@ -59,34 +55,47 @@ module Actions
           expect(subscriber).to be_failure
         end
 
-        describe 'broadcasts :failure with a payload of a StoreResult, which' do
+        describe 'broadcasts :failure with a payload which' do
           let(:payload) { subscriber.payload_for(:failure).first }
 
-          it 'is not successful' do
-            expect(payload).not_to be_success
+          it 'is a String' do
+            expect(payload).to be_a String
           end
 
-          it 'has one error' do
-            expect(payload.errors.to_a).to have(1).errors
-            message = ['Already logged in as ', '!'].join other_user.name
-            expect(payload.errors.first).to be_an_error_hash_for :user, message
+          it 'is the JSON representation of the correct error message' do
+            expected = "Already logged in as #{other_user.name}!".to_json
+            expect(payload).to eq expected
           end
-
-          it 'has an unpersisted UserEntity for an :entity value' do
-            expect(payload.entity).to be_a UserEntity
-            expect(payload.entity).not_to be_persisted
-          end
-        end # describe 'broadcasts :success with a payload of a StoreResult, ...'
+        end # describe 'broadcasts :success with a payload which'
       end # context 'there is already a user logged in'
 
       context 'the user data is invalid' do
-        let(:bogus_data) { user_data.tap { |data| data.password = 'x' } }
+        let(:bogus_data) do
+          user_data.tap do |data|
+            data.password = 'x'
+            data.delete :slug
+          end
+        end
+        # let(:bogus_data) { user_data.tap { |data| data.password = 'x' } }
         let(:command) { klass.new guest_user, bogus_data }
 
         it 'broadcasts :failure' do
           expect(subscriber).not_to be_successful
           expect(subscriber).to be_failure
         end
+
+        describe 'broadcasts :failure with a payload which' do
+          let(:payload) { subscriber.payload_for(:failure).first }
+
+          it 'is a JSON-encoded Hash' do
+            expect(JSON.parse(payload)).to be_a Hash
+          end
+
+          it 'contains the specified user data' do
+            data = JSON.parse(payload).symbolize_keys
+            expect(data).to eq bogus_data.to_h
+          end
+        end # describe 'broadcasts :failure with a payload which'
       end # context 'the user data is invalid'
     end # context 'is unsuccessful with parameters that are invalid because'
   end # describe Actions::CreateUser

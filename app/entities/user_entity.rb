@@ -69,26 +69,26 @@ class UserEntity
   end
 
   # Because there's no guarantee that the presence validation will be first.
-  def name_is_missing_or_blank
-    errors.add :name, 'may not be missing or blank'
-  end
+  # def name_is_missing_or_blank
+  #   errors.add :name, 'may not be missing or blank'
+  # end
 
   def name_has_no_adjacent_whitespace
-    return name_is_missing_or_blank unless name.to_s.strip.present?
-    return if name.strip == name.strip.gsub(/\s{2,}/, '?')
+    # return name_is_missing_or_blank unless name.to_s.strip.present?
+    return if name.to_s.strip == name.to_s.strip.gsub(/\s{2,}/, '?')
     errors.add :name, 'may not have adjacent whitespace'
   end
 
   def name_has_no_invalid_whitespace
-    return name_is_missing_or_blank unless name.to_s.strip.present?
+    # return name_is_missing_or_blank unless name.to_s.strip.present?
     expected = name.strip.gsub(/ {2,}/, ' ')
     return if expected == expected.gsub(/\s/, ' ')
     errors.add :name, 'may not have whitespace other than spaces'
   end
 
   def name_has_no_spaces_at_ends # rubocop:disable Metrics/AbcSize
-    return name_is_missing_or_blank unless name.to_s.strip.present?
-    return if name == name.strip
+    # return name_is_missing_or_blank unless name.to_s.strip.present?
+    return if name.to_s == name.to_s.strip
     message = 'may not have leading whitespace'
     errors.add :name, message if name != name.lstrip
     message = 'may not have trailing whitespace'

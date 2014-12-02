@@ -125,43 +125,57 @@ describe UsersController do
       end
     end # describe 'with valid parameters'
 
-    describe 'with invalid parameters, such as' do
+    fcontext 'with invalid parameters' do
 
-      after :each do
-        post :create, user_data: params
-        user = assigns[:user]
-        errors = assigns[:errors]
-        expect(user).not_to be_persisted
-        # expect(user).to_not be_valid
-        expect(errors.count).to eq @messages.count
-        @messages.each do |k, v|
-          expected = { field: k.to_s, message: v }
-          expect(errors).to include expected
+      context 'that trigger redirection, such as' do
+        it 'a duplicate name' do
+          post :create, user_data: params
+          params[:profile] = "Updated #{params[:profile]}"
+          post :create, user_data: params
+          expect(assigns[:user]).to be nil
+          expect(response).to redirect_to root_path
+          user_slug = params[:name].parameterize
+          message = "A record identified by slug '#{user_slug}' already exists!"
+          expect(flash[:alert]).to eq message
         end
-      end
+      end # context 'that trigger redirection, such as'
 
-      it 'an empty name' do
-        params[:name] = ''
-        @messages = { name: 'may not be missing or blank' }
-      end
+      context 'that return errors to the controller/form, including' do
 
-      it 'a duplicate name' do
-        post :create, user_data: params
-        expect(assigns[:user]).to be_persisted
-        @messages = { name: 'is not available' }
-      end
+        after :each do
+          post :create, user_data: @params
+          expect(response).not_to be_redirection
+          user = assigns[:user]
+          expect(user).to be_a UserEntity
+          expect(user).not_to be_valid
+          expect(user).to have(@messages.count).errors
+          expect(user.errors.full_messages).to eq @messages
+        end
 
-      it 'an invalid email address' do
-        params[:email] = 'jruser at example dot com'
-        @messages = { email: 'does not appear to be a valid e-mail address' }
-      end
+        it 'an empty name' do
+          @params = params.merge name: ''
+          params[:name] = ''
+          @messages = [
+            "Name can't be blank",
+            'Name is too short (minimum is 6 characters)'
+          ]
+        end
 
-      it 'mismatched passwords' do
-        params[:password] = 'password'
-        params[:password_confirmation] = 'Password'
-        @messages = { password: 'and password confirmation do not match' }
-      end
-    end # describe 'with invalid parameters, such as'
+        it 'an invalid email address' do
+          @params = params.merge email: 'jruser at example dot com'
+          @messages = ['Email does not appear to be a valid e-mail address']
+        end
+
+        it 'mismatched passwords' do
+          bad_params = {
+            password: 'password',
+            password_confirmation: 'Password'
+          }
+          @params = params.merge bad_params
+          @messages = ['Password must match the password confirmation']
+        end
+      end # context 'that return errors to the controller/form, including'
+    end # describe 'with invalid parameters'
   end # describe "POST 'create'"
 
   describe "GET 'edit'" do

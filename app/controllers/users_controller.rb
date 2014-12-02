@@ -41,13 +41,18 @@ class UsersController < ApplicationController
   # called directly.)
 
   def on_create_success(payload)
-    @user = payload.entity
+    @user = payload
     redirect_to root_url, flash: { success: 'Thank you for signing up!' }
   end
 
   def on_create_failure(payload)
-    @user = payload.entity
-    @errors = payload.errors
+    @user = nil
+    attribs_or_message = JSON.load(payload)
+    if attribs_or_message.is_a? String
+      return redirect_to root_path, flash: { alert: attribs_or_message }
+    end
+    @user = UserEntity.new attribs_or_message.symbolize_keys
+    @user.valid?
     render 'new'
   end
 
