@@ -84,15 +84,14 @@ class UsersController < ApplicationController
     redirect_to users_path, flash: { alert: payload }
   end
 
-  # FIXME! FIXME! FIXME! Where's the DAO abstraction? FIXME! FIXME! FIXME!
   def on_update_success(payload)
-    dao = UserRepository.new.instance_variable_get(:@dao)
-    @user = dao.find_by_slug payload.entity.slug
+    @user = payload
+    slug = @user.slug
     message = 'You successfully updated your profile'
-    redirect_to user_path(@user.slug), flash: { success: message }
+    redirect_to user_path(slug), flash: { success: message }
   end
 
   def on_update_failure(payload)
-    redirect_to root_path, flash: { alert: payload.errors.first[:message] }
+    redirect_to root_path, flash: { alert: payload }
   end
 end # class UsersController

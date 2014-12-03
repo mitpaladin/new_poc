@@ -297,7 +297,7 @@ describe UsersController do
         patch :update, params
       end
 
-      it 'assigns the updated user record' do
+      fit 'assigns the updated user record' do
         assigned = assigns[:user]
         expect(assigned[:profile]).to eq updated_profile
       end

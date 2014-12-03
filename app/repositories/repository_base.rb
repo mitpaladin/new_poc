@@ -34,15 +34,11 @@ class RepositoryBase
     failed_result slug
   end
 
-  def update(entity)
-    result = find_by_slug entity.slug
-    return result unless result.success?
-
-    record = dao.where(slug: entity.slug).first
-    unless record.update_attributes(entity.attributes)
-      return failed_result_with_errors record.errors
-    end
-    successful_result record
+  def update(identifier, updated_attrs)
+    record = dao.where(slug: identifier).first
+    success = record.update_attributes(updated_attrs.to_h)
+    return successful_result(record) if success
+    failed_result_with_errors record.errors
   end
 
   private
@@ -63,6 +59,12 @@ class RepositoryBase
     errors = ActiveModel::Errors.new dao
     errors.add :base, "A record with 'slug'=#{slug} was not found."
     failed_result_with_errors errors
+  end
+
+  def filter(entity_attributes)
+    entity_attributes.reject do |attr|
+      [:errors, :validation_context].include? attr
+    end
   end
 
   def successful_result(record = nil)
