@@ -76,12 +76,12 @@ class UsersController < ApplicationController
     redirect_to root_path, flash: { alert: payload }
   end
 
-  def on_show_success(payload)
-    @user = payload.entity
+  def on_show_success(payload) # rubocop:disable Style/TrivialAccessors
+    @user = payload
   end
 
   def on_show_failure(payload)
-    redirect_to users_path, flash: { alert: payload.errors.first[:message] }
+    redirect_to users_path, flash: { alert: payload }
   end
 
   # FIXME! FIXME! FIXME! Where's the DAO abstraction? FIXME! FIXME! FIXME!

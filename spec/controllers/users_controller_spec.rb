@@ -274,7 +274,7 @@ describe UsersController do
       end
 
       it 'is shown the correct flash error message' do
-        message = "Cannot find user with slug #{target_user.slug}!"
+        message = "Cannot find user identified by slug #{target_user.slug}!"
         expect(flash[:alert]).to eq message
       end
     end # describe 'when attempting to view a profile which does not exist,'
