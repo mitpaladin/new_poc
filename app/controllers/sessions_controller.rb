@@ -45,12 +45,11 @@ class SessionsController < ApplicationController
   # No #on_destroy_failure. Can't happen and, even if it does, we don't want to
   # know about it. So there.
 
-  def on_new_success(payload)
-    @user = payload.entity
+  def on_new_success(payload) # rubocop:disable Style/TrivialAccessors
+    @user = payload
   end
 
-  def on_new_failure(_payload)
-    alert_flash = { alert: "User '#{current_user.name}' is already logged in!" }
-    redirect_to root_path, flash: alert_flash
+  def on_new_failure(payload)
+    redirect_to root_path, flash: { alert: payload }
   end
 end

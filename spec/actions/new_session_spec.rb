@@ -6,7 +6,6 @@ require 'new_session'
 
 module Actions
   describe NewSession do
-    let(:klass) { NewSession }
     let(:guest_user) { UserRepository.new.guest_user.entity }
     let(:subscriber) { BroadcastSuccessTester.new }
 
@@ -17,40 +16,38 @@ module Actions
     end
 
     context 'is successful with valid parameters' do
-      let(:command) { klass.new guest_user }
+      let(:command) { described_class.new guest_user }
 
       it 'broadcasts :success' do
         expect(subscriber).to be_successful
         expect(subscriber).not_to be_failure
       end
 
-      describe 'broadcasts :success with a payload of a StoreResult, which' do
+      describe 'broadcasts :success with a payload which' do
         let(:payload) { subscriber.payload_for(:success).first }
 
-        it 'is successful' do
-          expect(payload).to be_success
+        it 'is the Guest User UserEntity' do
+          expect(payload).to be_a UserEntity
+          expect(payload.slug).to eq 'guest-user'
         end
-
-        it 'has no errors' do
-          expect(payload).to have(0).errors
-        end
-
-        it 'has the Guest User entity attributes in its entity' do
-          expect(payload.entity.attributes).to eq payload.entity.attributes
-        end
-      end # describe 'broadcasts :success with a payload of a StoreResult, ...'
+      end # describe 'broadcasts :success with a payload which'
     end # context 'is successful with valid parameters'
 
     context 'is unsuccessful with invalid parameters' do
       let(:other_user) { UserEntity.new FactoryGirl.attributes_for(:user) }
       let(:command) do
         UserRepository.new.add other_user
-        klass.new other_user
+        described_class.new other_user
       end
 
-      it 'broadcasts :success' do
+      it 'broadcasts :failure' do
         expect(subscriber).not_to be_successful
         expect(subscriber).to be_failure
+      end
+
+      it 'broadcasts failure with the correct error message' do
+        payload = subscriber.payload_for(:failure).first
+        expect(payload).to eq "Already logged in as #{other_user.name}!"
       end
     end # context 'is unsuccessful with invalid parameters'
   end # describe Actions::NewSessions

@@ -12,7 +12,7 @@ describe 'Attempting to login after already being logged in fails and' do
 
   it 'displays an "Already logged in!" alert' do
     visit new_session_path
-    expected = "User '#{@user_name}' is already logged in!"
+    expected = "Already logged in as #{@user_name}!"
     expect(page).to have_css '.alert.alert-danger', text: expected
   end
 end # describe 'Attempting to login after already being logged in fails and'
