@@ -179,7 +179,7 @@ describe UsersController do
   end # describe "POST 'create'"
 
   describe "GET 'edit'" do
-    let(:not_auth_message) { "Not logged in as #{user.slug}!" }
+    let(:not_auth_message) { "Not logged in as #{user.name}!" }
     let(:user) { FactoryGirl.create :user, :saved_user }
 
     context 'for the Guest User' do
@@ -222,7 +222,7 @@ describe UsersController do
       end # context 'editing his own record'
 
       context 'attempting to edit the record of another user' do
-        let(:not_auth_message) { "Not logged in as #{other_user.slug}!" }
+        let(:not_auth_message) { "Not logged in as #{other_user.name}!" }
         let(:other_user) { FactoryGirl.create :user, :saved_user }
 
         before :each do

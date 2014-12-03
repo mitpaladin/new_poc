@@ -56,13 +56,12 @@ class UsersController < ApplicationController
     render 'new'
   end
 
-  def on_edit_success(payload)
-    @user = payload.entity
+  def on_edit_success(payload) # rubocop:disable Style/TrivialAccessors
+    @user = payload
   end
 
   def on_edit_failure(payload)
-    @errors = payload.errors
-    redirect_to root_url, flash: { alert: payload.errors.first[:message] }
+    redirect_to root_url, flash: { alert: payload }
   end
 
   def on_index_success(payload) # rubocop:disable Style/TrivialAccessors
