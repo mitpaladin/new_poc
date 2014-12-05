@@ -6,8 +6,12 @@ require 'new_user'
 require 'show_user'
 require 'update_user'
 
+require_relative 'users_controller/create_failure'
+
 # UsersController: actions related to Users within our "fancy" blog.
 class UsersController < ApplicationController
+  include Internals
+
   def index
     Actions::IndexUsers.new.subscribe(self, prefix: :on_index).execute
   end
@@ -46,13 +50,9 @@ class UsersController < ApplicationController
   end
 
   def on_create_failure(payload)
-    @user = nil
-    attribs_or_message = JSON.load(payload)
-    if attribs_or_message.is_a? String
-      return redirect_to root_path, flash: { alert: attribs_or_message }
-    end
-    @user = UserEntity.new attribs_or_message.symbolize_keys
-    @user.valid?
+    @user = user_for_create_failure(payload, self)
+    # CreateFailure::BlockingFailureRedirector.new(payload, self).check
+    # @user = CreateFailure::UserChecker.new(payload, self).parse
     render 'new'
   end
 

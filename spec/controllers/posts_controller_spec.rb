@@ -458,7 +458,7 @@ describe PostsController do
                            author_name: author.name
       end
 
-      fit 'that updates the post status to "draft"' do
+      it 'that updates the post status to "draft"' do
         post_data = { pubdate: nil }
         identity.current_user = author
         patch :update, id: post.slug, post_data: post_data

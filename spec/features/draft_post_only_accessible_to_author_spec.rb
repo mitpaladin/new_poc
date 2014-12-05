@@ -22,7 +22,7 @@ describe 'a draft post is' do
     helper.create_image_post
   end
 
-  fit 'accessible to its author' do
+  it 'accessible to its author' do
     visit post_path(@post_slug)
     expect(page).to have_selector '.page-header > h1', @post_title
     expected = %(by #{@user_name})

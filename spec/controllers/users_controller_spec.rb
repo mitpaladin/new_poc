@@ -101,7 +101,7 @@ describe UsersController do
   end # describe "GET 'new'"
 
   describe "POST 'create'" do
-    let(:params) { FactoryGirl.attributes_for :user }
+    let(:params) { FancyOpenStruct.new FactoryGirl.attributes_for(:user) }
 
     describe 'with valid parameters' do
       before :each do
@@ -125,22 +125,38 @@ describe UsersController do
       end
     end # describe 'with valid parameters'
 
-    fcontext 'with invalid parameters' do
+    context 'with invalid parameters' do
 
-      context 'that trigger redirection, such as' do
-        it 'a duplicate name' do
-          post :create, user_data: params
-          params[:profile] = "Updated #{params[:profile]}"
-          post :create, user_data: params
-          expect(assigns[:user]).to be nil
-          expect(response).to redirect_to root_path
-          user_slug = params[:name].parameterize
-          message = "A record identified by slug '#{user_slug}' already exists!"
-          expect(flash[:alert]).to eq message
-        end
-      end # context 'that trigger redirection, such as'
+      context 'that result in an apparently valid user entity, such as' do
+        # This tests a new user that would be valid if a user with the same name
+        # weren't already registered. At the entity level, it's fine; it takes a
+        # database hit to trip us up.
+        context 'a duplicate name' do
+          before :each do
+            post :create, user_data: params
+            params[:profile] = "Updated #{params[:profile]}"
+            post :create, user_data: params
+            @user = assigns[:user]
+          end
 
-      context 'that return errors to the controller/form, including' do
+          it 'assigns a UserEntity to :user' do
+            expect(@user).to be_a UserEntity
+          end
+
+          it 'does not redirect' do
+            expect(response).not_to be_redirect
+          end
+
+          it 'adds the name-already-taken error message to the :user entity' do
+            user_slug = params[:name].parameterize
+            message = 'Name is invalid: A record identified by slug' \
+              " '#{user_slug}' already exists!"
+            expect(@user.errors.full_messages).to include message
+          end
+        end # context 'a duplicate name'
+      end # context 'that result in an apparently valid user entity, such as'
+
+      context 'that result in a visibly invalid user entity, including' do
 
         after :each do
           post :create, user_data: @params
@@ -174,7 +190,7 @@ describe UsersController do
           @params = params.merge bad_params
           @messages = ['Password must match the password confirmation']
         end
-      end # context 'that return errors to the controller/form, including'
+      end # context 'that result in a visibly invalid user entity, including'
     end # describe 'with invalid parameters'
   end # describe "POST 'create'"
 
@@ -297,7 +313,7 @@ describe UsersController do
         patch :update, params
       end
 
-      fit 'assigns the updated user record' do
+      it 'assigns the updated user record' do
         assigned = assigns[:user]
         expect(assigned[:profile]).to eq updated_profile
       end

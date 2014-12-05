@@ -6,7 +6,6 @@ require 'create_user'
 
 module Actions
   describe CreateUser do
-    let(:klass) { CreateUser }
     let(:guest_user) { UserRepository.new.guest_user.entity }
     let(:subscriber) { BroadcastSuccessTester.new }
     let(:user_data) do
@@ -20,7 +19,7 @@ module Actions
     end
 
     context 'is successful with valid parameters' do
-      let(:command) { klass.new guest_user, user_data }
+      let(:command) { described_class.new guest_user, user_data }
 
       it 'broadcasts :success' do
         expect(subscriber).to be_successful
@@ -41,62 +40,91 @@ module Actions
     end # context 'is successful with valid parameters'
 
     context 'is unsuccessful with parameters that are invalid because' do
+      let(:user_repo) { UserRepository.new }
 
-      context 'there is already a user logged in' do
+      context 'the request is made from a logged-in user session' do
+        let(:command) { described_class.new current_user, user_data }
+        let(:current_user) do
+          UserEntity.new(user_attribs).tap { |user| user_repo.add user }
+        end
+        let(:user_attribs) { FactoryGirl.attributes_for :user }
+
+        describe 'and broadcasts :failure with a payload of a JSON Hash' do
+          let(:data) { FancyOpenStruct.new JSON.load(payload) }
+          let(:payload) { subscriber.payload_for(:failure).first }
+
+          it 'with one key, :messages' do
+            expect(data.keys).to eq [:messages]
+          end
+
+          it 'with a single :messages array item with the error message' do
+            expect(data).to have(1).message
+            expected = "Already logged in as #{current_user.name}!"
+            expect(data.messages.first).to eq expected
+          end
+        end # describe 'and broadcasts :failure with a payload of a JSON Hash'
+      end # context 'the request is made from a logged-in user session'
+
+      context 'the named user already exists' do
+        let(:command) { described_class.new guest_user, other_user.attributes }
         let(:other_user) do
-          user = UserEntity.new FactoryGirl.attributes_for(:user, :saved_user)
-          UserRepository.new.add user
-          user
+          UserEntity.new(user_attribs).tap { |user| user_repo.add user }
         end
-        let(:command) { klass.new other_user, user_data }
+        let(:user_attribs) { FactoryGirl.attributes_for :user }
 
-        it 'broadcasts :failure' do
-          expect(subscriber).not_to be_successful
-          expect(subscriber).to be_failure
-        end
-
-        describe 'broadcasts :failure with a payload which' do
+        describe 'and broadcasts :failure with a payload of a JSON Hash' do
+          let(:data) { FancyOpenStruct.new JSON.load(payload) }
           let(:payload) { subscriber.payload_for(:failure).first }
 
-          it 'is a String' do
-            expect(payload).to be_a String
+          it 'with two keys, :attributes and :messages' do
+            expected_keys = [:attributes, :messages].sort
+            expect(data.keys.sort).to eq expected_keys
           end
 
-          it 'is the JSON representation of the correct error message' do
-            expected = "Already logged in as #{other_user.name}!".to_json
-            expect(payload).to eq expected
+          it 'with an :attributes hash containing the specified attributes' do
+            expect(data[:attributes].symbolize_keys).to eq other_user.attributes
           end
-        end # describe 'broadcasts :success with a payload which'
-      end # context 'there is already a user logged in'
 
-      context 'the user data is invalid' do
-        let(:bogus_data) do
-          user_data.tap do |data|
-            data.password = 'x'
-            data.delete :slug
+          it 'with a :messages array containing the error message' do
+            expect(data).to have(1).message
+            expected = ['A record identified by slug',
+                        "'#{user_attribs[:name].parameterize}'",
+                        'already exists!'].join(' ')
+            expect(data.messages.first).to eq expected
           end
+        end # describe 'and broadcasts :failure with a payload of a JSON Hash'
+      end # context 'the named user already exists'
+
+      context 'the user name is invalid' do
+        let(:command) { described_class.new guest_user, user.attributes }
+        let(:user) do
+          UserEntity.new(user_attribs).tap { |user| user_repo.add user }
         end
-        # let(:bogus_data) { user_data.tap { |data| data.password = 'x' } }
-        let(:command) { klass.new guest_user, bogus_data }
+        let(:user_attribs) { FactoryGirl.attributes_for :user, name: '  Joe ' }
 
-        it 'broadcasts :failure' do
-          expect(subscriber).not_to be_successful
-          expect(subscriber).to be_failure
-        end
-
-        describe 'broadcasts :failure with a payload which' do
+        describe 'and broadcasts :failure with a payload of a JSON Hash' do
+          let(:data) { FancyOpenStruct.new JSON.load(payload) }
           let(:payload) { subscriber.payload_for(:failure).first }
 
-          it 'is a JSON-encoded Hash' do
-            expect(JSON.parse(payload)).to be_a Hash
+          it 'with two keys, :attributes and :messages' do
+            expect(data.keys.sort).to eq [:attributes, :messages]
           end
 
-          it 'contains the specified user data' do
-            data = JSON.parse(payload).symbolize_keys
-            expect(data).to eq bogus_data.to_h
+          it 'with an :attributes hash containing the specified attributes' do
+            actual = data[:attributes].symbolize_keys.sort
+            expect(actual).to eq user_attribs.sort
           end
-        end # describe 'broadcasts :failure with a payload which'
-      end # context 'the user data is invalid'
+
+          it 'with a :messages array containing the error messages' do
+            expect(data).to have(2).messages
+            expected_fmt = 'Name may not have %s whitespace'
+            ['leading', 'trailing'].each do |space_type|
+              expected = format expected_fmt, space_type
+              expect(data[:messages]).to include expected
+            end
+          end
+        end # describe 'and broadcasts :failure with a payload of a JSON Hash'
+      end # context 'the user name is invalid'
     end # context 'is unsuccessful with parameters that are invalid because'
   end # describe Actions::CreateUser
 end # module Actions
