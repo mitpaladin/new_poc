@@ -2,12 +2,19 @@
 require 'active_model'
 require 'instance_variable_setter'
 
+require_relative 'user_entity/name_validator'
+
 # Persistence entity-layer representation for User. Not a domain object; used to
 # communicate across the repository/DAO boundary.
 class UserEntity
   include ActiveAttr::BasicModel
   include ActiveAttr::Serialization
   include Comparable
+
+  # Internal, private support classes for UserEntity
+  module Internals
+  end # module UserEntity::Internals
+  private_constant :Internals
 
   attr_reader :email,
               :name,
@@ -20,8 +27,7 @@ class UserEntity
 
   # NOTE: No `uniqueness: true` without database access...
   validates :name, presence: true, length: { minimum: 6 }
-  validate :name_has_no_spaces_at_ends
-  validate :name_has_no_adjacent_whitespace
+  validate :validate_name
   validates_email_format_of :email
   validate :passwords_are_valid
 
@@ -68,31 +74,19 @@ class UserEntity
     UserRepository.new.guest_user.entity
   end
 
-  # Because there's no guarantee that the presence validation will be first.
-  # def name_is_missing_or_blank
-  #   errors.add :name, 'may not be missing or blank'
-  # end
-
-  def name_has_no_adjacent_whitespace
-    # return name_is_missing_or_blank unless name.to_s.strip.present?
-    return if name.to_s.strip == name.to_s.strip.gsub(/\s{2,}/, '?')
-    errors.add :name, 'may not have adjacent whitespace'
+  def add_to_name_errors_if_whitespace(strip_where)
+    strips = {
+      leading: :lstrip,
+      trailing: :rstrip
+    }
+    error_message = format 'may not have %s whitespace', strip_where.to_s
+    errors.add :name, error_message if name != name.send(strips[strip_where])
   end
 
-  def name_has_no_invalid_whitespace
-    # return name_is_missing_or_blank unless name.to_s.strip.present?
-    expected = name.strip.gsub(/ {2,}/, ' ')
-    return if expected == expected.gsub(/\s/, ' ')
-    errors.add :name, 'may not have whitespace other than spaces'
-  end
-
-  def name_has_no_spaces_at_ends # rubocop:disable Metrics/AbcSize
-    # return name_is_missing_or_blank unless name.to_s.strip.present?
-    return if name.to_s == name.to_s.strip
-    message = 'may not have leading whitespace'
-    errors.add :name, message if name != name.lstrip
-    message = 'may not have trailing whitespace'
-    errors.add :name, message if name != name.rstrip
+  def validate_name
+    Internals::NameValidator.new(name)
+      .validate
+      .add_errors_to_model(self)
   end
 
   def passwords_match?

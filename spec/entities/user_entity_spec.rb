@@ -73,6 +73,11 @@ describe UserEntity do
         expect(klass.new @attribs).not_to be_valid
       end
 
+      it 'an invalid name' do
+        name = '  Some  Body '
+        @attribs = { name: name, email: user_email, profile: user_profile }
+      end
+
       it 'no name' do
         @attribs = { email: user_email, profile: user_profile }
       end
