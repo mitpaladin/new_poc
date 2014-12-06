@@ -3,18 +3,16 @@
 class BaseSummariser
   attr_writer :count
 
-  # rubocop:disable Metrics/AbcSize
   def initialize(&block)
-    @count ||= 10
+    @count = 10
     @data_class ||= 'UNKNOWN DATA CLASS; SOME CLASS SHOULD BE ASSIGNED HERE'
-    @aggregator ||= -> { @data_class.all }
-    @selector ||= -> (data) { data }
-    @sorter ||= -> (data) { data }
-    @orderer ||= -> (data) { data }
+    @aggregator ||= default_aggregator
     @chunker ||= -> (data) { data.take @count }
+    @selector ||= dsl_passthrough
+    @sorter ||= dsl_passthrough
+    @orderer ||= dsl_passthrough
     instance_eval(&block) if block
   end
-  # rubocop:enable Metrics/AbcSize
 
   def summarise_data(data)
     summary_steps.each do |op|
@@ -35,12 +33,20 @@ class BaseSummariser
 
   private
 
+  def default_aggregator
+    -> { @data_class.all }
+  end
+
   def dsl_name?(name)
     dsl_methods.include? name
   end
 
   def dsl_methods
     [:aggregator, :selector, :sorter, :orderer, :chunker]
+  end
+
+  def dsl_passthrough
+    -> (data) { data }
   end
 
   def summary_steps
