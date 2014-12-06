@@ -3,26 +3,22 @@ require 'spec_helper'
 
 require 'create_post'
 
+require 'main_logger'
+
 shared_examples 'a successful post' do
   it 'is successful' do
     expect(subscriber).to be_successful
     expect(subscriber).not_to be_failure
   end
 
-  describe 'is successful, broadcasting a StoreResult payload with' do
+  describe 'is successful, broadcasting a PostEntity payload' do
     let(:payload) { subscriber.payload_for(:success).first }
 
-    it 'a :success value of true' do
-      expect(payload).to be_success
+    it 'which is valid' do
+      expect(payload).to be_valid
     end
 
-    it 'an empty :errors item' do
-      expect(payload.errors).to be_empty
-    end
-
-    description = 'a PostEntity instance for an :entity value, with the' \
-        ' correct field values set'
-    it description do
+    it 'with the correct field values set' do
       acceptable_keys = [
         :body,
         :created_at,
@@ -35,38 +31,13 @@ shared_examples 'a successful post' do
         .select { |k, _v| acceptable_keys.include? k }
         .merge author_name: current_user.name
 
-      expect(payload.entity).to be_a PostEntity
+      expect(payload).to be_a PostEntity
       expected.each do |attrib, value|
-        expect(payload.entity.attributes[attrib]).to eq value
+        expect(payload.attributes[attrib]).to eq value
       end
     end
-  end # describe 'is successful, broadcasting a StoreResult payload with'
+  end # describe 'is successful, broadcasting a PostEntity payloadh'
 end # shared_examples 'a successful post'
-
-shared_examples 'an unsuccessful post' do |error_field, error_message|
-  it 'is unsuccessful' do
-    expect(subscriber).not_to be_successful
-    expect(subscriber).to be_failure
-  end
-
-  describe 'is unsuccessful, broadcasting a StoreResult payload with' do
-    let(:payload) { subscriber.payload_for(:failure).first }
-
-    it 'a :success value of false' do
-      expect(payload).not_to be_success
-    end
-
-    it 'a correct :errors item' do
-      expect(payload).to have(1).error
-      expect(payload.errors.first)
-          .to be_an_error_hash_for error_field, error_message
-    end
-
-    it 'an :entity value of nil' do
-      expect(payload.entity).to be nil
-    end
-  end # describe 'is unsuccessful, broadcasting a StoreResult payload...'
-end
 
 # ############################################################################ #
 # ############################################################################ #
@@ -92,16 +63,33 @@ module Actions
     context 'with the Guest User as the current user' do
       let(:command) { klass.new repo.guest_user.entity, post_data }
       let(:post_data) { { title: 'A Title', body: 'A Body' } }
+      let(:message) { 'Not logged in as a registered user!' }
 
-      message = 'not logged in as a registered user!'
-      it_behaves_like 'an unsuccessful post', :user, message
+      it 'is unsuccessful' do
+        expect(subscriber).not_to be_successful
+        expect(subscriber).to be_failure
+      end
+
+      describe 'is unsuccessful, broadcasting a payload with' do
+        let(:payload) { subscriber.payload_for(:failure).first }
+
+        it 'the expected error' do
+          expect(payload.message).to eq message.to_json
+        end
+      end # describe 'is unsuccessful, broadcasting a payload with'
     end # context 'with the Guest User as the current user'
 
     context 'with a Registered User as the current user' do
       let(:command) { klass.new current_user, post_data }
 
       context 'with minimal valid post data' do
-        let(:post_data) { { title: 'A Title', body: 'A Body' } }
+        let(:post_data) do
+          {
+            author_name: current_user.name,
+            title: 'A Title',
+            body: 'A Body'
+          }
+        end
 
         it_behaves_like 'a successful post'
       end # context 'with minimal valid post data'
@@ -109,6 +97,7 @@ module Actions
       context 'with additional valid post data' do
         let(:post_data) do
           {
+            author_name: current_user.name,
             title: 'A Title',
             body: 'A Body',
             image_url: 'http://example.com/image1.png'
@@ -121,6 +110,7 @@ module Actions
       context 'with additional but invalid post data' do
         let(:valid_data) do
           {
+            author_name: current_user.name,
             title: 'A Title',
             body: 'A Body',
             image_url: 'http://example.com/image1.png'
@@ -132,7 +122,7 @@ module Actions
         it_behaves_like 'a successful post'
 
         it 'does not include any invalid initialiser settings' do
-          payload = subscriber.payload_for(:success).first.entity
+          payload = subscriber.payload_for(:success).first
           invalid_data.each_key do |k|
             expect(payload.attributes).not_to include k
           end
@@ -140,11 +130,16 @@ module Actions
       end # context 'with additional but invalid post data'
 
       context 'with post status set to' do
-        let(:actual) { subscriber.payload_for(:success).first.entity }
+        let(:actual) { subscriber.payload_for(:success).first }
 
         context 'draft' do
           let(:post_data) do
-            { title: 'A Title', body: 'A Body', post_status: 'draft' }
+            {
+              author_name: current_user.name,
+              title: 'A Title',
+              body: 'A Body',
+              post_status: 'draft'
+            }
           end
 
           it_behaves_like 'a successful post'
@@ -156,7 +151,12 @@ module Actions
 
         context 'public' do
           let(:post_data) do
-            { title: 'A Title', body: 'A Body', post_status: 'public' }
+            {
+              author_name: current_user.name,
+              title: 'A Title',
+              body: 'A Body',
+              post_status: 'public'
+            }
           end
 
           it_behaves_like 'a successful post'
@@ -170,7 +170,23 @@ module Actions
       context 'with insufficient valid post data' do
         let(:post_data) { { body: 'A Body' } }
 
-        it_behaves_like 'an unsuccessful post', :title, 'must be present'
+        it 'is unsuccessful' do
+          expect(subscriber).not_to be_successful
+          expect(subscriber).to be_failure
+        end
+
+        describe 'is unsuccessful, broadcasting a payload with' do
+          let(:payload) { subscriber.payload_for(:failure).first }
+
+          it 'the expected errors' do
+            attribs = JSON.parse(payload.message).symbolize_keys
+            entity = PostEntity.new attribs
+            expect(entity).not_to be_valid
+            expect(entity).to have(1).error
+            messages = entity.errors.full_messages
+            expect(messages).to include "Title can't be blank"
+          end
+        end # describe 'is unsuccessful, broadcasting a payload with'
       end # context 'with insufficient valid post data'
     end # context 'with a Registered User as the current user'
   end # describe Actions::CreatePost

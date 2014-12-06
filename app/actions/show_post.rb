@@ -3,48 +3,62 @@ module Actions
   # Wisper-based command object called by Posts controller #show action.
   class ShowPost
     include Wisper::Publisher
-    attr_reader :current_user, :target_slug
 
     def initialize(target_slug, current_user)
       @target_slug = target_slug
       @current_user = current_user
+      @entity = build_dummy_entity
     end
 
     def execute
-      result = post_repo.find_by_slug target_slug
-      return broadcast_failure unless result.success?
-      return broadcast_failure unless current_user_is_authorised?(result)
-      broadcast_success result
+      validate_slug
+      verify_authorisation
+      broadcast_success @entity
+    rescue RuntimeError => the_error
+      broadcast_failure the_error.message
     end
 
     private
 
-    def broadcast_failure
-      broadcast :failure, failure_result
+    attr_accessor :entity
+    attr_reader :current_user, :target_slug
+
+    def broadcast_failure(message)
+      broadcast :failure, message
     end
 
     def broadcast_success(payload)
       broadcast :success, payload
     end
 
-    def build_errors
-      errors = { user: "Cannot find post with slug #{target_slug}!" }
-      ErrorFactory.create errors
+    def build_dummy_entity
+      Naught.build do |config|
+        config.impersonate PostEntity
+        config.predicates_return false
+        def author_name
+          'Guest User'
+        end
+      end.new
     end
 
-    def current_user_is_authorised?(result)
-      return true if result.entity.pubdate.present?
-      result.entity.author_name == current_user.name
-    end
-
-    # dependencies; candidates for future injection
-
-    def failure_result
-      StoreResult.new success: false, entity: nil, errors: build_errors
+    def validate_slug
+      result = post_repo.find_by_slug target_slug
+      @entity = result.entity
+      return if result.success?
+      fail error_message_for_slug
     end
 
     def post_repo
       @post_repo ||= PostRepository.new
+    end
+
+    def verify_authorisation
+      return if entity.published? || current_user.name == entity.author_name
+      fail error_message_for_slug
+    end
+
+    def error_message_for_slug
+      "Cannot find post identified by slug: '#{target_slug}'!"
     end
   end # class Actions::ShowPost
 end # module Actions

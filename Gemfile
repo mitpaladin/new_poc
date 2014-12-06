@@ -49,8 +49,8 @@ group :development do
   # officially updated in *years*. Perhaps more selective filtering is
   # warranted?
   # gem 'metric_fu', github: 'metricfu/metric_fu'
-  gem 'flay' #, github: 'seattlerb/flay'
-  gem 'flog' #, github: 'seattlerb/flog'
+  gem 'flay' # , github: 'seattlerb/flay'
+  gem 'flog' # , github: 'seattlerb/flog'
   gem 'metric_fu-Saikuro'
   gem 'churn', github: 'danmayer/churn'
   gem 'reek', github: 'troessner/reek'

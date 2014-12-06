@@ -43,56 +43,58 @@ class PostsController < ApplicationController
   # to say that, even though these are public methods, they should never be
   # called directly.)
 
-  def on_create_success(payload)
-    @post = payload.entity
+  def on_create_success(entity)
+    @post = entity
     redirect_to root_path, flash: { success: 'Post added!' }
   end
 
   def on_create_failure(payload)
-    parts = []
-    payload.errors.each do |error|
-      parts << [error[:field].to_s.capitalize, error[:message]].join(' ')
-    end
-    alert = parts.join '<br/>'
-    redirect_to posts_path, flash: { alert: alert }
+    message_or_entity = JSON.load payload.message
+    fail message_or_entity if message_or_entity.is_a? String
+    invalid_entity = PostEntity.new message_or_entity.symbolize_keys
+    invalid_entity.valid?   # sets up error messages
+    @post = invalid_entity
+    render 'new'
+  rescue RuntimeError => e # not logged in as a registered user
+    redirect_to root_path, flash: { alert: e.message }
   end
 
-  def on_edit_success(payload)
-    @post = payload.entity
+  def on_edit_success(payload) # rubocop:disable Style/TrivialAccessors
+    @post = payload
   end
 
   def on_edit_failure(payload)
-    redirect_to posts_path, flash: { alert: payload.errors.first[:message] }
+    redirect_to posts_path, flash: { alert: payload }
   end
 
-  def on_index_success(payload)
-    @posts = payload.entity
-    @posts
+  def on_index_success(payload) # rubocop:disable Style/TrivialAccessors
+    @posts = payload
   end
 
-  def on_new_success(payload)
-    @post = payload.entity
+  def on_new_success(payload) # rubocop:disable Style/TrivialAccessors
+    @post = payload
   end
 
   def on_new_failure(payload)
-    redirect_to root_path, flash: { alert: payload.errors.first[:message] }
+    # Only supported error is for the guest user
+    redirect_to root_path, flash: { alert: payload }
   end
 
-  def on_show_success(payload)
-    @post = payload.entity
+  def on_show_success(payload) # rubocop:disable Style/TrivialAccessors
+    @post = payload
   end
 
   def on_show_failure(payload)
-    redirect_to posts_path, flash: { alert: payload.errors.first[:message] }
+    redirect_to posts_path, flash: { alert: payload }
   end
 
   def on_update_success(payload)
-    @post = payload.entity
+    @post = payload
     message = "Post '#{@post.title}' successfully updated."
     redirect_to post_path(@post.slug), flash: { success: message }
   end
 
   def on_update_failure(payload)
-    redirect_to posts_path, flash: { alert: payload.errors.first[:message] }
+    redirect_to posts_path, flash: { alert: payload }
   end
 end # class PostsController

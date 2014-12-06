@@ -13,9 +13,15 @@ class PostEntity
   include ActiveAttr::BasicModel
   include ActiveAttr::Serialization
 
+  validates :author_name, presence: true
+  validates :title, presence: true
+  validate :must_have_body_or_title
+  validate :author_must_be_a_registered_user
+
   def initialize(attribs)
     init_attrib_keys.each { |attrib| class_eval { attr_reader attrib } }
     InstanceVariableSetter.new(self).set attribs
+    @pubdate ||= Time.now if attribs[:post_status] == 'public'
     extend EntityShared
   end
 
@@ -70,6 +76,15 @@ class PostEntity
 
   private
 
+  def guest_user_name
+    'Guest User'
+  end
+
+  def author_must_be_a_registered_user
+    return unless author_name == guest_user_name
+    errors.add :author_name, 'must be a registered user'
+  end
+
   def body_builder_class
     if image_url.present?
       SupportClasses::ImageBodyBuilder
@@ -80,6 +95,11 @@ class PostEntity
 
   def convert_body(fragment)
     MarkdownHtmlConverter.new.to_html(fragment)
+  end
+
+  def must_have_body_or_title
+    return if body.present? || image_url.present?
+    errors.add :body, 'must be specified if image URL is omitted'
   end
 
   def timestamp_for(the_time = Time.now)

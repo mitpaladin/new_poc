@@ -14,8 +14,10 @@ describe DummyTestClass do
     describe 'returns a formatted time/date string when' do
       it 'passed an explicit timestamp (having a #to_time method)' do
         the_time = Chronic.parse '21 August 2014 at 15:38:59 '
-        expected = 'Thu Aug 21 2014 at 15:38 SGT (+0800)'
-        expect(DummyTestClass.timestamp_for the_time).to eq expected
+        pattern_str = 'Thu Aug 21 2014 at 15:38' \
+          ' [[:upper:]]{3} \([\+\-][[:digit:]]{4}\)'
+        expected = Regexp.new pattern_str
+        expect(DummyTestClass.timestamp_for the_time).to match expected
       end
 
       it 'called without a parameter, as if called using the current time' do

@@ -6,8 +6,12 @@ require 'new_user'
 require 'show_user'
 require 'update_user'
 
+require_relative 'users_controller/create_failure'
+
 # UsersController: actions related to Users within our "fancy" blog.
 class UsersController < ApplicationController
+  include Internals
+
   def index
     Actions::IndexUsers.new.subscribe(self, prefix: :on_index).execute
   end
@@ -41,55 +45,52 @@ class UsersController < ApplicationController
   # called directly.)
 
   def on_create_success(payload)
-    @user = payload.entity
+    @user = payload
     redirect_to root_url, flash: { success: 'Thank you for signing up!' }
   end
 
   def on_create_failure(payload)
-    @user = payload.entity
-    @errors = payload.errors
+    @user = user_for_create_failure(payload, self)
+
     render 'new'
   end
 
-  def on_edit_success(payload)
-    @user = payload.entity
+  def on_edit_success(payload) # rubocop:disable Style/TrivialAccessors
+    @user = payload
   end
 
   def on_edit_failure(payload)
-    @errors = payload.errors
-    redirect_to root_url, flash: { alert: payload.errors.first[:message] }
+    redirect_to root_url, flash: { alert: payload }
   end
 
-  def on_index_success(payload)
-    @users = payload.entity
+  def on_index_success(payload) # rubocop:disable Style/TrivialAccessors
+    @users = payload
   end
 
-  def on_new_success(payload)
-    @user = payload.entity
+  def on_new_success(payload) # rubocop:disable Style/TrivialAccessors
+    @user = payload
   end
 
   def on_new_failure(payload)
-    @user = nil
-    redirect_to root_path, flash: { alert: payload.errors.first[:message] }
+    redirect_to root_path, flash: { alert: payload }
   end
 
-  def on_show_success(payload)
-    @user = payload.entity
+  def on_show_success(payload) # rubocop:disable Style/TrivialAccessors
+    @user = payload
   end
 
   def on_show_failure(payload)
-    redirect_to users_path, flash: { alert: payload.errors.first[:message] }
+    redirect_to users_path, flash: { alert: payload }
   end
 
-  # FIXME! FIXME! FIXME! Where's the DAO abstraction? FIXME! FIXME! FIXME!
   def on_update_success(payload)
-    dao = UserRepository.new.instance_variable_get(:@dao)
-    @user = dao.find_by_slug payload.entity.slug
+    @user = payload
+    slug = @user.slug
     message = 'You successfully updated your profile'
-    redirect_to user_path(@user.slug), flash: { success: message }
+    redirect_to user_path(slug), flash: { success: message }
   end
 
   def on_update_failure(payload)
-    redirect_to root_path, flash: { alert: payload.errors.first[:message] }
+    redirect_to root_path, flash: { alert: payload }
   end
 end # class UsersController

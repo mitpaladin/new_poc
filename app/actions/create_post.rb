@@ -34,60 +34,30 @@ module Actions
       end
 
       def post_attributes
-        %w(title body image_url slug created_at updated_at pubdate)
-          .map(&:to_sym)
+        %w(author_name title body image_url slug created_at updated_at pubdate
+           post_status).map(&:to_sym)
       end
-    end
-
-    # Builds error messages for post validation.
-    class PostValidation
-      def self.errors_for(post)
-        ret = []
-        unless post.body.present? || post.image_url.present?
-          ret << _body_and_image_url_both_missing_error
-        end
-        ret << _missing_title_error unless post.title.present?
-        ret
-      end
-
-      def self._body_and_image_url_both_missing_error
-        {
-          field: 'body',
-          message: 'must be specified if no image URL is specified'
-        }
-      end
-
-      def self._missing_title_error
-        { field: 'title', message: 'must be present' }
-      end
-    end # class CreatePost::PostValidation
+    end # class PostDataFilter
 
     include Wisper::Publisher
-    attr_reader :current_user, :draft_post, :post_data
 
     def initialize(current_user, post_data)
       @current_user = current_user
       @post_data = filter_post_data post_data
-      @errors = []
     end
 
     def execute
-      validate_current_user
+      prohibit_guest_access
       validate_post_data
-      entity = package_data_as_entity
-      result = add_to_repository entity
-      broadcast_success result
-    rescue
-      return broadcast_failure_for_errors
+      add_entity_to_repository
+      broadcast_success @entity
+    rescue RuntimeError => message_or_bad_entity
+      broadcast_failure message_or_bad_entity
     end
 
     private
 
-    def broadcast_failure_for_errors
-      result = StoreResult.new success: false, entity: nil,
-                               errors: @errors
-      broadcast_failure result
-    end
+    attr_reader :current_user, :draft_post, :post_data, :entity
 
     def broadcast_failure(payload)
       broadcast :failure, payload
@@ -97,11 +67,9 @@ module Actions
       broadcast :success, payload
     end
 
-    def add_to_repository(entity)
-      result = PostRepository.new.add entity
-      fail Marshal.dump(result.errors) unless result.success?
-      result
-    end
+    # Support methods
+
+    # ... for #initialize
 
     def filter_post_data(post_data)
       filter = PostDataFilter.new(post_data)
@@ -110,30 +78,40 @@ module Actions
       ret
     end
 
-    def package_data_as_entity
-      data = FancyOpenStruct.new post_data.to_h
-      data.author_name = current_user.name
-      data.pubdate = Time.now unless draft_post
-      PostEntity.new data.to_h
+    # ... for #execute
+
+    def add_entity_to_repository
+      result = PostRepository.new.add entity
+      fail entity.to_json unless result.success?
+      # DON'T just use the existing entity; it (shouldn't) have its slug set,
+      # whereas the one that's been persisted and passed back through the
+      # `StoreResult` does. (That's how `PostEntity` determines whether it's
+      # been persisted or not: whether the `slug` attribute is set.)
+      @entity = result.entity
     end
 
-    def post_attributes
-      %w(title body image_url slug created_at updated_at pubdaate).map(&:to_sym)
-    end
-
-    def validate_current_user
-      guest_user = UserRepository.new.guest_user.entity
-      return if current_user.name != guest_user.name
-      @errors += [
-        { field: 'user', message: 'not logged in as a registered user!' }
-      ]
-      fail Marshal.dump(@errors) unless @errors.empty?
+    def prohibit_guest_access
+      guest_user = user_repo.guest_user.entity
+      return unless guest_user.name == current_user.name
+      fail guest_user_not_authorised_message
     end
 
     def validate_post_data
-      @errors += PostValidation.errors_for post_data
-      return if @errors.empty?
-      fail Marshal.dump(@errors)
+      attribs = post_data.to_h.symbolize_keys
+      attribs[:author_name] ||= current_user.name
+      @entity = PostEntity.new attribs
+      return if @entity.valid?
+      fail @entity.to_json
+    end
+
+    # ... for #prohibit_guest_access
+
+    def guest_user_not_authorised_message
+      'Not logged in as a registered user!'.to_json
+    end
+
+    def user_repo
+      @user_repo ||= UserRepository.new
     end
   end # class Actions::CreatePost
 end # module Actions

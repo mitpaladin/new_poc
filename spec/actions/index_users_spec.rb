@@ -30,29 +30,23 @@ module Actions
       expect(subscriber).not_to be_failure
     end
 
-    describe 'is successful, broadcasting a StoreResult payload with' do
+    describe 'is successful, broadcasting a payload which' do
       let(:payload) { subscriber.payload_for(:success).first }
 
-      it 'a :success value of true' do
-        expect(payload).to be_success
+      it 'is an enumeration of UserEntity instances' do
+        expect(payload).to be_an Enumerable
+        payload.each { |user_item| expect(user_item).to be_a UserEntity }
       end
 
-      it 'an empty :errors item' do
-        expect(payload.errors).to be_empty
+      it 'has the correct number of entities' do
+        expect(payload).to have(users.count).items
       end
 
-      describe 'an :entity value of an array of saved UserEntity values' do
-
-        it 'that has the correct number of entities' do
-          expect(payload.entity.count).to eq users.count
+      it 'has the same entities in the same order as those added' do
+        users.each_with_index do |user, index|
+          expect(payload[index]).to be_saved_user_entity_for user
         end
-
-        it 'with the correct entities' do
-          users.each_with_index do |user, index|
-            expect(payload.entity[index]).to be_saved_user_entity_for user
-          end
-        end
-      end # describe 'an :entity value of an array of saved UserEntity values'
-    end # describe 'is successful, broadcasting a StoreResult payload with'
+      end
+    end # describe 'is successful, broadcasting a payload which'
   end # describe Actions::IndexUsers
 end # module Actions

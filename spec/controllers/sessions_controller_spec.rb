@@ -90,7 +90,7 @@ describe SessionsController do
       end
 
       it 'has the correct flash error message' do
-        message = "User '#{registered_user.name}' is already logged in!"
+        message = "Already logged in as #{registered_user.name}!"
         expect(flash[:alert]).to eq message
       end
     end # context 'for a Registered User'

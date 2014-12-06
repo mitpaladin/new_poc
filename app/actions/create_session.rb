@@ -11,25 +11,28 @@ module Actions
     end
 
     def execute
-      auth_params = [user_name.to_s.parameterize, password]
-      result = UserRepository.new.authenticate(*auth_params)
-      return broadcast_success(result) if result.success?
-      broadcast_failure result
+      authenticate_user
+      broadcast_success @entity
+    rescue RuntimeError => error
+      broadcast_failure error.message
     end
 
     private
 
-    def broadcast_failure(result)
-      broadcast :failure, payload_with_errors_for(result)
+    def broadcast_failure(payload)
+      broadcast :failure, payload
     end
 
     def broadcast_success(payload)
       broadcast :success, payload
     end
 
-    def payload_with_errors_for(result)
-      StoreResult.new success: false, errors: result.errors,
-                      entity: UserRepository.new.guest_user.entity
+    def authenticate_user
+      auth_params = [user_name.to_s.parameterize, password]
+      result = UserRepository.new.authenticate(*auth_params)
+      @entity = result.entity
+      return if result.success?
+      fail result.errors.first[:message]
     end
   end # class Actions::CreateSession
 end # module Actions

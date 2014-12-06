@@ -1,6 +1,7 @@
 
 shared_examples 'an unauthorised user for this post' do |message = nil|
-  message = 'Not logged in as a registered user!' if message.nil?
+  default = /User .+? is not the author of this post\!/
+  message = default unless message
 
   it 'redirects to the posts path' do
     expect(response).to redirect_to posts_path

@@ -8,8 +8,8 @@ shared_examples 'an attempt to create an invalid Post' do
       @post = assigns[:post]
     end
 
-    it 'a new record' do
-      expect(@post).to be_a_new_record
+    it 'not persisted' do
+      expect(@post).not_to be_persisted
     end
 
     it 'is invalid' do

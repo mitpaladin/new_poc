@@ -119,7 +119,7 @@ describe PostsController do
         end
       end
     end # context 'for a registered user owning no draft posts'
-  end # describe "GET 'index'"
+  end # describe "GET 'index'" (StoreResult removed)
 
   describe "GET 'new'" do
     context 'for a Registered User' do
@@ -149,30 +149,36 @@ describe PostsController do
         get :new
       end
 
-      it 'does not assign a value to the :post variable' do
-        expect(assigns).not_to have_key(:post)
+      it 'does not assign a :post variable' do
+        expect(assigns).not_to have_key :post
       end
 
       it 'redirects to the landing page' do
-        expect(response).to be_redirection
         expect(response).to redirect_to root_path
       end
 
       it 'renders the correct flash error message' do
-        expected = 'Not logged in as a registered user!'
-        expect(flash[:alert]).to eq expected
+        expect(flash[:alert]).to eq 'Not logged in as a registered user!'
       end
     end # context 'for the Guest User'
-  end # describe "GET 'new'"
+  end # describe "GET 'new'" (StoreResult removed)
 
   describe "POST 'create'" do
-    let(:params) { FactoryGirl.attributes_for :post }
+    let(:params) do
+      attrs = FactoryGirl.attributes_for :post
+      attrs[:author_name] = identity.current_user
+      [:pubdate, :slug].each { |attr| attrs.delete attr }
+      attrs
+    end
 
     context 'for a Registered User' do
+      before :each do
+        user = FactoryGirl.create :user, :saved_user
+        identity.current_user = user
+      end
+
       describe 'with valid parameters' do
         before :each do
-          user = FactoryGirl.create :user, :saved_user
-          identity.current_user = user
           post :create, post_data: params
         end
 
@@ -184,8 +190,12 @@ describe PostsController do
           post = assigns[:post]
           expect(post).to be_persisted
           dao = PostDao.find_by_slug post.slug
-          [:body, :image_url, :title].each do |attrib|
+          [:body, :image_url, :slug, :title].each do |attrib|
             expect(post.attributes[attrib]).to eq dao[attrib]
+          end
+          [:created_at, :updated_at].each do |attrib|
+            expect(post.attributes[attrib]).to be_within(0.5.seconds)
+              .of dao[attrib]
           end
         end
 
@@ -198,7 +208,7 @@ describe PostsController do
         end
       end # describe 'with valid parameters'
 
-      # it_behaves_like 'an attempt to create an invalid Post'
+      it_behaves_like 'an attempt to create an invalid Post'
     end # context 'for a Registered User'
 
     context 'for the Guest User' do
@@ -206,19 +216,20 @@ describe PostsController do
         post :create, post_data: params
       end
 
-      it 'does not assign a value to the  :post item' do
+      it 'does not assign a value to the :post item' do
         expect(assigns).not_to have_key :post
       end
 
-      it 'redirects to the post-listing path' do
-        expect(response).to redirect_to posts_path
+      it 'redirects to the root path' do
+        expect(response).to redirect_to root_path
       end
 
       it 'renders the correct flash alert message' do
-        expect(flash[:alert]).to eq 'User not logged in as a registered user!'
+        expected = 'Not logged in as a registered user!'
+        expect(flash[:alert]).to eq expected
       end
     end # context 'for the Guest User'
-  end # describe "POST 'create'"
+  end # describe "POST 'create'" (StoreResult removed)
 
   describe "GET 'edit'" do
     let(:author) { FactoryGirl.create :user, :saved_user }
@@ -232,7 +243,8 @@ describe PostsController do
         get :edit, id: post.slug
       end
 
-      it_behaves_like 'an unauthorised user for this post'
+      expected = 'Not logged in as a registered user!'
+      it_behaves_like 'an unauthorised user for this post', expected
     end # context 'for the Guest User'
 
     context 'when a user other than the post author is logged in' do
@@ -269,7 +281,7 @@ describe PostsController do
         expect(assigned[:pubdate]).to be_within(0.5.seconds).of post[:pubdate]
       end
     end # context 'when the logged-in user is the post author'
-  end # describe "GET 'edit'"
+  end # describe "GET 'edit'" (StoreResult removed)
 
   describe "GET 'show'" do
     let(:author) { FactoryGirl.create :user, :saved_user }
@@ -342,7 +354,7 @@ describe PostsController do
         end
 
         it 'renders the correct flash error message' do
-          expected = "Cannot find post with slug #{article.slug}!"
+          expected = "Cannot find post identified by slug: '#{article.slug}'!"
           expect(flash[:alert]).to eq expected
         end
       end
@@ -363,10 +375,11 @@ describe PostsController do
       end
 
       it 'renders the correct flash error message' do
-        expect(flash[:alert]).to eq "Cannot find post with slug #{bad_slug}!"
+        expected = "Cannot find post identified by slug: '#{bad_slug}'!"
+        expect(flash[:alert]).to eq expected
       end
     end # context 'for an invalid post'
-  end # describe "GET 'show'"
+  end # describe "GET 'show'" (StoreResult removed)
 
   describe "PATCH 'update'" do
     let(:author) { FactoryGirl.create :user, :saved_user }
@@ -410,8 +423,7 @@ describe PostsController do
           patch :update, id: post.slug, post_data: post_data
         end
 
-        message = 'Not logged in as the author of this post!'
-        it_behaves_like 'an unauthorised user for this post', message
+        it_behaves_like 'an unauthorised user for this post'
       end # context 'for a registered user other than the post author'
 
       context 'for the Guest User' do
@@ -419,7 +431,8 @@ describe PostsController do
           patch :update, id: post.slug, post_data: post_data
         end
 
-        it_behaves_like 'an unauthorised user for this post'
+        message = 'Not logged in as a registered user!'
+        it_behaves_like 'an unauthorised user for this post', message
       end # context 'for the Guest User'
     end # context 'when the post status is unaffected'
 

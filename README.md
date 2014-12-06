@@ -7,6 +7,12 @@
 
 This is an experiment in clean(er) architecture in Rails. It's not intended as a full, releasable application, but rather to answer some critical questions about how we will actually release such an app.
 
+Put another way, it's turned into an illustration of [Greenspun's tenth rule](http://en.wikipedia.org/wiki/Greenspun%27s_tenth_rule). Paraphrasing:
+
+> Any sufficiently complicated Rails or Padrino app contains an ad-hoc, informally-specified, bug-ridden, slow implementation of [DCI in Ruby](http://dci-in-ruby.info/).
+
+Generally, the more abstruse, less functional half; and "sufficiently complex" can be interpreted as "more functional than DHH's 15-minute-blog example", but I digress.
+
 ## Background
 
 It grew out of a year of experimentation with different techniques, such as [Draper](https://github.com/drapergem/draper) model decorators, various DSOs (domain-logic service objects, or "interactors") such as [ActiveInteraction](https://github.com/orgsync/active_interaction), [Mutations](https://github.com/cypriss/mutations), [`interactor`](https://github.com/collectiveidea/interactor) (not to be confused with the general term), and so on. Lots of people have recognised the pain points in Rails and come up with various pieces of a solution. Another technique proven useful is the use of [*message queues*](https://en.wikipedia.org/wiki/Message_queue) such as [Wisper](http://www.sitepoint.com/using-wisper-to-decompose-applications/) or [RabbitMQ](http://www.rabbitmq.com), itself built on the open [AMQP](https://en.wikipedia.org/wiki/Advanced_Message_Queuing_Protocol) standard.

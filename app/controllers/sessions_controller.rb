@@ -25,16 +25,14 @@ class SessionsController < ApplicationController
   # https://github.com/krisleech/wisper/issues/75 for relevant detail.
 
   def on_create_success(payload)
-    @errors = ErrorFactory.create []
-    @user = payload.entity
-    self.current_user = payload.entity
+    @user = payload
+    self.current_user = @user
     redirect_to root_url, flash: { success: 'Logged in!' }
   end
 
-  def on_create_failure(_payload)
+  def on_create_failure(payload)
     @user = nil
-    flash_alert = { alert: 'Invalid user name or password' }
-    redirect_to new_session_path, flash: flash_alert
+    redirect_to new_session_path, flash: { alert: payload }
   end
 
   def on_destroy_success(_payload)
@@ -45,12 +43,11 @@ class SessionsController < ApplicationController
   # No #on_destroy_failure. Can't happen and, even if it does, we don't want to
   # know about it. So there.
 
-  def on_new_success(payload)
-    @user = payload.entity
+  def on_new_success(payload) # rubocop:disable Style/TrivialAccessors
+    @user = payload
   end
 
-  def on_new_failure(_payload)
-    alert_flash = { alert: "User '#{current_user.name}' is already logged in!" }
-    redirect_to root_path, flash: alert_flash
+  def on_new_failure(payload)
+    redirect_to root_path, flash: { alert: payload }
   end
 end

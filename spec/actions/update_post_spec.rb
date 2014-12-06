@@ -36,24 +36,45 @@ module Actions
           expect(subscriber).not_to be_failure
         end
 
-        describe 'is successful, broadcasting a StoreResult payload with' do
+        describe 'is successful, broadcasting a payload which' do
           let(:payload) { subscriber.payload_for(:success).first }
 
-          it 'a :success value of true' do
-            expect(payload).to be_success
+          it 'is a PostEntity' do
+            expect(payload).to be_a PostEntity
           end
 
-          it 'an empty :errors field' do
-            expect(payload.errors).to be_empty
+          it 'is a PostEntity with correct attributes' do
+            attrib_keys = post.attributes.keys - post_data.keys - [:pubdate]
+            attrib_keys.each { |key| expect(payload[key]).to eq post[key] }
+            post_data.keys.each { |k| expect(payload[k]).to eq post_data[k] }
+            if post.attributes.key? :pubdate
+              expect(payload[:pubdate]).to be_within(0.5.seconds)
+                .of post[:pubdate]
+            end
           end
-
-          it 'an :entity field with the updated PostEntity' do
-            expect(payload.entity).to be_a PostEntity
-            expect(payload.entity.body).to eq post_data[:body]
-            expect(payload.entity.slug).to eq post.slug
-          end
-        end # describe 'is successful, broadcasting a StoreResult payload with'
+        end # describe 'is successful, broadcasting a payload which'
       end # context 'updating supported attributes with new valid values'
+
+      context 'changing the publication state of the post' do
+        context 'from published to draft' do
+          let(:post_data) { { pubdate: nil } }
+
+          it 'is successful' do
+            expect(subscriber).to be_successful
+            expect(subscriber).not_to be_failure
+          end
+
+          describe 'is successful, broadcasting a payload which' do
+            let(:payload) { subscriber.payload_for(:success).first }
+
+            it 'is a draft PostEntity' do
+              expect(payload).to be_a PostEntity
+              expect(payload).not_to be_published
+              expect(payload).to be_draft
+            end
+          end # describe 'is successful, broadcasting a payload which'
+        end # context 'from published to draft'
+      end # context 'changing the publication state of the post'
 
       context 'attempting to update supported attributes with invalid values' do
         let(:post_data) { { title: '', body: '', image_url: '' } }
@@ -63,22 +84,18 @@ module Actions
           expect(subscriber).to be_failure
         end
 
-        describe 'is unsuccessful, broadcasting a StoreResult payload with' do
+        describe 'is unsuccessful, broadcasting a payload which' do
           let(:payload) { subscriber.payload_for(:failure).first }
 
-          it 'a :success value of false' do
-            expect(payload).not_to be_success
+          it 'is a JSON-encoded array with the correct error messages' do
+            expected = [
+              "Title can't be blank",
+              'Body must be specified if image URL is omitted'
+            ]
+            messages = JSON.parse payload
+            expect(messages).to eq expected
           end
-
-          it 'an :errors field with the correct information' do
-            message = 'Invalid attribute values specified for update!'
-            expect(payload.errors.first).to be_an_error_hash_for :post, message
-          end
-
-          it 'an :entity value of nil' do
-            expect(payload.entity).to be nil
-          end
-        end # describe 'is unsuccessful, broadcasting a StoreResult payload with'
+        end # describe 'is unsuccessful, broadcasting a payload which'
       end # context 'attempting to update supported attributes with invalid...'
     end # context 'for the post author'
 
@@ -94,22 +111,14 @@ module Actions
         expect(subscriber).to be_failure
       end
 
-      describe 'is unsuccessful, broadcasting a StoreResult payload with' do
+      describe 'is unsuccessful, broadcasting a payload which' do
         let(:payload) { subscriber.payload_for(:failure).first }
 
-        it 'a :success value of false' do
-          expect(payload).not_to be_success
+        it 'is the correct error message' do
+          expected = "User #{current_user.name} is not the author of this post!"
+          expect(payload).to eq expected
         end
-
-        it 'an :errors field with the correct information' do
-          message = 'Not logged in as the author of this post!'
-          expect(payload.errors.first).to be_an_error_hash_for :user, message
-        end
-
-        it 'an :entity value of nil' do
-          expect(payload.entity).to be nil
-        end
-      end # describe 'is unsuccessful, broadcasting a StoreResult payload with'
+      end # describe 'is unsuccessful, broadcasting a payload which'
     end # context 'for a registered user other than the post author'
 
     context 'for the Guest User' do
@@ -122,22 +131,13 @@ module Actions
         expect(subscriber).to be_failure
       end
 
-      describe 'is unsuccessful, broadcasting a StoreResult payload with' do
+      describe 'is unsuccessful, broadcasting a payload which' do
         let(:payload) { subscriber.payload_for(:failure).first }
 
-        it 'a :success value of false' do
-          expect(payload).not_to be_success
+        it 'is the correct error message' do
+          expect(payload).to eq 'Not logged in as a registered user!'
         end
-
-        it 'an :errors field with the correct information' do
-          message = 'Not logged in as a registered user!'
-          expect(payload.errors.first).to be_an_error_hash_for :user, message
-        end
-
-        it 'an :entity value of nil' do
-          expect(payload.entity).to be nil
-        end
-      end # describe 'is unsuccessful, broadcasting a StoreResult payload with'
+      end # describe 'is unsuccessful, broadcasting a payload which'
     end # context 'for the Guest User'
   end # describe Actions::UpdatePost
 end # module Actions

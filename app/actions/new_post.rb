@@ -3,43 +3,42 @@ module Actions
   # Wisper-based command object called by Posts controller #new action.
   class NewPost
     include Wisper::Publisher
-    attr_reader :current_user
 
     def initialize(current_user)
       @current_user = current_user
     end
 
     def execute
-      guest_user = user_repo.guest_user.entity
-      return broadcast_auth_failure if current_user.name == guest_user.name
-      entity = PostEntity.new author_name: current_user.name
-      result = StoreResult.new success: true, entity: entity,
-                               errors: ErrorFactory.create([])
-      broadcast_success result
+      prohibit_guest_access
+      broadcast_success(build_entity)
+    rescue RuntimeError => the_error
+      broadcast_failure the_error.message
     end
 
     private
 
-    def broadcast_failure(payload)
-      broadcast :failure, payload
+    attr_reader :current_user
+
+    def broadcast_failure(invalid_entity)
+      broadcast :failure, invalid_entity
     end
 
     def broadcast_success(payload)
       broadcast :success, payload
     end
 
-    def broadcast_auth_failure
-      broadcast_failure_for :user, 'Not logged in as a registered user!'
+    def build_entity
+      PostEntity.new author_name: current_user.name
     end
 
-    def broadcast_failure_for(key, message)
-      result = StoreResult.new success: false, entity: nil,
-                               errors: build_errors_for(key, message)
-      broadcast_failure result
+    def prohibit_guest_access
+      guest_user = user_repo.guest_user.entity
+      return unless guest_user.name == current_user.name
+      fail guest_user_not_authorised_message
     end
 
-    def build_errors_for(key, message)
-      [{ field: key.to_s, message: message }]
+    def guest_user_not_authorised_message
+      'Not logged in as a registered user!'
     end
 
     def user_repo

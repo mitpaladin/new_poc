@@ -10,51 +10,35 @@ module Actions
     end
 
     def execute
-      if already_logged_in?
-        broadcast_failure
-      else
-        broadcast_success
-      end
+      verify_not_logged_in
+      broadcast_success guest_user
+    rescue RuntimeError => error
+      broadcast_failure error.message
     end
 
     private
 
-    def broadcast_success
-      result = StoreResult.new success: true, errors: [], entity: guest_user
-      broadcast :success, result
+    def broadcast_success(payload)
+      broadcast :success, payload
     end
 
-    def broadcast_failure
-      result = StoreResult.new success: false,
-                               entity: nil,
-                               errors: build_errors
-      broadcast :failure, result
+    def broadcast_failure(message)
+      broadcast :failure, message
     end
 
-    def build_errors
-      errors = errors_object
-      errors.add :session, "Already logged in as #{current_user.name}!"
-      ErrorFactory.create errors
-    end
-
-    # Implementation helpers
-
-    def already_logged_in?
-      guest_user.name != current_user.name
+    def verify_not_logged_in
+      return if guest_user.name == current_user.name
+      fail "Already logged in as #{current_user.name}!"
     end
 
     def guest_user
-      user_repo.guest_user.entity
+      @guest_user ||= user_repo.guest_user.entity
     end
 
     # dependencies; candidates for future injection
 
-    def errors_object
-      ActiveModel::Errors.new current_user
-    end
-
     def user_repo
-      UserRepository.new
+      @user_repo ||= UserRepository.new
     end
   end # class Actions::NewSession
 end # module Actions

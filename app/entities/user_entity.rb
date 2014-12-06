@@ -2,12 +2,19 @@
 require 'active_model'
 require 'instance_variable_setter'
 
+require_relative 'user_entity/name_validator'
+
 # Persistence entity-layer representation for User. Not a domain object; used to
 # communicate across the repository/DAO boundary.
 class UserEntity
   include ActiveAttr::BasicModel
   include ActiveAttr::Serialization
   include Comparable
+
+  # Internal, private support classes for UserEntity
+  module Internals
+  end # module UserEntity::Internals
+  private_constant :Internals
 
   attr_reader :email,
               :name,
@@ -17,6 +24,12 @@ class UserEntity
               :slug,
               :created_at,
               :updated_at
+
+  # NOTE: No `uniqueness: true` without database access...
+  validates :name, presence: true, length: { minimum: 6 }
+  validate :validate_name
+  validates_email_format_of :email
+  validate :passwords_are_valid
 
   def initialize(attribs)
     init_attrib_keys.each { |attrib| class_eval { attr_reader attrib } }
@@ -59,5 +72,35 @@ class UserEntity
   # FIXME: Wrong-way dependency; better way to fix?
   def guest_user_entity
     UserRepository.new.guest_user.entity
+  end
+
+  def add_to_name_errors_if_whitespace(strip_where)
+    strips = {
+      leading: :lstrip,
+      trailing: :rstrip
+    }
+    error_message = format 'may not have %s whitespace', strip_where.to_s
+    errors.add :name, error_message if name != name.send(strips[strip_where])
+  end
+
+  def validate_name
+    Internals::NameValidator.new(name)
+      .validate
+      .add_errors_to_model(self)
+  end
+
+  def passwords_match?
+    password.to_s.strip.present? &&
+      (password == password.to_s.strip) &&
+      (password == password_confirmation)
+  end
+
+  def passwords_omitted?
+    password.to_s.strip.empty? && password_confirmation.to_s.strip.empty?
+  end
+
+  def passwords_are_valid
+    return if passwords_omitted? || passwords_match?
+    errors.add :password, 'must match the password confirmation'
   end
 end # class UserEntity

@@ -27,24 +27,13 @@ module Actions
         expect(subscriber).to be_failure
       end
 
-      describe 'is not  successful, broadcasting a StoreResult payload with' do
+      describe 'is not successful, broadcasting a payload which' do
         let(:payload) { subscriber.payload_for(:failure).first }
 
-        it 'a :success value of false' do
-          expect(payload).not_to be_success
+        it 'is the appropriate error message' do
+          expect(payload).to eq "Not logged in as #{current_user.name}!"
         end
-
-        it 'an :errors item with the correct information' do
-          message = "Not logged in as "
-          message = "Not logged in as #{current_user.slug}!"
-          expect(payload).to have(1).error
-          expect(payload.errors.first).to be_an_error_hash_for :user, message
-        end
-
-        it 'an :entity value of nil' do
-          expect(payload.entity).to be nil
-        end
-      end # describe 'is not successful, broadcasting a StoreResult payload...'
+      end # describe 'is not successful, broadcasting a payload which'
     end # context 'with the Guest User as the current user'
 
     context 'with the profile owner as the current user' do
@@ -55,21 +44,14 @@ module Actions
         expect(subscriber).not_to be_failure
       end
 
-      describe 'is successful, broadcasting a StoreResult payload with' do
+      describe 'is successful, broadcasting a payload which' do
         let(:payload) { subscriber.payload_for(:success).first }
 
-        it 'a :success value of true' do
-          expect(payload).to be_success
+        it 'is a UserEntity corresponding to the current user' do
+          expect(payload).to be_a UserEntity
+          expect(payload).to be_saved_user_entity_for current_user
         end
-
-        it 'an empty :errors item' do
-          expect(payload.errors).to be_empty
-        end
-
-        it 'the current user/profile owner as the :entity' do
-          expect(payload.entity.name).to eq current_user.name
-        end
-      end # describe 'is successful, broadcasting a StoreResult payload with'
+      end # describe 'is successful, broadcasting a payload which'
     end # context 'with the profile owner as the current user'
   end # describe Actions::EditUser
 end # module Actions

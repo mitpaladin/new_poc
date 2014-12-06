@@ -9,7 +9,7 @@ shared_examples description do |description, name, password|
   context description do
     let(:command) do
       user_name = name == :registered_user ? registered_user.name : name
-      klass.new user_name, password
+      described_class.new user_name, password
     end
 
     it 'broadcasts failure' do
@@ -17,25 +17,18 @@ shared_examples description do |description, name, password|
       expect(subscriber).to be_failure
     end
 
-    describe 'broadcasts :failure with a payload of a StoreResult, which' do
+    describe 'broadcasts :failure with a payload which' do
       let(:payload) { subscriber.payload_for(:failure).first }
 
-      it 'is a failure' do
-        expect(payload).not_to be_success
+      it 'is the correct error message' do
+        expect(payload).to eq 'Invalid user name or password'
       end
-
-      it 'has one error' do
-        expect(payload).to have(1).errors
-        expect(payload.errors.first)
-            .to be_an_error_hash_for :base, 'Invalid user name or password'
-      end
-    end # describe 'broadcasts :failure with a payload of a StoreResult,...'
+    end # describe 'broadcasts :failure with a payload which'
   end # context description
 end # shared_examples 'a broadcast :create failure for'
 
 module Actions
   describe CreateSession do
-    let(:klass) { CreateSession }
     let(:guest_user) { UserRepository.new.guest_user.entity }
     let(:registered_user) do
       user = UserEntity.new FactoryGirl.attributes_for(:user, :saved_user)
@@ -51,30 +44,26 @@ module Actions
     end
 
     context 'is successful with valid parameters' do
-      let(:command) { klass.new registered_user.name, registered_user.password }
+      let(:command) do
+        described_class.new registered_user.name, registered_user.password
+      end
 
       it 'broadcasts :success' do
         expect(subscriber).to be_successful
         expect(subscriber).not_to be_failure
       end
 
-      describe 'broadcasts :success with a payload of a StoreResult, which' do
+      describe 'broadcasts :success with a payload which' do
         let(:payload) { subscriber.payload_for(:success).first }
 
-        it 'is successful' do
-          expect(payload).to be_success
+        it 'is a UserEntity' do
+          expect(payload).to be_a UserEntity
         end
 
-        it 'has no errors' do
-          expect(payload).to have(0).errors
+        it 'has the correct user attributes' do
+          expect(payload).to be_saved_user_entity_for registered_user
         end
-
-        it 'has the Guest User entity attributes in its entity' do
-          [:name, :email, :profile, :slug].each do |field|
-            expect(payload.entity.send field).to eq registered_user.send(field)
-          end
-        end
-      end # describe 'broadcasts :success with a payload of a StoreResult, ...'
+      end # describe 'broadcasts :success with a payload which'
     end # context 'is successful with valid parameters'
 
     context 'is unsuccessful with invalid parameters' do

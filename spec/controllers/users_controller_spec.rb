@@ -101,7 +101,7 @@ describe UsersController do
   end # describe "GET 'new'"
 
   describe "POST 'create'" do
-    let(:params) { FactoryGirl.attributes_for :user }
+    let(:params) { FancyOpenStruct.new FactoryGirl.attributes_for(:user) }
 
     describe 'with valid parameters' do
       before :each do
@@ -125,47 +125,77 @@ describe UsersController do
       end
     end # describe 'with valid parameters'
 
-    describe 'with invalid parameters, such as' do
+    context 'with invalid parameters' do
 
-      after :each do
-        post :create, user_data: params
-        user = assigns[:user]
-        errors = assigns[:errors]
-        expect(user).not_to be_persisted
-        # expect(user).to_not be_valid
-        expect(errors.count).to eq @messages.count
-        @messages.each do |k, v|
-          expected = { field: k.to_s, message: v }
-          expect(errors).to include expected
+      context 'that result in an apparently valid user entity, such as' do
+        # This tests a new user that would be valid if a user with the same name
+        # weren't already registered. At the entity level, it's fine; it takes a
+        # database hit to trip us up.
+        context 'a duplicate name' do
+          before :each do
+            post :create, user_data: params
+            params[:profile] = "Updated #{params[:profile]}"
+            post :create, user_data: params
+            @user = assigns[:user]
+          end
+
+          it 'assigns a UserEntity to :user' do
+            expect(@user).to be_a UserEntity
+          end
+
+          it 'does not redirect' do
+            expect(response).not_to be_redirect
+          end
+
+          it 'adds the name-already-taken error message to the :user entity' do
+            user_slug = params[:name].parameterize
+            message = 'Name is invalid: A record identified by slug' \
+              " '#{user_slug}' already exists!"
+            expect(@user.errors.full_messages).to include message
+          end
+        end # context 'a duplicate name'
+      end # context 'that result in an apparently valid user entity, such as'
+
+      context 'that result in a visibly invalid user entity, including' do
+
+        after :each do
+          post :create, user_data: @params
+          expect(response).not_to be_redirection
+          user = assigns[:user]
+          expect(user).to be_a UserEntity
+          expect(user).not_to be_valid
+          expect(user).to have(@messages.count).errors
+          expect(user.errors.full_messages).to eq @messages
         end
-      end
 
-      it 'an empty name' do
-        params[:name] = ''
-        @messages = { name: 'may not be missing or blank' }
-      end
+        it 'an empty name' do
+          @params = params.merge name: ''
+          params[:name] = ''
+          @messages = [
+            "Name can't be blank",
+            'Name is too short (minimum is 6 characters)'
+          ]
+        end
 
-      it 'a duplicate name' do
-        post :create, user_data: params
-        expect(assigns[:user]).to be_persisted
-        @messages = { name: 'is not available' }
-      end
+        it 'an invalid email address' do
+          @params = params.merge email: 'jruser at example dot com'
+          @messages = ['Email does not appear to be a valid e-mail address']
+        end
 
-      it 'an invalid email address' do
-        params[:email] = 'jruser at example dot com'
-        @messages = { email: 'does not appear to be a valid e-mail address' }
-      end
-
-      it 'mismatched passwords' do
-        params[:password] = 'password'
-        params[:password_confirmation] = 'Password'
-        @messages = { password: 'and password confirmation do not match' }
-      end
-    end # describe 'with invalid parameters, such as'
+        it 'mismatched passwords' do
+          bad_params = {
+            password: 'password',
+            password_confirmation: 'Password'
+          }
+          @params = params.merge bad_params
+          @messages = ['Password must match the password confirmation']
+        end
+      end # context 'that result in a visibly invalid user entity, including'
+    end # describe 'with invalid parameters'
   end # describe "POST 'create'"
 
   describe "GET 'edit'" do
-    let(:not_auth_message) { "Not logged in as #{user.slug}!" }
+    let(:not_auth_message) { "Not logged in as #{user.name}!" }
     let(:user) { FactoryGirl.create :user, :saved_user }
 
     context 'for the Guest User' do
@@ -208,7 +238,7 @@ describe UsersController do
       end # context 'editing his own record'
 
       context 'attempting to edit the record of another user' do
-        let(:not_auth_message) { "Not logged in as #{other_user.slug}!" }
+        let(:not_auth_message) { "Not logged in as #{other_user.name}!" }
         let(:other_user) { FactoryGirl.create :user, :saved_user }
 
         before :each do
@@ -260,7 +290,7 @@ describe UsersController do
       end
 
       it 'is shown the correct flash error message' do
-        message = "Cannot find user with slug #{target_user.slug}!"
+        message = "Cannot find user identified by slug #{target_user.slug}!"
         expect(flash[:alert]).to eq message
       end
     end # describe 'when attempting to view a profile which does not exist,'

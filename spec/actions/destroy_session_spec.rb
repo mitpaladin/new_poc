@@ -7,9 +7,8 @@ require 'destroy_session'
 
 module Actions
   describe DestroySession do
-    let(:klass) { DestroySession }
     let(:subscriber) { BroadcastSuccessTester.new }
-    let(:command) { klass.new }
+    let(:command) { described_class.new }
 
     before :each do
       command.subscribe subscriber
@@ -21,19 +20,11 @@ module Actions
       expect(subscriber).not_to be_failure
     end
 
-    describe 'is successful, broadcasting a StoreResult payload with' do
+    describe 'is successful, broadcasting a payload with' do
       let(:payload) { subscriber.payload_for(:success).first }
 
-      it 'a :success value of true' do
-        expect(payload).to be_success
-      end
-
-      it 'an empty :errors item' do
-        expect(payload.errors).to be_empty
-      end
-
-      it 'a nil :entity value' do
-        expect(payload.entity).to be nil
+      it ':success' do
+        expect(payload).to be :success
       end
     end # describe 'is successful, broadcasting a StoreResult payload with'
   end # describe Actions::DestroySession

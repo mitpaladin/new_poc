@@ -4,15 +4,10 @@ module Actions
   class IndexUsers
     include Wisper::Publisher
 
-    def initialize
-    end
-
     def execute
       # UserRepository#all (currently) filters out the Guest User, which is
       # exactly what we want here
-      users = UserRepository.new.all
-      result = StoreResult.new success: true, errors: [], entity: users
-      broadcast_success result
+      broadcast_success UserRepository.new.all
     end
 
     private
