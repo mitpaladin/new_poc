@@ -51,8 +51,7 @@ class UsersController < ApplicationController
 
   def on_create_failure(payload)
     @user = user_for_create_failure(payload, self)
-    # CreateFailure::BlockingFailureRedirector.new(payload, self).check
-    # @user = CreateFailure::UserChecker.new(payload, self).parse
+
     render 'new'
   end
 
