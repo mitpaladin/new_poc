@@ -74,15 +74,6 @@ class UserEntity
     UserRepository.new.guest_user.entity
   end
 
-  def add_to_name_errors_if_whitespace(strip_where)
-    strips = {
-      leading: :lstrip,
-      trailing: :rstrip
-    }
-    error_message = format 'may not have %s whitespace', strip_where.to_s
-    errors.add :name, error_message if name != name.send(strips[strip_where])
-  end
-
   def validate_name
     Internals::NameValidator.new(name)
       .validate
