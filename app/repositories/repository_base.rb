@@ -17,16 +17,16 @@ class RepositoryBase
     dao.all.map { |record| factory.create record }
   end
 
-  def delete(slug)
-    # We pass in a slug; the Repository (and Entity) don't know what an 'id'
-    # is. The DAO, however, is ActiveRecord, and seems to need an ID
-    record = dao.find_by_slug(slug)
-    return failed_result(slug) unless record
-    destroyed_record_count = dao.delete(record.id)
-    # This should never happen; if we can see it, we should be able to delete it
-    return failed_result(record.id) if destroyed_record_count.zero?
-    successful_result
-  end
+  # def delete(slug)
+  #   # We pass in a slug; the Repository (and Entity) don't know what an 'id'
+  #   # is. The DAO, however, is ActiveRecord, and seems to need an ID
+  #   record = dao.find_by_slug(slug)
+  #   return failed_result(slug) unless record
+  #   destroyed_record_count = dao.delete(record.id)
+  #   # This should never happen; if we can see it, we can delete it
+  #   return failed_result(record.id) if destroyed_record_count.zero?
+  #   successful_result
+  # end
 
   def find_by_slug(slug)
     found_post = dao.where(slug: slug).first
@@ -59,12 +59,6 @@ class RepositoryBase
     errors = ActiveModel::Errors.new dao
     errors.add :base, "A record with 'slug'=#{slug} was not found."
     failed_result_with_errors errors
-  end
-
-  def filter(entity_attributes)
-    entity_attributes.reject do |attr|
-      [:errors, :validation_context].include? attr
-    end
   end
 
   def successful_result(record = nil)

@@ -73,9 +73,9 @@ describe UserRepository do
     end
   end # describe :all
 
-  describe :delete.to_s do
-    it_behaves_like 'the #delete method for a Repository'
-  end # describe :delete
+  # describe :delete.to_s do
+  #   it_behaves_like 'the #delete method for a Repository'
+  # end # describe :delete
 
   describe :find_by_slug.to_s do
     it_behaves_like 'the #find_by_slug method for a Repository'

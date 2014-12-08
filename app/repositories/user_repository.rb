@@ -51,12 +51,6 @@ class UserRepository < RepositoryBase
     invalid_user_name_or_password
   end
 
-  def failed_name_result(name)
-    errors = ActiveModel::Errors.new dao
-    errors.add :base, "A record with 'name'=#{name} was not found."
-    failed_result_with_errors errors
-  end
-
   def include_password?(options)
     !options.include?(:no_password)
   end
