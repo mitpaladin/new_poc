@@ -27,7 +27,7 @@ shared_examples 'the #add method for a Repository' do
       end
     end
     let(:obj) do
-      klass.new factory_class, mockDao
+      described_class.new factory_class, mockDao
     end
     let!(:initial_count) { mockDao.all.count }
     let(:result) { obj.add entity }

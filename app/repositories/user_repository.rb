@@ -21,12 +21,6 @@ class UserRepository < RepositoryBase
                     success: errors.empty?
   end
 
-  def find_by_name(name)
-    found_user = dao.where(name: name).first
-    return successful_result(found_user) if found_user
-    failed_name_result name
-  end
-
   def guest_user(*options)
     user_dao = dao.first
     errors = ErrorFactory.create(user_dao.errors)
