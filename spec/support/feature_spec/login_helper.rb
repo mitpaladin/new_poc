@@ -1,15 +1,59 @@
 
 require_relative 'helper_base'
-require_relative 'user_helper_support/user_creator_data'
 
 # Feature-spec support class to create and log in with a new user.
 class FeatureSpecLoginHelper < FeatureSpecHelperBase
+  module Internals
+    # Encapsulates/sequences data suitable for user generation.
+    class UserCreatorData
+      attr_reader :user_password
+
+      def initialize(params_in = {})
+        params = default_params.merge params_in
+        @user_name = Sequencer.new params[:user_name], params[:name_start]
+        @user_email = Sequencer.new params[:user_email], params[:name_start]
+        @user_profile = params[:user_profile]
+        @user_password = 'password'
+      end
+
+      def user_name
+        @user_name.to_s
+      end
+
+      def user_email
+        @user_email.to_s
+      end
+
+      def user_profile
+        @user_profile.to_s
+      end
+
+      def step
+        @user_name.step
+        @user_email.step
+      end
+
+      private
+
+      def default_params
+        {
+          user_name:    'J Random User %d',
+          user_email:   'jruser%d@example.com',
+          user_profile: 'Just Another *Random* User',
+          name_start:   0
+        }
+      end
+    end # class FeatureSpecLoginHelper::Internals::UserCreatorData
+  end # module FeatureSpecLoginHelper::Internals
+  private_constant :Internals
+
   extend Forwardable
   attr_accessor :data
   def_delegator :@data, :step, :step
 
-  def initialize(spec_obj, data = UserHelperSupport::UserCreatorData.new)
-    super
+  def initialize(spec_obj, data_values = {})
+    data = Internals::UserCreatorData.new data_values
+    super spec_obj, data
   end
 
   def register_and_login

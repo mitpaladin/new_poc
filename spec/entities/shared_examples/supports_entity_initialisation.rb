@@ -4,11 +4,11 @@ shared_examples 'it supports entity initialisation' do
 
     describe 'succeeding' do
       it 'with any combination of valid field names' do
-        expect { klass.new valid_subset }.not_to raise_error
+        expect { described_class.new valid_subset }.not_to raise_error
       end
 
       it 'with invalid field names' do
-        expect { klass.new invalid_attribs }.not_to raise_error
+        expect { described_class.new invalid_attribs }.not_to raise_error
       end
     end # describe 'succeeding'
 
@@ -16,7 +16,7 @@ shared_examples 'it supports entity initialisation' do
       # Null entities aren't very useful. (Use Null Objects instead.)
       it 'with no parameters' do
         message = 'wrong number of arguments (0 for 1)'
-        expect { klass.new }.to raise_error ArgumentError, message
+        expect { described_class.new }.to raise_error ArgumentError, message
       end
     end # describe 'failing'
   end # describe 'supports initialisation'
@@ -24,7 +24,7 @@ shared_examples 'it supports entity initialisation' do
   describe 'instantiating with' do
 
     describe 'valid attribute names' do
-      let(:obj) { klass.new valid_subset }
+      let(:obj) { described_class.new valid_subset }
 
       it 'sets the attributes' do
         valid_subset.each_pair do |attrib, value|
@@ -34,7 +34,7 @@ shared_examples 'it supports entity initialisation' do
     end # describe 'valid attribute names'
 
     describe 'valid and invalid attribute names' do
-      let(:obj) { klass.new valid_subset.merge(invalid_attribs) }
+      let(:obj) { described_class.new valid_subset.merge(invalid_attribs) }
 
       it 'sets the valid attributes' do
         valid_subset.each_pair do |attrib, value|
