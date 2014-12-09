@@ -70,10 +70,16 @@ module Actions
         end
 
         describe 'is not successful, broadcasting a payload which' do
-          let(:payload) { subscriber.payload_for(:failure).first }
+          let(:payload) do
+            data = JSON.parse(subscriber.payload_for(:failure).first)
+            FancyOpenStruct.new data
+          end
 
           it 'is the expected error message' do
-            expect(payload).to eq 'Not logged in as a registered user!'
+            expect(payload.to_h).to be_a Hash
+            expect(payload).to have(1).message
+            expected = 'Not logged in as a registered user!'
+            expect(payload.messages.first).to eq expected
           end
         end # describe 'is not successful, broadcasting a payload which'
       end # describe 'cannot update any attributes, such as :profile'
