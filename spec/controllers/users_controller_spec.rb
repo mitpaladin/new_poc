@@ -79,10 +79,9 @@ describe UsersController do
     end # context 'with no user logged in'
 
     context 'with a user logged in' do
+      let(:user_attrs) { FactoryGirl.attributes_for :user, :saved_user }
       let(:user) do
-        ret = UserEntity.new FactoryGirl.attributes_for :user, :saved_user
-        UserRepository.new.add ret
-        ret
+        UserEntity.new(user_attrs).tap { |user| UserRepository.new.add user }
       end
 
       before :each do

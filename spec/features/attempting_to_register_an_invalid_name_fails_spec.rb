@@ -4,8 +4,6 @@ require 'spec_helper'
 require 'support/feature_spec/login_helper'
 
 describe 'Attempting to register a new user fails with data invalid because' do
-  let(:landing_page_header) { 'Watching Paint Dry' }
-
   after :each do
     helper = FeatureSpecLoginHelper.new self, user_name: @user_name
     helper.register
