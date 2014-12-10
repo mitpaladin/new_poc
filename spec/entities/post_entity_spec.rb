@@ -5,7 +5,6 @@ require_relative 'shared_examples/a_data_mapping_entity'
 
 # Specs for persistence entity-layer representation for User.
 describe PostEntity do
-  let(:klass) { PostEntity }
   let(:author_name) { 'Joe Palooka' }
   let(:image_url) { 'http://www.example.com/foo.png' }
   let(:title) { 'The Title' }
@@ -28,9 +27,9 @@ describe PostEntity do
     %w(author_name body image_url slug title pubdate created_at updated_at)
       .map(&:to_sym).to_a
   end
-  let(:draft_post) { klass.new valid_subset }
+  let(:draft_post) { described_class.new valid_subset }
   let(:published_attribs) { valid_subset.merge pubdate: Time.now }
-  let(:published_post) { klass.new published_attribs }
+  let(:published_post) { described_class.new published_attribs }
 
   it_behaves_like 'a data-mapping entity'
 
@@ -39,7 +38,7 @@ describe PostEntity do
     describe 'returns true when initialised with' do
 
       after :each do
-        expect(klass.new @attribs).to be_valid
+        expect(described_class.new @attribs).to be_valid
       end
 
       it 'an author name, title and body' do
@@ -67,12 +66,24 @@ describe PostEntity do
     describe 'returns false when initialised with' do
 
       after :each do
-        expect(klass.new @attribs).not_to be_valid
+        expect(described_class.new @attribs).not_to be_valid
       end
 
       it 'no author name' do
         @attribs = { title: title, image_url: image_url, body: body }
       end
+
+      # Entity validation doesn't hit the database, so it can't tell if a name
+      # is actually invalid; all it can do is determine that it's not what it
+      # thinks the guest user name is.
+      # it 'an invalid author name' do
+      #   @attribs = {
+      #     author_name: 'Invalid Author Name',
+      #     title: title,
+      #     image_url: image_url,
+      #     body: body
+      #   }
+      # end
 
       it 'no title' do
         @attribs = {
@@ -91,12 +102,12 @@ describe PostEntity do
     end # describe 'returns false when initialised with'
   end # describe :valid?
 
-  describe :build_body do
+  describe :build_body.to_s do
     let(:post) { published_post }
     let(:text_post) do
       attribs = post.attributes
       attribs.delete :image_url
-      klass.new attribs
+      described_class.new attribs
     end
 
     it 'takes no parameters' do
@@ -118,7 +129,7 @@ describe PostEntity do
       it 'an image post' do
         post_attribs = post.attributes
         post_attribs[:image_url] = image_url
-        post = klass.new post_attribs
+        post = described_class.new post_attribs
         body_markup = "<p>#{post.body}</p>\n"
         expected = %(<figure><img src="#{post.image_url}">)
         expected += %(<figcaption>#{body_markup}</figcaption></figure>\n)

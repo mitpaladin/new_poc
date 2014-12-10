@@ -16,7 +16,8 @@ class PostEntity
   validates :author_name, presence: true
   validates :title, presence: true
   validate :must_have_body_or_title
-  validate :author_must_be_a_registered_user
+  validate :author_must_not_be_the_guest_user
+  # Without access to the database, we can't *really* validate the author name.
 
   def initialize(attribs)
     init_attrib_keys.each { |attrib| class_eval { attr_reader attrib } }
@@ -80,7 +81,7 @@ class PostEntity
     'Guest User'
   end
 
-  def author_must_be_a_registered_user
+  def author_must_not_be_the_guest_user
     return unless author_name == guest_user_name
     errors.add :author_name, 'must be a registered user'
   end
@@ -100,13 +101,5 @@ class PostEntity
   def must_have_body_or_title
     return if body.present? || image_url.present?
     errors.add :body, 'must be specified if image URL is omitted'
-  end
-
-  def timestamp_for(the_time = Time.now)
-    the_time.to_time.localtime.strftime timestamp_format
-  end
-
-  def timestamp_format
-    '%a %b %e %Y at %R %Z (%z)'
   end
 end # class PostEntity
