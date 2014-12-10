@@ -38,9 +38,9 @@ module Actions
       Naught.build do |config|
         config.impersonate UserEntity
         config.predicates_return false
-        def name
-          'No Such User'
-        end
+        # def name
+        #   'No Such User'
+        # end
       end.new
     end
 
