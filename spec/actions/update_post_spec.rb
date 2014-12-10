@@ -135,9 +135,11 @@ module Actions
       describe 'is unsuccessful, broadcasting a payload which' do
         let(:payload) { subscriber.payload_for(:failure).first }
 
-        it 'is the correct error message' do
+        it 'is the correct error message in a JSON-encoded array' do
           expected = "User #{current_user.name} is not the author of this post!"
-          expect(payload).to eq expected
+          data = JSON.parse(payload)
+          expect(data).to have(1).entry
+          expect(data.first).to eq expected
         end
       end # describe 'is unsuccessful, broadcasting a payload which'
     end # context 'for a registered user other than the post author'
@@ -156,9 +158,12 @@ module Actions
         let(:payload) { subscriber.payload_for(:failure).first }
 
         it 'is the correct error message' do
-          expect(payload).to eq 'Not logged in as a registered user!'
+          expected = 'Not logged in as a registered user!'
+          data = JSON.parse(payload)
+          expect(data).to have(1).entry
+          expect(data.first).to eq expected
         end
       end # describe 'is unsuccessful, broadcasting a payload which'
     end # context 'for the Guest User'
   end # describe Actions::UpdatePost
-end # module Actions
+end # module Actionsß

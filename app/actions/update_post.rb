@@ -35,7 +35,7 @@ module Actions
 
     def prohibit_guest_access
       return unless guest_user.name == current_user.name
-      fail guest_user_not_authorised_message
+      fail [guest_user_not_authorised_message].to_json
     end
 
     def update_entity
@@ -53,7 +53,7 @@ module Actions
 
     def verify_user_is_author
       return if current_user.name == entity.author_name
-      fail error_message_for_non_author
+      fail [error_message_for_non_author].to_json
     end
 
     # Support methods
