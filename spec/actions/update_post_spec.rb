@@ -5,8 +5,7 @@ require 'update_post'
 
 module Actions
   describe UpdatePost do
-    let(:klass) { UpdatePost }
-    let(:command) { klass.new post_slug, post_data, current_user }
+    let(:command) { described_class.new post_slug, post_data, current_user }
     let(:subscriber) { BroadcastSuccessTester.new }
     let(:user_repo) { UserRepository.new }
     let(:author) do
@@ -54,6 +53,28 @@ module Actions
           end
         end # describe 'is successful, broadcasting a payload which'
       end # context 'updating supported attributes with new valid values'
+
+      context 'with an invalid slug passed to the action' do
+        let(:invalid_slug) { 'invalid-slug' }
+        let(:command) do
+          described_class.new invalid_slug, post_data, current_user
+        end
+        let(:post_data) { { body: 'Updated Post Body', title: 'A New Title'} }
+
+        it 'is unsuccessful' do
+          expect(subscriber).not_to be_successful
+          expect(subscriber).to be_failure
+        end
+
+        describe 'is unsuccessful, broadcasting a payload which' do
+          let(:payload) { subscriber.payload_for(:failure).first }
+
+          it 'contains the correct error message' do
+            expected = "Cannot find post identified by slug: '#{invalid_slug}'!"
+            expect(payload).to eq expected
+          end
+        end # describe 'is unsuccessful, broadcasting a payload which'
+      end # context 'with an invalid slug passed to the action'
 
       context 'changing the publication state of the post' do
         context 'from published to draft' do
