@@ -95,6 +95,7 @@ class PostsController < ApplicationController
   end
 
   def on_update_failure(payload)
-    redirect_to posts_path, flash: { alert: payload }
+    data = JSON.parse payload
+    redirect_to posts_path, flash: { alert: data.join('<br/>') }
   end
 end # class PostsController

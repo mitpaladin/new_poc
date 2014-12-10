@@ -5,7 +5,7 @@ require_relative 'shared_examples/a_data_mapping_entity'
 
 # Specs for persistence entity-layer representation for User.
 describe UserEntity do
-  let(:klass) { UserEntity }
+  # let(:klass) { UserEntity }
   let(:user_name) { 'Joe Palooka' }
   let(:user_email) { 'joe@example.com' }
   let(:user_profile) { 'Whatever.' }
@@ -33,7 +33,7 @@ describe UserEntity do
 
     describe 'returns true when initialised with' do
       after :each do
-        expect(klass.new @attribs).to be_valid
+        expect(described_class.new @attribs).to be_valid
       end
 
       it 'a name and an email address' do
@@ -70,17 +70,26 @@ describe UserEntity do
 
     describe 'returns false when initialised with' do
       after :each do
-        expect(klass.new @attribs).not_to be_valid
+        expect(described_class.new @attribs).not_to be_valid
       end
 
-      it 'an invalid name' do
-        name = '  Some  Body '
-        @attribs = { name: name, email: user_email, profile: user_profile }
-      end
+      describe 'a name that is invalid because it' do
+        after :each do
+          @attribs = { name: @name, email: user_email, profile: user_profile }
+        end
 
-      it 'no name' do
-        @attribs = { email: user_email, profile: user_profile }
-      end
+        it 'has leading/trailing whitespace' do
+          @name = '  Some  Body '
+        end
+
+        it 'contains invalid whitespace' do
+          @name = "Some\tBody\n"
+        end
+
+        it 'is missing' do
+          @name = nil
+        end
+      end # describe 'a name that is invalid because it'
 
       it 'no email address' do
         @attribs = { name: user_name, profile: user_profile }
@@ -103,7 +112,8 @@ describe UserEntity do
 
   describe :formatted_profile.to_s do
     let(:profile) { 'This *is* a test.' }
-    let(:user) { klass.new FactoryGirl.attributes_for :user, profile: profile }
+    let(:user) { described_class.new user_attribs }
+    let(:user_attribs) { FactoryGirl.attributes_for :user, profile: profile }
 
     it 'returns the profile string, parsing Markdown to HTML' do
       expected = "<p>This <em>is</em> a test.</p>\n"
@@ -126,10 +136,10 @@ describe UserEntity do
 
   describe :sort.to_s do
     let(:low_user) do
-      klass.new FactoryGirl.attributes_for :user, name: 'Abe Zonker'
+      described_class.new FactoryGirl.attributes_for :user, name: 'Abe Zonker'
     end
     let(:high_user) do
-      klass.new FactoryGirl.attributes_for :user, nme: 'Zig Adler'
+      described_class.new FactoryGirl.attributes_for :user, nme: 'Zig Adler'
     end
 
     it 'returns the sorted array when source is not in order by name' do

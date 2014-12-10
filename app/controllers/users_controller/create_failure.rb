@@ -1,5 +1,4 @@
 
-require_relative 'blocking_failure_redirector'
 require_relative 'user_checker'
 
 # Internal classes used by our UsersController.
@@ -13,7 +12,6 @@ class UsersController < ApplicationController
     include CreateFailure
 
     def user_for_create_failure(payload, controller)
-      BlockingFailureRedirector.new(payload, controller).check
       @user = UserChecker.new(payload, controller).parse
     end
   end # module Internals

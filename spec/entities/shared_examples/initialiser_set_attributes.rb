@@ -1,7 +1,7 @@
 
 shared_examples 'it has initialiser-set attributes' do
   describe '#attributes' do
-    let(:obj) { klass.new valid_subset }
+    let(:obj) { described_class.new valid_subset }
     let(:actual) { obj.attributes }
 
     it 'returns the attributes passed to the initialiser' do

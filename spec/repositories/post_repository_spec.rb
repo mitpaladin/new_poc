@@ -47,9 +47,9 @@ describe PostRepository do
     it_behaves_like 'the #all method for a Repository'
   end # decribe :all
 
-  describe :delete.to_s do
-    it_behaves_like 'the #delete method for a Repository'
-  end # decribe :delete
+  # describe :delete.to_s do
+  #   it_behaves_like 'the #delete method for a Repository'
+  # end # decribe :delete
 
   describe :find_by_slug.to_s do
     it_behaves_like 'the #find_by_slug method for a Repository'

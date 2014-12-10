@@ -35,9 +35,9 @@ module Actions
       Naught.build do |config|
         config.impersonate PostEntity
         config.predicates_return false
-        def author_name
-          'Guest User'
-        end
+        # def author_name
+        #   'Guest User'
+        # end
       end.new
     end
 

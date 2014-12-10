@@ -50,6 +50,27 @@ module Actions
           expect(payload).to eq message
         end
       end # describe 'it is unsuccessful, returning a payload which'
+
+      context 'with an invalid slug passed to the action' do
+        let(:invalid_slug) { 'invalid-slug' }
+        let(:command) do
+          described_class.new invalid_slug, author
+        end
+
+        it 'is unsuccessful' do
+          expect(subscriber).not_to be_successful
+          expect(subscriber).to be_failure
+        end
+
+        describe 'is unsuccessful, broadcasting a payload which' do
+          let(:payload) { subscriber.payload_for(:failure).first }
+
+          it 'contains the correct error message' do
+            expected = "Cannot find post identified by slug: '#{invalid_slug}'!"
+            expect(payload).to eq expected
+          end
+        end # describe 'is unsuccessful, broadcasting a payload which'
+      end # context 'with an invalid slug passed to the action'
     end # context 'with another registered user as the current user'
 
     context 'with the Guest User as the current user' do

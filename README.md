@@ -57,6 +57,23 @@ Meeting each and all of these conditions will demonstrate that we have an applic
 
 Code analysis and reporting tools, such as [`simplecov`](https://github.com/colszowka/simplecov) test-coverage reporting, [`rubocop`](http://batsov.com/rubocop/) style checking, [`metric_fu`](http://metricfu.github.io/metric_fu/old_index.html) metrics reporting, [`inch`](http://trivelop.de/inch/) documentation analysis, and so on, shall be used throughout the project to show where improvements may be worthwhile. This should be effected through an automated continuous-integration system such as [CruiseControl.rb](http://cruisecontrolrb.thoughtworks.com), which was the motivation for the project's `cruise` Rake task.
 
+#### One Important Note
+
+It's clear (in hindsight) that using *feature specs* as the authoritative source of "is it fully tested?" is vital. New developers may look and say "well, you've already got specs for your `Action` classes, and specs for the controllers that use those Actions; why do you even *care* about feature specs?" Simple:
+
+1. Feature specs are the closest attempt we have to tests running the code *as a user in the browser would*. Code that doesn't get run by such specs is either unable to be executed as a result of user action (and therefore suspect), and/or unproven to work as actually delivered (and therefore suspect since the only safe assumption is that if it's not tested, it *doesn't* work as expected);
+1. Controller specs verify that we're using the Actions correctly *within the scope of the controllers*; any Action code not exercised by controller specs is suspect for similar reasons to those given for feature specs;
+1. Specs for our Action classes, obviously, are our first line of defence against defects. Code not covered by specs is suspect, yadda yadda.
+
+Therefore, when modifying any code that affects any part of this stack (which is *every bit of code in the app*), the recommended workflow is something very similar to the following:
+
+1. Iterate specs and code on whatever you're working on until you're "done for now" with a green bar;
+1. Iterate Action specs that exercide relevent Actions (that exercise your code if it's in a component *other than* an Action) until you get a green bar, going back to the previous step as needed;
+1. Iterate controller specs for the Actions you've just tested, making sure that *they* still give a green bar *while fully executing your code and the relevent Action code*; and finally
+1. Update or create feature specs that prove that everything up to that point works as expected.
+
+You'll probably get to the point where you're doing things in reverse order: breaking feature specs because the controller actions aren't right yet, and so on. Whichever is more productive for you; just make sure *everything gets covered*.
+
 ### It Seemed a Good Idea at the Time…
 
 …has been the start of many a tale of attempted expedience yielding (hopefully) useful experience. Here, as well. As mentioned elsewhere, in my view, Avdi's *Objects on Rails* sample app implementation, and in fact even some of the techniques, have not aged particularly well as Rails has gone from the version 3.0 that was current as the book was written, to version 3.2 as we had used until quite recently, to version 4.1 which is current as I write this. Many things have changed along the way, as one might expect between major versions. One that has bitten us in particular is the ease of creating app-wide globals in Rails 3 vs Rails 4. My *impressions* at this stage are that Rails 4 actively and deliberately make it harder to have data shared across controllers that is neither persisted nor part of session storage, as opposed to Rails 3, which by letting one put just about anything into an initialiser loaded at application startup from the `config/initializers` directory, allowed the technique that Avdi cleverly used in the section entitled "[Making the Blog object into a Singleton](http://objectsonrails.com/#sec-6_3)". Rails appears to offer its own mechanism for singleton resources, as does Ruby with its Singleton module, but neither support the casual "here's a global object that *oh, by the way* is just an instance of a normal model that has non-singleton instances running about".

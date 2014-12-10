@@ -44,14 +44,15 @@ module Actions
 
     def prohibit_guest_access
       return unless guest_user.name == current_user.name
-      fail guest_user_not_authorised_message
+      fail_with_messages guest_user_not_authorised_message
     end
 
     def update_entity
       result = user_repo.update current_user.slug, user_data
       @entity = result.entity
       return if result.success?
-      fail @entity.to_json
+      # Remember: @entity is `nil` at this point
+      fail_with_bad_data user_data
     end
 
     def guest_user
@@ -67,7 +68,24 @@ module Actions
     end
 
     def permitted_attribs
-      [:email, :profile]
+      [:email, :profile, :password, :password_confirmation]
+    end
+
+    # ... for #update_entity
+
+    def fail_with_bad_data(data)
+      attribs = current_user.attributes.reject { |s| s.match(/password/) }
+      entity = UserEntity.new attribs.merge(data)
+      entity.invalid?
+      data = {
+        messages: entity.errors.full_messages,
+        entity: entity.attributes
+      }
+      fail JSON.dump data
+    end
+
+    def fail_with_messages(messages)
+      fail JSON.dump(messages: Array(messages))
     end
   end # class Actions::UpdateUser
 end # module Actions

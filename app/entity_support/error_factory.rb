@@ -58,12 +58,3 @@ class ErrorFactory
     end
   end
 end
-
-# interim; will replace ErrorFactory
-class NewErrorFactory
-  def self.create(errors)
-    errors.map do |field, messages|
-      messages.map { |message| { field: field.to_s, message: message } }
-    end.flatten
-  end
-end
