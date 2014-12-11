@@ -42,7 +42,7 @@ What we're *no longer* using:
 
 This demo will be declared successful when it meets each and all of the following criteria, not listed in any sort of priority order:
 
-1. Rails controllers, used to implement normal RESTful resource actions exhibit no direct knowledge of domain concepts; they defer to DSOs for actions upon data resources (such as "blog posts" or "user sessions") and page transitions (such as redirecting to a DSO-specified page on the success or failure o an action);
+1. Rails controllers, used to implement normal RESTful resource actions exhibit no direct knowledge of domain concepts; they defer to DSOs for actions upon data resources (such as "blog posts" or "user sessions"). Handing redirects, rendering and such is now the purview of "action responder" methods on controllers, which each implement fairly generic actions (with respect to Rails) and exhibit only the degree of knowledge necessary to create instance variables or suchlike;
 2. Rails views will have no domain-knowledge-exhibiting code embedded in them, but will call Rails helpers and/or domain-entity methods. They should be as close to the often-discussed "logic-less templates" as is practicable;
 3. The goals of the earlier `interactor_demo` tutorial adaptation shall be met, including:
 	4. Logic *roughly* analogous to the first thirteen sections of Avdi Grimm's [*Objects on Rails*](http://objectsonrails.com/) book, **but** see the section "*It Seemed a Good Idea at the Time*" [below](#it-seemed-a-good-idea-at-the-time);
