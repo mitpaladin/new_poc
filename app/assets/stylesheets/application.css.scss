@@ -11,6 +11,7 @@
  * file per style scope.
  *
  *= require_tree .
+ *= require markdown-toolbar
  *= used_to require bootstrap # see application.html.slim for bootswatch
  *= require_self
  */

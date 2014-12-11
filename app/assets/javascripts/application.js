@@ -14,4 +14,5 @@
 //= require jquery_ujs
 //  used_to require turbolinks
 //= require bootstrap
+//= require markdown-toolbar
 //= require_tree .
