@@ -42,14 +42,12 @@ module Actions
             expect(payload).to be_a PostEntity
           end
 
-          it 'is a PostEntity with correct attributes' do
-            attrib_keys = post.attributes.keys - post_data.keys - [:pubdate]
-            attrib_keys.each { |key| expect(payload[key]).to eq post[key] }
+          it 'is a PostEntity with correct (updated) attributes' do
+            unchanged_keys = post.attributes.keys - post_data.keys - [:pubdate]
+            unchanged_keys.each { |key| expect(payload[key]).to eq post[key] }
             post_data.keys.each { |k| expect(payload[k]).to eq post_data[k] }
-            if post.attributes.key? :pubdate
-              expect(payload[:pubdate]).to be_within(0.5.seconds)
-                .of post[:pubdate]
-            end
+            expect(payload[:pubdate]).to be_within(0.5.seconds)
+              .of post[:pubdate]
           end
         end # describe 'is successful, broadcasting a payload which'
       end # context 'updating supported attributes with new valid values'
@@ -98,7 +96,7 @@ module Actions
       end # context 'changing the publication state of the post'
 
       context 'attempting to update supported attributes with invalid values' do
-        let(:post_data) { { title: '', body: '', image_url: '' } }
+        let(:post_data) { { body: '', image_url: '' } }
 
         it 'is unsuccessful' do
           expect(subscriber).not_to be_successful
@@ -109,10 +107,7 @@ module Actions
           let(:payload) { subscriber.payload_for(:failure).first }
 
           it 'is a JSON-encoded array with the correct error messages' do
-            expected = [
-              "Title can't be blank",
-              'Body must be specified if image URL is omitted'
-            ]
+            expected = ['Body must be specified if image URL is omitted']
             messages = JSON.parse payload
             expect(messages).to eq expected
           end

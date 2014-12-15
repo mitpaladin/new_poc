@@ -64,7 +64,7 @@ class PostsController < ApplicationController
   end
 
   def on_edit_failure(payload)
-    redirect_to posts_path, flash: { alert: payload }
+    redirect_to root_path, flash: { alert: payload }
   end
 
   def on_index_success(payload) # rubocop:disable Style/TrivialAccessors
@@ -85,7 +85,7 @@ class PostsController < ApplicationController
   end
 
   def on_show_failure(payload)
-    redirect_to posts_path, flash: { alert: payload }
+    redirect_to root_path, flash: { alert: payload }
   end
 
   def on_update_success(payload)
@@ -96,6 +96,6 @@ class PostsController < ApplicationController
 
   def on_update_failure(payload)
     data = JSON.parse payload
-    redirect_to posts_path, flash: { alert: data.join('<br/>') }
+    redirect_to root_path, flash: { alert: data.join('<br/>') }
   end
 end # class PostsController

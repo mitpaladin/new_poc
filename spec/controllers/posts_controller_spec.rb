@@ -349,8 +349,8 @@ describe PostsController do
           expect(response).to be_redirect
         end
 
-        it 'redirects to the post-listing page' do
-          expect(response).to redirect_to posts_path
+        it 'redirects to the landing page' do
+          expect(response).to redirect_to root_path
         end
 
         it 'renders the correct flash error message' do
@@ -370,8 +370,8 @@ describe PostsController do
         expect(response).to be_redirect
       end
 
-      it 'redirects to the post-listing page' do
-        expect(response).to redirect_to posts_path
+      it 'redirects to the landing page' do
+        expect(response).to redirect_to root_path
       end
 
       it 'renders the correct flash error message' do

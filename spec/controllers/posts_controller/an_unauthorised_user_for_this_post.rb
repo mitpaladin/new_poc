@@ -3,8 +3,8 @@ shared_examples 'an unauthorised user for this post' do |message = nil|
   default = /User .+? is not the author of this post\!/
   message = default unless message
 
-  it 'redirects to the posts path' do
-    expect(response).to redirect_to posts_path
+  it 'redirects to the root path' do
+    expect(response).to redirect_to root_path
   end
 
   it 'sets the correct flash error message' do
