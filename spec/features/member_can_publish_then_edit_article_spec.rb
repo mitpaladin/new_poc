@@ -3,14 +3,15 @@ require 'spec_helper'
 
 require 'support/feature_spec/login_helper'
 require 'support/feature_spec/new_post_helper'
+require 'support/feature_spec/edit_post_spec_support'
 
-describe 'Member can publish articles and' do
+feature 'Member can publish articles and' do
 
   before :each do
     FeatureSpecLoginHelper.new(self).register_and_login
     @data = PostHelperSupport::PostCreatorData.new
     helper = FeatureSpecNewPostHelper.new self, @data
-    helper.create_image_post
+    helper.create_text_post
     visit post_path(@post_slug)
   end
 
@@ -26,18 +27,6 @@ describe 'Member can publish articles and' do
   end
 
   it 'then edit the new article' do
-    new_caption = 'Updated Body Text'
-    button_caption = "Edit '#{@post_title}'"
-    click_link button_caption
-    fill_in 'post_data_body', with: new_caption
-    click_button 'Update Post'
-    expected = "Post '#{@post_title}' successfully updated."
-    selector = 'div.alert.alert-success.alert-dismissable'
-    expect(page).to have_selector selector, text: expected
-    selector = format('a.btn[href="%s"]', edit_post_path(@post_slug))
-    expect(page).to have_selector selector, text: button_caption
-    click_link button_caption
-    expect(page).to have_selector '.main > h1', 'Edit Post'
-    expect(page).to have_selector '.main > form.edit_post'
+    EditPostSpecSupport.new(self).update_and_then_edit_post
   end
-end # describe 'Member can publish articles and'
+end # feature 'Member can publish articles and'

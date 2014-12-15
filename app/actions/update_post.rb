@@ -39,8 +39,11 @@ module Actions
     end
 
     def update_entity
-      attributes = attributes_from_repo.merge post_data.to_h
-      new_entity = PostEntity.new attributes
+      inputs = post_data
+      inputs.delete :post_status
+      # FIXME: Error checking for repo update?
+      _result = post_repo.update post_slug, inputs
+      new_entity = post_repo.find_by_slug(post_slug).entity
       fail new_entity.errors.full_messages.to_json unless new_entity.valid?
       new_entity
     end
