@@ -46,11 +46,10 @@ describe 'HTML::Pipeline simple exploration, demoing' do
       gfm: false
     }
   end
+  let(:pipeline) { HTML::Pipeline.new filters, context }
 
   describe 'a single MarkdownFilter pipeline' do
-    let(:pipeline) do
-      HTML::Pipeline.new [HTML::Pipeline::MarkdownFilter], context
-    end
+    let(:filters) { [HTML::Pipeline::MarkdownFilter] }
 
     after :each do
       result = pipeline.call @input
@@ -78,4 +77,90 @@ describe 'HTML::Pipeline simple exploration, demoing' do
       @expected = ['<p>', '</p>'].join @input
     end
   end # describe 'a single MarkdownFilter pipeline'
+
+  describe 'a PlainTextInputFilter-plus-SanitizationFilter pipeline' do
+    let(:filters) do
+      [HTML::Pipeline::SanitizationFilter, HTML::Pipeline::PlainTextInputFilter]
+    end
+
+    # This is because a PlainTextFilter "html escape text and wrap the result"
+    # *in a div*. Oopsie.
+    it 'rejects Markdown content, complaining that it is HTML' do
+      expect { pipeline.call gruber_content_markdown }
+        .to raise_error TypeError, 'text cannot be HTML'
+    end
+  end # describe 'a PlainTextInputFilter-plus-SanitizationFilter pipeline'
+
+  describe 'a single SanitizationFilter pipeline' do
+    let(:filters) do
+      [HTML::Pipeline::SanitizationFilter]
+    end
+
+    after :each do
+      result = pipeline.call @input
+      expect(result.keys).to eq [:output]
+      output = result[:output]
+      expect(output).to be_a Nokogiri::HTML::DocumentFragment
+      expect(output.to_html).to eq @expected
+    end
+
+    it 'ignores Markdown' do
+      @input = gruber_content_markdown
+      @expected = gruber_content_markdown
+    end
+
+    it 'strips non-whitelisted HTML tags' do
+      @input = '<form><textarea name="foo"></textarea></form>'
+      @expected = ''
+    end
+  end # describe 'a single SanitizationFilter pipeline'
+
+  describe 'an HttpsFilter pipeline' do
+    let(:filters) do
+      [HTML::Pipeline::MarkdownFilter, HTML::Pipeline::HttpsFilter]
+    end
+
+    after :each do
+      result = pipeline.call @input
+      expect(result[:output]).to be_a Nokogiri::HTML::DocumentFragment
+      expect(result[:output].to_html).to eq @expected
+    end
+
+    it 'changes an http to https URL for an image (for proxying)' do
+      http_url = 'http://example.com'
+      secure_url = 'https://example.com'
+      context[:http_url] = http_url
+      @input = "[image 1](#{http_url}/images/foo.png)"
+      @expected = "<p><a href=\"#{secure_url}/images/foo.png\">image 1</a></p>"
+    end
+
+    it 'does not modify URLs for subdomains' do
+      context[:http_url] = 'http://example.com/'
+      @input = '[image 1](http://images.example.com/foo.png)'
+      link = '<a href="http://images.example.com/foo.png">image 1</a>'
+      @expected = ['<p>', '</p>'].join link
+    end
+  end
+
+  describe "all filters we're likely to use in a pipeline" do
+    let(:context) do
+      {
+        asset_root: 'https://images.example.com/',
+        gfm: true
+      }
+    end
+    let(:filters) do
+      [
+        HTML::Pipeline::MarkdownFilter,
+        HTML::Pipeline::SanitizationFilter,
+        # HTML::Pipeline::CamoFilter,
+        HTML::Pipeline::ImageMaxWidthFilter,
+        HTML::Pipeline::HttpsFilter,
+        HTML::Pipeline::MentionFilter,
+        HTML::Pipeline::EmojiFilter,
+        HTML::Pipeline::SyntaxHighlightFilter
+      ]
+    end
+
+  end # describe "all filters we're likely to use in a pipeline"
 end # describe 'HTML::Pipeline simple exploration, demoing'
