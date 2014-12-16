@@ -42,7 +42,6 @@ end
 describe 'HTML::Pipeline simple exploration, demoing' do
   let(:context) do
     {
-      asset_root: 'https://images.example.com/',
       gfm: false
     }
   end
@@ -140,7 +139,7 @@ describe 'HTML::Pipeline simple exploration, demoing' do
       link = '<a href="http://images.example.com/foo.png">image 1</a>'
       @expected = ['<p>', '</p>'].join link
     end
-  end
+  end # describe 'an HttpsFilter pipeline'
 
   describe 'a MentionFilter pipeline' do
     let(:filters) { [HTML::Pipeline::MentionFilter] }
@@ -165,8 +164,53 @@ describe 'HTML::Pipeline simple exploration, demoing' do
       @expected = 'Mentioning <a href="http://example.com/jch"' \
         ' class="user-mention">@jch</a>.'
     end
-  end
+  end # describe 'a MentionFilter pipeline'
+
+  describe 'an EmojiFilter pipeline' do
+    let(:asset_root) { 'http://example.com/' }
+    let(:filters) { [HTML::Pipeline::EmojiFilter] }
+
+    it 'raises an ArgumentError if no :asset_root is specified' do
+      @input = 'All done? :shipit:'
+      message = 'Missing context keys for HTML::Pipeline::EmojiFilter:' \
+        ' :asset_root'
+      expect { pipeline.call @input }.to raise_error ArgumentError, message
+    end
+
+    it 'generates the expected markup for a valid emoji' do
+      @input = 'All done? :shipit:'
+      result = pipeline.call @input, asset_root: asset_root
+      expect(result.keys).to eq [:output]
+      expect(result[:output]).to have(2).children
+      img = result[:output].children.last
+      expect(img.name).to eq 'img'
+      expect(img['class']).to eq 'emoji'
+      expect(img['title']).to eq ':shipit:'
+      expect(img['alt']).to eq ':shipit:'
+      expect(img['src']).to eq 'http://example.com/emoji/shipit.png'
+    end
+
+    describe 'does not generate markup when the emoji is inside' do
+      after :each do
+        result = pipeline.call @input, asset_root: asset_root
+        expect(result.keys).to eq [:output]
+        expect(result[:output]).to be_a Nokogiri::HTML::DocumentFragment
+        expect(result[:output].to_html).to eq @input
+      end
+
+      it 'a :code tag' do
+        @input = '<code>:shipit:</code>'
+      end
+
+      it 'a :pre tag' do
+        @input = '<pre>:shipit:</pre>'
+      end
+
       xit 'a :tt tag' do
+        @input = '<tt>:shipit:</tt>'
+      end
+    end # describe 'does not generate markup when the emoji is inside'
+  end # describe 'an EmojiFilter pipeline'
 
   describe "all filters we're likely to use in a pipeline" do
     let(:context) do
@@ -181,7 +225,7 @@ describe 'HTML::Pipeline simple exploration, demoing' do
         HTML::Pipeline::SanitizationFilter,
         # HTML::Pipeline::CamoFilter,
         HTML::Pipeline::ImageMaxWidthFilter,
-        HTML::Pipeline::HttpsFilter,
+        # HTML::Pipeline::HttpsFilter,
         HTML::Pipeline::MentionFilter,
         HTML::Pipeline::EmojiFilter,
         HTML::Pipeline::SyntaxHighlightFilter
