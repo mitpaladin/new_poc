@@ -142,6 +142,31 @@ describe 'HTML::Pipeline simple exploration, demoing' do
     end
   end
 
+  describe 'a MentionFilter pipeline' do
+    let(:filters) { [HTML::Pipeline::MentionFilter] }
+
+    after :each do
+      result = pipeline.call @input
+      expect(result[:mentioned_usernames]).to eq @mentions
+      expect(result[:output]).to be_a Nokogiri::HTML::DocumentFragment
+      expect(result[:output].to_html).to eq @expected
+    end
+
+    it 'uses a base_url of "/" if none is specified' do
+      @input = 'Mentioning @jch.'
+      @expected = 'Mentioning <a href="/jch" class="user-mention">@jch</a>.'
+      @mentions = ['jch']
+    end
+
+    it 'uses a specified base_url to build @mention URLs' do
+      context[:base_url] = 'http://example.com/'
+      @input = 'Mentioning @jch.'
+      @mentions = ['jch']
+      @expected = 'Mentioning <a href="http://example.com/jch"' \
+        ' class="user-mention">@jch</a>.'
+    end
+  end
+
   describe "all filters we're likely to use in a pipeline" do
     let(:context) do
       {
