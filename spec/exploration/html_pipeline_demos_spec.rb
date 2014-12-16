@@ -166,6 +166,7 @@ describe 'HTML::Pipeline simple exploration, demoing' do
         ' class="user-mention">@jch</a>.'
     end
   end
+      xit 'a :tt tag' do
 
   describe "all filters we're likely to use in a pipeline" do
     let(:context) do
