@@ -8,7 +8,7 @@ def enclose_markup(markup)
   # ['<div id="outer">', markup, '</div>'].join
 end
 
-xdescribe 'RedCarpet simple exploration, such that' do
+describe 'RedCarpet simple exploration, such that' do
   # Renderer to which we add Rouge/Pygments syntax highlighting for code blocks.
   class Renderer < Redcarpet::Render::HTML
     include Rouge::Plugins::Redcarpet
@@ -213,7 +213,7 @@ xdescribe 'RedCarpet simple exploration, such that' do
 
           it 'formats the code block embedded in the markup' do
             match_str = '<p>Leading content</p>\s+?' \
-              '<pre><code class="highlight ruby">.+?' \
+              '<pre class="highlight ruby"><code>.+?' \
               '</code></pre>\s+?<p>Trailing content</p>'
             matcher = Regexp.new match_str, Regexp::MULTILINE
             expect(markup).to match matcher
@@ -282,7 +282,7 @@ xdescribe 'RedCarpet simple exploration, such that' do
       end
       let(:false_matcher) do
         str = [
-          '<pre><code class="highlight plaintext">',
+          '<pre class="highlight plaintext"><code>',
           "\n</code></pre>"
         ].join code_line
         Regexp.new str, Regexp::MULTILINE
