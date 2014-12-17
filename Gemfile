@@ -10,7 +10,7 @@ gem 'bcrypt-ruby'
 gem 'coffee-rails'
 gem 'fancy-open-struct'
 gem 'friendly_id'
-gem 'html-pipeline'
+gem 'html-pipeline', github: 'jch/html-pipeline'
 # Next few needed for html-pipeline
 gem 'gemoji'
 gem 'github-linguist'

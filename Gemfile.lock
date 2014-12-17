@@ -44,6 +44,14 @@ GIT
     markdown-toolbar (0.2.4)
 
 GIT
+  remote: git://github.com/jch/html-pipeline.git
+  revision: 5feb0c185fb1e5037e3ad6d6bd533fb4af3685d8
+  specs:
+    html-pipeline (1.11.0)
+      activesupport (>= 2)
+      nokogiri (~> 1.4)
+
+GIT
   remote: git://github.com/jdickey/rspec-http.git
   revision: ace2c10bbfcba980947d0365e46c6af32c5b93cc
   branch: rspec-3
@@ -196,9 +204,6 @@ GEM
     github-markdown (0.6.8)
     hike (1.2.3)
     hirb (0.7.2)
-    html-pipeline (1.11.0)
-      activesupport (>= 2)
-      nokogiri (~> 1.4)
     htmlentities (4.3.2)
     i18n (0.6.11)
     ice_nine (0.11.1)
@@ -466,7 +471,7 @@ DEPENDENCIES
   gemoji
   github-linguist
   github-markdown
-  html-pipeline
+  html-pipeline!
   htmlentities
   jbuilder
   jquery-rails

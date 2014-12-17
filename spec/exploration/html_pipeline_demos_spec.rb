@@ -206,7 +206,7 @@ describe 'HTML::Pipeline simple exploration, demoing' do
         @input = '<pre>:shipit:</pre>'
       end
 
-      xit 'a :tt tag' do
+      it 'a :tt tag' do
         @input = '<tt>:shipit:</tt>'
       end
     end # describe 'does not generate markup when the emoji is inside'
