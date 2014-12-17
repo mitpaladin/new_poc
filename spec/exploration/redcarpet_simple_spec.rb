@@ -8,7 +8,7 @@ def enclose_markup(markup)
   # ['<div id="outer">', markup, '</div>'].join
 end
 
-describe 'RedCarpet simple exploration, such that' do
+xdescribe 'RedCarpet simple exploration, such that' do
   # Renderer to which we add Rouge/Pygments syntax highlighting for code blocks.
   class Renderer < Redcarpet::Render::HTML
     include Rouge::Plugins::Redcarpet

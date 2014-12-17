@@ -15,7 +15,7 @@ gem 'html-pipeline', github: 'jch/html-pipeline'
 gem 'gemoji'
 gem 'github-linguist'
 gem 'github-markdown'
-gem 'pygments.rb'
+gem 'pygments.rb', github: 'pombredanne/pygments.rb' # '~> 0.6.0'
 gem 'sanitize'
 # End html-pipeline dependencies
 gem 'htmlentities'
@@ -39,7 +39,7 @@ gem 'thin'
 gem 'uglifier'
 gem 'validates_email_format_of'
 gem 'wisper'
-gem 'yajl-ruby', github: 'brianmario/yajl-ruby'
+gem 'yajl-ruby', '1.1.0' # for pygments.rb # , github: 'brianmario/yajl-ruby'
 
 group :doc do
   gem 'sdoc'

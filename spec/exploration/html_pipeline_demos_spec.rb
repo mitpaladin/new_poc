@@ -23,14 +23,14 @@ def gfm_plain_fenced_code_block_html
 end
 
 def gfm_highlighted_fenced_code_block_html
-  '<div class="highlight highlight-ruby">' "\n" \
+  '<div class="highlight highlight-ruby">' \
   '<pre><span class="k">def</span> <span class="nf">foo</span>' \
   '<span class="p">(</span><span class="n">bar</span>' \
   '<span class="p">)</span>' "\n" \
   '  <span class="n">quux</span> <span class="o">&lt;&lt;</span>' \
   ' <span class="n">bar</span>' "\n" \
   '<span class="k">end</span>' "\n" \
-  "</pre>\n</div>\n"
+  '</pre></div>'
 end
 
 def gruber_content_markdown

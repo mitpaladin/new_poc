@@ -6,7 +6,7 @@ class FCBData
   def self.expected
     [
       %(<p>Leading content</p>\n),
-      %(<pre><code class="highlight ruby">),
+      %(<pre class="highlight ruby"><code>),
       _expected_func_start,
       _expected_func_end
     ].join

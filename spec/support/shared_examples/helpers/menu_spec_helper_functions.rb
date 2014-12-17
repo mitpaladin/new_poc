@@ -27,11 +27,7 @@ end
 # rubocop:enable Metrics/AbcSize
 
 def separator_style_for(menu_sym)
-  if menu_sym == :navbar
-    'min-width: 3rem;'
-  else
-    nil
-  end
+  return 'min-width: 3rem;' if menu_sym == :navbar
 end
 
 def user_type_name_for(current_user)
