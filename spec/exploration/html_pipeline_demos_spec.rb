@@ -22,6 +22,17 @@ def gfm_plain_fenced_code_block_html
   '</code></pre>'
 end
 
+def gfm_highlighted_fenced_code_block_html
+  '<div class="highlight highlight-ruby">' "\n" \
+  '<pre><span class="k">def</span> <span class="nf">foo</span>' \
+  '<span class="p">(</span><span class="n">bar</span>' \
+  '<span class="p">)</span>' "\n" \
+  '  <span class="n">quux</span> <span class="o">&lt;&lt;</span>' \
+  ' <span class="n">bar</span>' "\n" \
+  '<span class="k">end</span>' "\n" \
+  "</pre>\n</div>\n"
+end
+
 def gruber_content_markdown
   "This is *emphasised* and this is **bold**.\n\n" \
   "    This is indented sufficiently to be treated as code.\n" \
@@ -211,6 +222,27 @@ describe 'HTML::Pipeline simple exploration, demoing' do
       end
     end # describe 'does not generate markup when the emoji is inside'
   end # describe 'an EmojiFilter pipeline'
+
+  describe 'a SyntaxHighlightFilter (with Markdown for convenience) pipeline' do
+    let(:filters) do
+      [HTML::Pipeline::MarkdownFilter, HTML::Pipeline::SyntaxHighlightFilter]
+    end
+
+    after :each do
+      result = pipeline.call @input, gfm: true
+      expect(result[:output].to_html).to eq @expected
+    end
+
+    it 'generates the correct highlighting markup for recognised code' do
+      @input = gfm_plain_fenced_code_block_markdown
+      @expected = gfm_highlighted_fenced_code_block_html
+    end
+
+    it 'does not highlight unrecognised code' do
+      @input = "```foobb\nanything goes here\n```\n\n"
+      @expected = %(<pre lang=\"foobb"><code>anything goes here\n</code></pre>)
+    end
+  end # describe 'a SyntaxHighlightFilter (with Markdown...) pipeline'
 
   describe "all filters we're likely to use in a pipeline" do
     let(:context) do
