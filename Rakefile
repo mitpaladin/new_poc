@@ -3,6 +3,8 @@
 
 require File.expand_path('../config/application', __FILE__)
 
+load 'tasks/emoji.rake'
+
 if %w(development test).include? Rails.env
   require 'rubocop/rake_task'
 
@@ -38,7 +40,7 @@ if %w(development test).include? Rails.env
   end
 
   task(:default).clear
-  task default: [:spec, :rubocop]
+  task default: [:emoji, :spec, :rubocop]
 end
 
 Rails.application.load_tasks

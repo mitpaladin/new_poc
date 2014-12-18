@@ -58,6 +58,22 @@ describe 'HTML::Pipeline simple exploration, demoing' do
   end
   let(:pipeline) { HTML::Pipeline.new filters, context }
 
+  describe 'an AutolinkFilter pipeline' do
+    let(:filters) { [HTML::Pipeline::AutolinkFilter] }
+
+    after :each do
+      result = pipeline.call @input
+      expect(result.keys).to eq [:output]
+      expect(result[:output]).to eq @expected
+    end
+
+    it 'parses http links' do
+      link = 'http://www.example.com/'
+      @input = "Visit #{link} for more."
+      @expected = "Visit <a href=\"#{link}\">#{link}</a> for more."
+    end
+  end # describe 'an AutolinkFilter pipeline'
+
   describe 'a single MarkdownFilter pipeline' do
     let(:filters) { [HTML::Pipeline::MarkdownFilter] }
 
@@ -87,6 +103,22 @@ describe 'HTML::Pipeline simple exploration, demoing' do
       @expected = ['<p>', '</p>'].join @input
     end
   end # describe 'a single MarkdownFilter pipeline'
+
+  describe 'an AutolinkFilter pipeline' do
+    let(:filters) { [HTML::Pipeline::AutolinkFilter] }
+
+    after :each do
+      result = pipeline.call @input
+      expect(result.keys).to eq [:output]
+      expect(result[:output]).to eq @expected
+    end
+
+    it 'parses http links' do
+      link = 'http://www.example.com/'
+      @input = "Visit #{link} for more."
+      @expected = "Visit <a href=\"#{link}\">#{link}</a> for more."
+    end
+  end # describe 'an AutolinkFilter pipeline'
 
   describe 'a PlainTextInputFilter-plus-SanitizationFilter pipeline' do
     let(:filters) do

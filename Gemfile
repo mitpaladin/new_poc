@@ -16,6 +16,7 @@ gem 'gemoji'
 gem 'github-linguist'
 gem 'github-markdown'
 gem 'pygments.rb', github: 'pombredanne/pygments.rb' # '~> 0.6.0'
+gem 'rinku'
 gem 'sanitize'
 # End html-pipeline dependencies
 gem 'htmlentities'
