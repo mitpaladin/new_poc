@@ -1,83 +1,39 @@
 
 require 'spec_helper'
 
-# Get the fugly markup/HTML building for fenced code blocks out of the specs.
-class FCBData
-  def self.expected
-    [
-      %(<p>Leading content</p>\n),
-      %(<pre><code class="highlight ruby">),
-      _expected_func_start,
-      _expected_func_end
-    ].join
-  end
+require_relative 'support/fcb_data'
+require_relative 'support/table_data'
 
-  def self.markup
-    [
-      %(Leading content\n\n```ruby\n),
-      %(# This is a Ruby comment. D'oh!\n),
-      %(def foo(bar = 'bar', options = {})\n),
-      %(  format 'bar = %s, options = %s', bar, options.inspect\n),
-      %(end\n```\n\n)
-    ].join
-  end
-
-  def self._expected_func_end
-    [
-      %(  <span class="nb">format</span> ),
-      %(<span class="s1">'bar = %s, options = %s'</span>),
-      %(<span class=\"p\">,</span> <span class=\"n\">bar</span>),
-      %(<span class=\"p\">,</span> <span class=\"n\">options</span>),
-      %(<span class=\"p\">.</span><span class=\"nf\">inspect</span>\n),
-      %(<span class=\"k\">end</span>\n</code></pre>\n)
-    ]
-  end
-
-  def self._expected_func_start
-    [
-      %(<span class="c1"># This is a Ruby comment. D'oh!</span>\n),
-      %(<span class="k">def</span> <span class="nf">foo</span>),
-      %(<span class="p">\(</span><span class="n">bar</span> ),
-      %(<span class="o">=</span> <span class="s1">'bar'</span>),
-      %(<span class="p">,</span> <span class="n">options</span> ),
-      %(<span class="o">=</span> <span class="p">{}\)</span>\n)
-    ]
-  end
+def make_emoji(emoji, unicode)
+  path = "/images/emoji/unicode/#{unicode}.png"
+  %(<img class="emoji" title="#{emoji}" alt="#{emoji}" src="#{path}") \
+    ' height="20" width="20" align="absmiddle">'
 end
 
-# Get the fugly markup/HTML building for table data out of the specs.
-class TableData
-  def self.expected
-    [
-      %(<table><thead>\n<tr>\n<th>Tables</th>\n),
-      %(<th style="text-align: center">Are</th>\n),
-      %(<th style="text-align: right">Cool</th>\n),
-      %(</tr>\n</thead><tbody>\n<tr>\n<td>col 3 is</td>\n),
-      %(<td style="text-align: center">right-aligned</td>\n),
-      %(<td style="text-align: right">$1600</td>\n),
-      %(</tr>\n</tbody></table>\n)
-    ].join
-  end
+def make_mention(name, base = 'https://github.com')
+  %(<a href="#{base}/#{name}" class="user-mention">@#{name}</a>)
+end
 
-  def self.markup
-    [
-      %(| Tables        | Are           | Cool  |\n),
-      %(| ------------- |:-------------:| -----:|\n),
-      %(| col 3 is      | right-aligned | $1600 |)
-    ].join
-  end
+def maxwidth_image_link_for(path)
+  img = %(<img src="#{path}" style="max-width:100%;">)
+  %(<a href="#{path}" target="_blank">#{img}</a>)
 end
 
 describe MarkdownHtmlConverter do
   it 'can be constructed' do
-    expect(MarkdownHtmlConverter.new).to be_a MarkdownHtmlConverter
+    expect(described_class.new).to be_a MarkdownHtmlConverter
     # ...and not raise an error, naturally...
   end
 
   describe 'correctly parses markup including' do
 
     after :each do
-      expect(MarkdownHtmlConverter.new.to_html @markup).to eq @expected
+      actual = described_class.new.to_html @markup
+      if @expected.respond_to? :named_captures # it's a Regexp
+        expect(actual).to match(@expected)
+      else # better be a String
+        expect(actual.gsub("\n", '')).to eq @expected.to_s.gsub("\n", '')
+      end
     end
 
     it 'autolinks' do
@@ -92,36 +48,77 @@ describe MarkdownHtmlConverter do
       @expected = FCBData.expected
     end
 
-    it 'highlight' do
-      @markup = 'This is ==highlighted== and this is not.'
-      @expected = '<p>This is <mark>highlighted</mark> and this is not.</p>' \
-          "\n"
-    end
+    # Highlight supported by RedCarpet, not by HTML::Pipeline. Someone *could*
+    # eventually get around to writing a new filter for it. Someday.
+    # it 'highlight' do
+    #   @markup = 'This is ==highlighted== and this is not.'
+    #   @expected = '<p>This is <mark>highlighted</mark> and this is not.</p>' \
+    #       "\n"
+    # end
 
-    it 'no_intra_emphasis' do
-      @markup = 'This has a snake_case_style string in it.'
-      @expected = '<p>This has a snake<u>case</u>style string in it.</p>' "\n"
-    end
+    # Not supported by the github-markdown Gem used by HTML::Pipeline.
+    # See https://help.github.com/articles/github-flavored-markdown/ for more.
+    # it 'no_intra_emphasis' do
+    #   @markup = 'This has a snake_case_style string in it.'
+    #   @expected = '<p>This has a snake<u>case</u>style string in it.</p>' "\n"
+    # end
 
-    it 'strikethrough' do
-      @markup = 'This is ~~hideous~~excellent'
-      @expected = '<p>This is <del>hideous</del>excellent</p>' "\n"
-    end
+    # Not supported by the github-markdown Gem used by HTML::Pipeline. Use the
+    # `<del></del>` HTML tag pair per the doc at
+    # https://github.com/github/markup/tree/master#html-sanitization
+    # it 'strikethrough' do
+    #   @markup = 'This is ~~hideous~~excellent'
+    #   @expected = '<p>This is <del>hideous</del>excellent</p>' "\n"
+    # end
 
-    it 'superscript' do
-      @markup = 'At script^super and after'
-      @expected = '<p>At script<sup>super</sup> and after</p>' "\n"
-    end
+    # Not supported by the github-markdown Gem used by HTML::Pipeline. Use the
+    # `<sup></sup>` HTML tag pair per the doc at
+    # https://github.com/github/markup/tree/master#html-sanitization
+    # it 'superscript' do
+    #   @markup = 'At script^super and after'
+    #   @expected = '<p>At script<sup>super</sup> and after</p>' "\n"
+    # end
 
     it 'tables' do
       @markup = TableData.markup
       @expected = TableData.expected
     end
 
-    it 'underline' do
-      @markup = 'This may be _underlined_ but this is still *emphasised*.'
-      @expected = '<p>This may be <u>underlined</u> but this is still ' \
-          "<em>emphasised</em>.</p>\n"
+    it 'emphasised (underlined)' do
+      @markup = 'This is *emphasised*.'
+      @expected = '<p>This is <em>emphasised</em>.</p>'
     end
+
+    # Following are supported by HTML::Pipeline but not by RedCarpet as shipped.
+
+    it 'emoji' do
+      @markup = 'This is great! :expressionless:'
+      emoji = make_emoji ':expressionless:', '1f611'
+      @expected = '<p>This is great! ' + emoji + '</p>'
+    end
+
+    it '@mentions' do
+      @markup = 'Pinging @jdickey. Does it work?'
+      @expected = "<p>Pinging #{make_mention 'jdickey'}. Does it work?</p>"
+    end
+
+    describe 'image max width' do
+      it 'leaves surrounding markup intact' do
+        caption = '<figcaption><p>Foo</p></figcaption>'
+        @markup = %(<figure><img src="foo.png">#{caption}</figure>)
+        image_link = maxwidth_image_link_for 'foo.png'
+        @expected = %(<figure>#{image_link}#{caption}</figure>)
+      end
+
+      it 'makes no change when image is within an anchor tag' do
+        @markup = '[image](/foo.png)'
+        @expected = %(<p><a href="/foo.png">image</a></p>)
+      end
+
+      it 'sets other images to max-width of 100% in a new tab' do
+        @markup = '<img src="foo.png">'
+        @expected = ['<p>', '</p>'].join maxwidth_image_link_for('foo.png')
+      end
+    end # describe 'image max width'
   end # describe 'correctly parses markup including'
 end # describe MarkdownHtmlConverter

@@ -3,6 +3,13 @@ require 'spec_helper'
 
 require_relative 'shared_examples/a_data_mapping_entity'
 
+def expected_figure_markup(image_url, post_body)
+  caption = "<figcaption><p>#{post_body}</p></figcaption>"
+  tag = %(<img src="#{image_url}" style="max-width:100%;">)
+  image = %(<a href="#{image_url}" target="_blank">) + tag + '</a>'
+  '<figure>' + image + caption + '</figure>'
+end
+
 # Specs for persistence entity-layer representation for User.
 describe PostEntity do
   let(:author_name) { 'Joe Palooka' }
@@ -119,25 +126,16 @@ describe PostEntity do
     # `figure` tag and contents, or the `p` tag and contents, as appropriate for
     # this instance of the model.
     describe 'generates the correct markup for' do
-
-      # One issue with using RedCarpet as we are in our MarkdownHtmlConverter
-      # class is that a simple string, e.g., 'foo', will always get converted to
-      # aa paragraph with a trailing newline, e.g., "<p>foo</p>\n". This is,
-      # AFAICT, acceptable within a <figcaption> tag per Mozilla's reference
-      # (https://developer.mozilla.org/en-US/docs/Web/HTML/Element/figcaption).
-      # It *is* "new behaviour" that broke this existing spec.
       it 'an image post' do
         post_attribs = post.attributes
         post_attribs[:image_url] = image_url
         post = described_class.new post_attribs
-        body_markup = "<p>#{post.body}</p>\n"
-        expected = %(<figure><img src="#{post.image_url}">)
-        expected += %(<figcaption>#{body_markup}</figcaption></figure>\n)
+        expected = expected_figure_markup(image_url, post.body)
         expect(post.build_body).to eq expected
       end
 
       it 'a text post' do
-        expect(text_post.build_body).to eq %(<p>#{post.body}</p>\n)
+        expect(text_post.build_body).to eq %(<p>#{post.body}</p>)
       end
     end # describe 'generates the correct markup for'
   end # describe :build_body

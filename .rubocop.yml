@@ -1,0 +1,7 @@
+
+# I can see this being consistent with the style that the Guide has been
+# evolving towards, but *this* evolution complained about 116 different blank
+# lines working as visual separators in specs; no non-spec files were flagged.
+# We'll get to this... *eventually*.
+Style/EmptyLinesAroundBlockBody:
+  Enabled: false

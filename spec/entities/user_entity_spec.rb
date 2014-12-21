@@ -116,7 +116,7 @@ describe UserEntity do
     let(:user_attribs) { FactoryGirl.attributes_for :user, profile: profile }
 
     it 'returns the profile string, parsing Markdown to HTML' do
-      expected = "<p>This <em>is</em> a test.</p>\n"
+      expected = '<p>This <em>is</em> a test.</p>'
       expect(user.formatted_profile).to eq expected
     end
   end # describe :formatted_profile

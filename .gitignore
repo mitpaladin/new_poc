@@ -22,3 +22,4 @@ tmp/
 vendor/cache
 vendor/ruby
 o-rdoc/
+public/images/emoji
