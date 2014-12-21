@@ -4,11 +4,15 @@ class TableData
   def self.expected
     [
       %(<table><thead>\n<tr>\n<th>Tables</th>\n),
-      %(<th style="text-align: center">Are</th>\n),
-      %(<th style="text-align: right">Cool</th>\n),
+      # %(<th style="text-align: center">Are</th>\n), # RC
+      %(<th align="center">Are</th>\n),
+      # %(<th style="text-align: right">Cool</th>\n), # RC
+      %(<th align="right">Cool</th>\n),
       %(</tr>\n</thead><tbody>\n<tr>\n<td>col 3 is</td>\n),
-      %(<td style="text-align: center">right-aligned</td>\n),
-      %(<td style="text-align: right">$1600</td>\n),
+      # %(<td style="text-align: center">right-aligned</td>\n), # RC
+      %(<td align="center">right-aligned</td>\n),
+      # %(<td style="text-align: right">$1600</td>\n), # RC
+      %(<td align="right">$1600</td>\n),
       %(</tr>\n</tbody></table>\n)
     ].join
   end

@@ -1,13 +1,31 @@
 
 # Get the fugly markup/HTML building for fenced code blocks out of the specs.
 class FCBData
+  # Markup that varies between HTML::Pipeline and, e.g., RedCarpet.
+  module HtmlPipeline
+    def self.preamble
+      "<p>Leading content</p>\n\n"
+    end
+
+    def self.code_block_start
+      '<div class="highlight highlight-ruby"><pre>'
+    end
+
+    def self.code_block_end
+      '</pre></div>'
+    end
+  end # module FCBData::HtmlPipeline
+  private_constant :HtmlPipeline
+
   def self.expected
-    [
-      %(<p>Leading content</p>\n),
-      %(<pre class="highlight ruby"><code>),
-      _expected_func_start,
-      _expected_func_end
+    mod = HtmlPipeline
+    str = [
+      mod.preamble,
+      mod.code_block_start,
+      '.*',
+      mod.code_block_end
     ].join
+    Regexp.new str, Regexp::MULTILINE
   end
 
   def self.markup
@@ -19,26 +37,4 @@ class FCBData
       %(end\n```\n\n)
     ].join
   end
-
-  def self._expected_func_end
-    [
-      %(  <span class="nb">format</span> ),
-      %(<span class="s1">'bar = %s, options = %s'</span>),
-      %(<span class=\"p\">,</span> <span class=\"n\">bar</span>),
-      %(<span class=\"p\">,</span> <span class=\"n\">options</span>),
-      %(<span class=\"p\">.</span><span class=\"nf\">inspect</span>\n),
-      %(<span class=\"k\">end</span>\n</code></pre>\n)
-    ]
-  end
-
-  def self._expected_func_start
-    [
-      %(<span class="c1"># This is a Ruby comment. D'oh!</span>\n),
-      %(<span class="k">def</span> <span class="nf">foo</span>),
-      %(<span class="p">\(</span><span class="n">bar</span> ),
-      %(<span class="o">=</span> <span class="s1">'bar'</span>),
-      %(<span class="p">,</span> <span class="n">options</span> ),
-      %(<span class="o">=</span> <span class="p">{}\)</span>\n)
-    ]
-  end
-end
+end # class FCBData

@@ -17,21 +17,13 @@ describe 'Member can publish articles and' do
 
   # NOTE: DANGER! HARD-CODED VALUE SUBJECT TO CHANGE (coming from data class)!
   it 'view it on the landing page' do
-    # NOTE: Regexes Are *Useful* *Evil*, Demonstration #81,271,496.
-    #       It took longer to debug the regex than to write the code segment
-    #       this spec exercises.
-    expected = Regexp.new '\<figcaption\>' \
-        '\<p\>This is \<em\>another\</em\> post body\. \(Number (\d+?) in a ' \
-        'series\.\)\<\/p\>\s+?\</figcaption\>'
+    caption_str = '<figcaption><p>This is <em>another</em> post body.' \
+      ' (Number %d in a series.)</p></figcaption>'
     captions = page.all('figcaption')
-    indexes = []
-    captions.each do |caption|
-      expect(caption.native.to_html).to match expected
-      indexes << expected.match(caption.native.to_html)[1].to_i
+    expect(captions).to have(2).entries
+    # Remember that the items are in "reverse chronological" order!
+    captions.to_a.reverse.each_with_index do |caption, index|
+      expect(caption.native.to_html).to eq format(caption_str, index + 1)
     end
-    # Posts on page are in reverse chrono order, ergo indexes reversed also...
-    indexes
-      .reverse
-      .each_with_index { |value, index| expect(value - 1).to eq index }
   end
 end # describe 'Member can publish articles and'
