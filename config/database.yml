@@ -6,10 +6,8 @@ default: &default
   socket: /var/pgsql_socket
   host: localhost
   port: 5432
-  username: iehgod
-  password: r0dtsadt
-  # username: <%= ENV['NEWPOC_DBUSER'] %>
-  # password: <%= ENV['NEWPOC_DBPASS'] %>
+  username: <%= ENV['NEWPOC_DBUSER'] %>
+  password: <%= ENV['NEWPOC_DBPASS'] %>
 
 development:
   <<: *default
