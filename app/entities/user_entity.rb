@@ -32,7 +32,10 @@ class UserEntity
   validate :passwords_are_valid
 
   def initialize(attribs)
-    init_attrib_keys.each { |attrib| class_eval { attr_reader attrib } }
+    init_attrib_keys.each do |key|
+      instance_variable_set "@#{key}".to_sym, attribs[key.to_s]
+    end
+    # MainLogger.log.debug [:user_entity_41, name, email, profile]
     InstanceVariableSetter.new(self).set attribs
   end
 

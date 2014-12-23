@@ -82,7 +82,11 @@ module Actions
           end
 
           it 'with an :attributes hash containing the specified attributes' do
-            expect(data[:attributes].symbolize_keys).to eq other_user.attributes
+            these_values = data[:attributes].symbolize_keys.delete_if do |_k, v|
+              v.nil?
+            end
+            other_values = other_user.attributes.delete_if { |_k, v| v.nil? }
+            expect(these_values).to eq other_values
           end
 
           it 'with a :messages array containing the error message' do
@@ -111,7 +115,9 @@ module Actions
           end
 
           it 'with an :attributes hash containing the specified attributes' do
-            actual = data[:attributes].symbolize_keys.sort
+            actual = data[:attributes].symbolize_keys.delete_if do |_k, v|
+              v.nil?
+            end.sort
             expect(actual).to eq user_attribs.sort
           end
 

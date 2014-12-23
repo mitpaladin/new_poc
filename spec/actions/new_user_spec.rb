@@ -29,9 +29,10 @@ module Actions
       describe 'is successful, broadcasting a payload which' do
         let(:payload) { subscriber.payload_for(:success).first }
 
-        it 'is an empty UserEntity' do
+        it 'is a UserEntity with no attribute values' do
           expect(payload).to be_a UserEntity
-          expect(payload.attributes).to be_empty
+          attribs = payload.attributes.delete_if { |_k, v| v.nil? }
+          expect(attribs).to be_empty
         end
       end # describe 'is successful, broadcasting a payload which'
     end # context 'with the Guest User as the current user'
