@@ -7,7 +7,7 @@ module Actions
       attr_reader :draft_post
 
       def initialize(post_data)
-        @data = post_data.to_h.symbolize_keys
+        @data = massage_input_data post_data
         @draft_post = false
       end
 
@@ -33,11 +33,20 @@ module Actions
         ret
       end
 
+      def massage_input_data(post_data)
+        data = if post_data.respond_to? :to_unsafe_h
+                 post_data.to_unsafe_h
+               else
+                 post_data.to_h
+               end
+        data.symbolize_keys
+      end
+
       def post_attributes
         %w(author_name title body image_url slug created_at updated_at pubdate
            post_status).map(&:to_sym)
       end
-    end # class PostDataFilter
+    end # class Actions::CreatePost::PostDataFilter
 
     include Wisper::Publisher
 
