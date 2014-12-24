@@ -10,10 +10,9 @@ shared_examples 'it has initialiser-set attributes' do
       end
     end
 
-    it 'returns only the attributes passed to the initialiser' do
-      expect(actual.length).to eq valid_subset.keys.length
-      all_attrib_keys.reject { |k| valid_subset.key? k }.each do |attrib|
-        expect(obj.send attrib).to be nil
+    it 'has nil values for all attributes not passed to the initialiser' do
+      actual.keys.reject { |k| valid_subset.key? k }.each do |attrib|
+        expect(obj[attrib.to_s]).to be nil
       end
     end
   end # describe '#attributes'
