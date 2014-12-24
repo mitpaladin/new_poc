@@ -37,6 +37,8 @@ class UserEntity
     end
     # MainLogger.log.debug [:user_entity_41, name, email, profile]
     InstanceVariableSetter.new(self).set attribs
+    # Pending near-future refactoring per Issue #142.
+    init_passwords attribs
   end
 
   def attributes
@@ -53,8 +55,7 @@ class UserEntity
 
   # callback used by InstanceVariableSetter
   def init_attrib_keys
-    %w(created_at email name password password_confirmation profile slug
-       updated_at).map(&:to_sym)
+    %w(created_at email name profile slug updated_at).map(&:to_sym)
   end
 
   # we're using FriendlyID for slugs, so...
@@ -75,6 +76,15 @@ class UserEntity
   # FIXME: Wrong-way dependency; better way to fix?
   def guest_user_entity
     UserRepository.new.guest_user.entity
+  end
+
+  def init_passwords(attribs)
+    return if attribs.nil?
+    @password = attribs[:password] || attribs[:password.to_s]
+    attr = attribs[:password_confirmation] ||
+           attribs[:password_confirmation.to_s]
+    @password_confirmation = attr
+    self
   end
 
   def validate_name
