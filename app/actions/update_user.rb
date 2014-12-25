@@ -79,7 +79,7 @@ module Actions
       entity.invalid?
       data = {
         messages: entity.errors.full_messages,
-        entity: entity.attributes
+        entity: entity.attributes.reject { |k, _| k == :errors }
       }
       fail JSON.dump data
     end
