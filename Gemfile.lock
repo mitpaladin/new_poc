@@ -46,12 +46,13 @@ GIT
       nokogiri (~> 1.4)
 
 GIT
-  remote: git://github.com/jdickey/rspec-http.git
-  revision: ace2c10bbfcba980947d0365e46c6af32c5b93cc
-  branch: rspec-3
+  remote: git://github.com/lencioni/pygments.rb.git
+  revision: 6f7c1c03d1aa90fdc04ef558fd5a8cf85512aa23
+  branch: yajl-update
   specs:
-    rspec-http (0.10.0)
-      rspec
+    pygments.rb (0.5.4)
+      posix-spawn (~> 0.3.6)
+      yajl-ruby (~> 1.2.0)
 
 GIT
   remote: git://github.com/modeset/teaspoon.git
@@ -76,16 +77,8 @@ GIT
       activerecord (>= 4.0.0)
 
 GIT
-  remote: git://github.com/pombredanne/pygments.rb.git
-  revision: fc848f7c5d7f59742866b4318ceb3b9fc5a7ec2f
-  specs:
-    pygments.rb (0.6.0)
-      posix-spawn (~> 0.3.6)
-      yajl-ruby (~> 1.1.0)
-
-GIT
   remote: git://github.com/slim-template/slim-rails.git
-  revision: d59278f41b54ce05a2cdb74d6207ed69d7dbcd81
+  revision: decc9cbcdbffc1c5925b9a6af5b6821ff864b326
   specs:
     slim-rails (3.0.0)
       actionmailer (>= 3.1, < 5.0)
@@ -265,7 +258,7 @@ GEM
     nokogumbo (1.2.0)
       nokogiri
     numerizer (0.2.0)
-    parser (2.2.0.pre.8)
+    parser (2.2.0)
       ast (>= 1.1, < 3.0)
       slop (~> 3.4, >= 3.4.5)
     pg (0.17.1)
@@ -378,6 +371,9 @@ GEM
     rspec-html-matchers (0.6.1)
       nokogiri (~> 1)
       rspec (~> 3)
+    rspec-http (0.11.0)
+      rack (~> 1.0)
+      rspec (~> 3.0)
     rspec-mocks (3.1.3)
       rspec-support (~> 3.1.0)
     rspec-rails (3.1.0)
@@ -472,7 +468,7 @@ GEM
     wisper (1.6.0)
     xpath (2.0.0)
       nokogiri (~> 1.3)
-    yajl-ruby (1.1.0)
+    yajl-ruby (1.2.1)
     yard (0.8.7.6)
 
 PLATFORMS
@@ -532,7 +528,7 @@ DEPENDENCIES
   rspec
   rspec-collection_matchers
   rspec-html-matchers
-  rspec-http!
+  rspec-http
   rspec-rails
   rubocop
   ruby-growl
@@ -549,4 +545,4 @@ DEPENDENCIES
   validates_email_format_of
   web-console
   wisper
-  yajl-ruby (= 1.1.0)
+  yajl-ruby

@@ -1,4 +1,5 @@
 
+# Changing versions? Remember to update ./.ruby-version as well!
 ruby '2.1.5'
 
 source 'https://rubygems.org'
@@ -15,7 +16,7 @@ gem 'html-pipeline', github: 'jch/html-pipeline'
 gem 'gemoji'
 gem 'github-linguist'
 gem 'github-markdown'
-gem 'pygments.rb', github: 'pombredanne/pygments.rb' # '~> 0.6.0'
+gem 'pygments.rb', github: 'lencioni/pygments.rb', branch: 'yajl-update'
 gem 'rinku'
 gem 'sanitize'
 # End html-pipeline dependencies
@@ -38,7 +39,7 @@ gem 'thin'
 gem 'uglifier'
 gem 'validates_email_format_of'
 gem 'wisper'
-gem 'yajl-ruby', '1.1.0' # for pygments.rb # , github: 'brianmario/yajl-ruby'
+gem 'yajl-ruby'
 
 group :doc do
   gem 'sdoc'
@@ -98,10 +99,9 @@ group :development, :test do
   gem 'rspec-collection_matchers'
   # Fork doesn't have version dependency; *has* RSpec 3 'expect' syntax. Win!
   gem 'rspec-html-matchers' # , github: 'seomoz/rspec-html-matchers'
-  # Original 'c42/rspec-http' is abandoned, pre-dates RSpec 2.14(!), now at 3.1.
-  # jdickey/rspec-http forked from shishir/rpec-http, which takes us to 2.99.0
-  # but needs work for RSpec 3.x.
-  gem 'rspec-http', github: 'jdickey/rspec-http', branch: 'rspec-3'
+  # Original 'c42/rspec-http' WAS abandoned, pre-dating RSpec 2.14(!).
+  # NEWS FLASH: 0.11.0 dropped 18 Dec 2014; first new commit in over two years.
+  gem 'rspec-http'
   # *Shoddy* release engineering. AIWT, 300+ commits since 3.0.0beta2 on master.
   gem 'rspec-rails' # , github: 'rspec/rspec-rails', branch: '3-1-maintenance'
   gem 'ruby-growl'
