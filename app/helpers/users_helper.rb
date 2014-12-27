@@ -5,7 +5,7 @@ require_relative 'users_helper/profile_articles_row_builder'
 require_relative 'users_helper/profile_bio_header_builder'
 require_relative 'users_helper/profile_bio_panel_builder'
 require_relative 'users_helper/profile_bio_row_builder'
-require 'index_row_builder'
+require_relative 'users_helper/index_row_builder'
 
 # Old-style junk drawer of view-helper functions, etc.
 module UsersHelper
