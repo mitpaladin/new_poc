@@ -13,7 +13,7 @@ gem 'meldd_repository'
 The app this was originally developed for started out using it as an [unbuilt Rails dependency](http://pivotallabs.com/unbuilt-rails-dependencies-how-to-design-for-loosely-coupled-highly-cohesive-components-within-a-rails-application/); in that usage, the `Gemfile` line would read
 
 ```ruby
-gem 'meldd_repository', path: 'lib/repository-base'
+gem 'meldd_repository', path: 'lib/meldd-repository'
 ```
 
 And then execute:
@@ -45,7 +45,7 @@ Once an instance of a `MelddRepository::Base` subclass is created, it inherits t
 | Method Name | Returns | Description |
 |:----------- |:------- |:----------- |
 | `add(entity)` | `MelddRepository::StoreResult` | Creates a new DAO record instance from the passed-in entity instance. Returns a new `MelddRepository::StoreResult` instance (see below) which indicates success or failure. Remember that the `entity` field within the result should be treated as an *updated* replacement for the original entity! |
-| `all` | Returns an Array of entity instances created by calling the standard array method `#map` on the result from calling `#all` on the DAO class. |
+| `all` | `Array` of entities | Returns an Array of entity instances created by calling the standard array method `#map` on the result from calling `#all` on the DAO class. |
 | `find_by_slug(slug)` | `MelddRepository::StoreResult` | Searches for a DAO record identified by the specified `slug`, returning a `MelddRepository::StoreResult` indicating success or failure. Unlike the [predecessor]((https://github.com/jdickey/new_poc/blob/monolith-complete/app/repositories/repository_base.rb) class' method, the "success" result contains an entity instance, rather than a DAO record. (Oops.) |
 | `update(identifier, updated_attrs)` | `MelddRepository::StoreResult` | Updates the DAO record identified by the slug passed in as `identifier` with attribute values from the Hash or Hash-like object passed in as `updated_attrs`. |
 
