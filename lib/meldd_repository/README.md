@@ -43,7 +43,7 @@ The third parameter, which did not exist in the [predecessor class](https://gith
 Once an instance of a `MelddRepository::Base` subclass is created, it inherits the following instance methods:
 
 | Method Name | Returns | Description |
-|: ------- |: ------ |: --------------------------- |
+|:----------- |:------- |:----------- |
 | `add(entity)` | `MelddRepository::StoreResult` | Creates a new DAO record instance from the passed-in entity instance. Returns a new `MelddRepository::StoreResult` instance (see below) which indicates success or failure. Remember that the `entity` field within the result should be treated as an *updated* replacement for the original entity! |
 | `all` | Returns an Array of entity instances created by calling the standard array method `#map` on the result from calling `#all` on the DAO class. |
 | `find_by_slug(slug)` | `MelddRepository::StoreResult` | Searches for a DAO record identified by the specified `slug`, returning a `MelddRepository::StoreResult` indicating success or failure. Unlike the [predecessor]((https://github.com/jdickey/new_poc/blob/monolith-complete/app/repositories/repository_base.rb) class' method, the "success" result contains an entity instance, rather than a DAO record. (Oops.) |
@@ -54,7 +54,7 @@ Once an instance of a `MelddRepository::Base` subclass is created, it inherits t
 Instances of this class are returned from several `MelddRepository::Base` methods to report the success or failure of commanded actions. It is a value object with three public instance methods:
 
 | Method Name | Returns | Description |
-| : ------- |: ------ |: ------------ |
+|:----------- |:------- |:----------- |
 | `entity` | An entity instance or `nil` | After a successful Repository method call, this returns an instance of an entity class, such as was specified to the initialiser of `MelddRepository::Base`, reflecting any changes commanded by the method call. After an *unsucessful* Repository method call, this will return `nil`. |
 | `errors` | `[]` or error-data array | After a successful Repository method call, this will return an empty Array. After an *unsuccessful* Repository method call, this will return an Array of Hash instances. Each Hash must have two keys, `:field` and `:message`. The value for `:field` will be a Repository-specific name, generally but not necessarily a field name such as `name`. The value for `:message` will be a Repository-specified message for a single error, not including the field name. Multiple errors associated with a single field will cause multiple Hash instances with the same `:field` value to be included in the returned Array. |
 | `success?` | boolean | Returns `true` to indicate a successful result, or `false` to indicate a failure. |
