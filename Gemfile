@@ -84,7 +84,7 @@ group :development do
   gem 'pry-rescue'
   gem 'pry-stack_explorer'
   gem 'rails-footnotes'
-  gem 'rubocop'
+  gem 'rubocop', require: false
   gem 'spring'
 end
 
