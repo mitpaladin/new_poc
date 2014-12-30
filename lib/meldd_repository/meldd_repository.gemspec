@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["jdickey@seven-sigma.com"]
   spec.summary       = %q{Basic Repository pattern implementation for `new_poc`.}
   spec.description   = %q{Basic Repository pattern implementation for `new_poc`.}
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/jdickey/new_poc"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
@@ -22,4 +22,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3.1'
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency 'rubocop', '>= 0.28.0'
+  spec.add_development_dependency 'activemodel', '> 3.2'
 end

@@ -1,5 +1,6 @@
 
 require_relative 'store_result'
+require_relative 'error_factory'
 
 # MelddRepository: includes base Repository class wrapping database access.
 module MelddRepository
@@ -20,6 +21,11 @@ module MelddRepository
     end
 
     private
+
+    def failed_result_with_errors(errors)
+      StoreResult.new entity: nil, success: false,
+                      errors: ErrorFactory.create(errors)
+    end
 
     def successful_result(record)
       StoreResult.new success: true, errors: [],

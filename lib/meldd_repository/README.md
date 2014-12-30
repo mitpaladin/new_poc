@@ -1,6 +1,8 @@
 # `MelddRepository`
 
-Contains a base class (`MelddRepository::Base`) for model Repository classes as developed for the [`new_poc`](https://github.com/jdickey/new_poc) exploration project, as well as an action-result-reporting class (`MelddRepository::StoreResult`).
+Contains a base class (`MelddRepository::Base`) for model Repository classes as developed for the [`new_poc`](https://github.com/jdickey/new_poc) exploration project.
+
+Also contains two supporting classes. `MelddRepository::StoreResult` provides a uniform API for the reporting of the results of actions such as `MelddRepository::Base#add` et al. `MelddRepository::ErrorFactory` is used to build the Array of error-info Hashes returned by `MelddRepository::StoreResult#errors` when an action has failed.
 
 ## Installation
 
@@ -58,6 +60,10 @@ Instances of this class are returned from several `MelddRepository::Base` method
 | `entity` | An entity instance or `nil` | After a successful Repository method call, this returns an instance of an entity class, such as was specified to the initialiser of `MelddRepository::Base`, reflecting any changes commanded by the method call. After an *unsucessful* Repository method call, this will return `nil`. |
 | `errors` | `[]` or error-data array | After a successful Repository method call, this will return an empty Array. After an *unsuccessful* Repository method call, this will return an Array of Hash instances. Each Hash must have two keys, `:field` and `:message`. The value for `:field` will be a Repository-specific name, generally but not necessarily a field name such as `name`. The value for `:message` will be a Repository-specified message for a single error, not including the field name. Multiple errors associated with a single field will cause multiple Hash instances with the same `:field` value to be included in the returned Array. |
 | `success?` | boolean | Returns `true` to indicate a successful result, or `false` to indicate a failure. |
+
+### `MelddRepository::ErrorFactory`
+
+This class is used internally; it is fully covered by specs but is not meant for normal use.
 
 ## Contributing
 
