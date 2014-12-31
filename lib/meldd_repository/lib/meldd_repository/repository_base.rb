@@ -20,6 +20,10 @@ module MelddRepository
       failed_result_with_errors record.errors
     end
 
+    def all
+      dao.all.map { |record| factory.create record }
+    end
+
     private
 
     def failed_result_with_errors(errors)

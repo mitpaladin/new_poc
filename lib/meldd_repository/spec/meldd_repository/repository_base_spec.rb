@@ -108,5 +108,42 @@ module MelddRepository
         end # context 'reports failure in multiple ways, including'
       end # describe 'returns a StoreResult instance that'
     end # describe 'method #add'
+
+    describe 'method #all' do
+      context 'with no entries' do
+        it 'returns an empty Array' do
+          dao = OpenStruct.new all: []
+          obj = described_class.new 'factory', dao
+          expect(obj.all).to eq []
+        end
+      end # context 'with no entries'
+
+      context 'with entries' do
+        let(:all_data) { [{ attr1: 'value1' }, { attr1: 'value2' }] }
+        let(:dao) { OpenStruct.new all: all_data }
+        let(:factory) do
+          Class.new do
+            def self.create(record)
+              record.inspect
+            end
+          end # class
+        end
+        let(:obj) { described_class.new factory, dao }
+
+        it 'returns an Array' do
+          expect(obj.all).to be_an Array
+        end
+
+        it 'has the correct number of entries' do
+          expect(obj.all.count).to eq all_data.count
+        end
+
+        it 'has the correct entry for each input data item' do
+          obj.all.each_with_index do |entry, index|
+            expect(entry).to eq all_data[index].inspect
+          end
+        end
+      end # context 'with entries'
+    end # describe 'method #all'
   end # describe MelddRepository::RepositoryBase
 end # module MelddRepository
