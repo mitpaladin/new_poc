@@ -5,6 +5,8 @@ ruby '2.1.5'
 source 'https://rubygems.org'
 source 'https://rails-assets.org'
 
+gem 'meldd_repository', path: 'lib/meldd_repository'
+
 gem 'active_attr'
 gem 'bcrypt-ruby'
 # gem 'bundler-reorganizer'
@@ -84,7 +86,7 @@ group :development do
   gem 'pry-rescue'
   gem 'pry-stack_explorer'
   gem 'rails-footnotes'
-  gem 'rubocop'
+  gem 'rubocop', require: false
   gem 'spring'
 end
 
