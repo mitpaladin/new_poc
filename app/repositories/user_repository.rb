@@ -1,5 +1,6 @@
 
 require 'meldd_repository/repository_base'
+require 'meldd_repository/store_result'
 
 # Intermediary between engine-bound DAO and Entity for User-related use cases.
 class UserRepository < MelddRepository::RepositoryBase
@@ -18,17 +19,18 @@ class UserRepository < MelddRepository::RepositoryBase
 
     user = user_dao.authenticate password
     errors = errors_for user
-    StoreResult.new entity: entity_for(user),
-                    errors: errors,
-                    success: errors.empty?
+    MelddRepository::StoreResult.new entity: entity_for(user),
+                                     errors: errors,
+                                     success: errors.empty?
   end
 
   def guest_user(*options)
     user_dao = dao.first
     errors = ErrorFactory.create(user_dao.errors)
-    StoreResult.new entity: factory.create(attributes_for user_dao, options),
-                    errors: errors,
-                    success: errors.empty?
+    entity = factory.create(attributes_for user_dao, options)
+    MelddRepository::StoreResult.new entity: entity,
+                                     errors: errors,
+                                     success: errors.empty?
   end
 
   private
@@ -63,9 +65,10 @@ class UserRepository < MelddRepository::RepositoryBase
   end
 
   def return_for_invalid_user
-    StoreResult.new entity: guest_user.entity,
-                    errors: invalid_user_name_or_password,
-                    success: false
+    errors = invalid_user_name_or_password
+    MelddRepository::StoreResult.new entity: guest_user.entity,
+                                     errors: errors,
+                                     success: false
   end
 
   def test_environment?
