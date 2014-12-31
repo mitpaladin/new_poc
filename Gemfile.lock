@@ -87,6 +87,12 @@ GIT
       railties (>= 3.1, < 5.0)
       slim (~> 3.0)
 
+PATH
+  remote: lib/meldd_repository
+  specs:
+    meldd_repository (0.0.3)
+      activemodel (> 3.2)
+
 GEM
   remote: https://rubygems.org/
   remote: https://rails-assets.org/
@@ -500,6 +506,7 @@ DEPENDENCIES
   jbuilder
   jquery-rails
   markdown-toolbar!
+  meldd_repository!
   meta_request
   metric_fu-Saikuro
   naught!
