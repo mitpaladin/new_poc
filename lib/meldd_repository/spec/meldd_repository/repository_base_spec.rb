@@ -157,7 +157,7 @@ module MelddRepository
             def self.where(_opts = :chain, *_rest)
               [OpenStruct.new(attributes: { slug: 'the-slug' })]
             end
-          end
+          end # class
         end
 
         before :each do
@@ -230,5 +230,66 @@ module MelddRepository
         end # describe 'returns an unsuccessful StoreResult containing'
       end # context 'where the target does not exist'
     end # describe 'method #find_by_slug'
+
+    describe 'method #update' do
+      let(:obj) { described_class.new FakeFactory, dao_subclass }
+      let(:original_attribs) { { slug: slug, attrib1: 'original' } }
+      let(:result) { obj.update slug, updated_attribs }
+      let(:slug) { 'the-slug' }
+      let(:updated_attribs) { { attrib1: 'updated' } }
+      # let(:record) { OpenStruct.new attributes: original_attribs }
+      let(:record) do
+        klass = Class.new do
+          attr_accessor :attributes
+          def initialize(attrs_in = {})
+            @attributes = attrs_in
+          end
+
+          def update_attributes(updated_attribs = {})
+            updated_attribs.each { |k, v| attributes[k] = v }
+            true
+          end
+        end # class
+        klass.new original_attribs
+      end
+
+      context 'for a valid update' do
+        let(:dao_subclass) do
+          the_record = record
+          klass = Class.new(FakeDao) do
+            def self.where(_opts = :chain, *_rest)
+              [rec]
+            end
+          end # class
+          # :define_method creates a *closure*, not an ordinary method
+          klass.class.send(:define_method, :rec) do
+            the_record
+          end
+          klass
+        end
+
+        describe 'returns a StoreResult with' do
+          it 'a #success? method returning true' do
+            expect(result).to be_success
+          end
+
+          it 'an #entity method returning the updated entity' do
+            expect(result.entity).to respond_to :attributes
+            expect(result.entity.attributes).to respond_to :to_hash
+            updated_attribs.each do |attrib, value|
+              expect(result.entity.attributes[attrib]).to eq value
+            end
+          end
+
+          it 'an #errors method returning an empty Array' do
+            expect(result.errors).to respond_to :to_ary
+            expect(result.errors).to be_empty
+          end
+        end # describe 'returns a StoreResult with'
+      end # context 'for a valid update'
+
+      context 'for a failed update' do
+      end # context 'for a failed update'
+    end # describe 'method #update'
   end # describe MelddRepository::RepositoryBase
 end # module MelddRepository

@@ -27,12 +27,19 @@ module MelddRepository
     def find_by_slug(slug)
       found_post = dao.where(slug: slug).first
       return successful_result(found_post) if found_post
-      failed_result slug
+      fail_with_slug_not_found slug
+    end
+
+    def update(identifier, updated_attrs)
+      record = dao.where(slug: identifier).first
+      success = record.update_attributes(updated_attrs.to_h)
+      return successful_result(record) if success
+      failed_result_with_errors record.errors
     end
 
     private
 
-    def failed_result(slug)
+    def fail_with_slug_not_found(slug)
       errors = ActiveModel::Errors.new dao
       errors.add :base, "A record with 'slug'=#{slug} was not found."
       failed_result_with_errors errors
