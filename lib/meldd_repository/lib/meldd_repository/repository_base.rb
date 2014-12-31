@@ -24,7 +24,19 @@ module MelddRepository
       dao.all.map { |record| factory.create record }
     end
 
+    def find_by_slug(slug)
+      found_post = dao.where(slug: slug).first
+      return successful_result(found_post) if found_post
+      failed_result slug
+    end
+
     private
+
+    def failed_result(slug)
+      errors = ActiveModel::Errors.new dao
+      errors.add :base, "A record with 'slug'=#{slug} was not found."
+      failed_result_with_errors errors
+    end
 
     def failed_result_with_errors(errors)
       StoreResult.new entity: nil, success: false,

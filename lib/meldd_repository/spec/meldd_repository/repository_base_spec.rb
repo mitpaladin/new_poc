@@ -29,13 +29,13 @@ module MelddRepository
 
     it 'has a constructor that requires two parameters' do
       expect { described_class.new }.to raise_error ArgumentError
-      expect { described_class.new 'foo' }.to raise_error ArgumentError
-      expect { described_class.new 'foo', 'bar' }.not_to raise_error
+      expect { described_class.new 'factory' }.to raise_error ArgumentError
+      expect { described_class.new 'factory', 'dao' }.not_to raise_error
     end
 
     describe 'method #add' do
       it 'requires one parameter' do
-        obj = described_class.new 'foo', 'bar'
+        obj = described_class.new 'factory', 'dao'
         method = obj.public_method :add
         expect(method.arity).to eq 1
       end
@@ -145,5 +145,90 @@ module MelddRepository
         end
       end # context 'with entries'
     end # describe 'method #all'
+
+    describe 'method #find_by_slug' do
+      let(:obj) { described_class.new FakeFactory, dao_class }
+      let(:record) { OpenStruct.new attributes: { slug: slug } }
+      let(:slug) { 'the-slug' }
+
+      context 'where the target exists' do
+        let(:dao_class) do
+          Class.new(FakeDao) do
+            def self.where(_opts = :chain, *_rest)
+              [OpenStruct.new(attributes: { slug: 'the-slug' })]
+            end
+          end
+        end
+
+        before :each do
+          obj.add record
+        end
+
+        describe 'returns a successful StoreResult containing' do
+          let(:result) { obj.find_by_slug slug }
+
+          it 'a :success? method returning true' do
+            expect(result).to be_success
+          end
+
+          it 'an :errors method returning an empty Array' do
+            expect(result.errors).to respond_to :to_ary
+            expect(result.errors).to be_empty
+          end
+
+          it 'an :entity method returning the retrieved entity' do
+            expect(result.entity).not_to be_nil
+            expect(result.entity.slug).to eq record.slug
+          end
+        end # describe 'returns a successful StoreResult containing'
+      end # context 'where the target exists'
+
+      context 'where the target does not exist' do
+        let(:dao_class) do
+          Class.new(FakeDao) do
+            def self.where(_opts = :chain, *_rest)
+              []
+            end
+          end # class
+        end
+
+        describe 'returns an unsuccessful StoreResult containing' do
+          let(:result) { obj.find_by_slug slug }
+
+          it 'a :success? method returning false' do
+            expect(result).not_to be_success
+          end
+
+          describe 'an Array' do
+            it 'containing a single entry' do
+              expect(result.errors).to respond_to :to_ary
+              expect(result.errors.count).to eq 1
+            end
+
+            describe 'containing an error-information Hash that' do
+              let(:error) { result.errors.first }
+
+              it 'has two fields' do
+                expect(error).to respond_to :to_hash
+                expect(error.keys).to eq [:field, :message]
+              end
+
+              it 'has the correct :field entry' do
+                expect(error[:field]).to eq 'base'
+              end
+
+              it 'has the correct :message entry' do
+                message = "A record with 'slug'=#{slug} was not found."
+                expect(error[:message]).to eq message
+              end
+            end # describe 'containing an error-information Hash that'
+          end # describe 'an Array'
+
+          it 'an :entity method returning nil' do
+            expect(result.entity).to be_nil
+          end
+        end # describe 'returns an unsuccessful StoreResult containing'
+      end # context 'where the target does not exist'
+    end # describe 'method #find_by_slug'
   end # describe MelddRepository::RepositoryBase
 end # module MelddRepository

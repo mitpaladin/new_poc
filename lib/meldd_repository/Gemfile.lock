@@ -1,7 +1,8 @@
 PATH
   remote: .
   specs:
-    meldd_repository (0.0.2)
+    meldd_repository (0.0.3)
+      activemodel (> 3.2)
 
 GEM
   remote: https://rubygems.org/
@@ -57,7 +58,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activemodel (> 3.2)
   bundler (~> 1.7)
   meldd_repository!
   rake (~> 10.0)

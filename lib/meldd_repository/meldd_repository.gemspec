@@ -18,9 +18,10 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
+  # FIXME: Required for ActiveModel::Errors. Need a more lightweight alternate.
+  spec.add_dependency 'activemodel', '> 3.2'
   spec.add_development_dependency "bundler", "~> 1.7"
   spec.add_development_dependency 'rspec', '~> 3.1'
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency 'rubocop', '>= 0.28.0'
-  spec.add_development_dependency 'activemodel', '> 3.2'
 end
