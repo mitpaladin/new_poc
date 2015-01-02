@@ -1,9 +1,9 @@
 
-require 'meldd_repository/repository_base'
-require 'meldd_repository/store_result'
+require 'newpoc/repository/base'
+require 'newpoc/support/store_result'
 
 # Intermediary between engine-bound DAO and Entity for User-related use cases.
-class UserRepository < MelddRepository::RepositoryBase
+class UserRepository < Newpoc::Repository::Base
   def initialize(factory = UserFactory, dao = UserDao)
     super factory, dao
   end
@@ -19,16 +19,16 @@ class UserRepository < MelddRepository::RepositoryBase
 
     user = user_dao.authenticate password
     errors = errors_for user
-    MelddRepository::StoreResult.new entity: entity_for(user),
+    Newpoc::Support::StoreResult.new entity: entity_for(user),
                                      errors: errors,
                                      success: errors.empty?
   end
 
   def guest_user(*options)
     user_dao = dao.first
-    errors = ErrorFactory.create(user_dao.errors)
+    errors = Newpoc::Repository::Internal::ErrorFactory.create(user_dao.errors)
     entity = factory.create(attributes_for user_dao, options)
-    MelddRepository::StoreResult.new entity: entity,
+    Newpoc::Support::StoreResult.new entity: entity,
                                      errors: errors,
                                      success: errors.empty?
   end
@@ -61,12 +61,12 @@ class UserRepository < MelddRepository::RepositoryBase
 
   def invalid_user_name_or_password
     data = { base: 'Invalid user name or password' }
-    ErrorFactory.create data
+    Newpoc::Repository::Internal::ErrorFactory.create data
   end
 
   def return_for_invalid_user
     errors = invalid_user_name_or_password
-    MelddRepository::StoreResult.new entity: guest_user.entity,
+    Newpoc::Support::StoreResult.new entity: guest_user.entity,
                                      errors: errors,
                                      success: false
   end
