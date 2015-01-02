@@ -1,16 +1,16 @@
-# coding: utf-8
+
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'meldd_repository/version'
+require 'newpoc/repository/base/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "meldd_repository"
-  spec.version       = MelddRepository::VERSION
+  spec.name          = "newpoc-repository-base"
+  spec.version       = Newpoc::Repository::Base::VERSION
   spec.authors       = ["Jeff Dickey"]
   spec.email         = ["jdickey@seven-sigma.com"]
   spec.summary       = %q{Basic Repository pattern implementation for `new_poc`.}
   spec.description   = %q{Basic Repository pattern implementation for `new_poc`.}
-  spec.homepage      = "https://github.com/jdickey/new_poc"
+  spec.homepage      = "https://github.com/jdickey/new_poc/"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
@@ -24,4 +24,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3.1'
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency 'rubocop', '>= 0.28.0'
+  spec.add_development_dependency 'simplecov', '>= 0.9.1'
 end

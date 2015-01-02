@@ -49,11 +49,18 @@
 # edge-case determination and workaround logic in your code adds more work,
 # defeating the originally virtuous laziness.
 #
-class ErrorFactory
-  class << self
-    def create(errors)
-      errors.map do |field, message|
-        { field: field.to_s, message: message }
+module Newpoc
+  module Repository
+    module Internal
+      # Factory for our funky error-info hashes; see documentation above.
+      class ErrorFactory
+        class << self
+          def create(errors)
+            errors.map do |field, message|
+              { field: field.to_s, message: message }
+            end
+          end
+        end
       end
     end
   end

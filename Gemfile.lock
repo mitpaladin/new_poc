@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/DatabaseCleaner/database_cleaner.git
-  revision: f7c32e62e995086c04e465853ed4f4167f4002bc
+  revision: 2cfcad6a42ba816b5df6032bb1581ab8cd9ce0ae
   specs:
     database_cleaner (1.3.0)
 
@@ -56,7 +56,7 @@ GIT
 
 GIT
   remote: git://github.com/modeset/teaspoon.git
-  revision: 615690c2059a7397188bc9c8d76ef4c2894f2d4e
+  revision: 09641099f82098302f58fbff899845fa6b73946e
   specs:
     teaspoon (0.8.0)
       railties (>= 3.2.5, < 5)
@@ -78,9 +78,9 @@ GIT
 
 GIT
   remote: git://github.com/slim-template/slim-rails.git
-  revision: decc9cbcdbffc1c5925b9a6af5b6821ff864b326
+  revision: f84707c10ae9018b9e654852e73e272884e27de1
   specs:
-    slim-rails (3.0.0)
+    slim-rails (3.0.1)
       actionmailer (>= 3.1, < 5.0)
       actionpack (>= 3.1, < 5.0)
       activesupport (>= 3.1, < 5.0)
@@ -88,9 +88,9 @@ GIT
       slim (~> 3.0)
 
 PATH
-  remote: lib/meldd_repository
+  remote: lib/newpoc-repository-base
   specs:
-    meldd_repository (0.0.3)
+    newpoc-repository-base (0.0.4)
       activemodel (> 3.2)
 
 GEM
@@ -145,7 +145,7 @@ GEM
     ast (2.0.0)
     astrolabe (1.3.0)
       parser (>= 2.2.0.pre.3, < 3.0)
-    awesome_print (1.2.0)
+    awesome_print (1.6.1)
     bcrypt (3.1.9)
     bcrypt-ruby (3.1.5)
       bcrypt (>= 3.1.3)
@@ -221,14 +221,14 @@ GEM
       activesupport (>= 4.1.0)
     hike (1.2.3)
     hirb (0.7.2)
-    htmlentities (4.3.2)
+    htmlentities (4.3.3)
     i18n (0.7.0)
     ice_nine (0.11.1)
     interception (0.5)
     jbuilder (2.2.6)
       activesupport (>= 3.0.0, < 5)
       multi_json (~> 1.2)
-    jquery-rails (4.0.2)
+    jquery-rails (4.0.3)
       rails-dom-testing (~> 1.0)
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
@@ -255,7 +255,7 @@ GEM
     method_source (0.8.2)
     metric_fu-Saikuro (1.1.3)
     mime-types (2.4.3)
-    mini_portile (0.6.1)
+    mini_portile (0.6.2)
     minitest (5.5.0)
     multi_json (1.10.1)
     netrc (0.10.2)
@@ -264,7 +264,7 @@ GEM
     nokogumbo (1.2.0)
       nokogiri
     numerizer (0.2.0)
-    parser (2.2.0)
+    parser (2.2.0.1)
       ast (>= 1.1, < 3.0)
       slop (~> 3.4, >= 3.4.5)
     pg (0.17.1)
@@ -352,7 +352,7 @@ GEM
     rdoc (4.2.0)
       json (~> 1.4)
     redcarpet (3.2.2)
-    reek (1.5.1)
+    reek (1.6.1)
       parser (~> 2.2.0.pre.7)
       rainbow (>= 1.99, < 3.0)
       unparser (~> 0.1.16)
@@ -408,7 +408,7 @@ GEM
       nokogiri (>= 1.4.4)
       nokogumbo (= 1.2.0)
     sass (3.4.9)
-    sass-rails (5.0.0)
+    sass-rails (5.0.1)
       railties (>= 4.0.0, < 5.0)
       sass (~> 3.1)
       sprockets (>= 2.8, < 4.0)
@@ -451,7 +451,7 @@ GEM
     tilt (1.4.1)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
-    uglifier (2.6.0)
+    uglifier (2.6.1)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
     uniform_notifier (1.6.2)
@@ -506,10 +506,10 @@ DEPENDENCIES
   jbuilder
   jquery-rails
   markdown-toolbar!
-  meldd_repository!
   meta_request
   metric_fu-Saikuro
   naught!
+  newpoc-repository-base!
   pg
   pry
   pry-byebug

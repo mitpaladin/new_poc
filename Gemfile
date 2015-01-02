@@ -5,7 +5,7 @@ ruby '2.1.5'
 source 'https://rubygems.org'
 source 'https://rails-assets.org'
 
-gem 'meldd_repository', path: 'lib/meldd_repository'
+gem 'newpoc-repository-base', path: 'lib/newpoc-repository-base'
 
 gem 'active_attr'
 gem 'bcrypt-ruby'
