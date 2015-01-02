@@ -23,6 +23,25 @@ class FakeFactory
   end
 end
 
+shared_examples 'a failed StoreResult' do
+  it 'has a #success? method returning false' do
+    expect(result).not_to be_success
+  end
+
+  it 'has an #errors method returning an array of error objects' do
+    expect(result.errors.count).to eq 1
+    error = result.errors.first
+    expect(error).to be_a Hash
+    expect(error.size).to eq 2
+    expect(error[:field]).to eq 'field1'
+    expect(error[:message]).to eq 'is invalid'
+  end
+
+  it 'has an #entity method returning nil' do
+    expect(result.entity).to be nil
+  end
+end
+
 module Newpoc
   # Repositories mediate between domain entities and implementation-level DAOs.
   module Repository
@@ -75,7 +94,7 @@ module Newpoc
           end # context 'reports success in multiple ways, including'
 
           context 'reports failure in multiple ways, including' do
-            let(:fake_dao_class) do
+            let(:dao_subclass) do
               Class.new(FakeDao) do
                 def save
                   false
@@ -88,24 +107,9 @@ module Newpoc
                 end
               end
             end
-            let(:obj) { described_class.new FakeFactory, fake_dao_class }
+            let(:obj) { described_class.new FakeFactory, dao_subclass }
 
-            it 'has a #success? method returning false' do
-              expect(result).not_to be_success
-            end
-
-            it 'has an #errors method returning an array of error objects' do
-              expect(result.errors.count).to eq 1
-              error = result.errors.first
-              expect(error).to be_a Hash
-              expect(error.size).to eq 2
-              expect(error[:field]).to eq 'field1'
-              expect(error[:message]).to eq 'is invalid'
-            end
-
-            it 'has an #entity method returning nil' do
-              expect(result.entity).to be nil
-            end
+            it_behaves_like 'a failed StoreResult' # uses `result`
           end # context 'reports failure in multiple ways, including'
         end # describe 'returns a StoreResult instance that'
       end # describe 'method #add'
@@ -239,22 +243,22 @@ module Newpoc
         let(:slug) { 'the-slug' }
         let(:updated_attribs) { { attrib1: 'updated' } }
         # let(:record) { OpenStruct.new attributes: original_attribs }
-        let(:record) do
-          klass = Class.new do
-            attr_accessor :attributes
-            def initialize(attrs_in = {})
-              @attributes = attrs_in
-            end
-
-            def update_attributes(updated_attribs = {})
-              updated_attribs.each { |k, v| attributes[k] = v }
-              true
-            end
-          end # class
-          klass.new original_attribs
-        end
 
         context 'for a valid update' do
+          let(:record) do
+            klass = Class.new do
+              attr_accessor :attributes
+              def initialize(attrs_in = {})
+                @attributes = attrs_in
+              end
+
+              def update_attributes(updated_attribs = {})
+                updated_attribs.each { |k, v| attributes[k] = v }
+                true
+              end
+            end # class
+            klass.new original_attribs
+          end
           let(:dao_subclass) do
             the_record = record
             klass = Class.new(FakeDao) do
@@ -290,6 +294,42 @@ module Newpoc
         end # context 'for a valid update'
 
         context 'for a failed update' do
+          let(:record) do
+            klass = Class.new do
+              attr_accessor :attributes
+              def initialize(attrs_in = {})
+                @attributes = attrs_in
+              end
+
+              def errors
+                ActiveModel::Errors.new(self).tap do |e|
+                  e.add :field1, 'is invalid'
+                end
+              end
+
+              def update_attributes(_)
+                false
+              end
+            end # class
+            klass.new original_attribs
+          end
+          let(:dao_subclass) do
+            the_record = record
+            klass = Class.new(FakeDao) do
+              def self.where(_opts = :chain, *_rest)
+                [rec]
+              end
+            end # class
+            # :define_method creates a *closure*, not an ordinary method
+            klass.class.send(:define_method, :rec) do
+              the_record
+            end
+            klass
+          end
+
+          describe 'returns a StoreResult with' do
+            it_behaves_like 'a failed StoreResult' # uses `result`
+          end # describe 'returns a StoreResult with'
         end # context 'for a failed update'
       end # describe 'method #update'
     end # describe Newpoc::Repository::Base
