@@ -1,8 +1,8 @@
 module Newpoc
   module Repository
-    # Module containing base class of all Repository classes for app.
-    module Base
-      VERSION = '0.0.2'
+    # Base class of all Repository classes for app.
+    class Base
+      VERSION = '0.0.3'
     end
   end
 end

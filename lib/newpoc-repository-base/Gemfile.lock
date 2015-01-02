@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    newpoc-repository-base (0.0.2)
+    newpoc-repository-base (0.0.3)
       activemodel (> 3.2)
 
 GEM
