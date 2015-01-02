@@ -4,6 +4,7 @@ function rakeall() {
   for gemfile in `find lib -name Gemfile.lock`
   do
     pushd `dirname $gemfile`
+    bundle install
     bundle exec rake
     popd
   done
