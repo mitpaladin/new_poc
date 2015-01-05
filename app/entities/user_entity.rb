@@ -18,8 +18,6 @@ class UserEntity
 
   attr_reader :email,
               :name,
-              :password,
-              :password_confirmation,
               :profile,
               :slug,
               :created_at,
@@ -29,7 +27,6 @@ class UserEntity
   validates :name, presence: true, length: { minimum: 6 }
   validate :validate_name
   validates_email_format_of :email
-  validate :passwords_are_valid
 
   def initialize(attribs)
     init_attrib_keys.each do |key|
@@ -37,8 +34,6 @@ class UserEntity
     end
     # MainLogger.log.debug [:user_entity_41, name, email, profile]
     InstanceVariableSetter.new(self).set attribs
-    # Pending near-future refactoring per Issue #142.
-    init_passwords attribs
   end
 
   def attributes
@@ -78,33 +73,9 @@ class UserEntity
     UserRepository.new.guest_user.entity
   end
 
-  def init_passwords(attribs)
-    return if attribs.nil?
-    @password = attribs[:password] || attribs[:password.to_s]
-    attr = attribs[:password_confirmation] ||
-           attribs[:password_confirmation.to_s]
-    @password_confirmation = attr
-    self
-  end
-
   def validate_name
     Internals::NameValidator.new(name)
       .validate
       .add_errors_to_model(self)
-  end
-
-  def passwords_match?
-    password.to_s.strip.present? &&
-      (password == password.to_s.strip) &&
-      (password == password_confirmation)
-  end
-
-  def passwords_omitted?
-    password.to_s.strip.empty? && password_confirmation.to_s.strip.empty?
-  end
-
-  def passwords_are_valid
-    return if passwords_omitted? || passwords_match?
-    errors.add :password, 'must match the password confirmation'
   end
 end # class UserEntity

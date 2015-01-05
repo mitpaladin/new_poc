@@ -24,11 +24,11 @@ class UserRepository < Newpoc::Repository::Base
                                      success: errors.empty?
   end
 
-  def guest_user(*options)
+  def guest_user
     user_dao = dao.first
     errors = Newpoc::Repository::Internal::ErrorFactory.create(user_dao.errors)
-    entity = factory.create(attributes_for user_dao, options)
-    Newpoc::Support::StoreResult.new entity: entity,
+    newentity = factory.create(user_dao.attributes)
+    Newpoc::Support::StoreResult.new entity: newentity,
                                      errors: errors,
                                      success: errors.empty?
   end

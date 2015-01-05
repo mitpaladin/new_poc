@@ -17,7 +17,7 @@ module Actions
     before :each do
       user_count.times do
         attribs = FactoryGirl.attributes_for :user, :saved_user
-        user = UserEntity.new attribs
+        user = UserPasswordEntityFactory.create attribs, 'password'
         repo.add user
         users << user
       end

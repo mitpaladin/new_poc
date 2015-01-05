@@ -18,7 +18,8 @@ module Actions
 
     context 'for a Registered User' do
       let(:current_user) do
-        entity = UserEntity.new FactoryGirl.attributes_for :user, :saved_user
+        user_attribs = FactoryGirl.attributes_for :user, :saved_user
+	entity = UserPasswordEntityFactory.create user_attribs, 'password'
         user_repo.add entity
         entity
       end

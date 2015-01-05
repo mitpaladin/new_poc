@@ -40,6 +40,15 @@ describe UserEntity do
         @attribs = { name: user_name, email: user_email }
       end
 
+      it 'a mismatched password pair' do
+        @attribs = {
+          name: user_name,
+          email: user_email,
+          password: 'password',
+          password_confirmation: 'p@ssw0rD'
+        }
+      end
+
       it 'a name, email address, and profile string' do
         @attribs = {
           name: user_name,
@@ -99,14 +108,6 @@ describe UserEntity do
         @attribs = { name: user_name, email: 'joe at example dot com' }
       end
 
-      it 'a mismatched password pair' do
-        @attribs = {
-          name: user_name,
-          email: user_email,
-          password: 'password',
-          password_confirmation: 'p@ssw0rD'
-        }
-      end
     end # describe 'returns false when initialised with'
   end # describe :valid?.to_s
 

@@ -31,7 +31,7 @@ describe UserRepository do
     FactoryGirl.attributes_for :user, :saved_user
   end
   let(:entity) do
-    entity_class.new entity_attributes
+    UserPasswordEntityFactory.create entity_attributes, 'password'
   end
   let(:save_error_data) { { frobulator: 'is busted' } }
   let(:record_errors) do
@@ -124,28 +124,4 @@ describe UserRepository do
       end # context 'with a correct password'
     end # context 'for an existing user'
   end # describe :authenticate
-
-  describe :guest_user.to_s do
-    context 'with default/no parameter specified' do
-      let(:result) { obj.guest_user }
-
-      it_behaves_like 'a result with a Guest User entity'
-
-      it 'includes the password fields in the Guest User entity' do
-        expect(result.entity.password).not_to be_empty
-        expect(result.entity.password_confirmation).not_to be_empty
-      end
-    end # context 'with default/no parameter specified'
-
-    context 'with :no_password option specified' do
-      let(:result) { obj.guest_user :no_password }
-
-      it_behaves_like 'a result with a Guest User entity'
-
-      it 'does NOT include the password fields in the Guest User entity' do
-        expect(result.entity.password).to be_nil
-        expect(result.entity.password_confirmation).to be_nil
-      end
-    end # context 'with :no_password option specified' do
-  end # describe :guest_user
 end # describe UserRepository

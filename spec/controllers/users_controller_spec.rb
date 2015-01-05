@@ -36,7 +36,7 @@ describe UsersController do
     before :each do
       user_count.times do
         attribs = FactoryGirl.attributes_for :user, :saved_user
-        user = UserEntity.new attribs
+        user = UserPasswordEntityFactory.create attribs, 'password'
         repo.add user
         users << user
       end
@@ -81,7 +81,9 @@ describe UsersController do
     context 'with a user logged in' do
       let(:user_attrs) { FactoryGirl.attributes_for :user, :saved_user }
       let(:user) do
-        UserEntity.new(user_attrs).tap { |user| UserRepository.new.add user }
+        user = UserPasswordEntityFactory.create user_attrs, 'password'
+        UserRepository.new.add user
+        user
       end
 
       before :each do
@@ -162,23 +164,25 @@ describe UsersController do
           expect(response).not_to be_redirection
           user = assigns[:user]
           expect(user).to be_a UserEntity
-          expect(user).not_to be_valid
           expect(user).to have(@messages.count).errors
-          expect(user.errors.full_messages).to eq @messages
+          expect(user.errors.full_messages).to end_with @messages
         end
 
         it 'an empty name' do
           @params = params.merge name: ''
           params[:name] = ''
+          prefix = 'Name is invalid: '
           @messages = [
-            "Name can't be blank",
-            'Name is too short (minimum is 6 characters)'
+            prefix + "Name can't be blank"
           ]
         end
 
         it 'an invalid email address' do
           @params = params.merge email: 'jruser at example dot com'
-          @messages = ['Email does not appear to be a valid e-mail address']
+          prefix = 'Name is invalid: '
+          @messages = [
+            prefix + 'Email does not appear to be a valid e-mail address'
+          ]
         end
 
         it 'mismatched passwords' do
@@ -187,7 +191,10 @@ describe UsersController do
             password_confirmation: 'Password'
           }
           @params = params.merge bad_params
-          @messages = ['Password must match the password confirmation']
+          prefix = 'Name is invalid: '
+          @messages = [
+            prefix + 'Password must match the password confirmation'
+          ]
         end
       end # context 'that result in a visibly invalid user entity, including'
     end # describe 'with invalid parameters'
@@ -263,7 +270,8 @@ describe UsersController do
 
     describe 'succeeds in requesting any existing public profile, so that it' do
       let(:target_user) do
-        entity = UserEntity.new FactoryGirl.attributes_for(:user, :saved_user)
+        user_attribs = FactoryGirl.attributes_for(:user, :saved_user)
+        entity = UserPasswordEntityFactory.create user_attribs, 'password'
         UserRepository.new.add entity
         entity
       end

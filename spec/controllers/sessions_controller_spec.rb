@@ -38,7 +38,8 @@ end # shared_examples 'invalid login credentials'
 # SessionsController: responsible for logging users in and out.
 describe SessionsController do
   let(:registered_user) do
-    user = UserEntity.new FactoryGirl.attributes_for(:user, :saved_user)
+    user_attribs = FactoryGirl.attributes_for(:user, :saved_user)
+    user = UserPasswordEntityFactory.create user_attribs, 'password'
     UserRepository.new.add user
     user
   end

@@ -81,12 +81,23 @@ module Actions
     end
 
     def add_user_entity_to_repo
-      new_entity = UserEntity.new(user_data)
+      new_entity = user_entity_with_passwords
       result = user_repo.add new_entity
       @entity = result.entity
       return if result.success?
+      fail_adding_user_to_repo(new_entity)
+    end
+
+    def fail_adding_user_to_repo(new_entity)
       new_entity.valid? # nope; now error messages are built
       fail_for attributes: user_data, messages: new_entity.errors.full_messages
+    end
+
+    def user_entity_with_passwords
+      ret = UserPasswordEntityFactory.create user_data, password
+      ret.password = user_data[:password]
+      ret.password_confirmation = user_data[:password_confirmation]
+      ret
     end
 
     def require_guest_user
