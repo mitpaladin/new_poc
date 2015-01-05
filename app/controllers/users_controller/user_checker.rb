@@ -23,7 +23,7 @@ class UsersController < ApplicationController
         private
 
         def check_for_conflicting_name
-          return unless user.valid?
+          return if data[:messages].empty?
           user.errors.add :name, conflicting_name_message
           self
         end

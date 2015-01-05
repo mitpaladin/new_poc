@@ -45,7 +45,9 @@ module Actions
       context 'the request is made from a logged-in user session' do
         let(:command) { described_class.new current_user, user_data }
         let(:current_user) do
-          UserEntity.new(user_attribs).tap { |user| user_repo.add user }
+          user = UserPasswordEntityFactory.create user_attribs, 'password'
+          user_repo.add user
+	  user
         end
         let(:user_attribs) { FactoryGirl.attributes_for :user }
 
@@ -68,7 +70,9 @@ module Actions
       context 'the named user already exists' do
         let(:command) { described_class.new guest_user, other_user.attributes }
         let(:other_user) do
-          UserEntity.new(user_attribs).tap { |user| user_repo.add user }
+          user = UserPasswordEntityFactory.create user_attribs, 'password'
+          user_repo.add user
+	  user
         end
         let(:user_attribs) { FactoryGirl.attributes_for :user }
 
@@ -102,7 +106,9 @@ module Actions
       context 'the user name is invalid' do
         let(:command) { described_class.new guest_user, user.attributes }
         let(:user) do
-          UserEntity.new(user_attribs).tap { |user| user_repo.add user }
+          user = UserPasswordEntityFactory.create user_attribs, 'password'
+          user_repo.add user
+          user
         end
         let(:user_attribs) { FactoryGirl.attributes_for :user, name: '  Joe ' }
 

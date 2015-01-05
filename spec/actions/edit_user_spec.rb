@@ -9,7 +9,8 @@ module Actions
     let(:repo) { UserRepository.new }
     let(:subscriber) { BroadcastSuccessTester.new }
     let(:current_user) do
-      user = UserEntity.new FactoryGirl.attributes_for :user, :saved_user
+      user_attribs = FactoryGirl.attributes_for :user, :saved_user
+      user = UserPasswordEntityFactory.create user_attribs, 'password'
       repo.add user
       user
     end

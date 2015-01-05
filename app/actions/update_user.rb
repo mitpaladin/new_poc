@@ -73,14 +73,45 @@ module Actions
 
     # ... for #update_entity
 
+    # Support class for #fail_with_bad_data
+    class BadDataEntity
+      def initialize(data, current_user)
+        attribs = current_user.attributes.reject { |s| s.match(/password/) }
+        @entity = UserEntity.new attribs.merge(data)
+        @entity.invalid?
+      end
+
+      def data_from(user_data)
+        check_password_mismatch user_data
+        build_data
+      end
+
+      private
+
+      attr_reader :entity
+
+      def build_data
+        {
+          messages: entity.errors.full_messages,
+          entity: entity_without_errors
+        }
+      end
+
+      def entity_without_errors
+        entity.attributes.reject { |k, _| k == :errors }
+      end
+
+      def check_password_mismatch(user_data)
+        return if user_data.password == user_data.password_confirmation
+        message = { base: 'Password must match the password confirmation' }
+        msg = Newpoc::Repository::Internal::ErrorFactory.create message
+        entity.errors[:messages] = msg
+      end
+    end
+    private_constant :BadDataEntity
+
     def fail_with_bad_data(data)
-      attribs = current_user.attributes.reject { |s| s.match(/password/) }
-      entity = UserEntity.new attribs.merge(data)
-      entity.invalid?
-      data = {
-        messages: entity.errors.full_messages,
-        entity: entity.attributes.reject { |k, _| k == :errors }
-      }
+      data = BadDataEntity.new(data, current_user).data_from user_data
       fail JSON.dump data
     end
 
