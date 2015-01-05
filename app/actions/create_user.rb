@@ -36,11 +36,13 @@ module Actions
       @user_data = UserDataConverter.new(user_data).data
       @user_slug = @user_data[:slug] || @user_data[:name].parameterize
       @user_data.delete :slug # will be recreated on successful save
+      init_passwords @user_data
     end
 
     def execute
       require_guest_user
       verify_entity_does_not_exist
+      verify_password
       add_user_entity_to_repo
       broadcast_success entity
     rescue RuntimeError => error
@@ -50,6 +52,7 @@ module Actions
     private
 
     attr_reader :current_user, :user_data, :entity
+    attr_reader :password, :password_confirmation
 
     def broadcast_failure(payload)
       broadcast :failure, payload
@@ -57,6 +60,24 @@ module Actions
 
     def broadcast_success(payload)
       broadcast :success, payload
+    end
+
+    def init_passwords(attribs)
+      verify_password_field attribs, :password
+      verify_password_field attribs, :password_confirmation
+      @password = attribs[:password].strip
+      @password_confirmation = attribs[:password_confirmation].strip
+    end
+
+    def verify_password_field(attribs, key)
+      value = attribs.fetch(key, '').strip
+      return self if value.present? && value.length > 7
+      message = "#{key.to_s.humanize} must be longer than 7 characters"
+      fail_for attributes: attribs, message: message
+    end
+
+    def verify_password
+      passwords_match?
     end
 
     def add_user_entity_to_repo
@@ -82,6 +103,21 @@ module Actions
 
     # Support methods
 
+    def passwords_match?
+      return if password == password_confirmation
+      fail_for attributes: user_data, messages: [password_mismatch_message]
+    end
+
+    def password_mismatch_message
+      'Password must match the password confirmation'
+    end
+
+    def passwords_longenough?
+      plength = password.to_s.strip.length
+      pclength = password_confirmation.to_s.strip.length
+      return if (plength > 7) && (pclength > 7)
+      fail_for messages: 'Passwords must be 8 or more characters long'
+    end
     # ... for #require_guest_user
 
     def already_logged_in_message
