@@ -203,13 +203,13 @@ describe UsersController do
             password_confirmation: 'Password'
           }
           @params = params.merge bad_params
-          prefix = 'Name is invalid: '
+          prefix = 'Password is invalid: '
           @messages = [
             prefix + 'Password must match the password confirmation'
           ]
         end
       end # context '
-    end # describe 'with invalid parameters'
+    end # describe 'with valid entity parameters'
   end # describe "POST 'create'"
 
   describe "GET 'edit'" do

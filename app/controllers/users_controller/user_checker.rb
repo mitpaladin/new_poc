@@ -16,23 +16,37 @@ class UsersController < ApplicationController
         end
 
         def parse
+          check_for_invalid_passwords
           check_for_conflicting_name
+          check_for_other_name_issues
           user
         end
 
         private
 
+        def check_for_invalid_passwords
+          @filtered_msgs = data[:messages].grep(/password/)
+          return if filtered_msgs.empty?
+          user.errors.add :password, padded_filtered_msgs
+        end
+
         def check_for_conflicting_name
-          return if data[:messages].empty?
-          user.errors.add :name, conflicting_name_message
-          self
+          @filtered_msgs = data[:messages].grep(/already exists/)
+          return if filtered_msgs.empty?
+          user.errors.add :name, padded_filtered_msgs
         end
 
-        def conflicting_name_message
-          'is invalid: ' + data[:messages].first
+        def check_for_other_name_issues
+          @filtered_msgs = data[:messages].grep(/Name/)
+          return if filtered_msgs.empty?
+          user.errors.add :name, padded_filtered_msgs
         end
 
-        attr_reader :controller, :data, :user
+        def padded_filtered_msgs
+          'is invalid: ' + filtered_msgs.first
+        end
+
+        attr_reader :controller, :data, :user, :filtered_msgs
       end # class UsersController::Internals::CreateFailure::UserChecker
 
       private_constant :UserChecker
