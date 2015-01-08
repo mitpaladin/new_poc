@@ -208,6 +208,18 @@ describe UsersController do
             prefix + 'Password must match the password confirmation'
           ]
         end
+
+        it 'too short passwords' do
+          bad_params = {
+            password: 'pword',
+            password_confirmation: 'pword'
+          }
+          @params = params.merge bad_params
+          prefix = 'Password is invalid: '
+          @messages = [
+            prefix + 'Password must be longer than 7 characters'
+          ]
+        end
       end # context '
     end # describe 'with valid entity parameters'
   end # describe "POST 'create'"

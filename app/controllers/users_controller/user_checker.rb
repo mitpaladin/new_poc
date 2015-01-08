@@ -25,7 +25,7 @@ class UsersController < ApplicationController
         private
 
         def check_for_invalid_passwords
-          @filtered_msgs = data[:messages].grep(/password/)
+          @filtered_msgs = data[:messages].grep(/Password/)
           return if filtered_msgs.empty?
           filtered_msgs.each do
             |msg| user.errors.add :password, padded_filtered_msgs(msg)
