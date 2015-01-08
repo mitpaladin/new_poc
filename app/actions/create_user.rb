@@ -118,12 +118,6 @@ module Actions
       'Password must match the password confirmation'
     end
 
-    def passwords_longenough?
-      plength = password.to_s.strip.length
-      pclength = password_confirmation.to_s.strip.length
-      return if (plength > 7) && (pclength > 7)
-      fail_for messages: 'Passwords must be 8 or more characters long'
-    end
     # ... for #require_guest_user
 
     def already_logged_in_message
