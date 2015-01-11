@@ -1,8 +1,11 @@
 
 require 'newpoc/entity/post/version'
 require 'newpoc/support/instance_variable_setter'
+require 'newpoc/services/markdown_html_converter'
 
 require 'active_attr'
+require 'html/pipeline'
+require 'nokogiri'
 
 module Newpoc
   module Entity
@@ -93,7 +96,7 @@ module Newpoc
           private
 
           def body_markup(markup)
-            MarkdownHtmlConverter.new.to_html(markup)
+            Newpoc::Services::MarkdownHtmlConverter.new.to_html(markup)
             # markup
           end
         end # class Newpoc::Entity::Post::SupportClasses::ImageBodyBuilder
@@ -188,7 +191,7 @@ module Newpoc
       end
 
       def convert_body(fragment)
-        MarkdownHtmlConverter.new.to_html(fragment)
+        Newpoc::Services::MarkdownHtmlConverter.new.to_html(fragment)
       end
 
       def must_have_body_or_title

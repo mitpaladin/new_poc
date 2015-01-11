@@ -19,6 +19,17 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency 'active_attr', '>= 0.8.5'
+  spec.add_dependency 'html-pipeline', '>= 0.11.0'
+  spec.add_dependency 'nokogiri', '>= 1.6.5'
+  # Next few needed for html-pipeline
+  spec.add_dependency 'gemoji', '>= 2.1.0'
+  spec.add_dependency 'github-linguist', '>= 4.2.5'
+  spec.add_dependency 'github-markdown', '>= 0.6.0'
+  spec.add_dependency 'pygments.rb'
+  # gem 'pygments.rb', github: 'lencioni/pygments.rb', branch: 'yajl-update'
+  spec.add_dependency 'rinku', '>= 1.7.3'
+  spec.add_dependency 'sanitize', '>= 3.1.0'
+  # End html-pipeline dependencies
 
   spec.add_development_dependency "bundler", "~> 1.7"
   spec.add_development_dependency "rake", "~> 10.0"
