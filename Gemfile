@@ -5,6 +5,7 @@ ruby '2.1.5'
 source 'https://rubygems.org'
 source 'https://rails-assets.org'
 
+gem 'newpoc-entity-post', path: 'lib/newpoc-entity-post'
 gem 'newpoc-repository-base', path: 'lib/newpoc-repository-base'
 
 gem 'active_attr'

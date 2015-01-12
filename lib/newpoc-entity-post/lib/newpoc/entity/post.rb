@@ -7,112 +7,19 @@ require 'active_attr'
 require 'html/pipeline'
 require 'nokogiri'
 
+require_relative 'post/byline_builder'
+require_relative 'post/image_body_builder'
+require_relative 'post/text_body_builder'
+require_relative 'post/timestamp_builder'
+
 module Newpoc
   module Entity
     # a Post is the domain entity for a blog-type post, with title, body, etc.
     class Post
+      # Internal support classes specific to Post entity go in SupportClasses.
       module SupportClasses
-        # Simple and to the point.
-        module TimestampBuilder
-          # Provides uniform formatting for timestamps.
-          def timestamp_for(the_time = Time.now)
-            the_time.to_time.localtime.strftime timestamp_format
-          end
-
-          def timestamp_format
-            '%a %b %e %Y at %R %Z (%z)'
-          end
-        end # module TimestampBuilder
-
-        # #################################################################### #
-
-        # Build article byline markup.
-        class BylineBuilder
-          extend TimestampBuilder
-          extend Forwardable
-
-          def_delegator :@entry, :h, :h
-
-          def initialize(decorated_entry)
-            @entry = decorated_entry
-          end
-
-          def to_html
-            doc = Nokogiri::HTML::Document.new
-            para = Nokogiri::XML::Element.new 'p', doc
-            para << inner(doc)
-            doc << para
-            para.to_html
-          end
-
-          protected
-
-          attr_reader :entry
-
-          private
-
-          def inner(doc)
-            ret = Nokogiri::XML::Element.new 'time', doc
-            ret[:pubdate] = 'pubdate'
-            ret << innermost
-          end
-
-          def innermost
-            if entry.draft?
-              parts = ['Drafted', date_str(entry.updated_at)]
-            else
-              parts = ['Posted', entry.pubdate_str]
-            end
-            (parts + ['by', entry.author_name]).join ' '
-          end
-
-          def date_str(the_date)
-            the_date.localtime.strftime '%a %b %e %Y at %R %Z (%z)'
-          end
-        end # class Newpoc::Entity::Post::SupportClasses::BylineBuilder
-
-        # #################################################################### #
-
-        # Build image-post body.
-        class ImageBodyBuilder
-          # Note that since Markdown has no specific support for the
-          # :figure, :img, or :figcaption tags beyond being a superset of
-          # HTML (valid HTML in a Markdown document should be processed
-          # correctly), we're leaving the `#build` method as is here.
-          def build(obj)
-            doc = Nokogiri::HTML::Document.new
-            figure = Nokogiri::XML::Element.new 'figure', doc
-
-            img = Nokogiri::XML::Element.new 'img', doc
-            img[:src] = obj.image_url
-            figure << img
-
-            figcaption = Nokogiri::XML::Element.new 'figcaption', doc
-            figcaption << body_markup(obj.body)
-            figure << figcaption
-            figure.to_html
-          end
-
-          private
-
-          def body_markup(markup)
-            Newpoc::Services::MarkdownHtmlConverter.new.to_html(markup)
-            # markup
-          end
-        end # class Newpoc::Entity::Post::SupportClasses::ImageBodyBuilder
-
-        # #################################################################### #
-
-        # Build text post body.
-        class TextBodyBuilder
-          def build(obj)
-            "\n#{obj.body}\n"
-          end
-        end # class Newpoc::Entity::Post::SupportClasses::TextBodyBuilder
       end # module Newpoc::Entity::Post::SupportClasses
       private_constant :SupportClasses
-
-      # ###################################################################### #
 
       include ActiveAttr::BasicModel
       include ActiveAttr::Serialization
