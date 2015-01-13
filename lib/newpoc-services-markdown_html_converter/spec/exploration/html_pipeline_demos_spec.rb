@@ -4,12 +4,36 @@ require 'spec_helper'
 require 'pygments'
 require 'html/pipeline'
 
+require 'pry'
+
 def gfm_at_mention_markdown
   'This mentions @jch in the markup'
 end
 
 def gfm_emoji_markdown
   'This does nothing special. :expressionless:'
+end
+
+def gfm_e_i_t_attrs(emoji)
+  {
+    class: 'emoji',
+    title: emoji,
+    alt: emoji,
+    src: '',
+    height: 20,
+    width: 20,
+    align: 'absmiddle'
+  }
+end
+
+def gfm_emoji_inside_tt(emoji, base_url)
+  image_attribs = gfm_e_i_t_attrs emoji
+  image_name = emoji.gsub(':', '') + '.png'
+  image_attribs[:src] = "#{base_url}/#{image_name}"
+  attrib_str = image_attribs.map do |attrib, value|
+    format '%s="%s"', attrib.to_s, value.to_s
+  end.join(' ')
+  ['<tt><img ', attrib_str, '></tt>'].join
 end
 
 def gfm_plain_fenced_code_block_markdown
@@ -224,7 +248,7 @@ describe 'HTML::Pipeline simple exploration, demoing' do
       @input = 'All done? :shipit:'
       result = pipeline.call @input, asset_root: asset_root
       expect(result.keys).to eq [:output]
-      expect(result[:output]).to have(2).children
+      expect(result[:output].children.count).to eq 2
       img = result[:output].children.last
       expect(img.name).to eq 'img'
       expect(img['class']).to eq 'emoji'
@@ -249,10 +273,24 @@ describe 'HTML::Pipeline simple exploration, demoing' do
         @input = '<pre>:shipit:</pre>'
       end
 
-      it 'a :tt tag' do
-        @input = '<tt>:shipit:</tt>'
-      end
+      # Breaks as of `html-pipeline` 1.11.0.
+      # it 'a :tt tag' do
+      #   @input = '<tt>:shipit:</tt>'
+      # end
     end # describe 'does not generate markup when the emoji is inside'
+
+    describe 'generates markup when the emoji is inside' do
+      # As of `html-pipeline` 1.11.0.
+      it 'a :tt tag' do
+        base_url = 'http://example.com/emoji'
+        @input = '<tt>:shipit:</tt>'
+        @expected = gfm_emoji_inside_tt(':shipit:', base_url)
+        result = pipeline.call @input, asset_root: asset_root
+        expect(result.keys).to eq [:output]
+        expect(result[:output]).to be_a Nokogiri::HTML::DocumentFragment
+        expect(result[:output].to_html).to eq @expected
+      end
+    end
   end # describe 'an EmojiFilter pipeline'
 
   describe 'a SyntaxHighlightFilter (with Markdown for convenience) pipeline' do

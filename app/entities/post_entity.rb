@@ -2,6 +2,8 @@
 require 'active_model'
 require 'instance_variable_setter'
 
+require 'newpoc/services/markdown_html_converter'
+
 require_relative 'post_entity/byline_builder'
 require_relative 'post_entity/image_body_builder'
 require_relative 'post_entity/text_body_builder'
@@ -95,7 +97,7 @@ class PostEntity
   end
 
   def convert_body(fragment)
-    MarkdownHtmlConverter.new.to_html(fragment)
+    Newpoc::Services::MarkdownHtmlConverter.new.to_html(fragment)
   end
 
   def must_have_body_or_title

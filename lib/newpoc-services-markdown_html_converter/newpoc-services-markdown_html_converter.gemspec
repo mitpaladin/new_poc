@@ -26,6 +26,7 @@ Gem::Specification.new do |spec|
 # gem 'pygments.rb', github: 'lencioni/pygments.rb', branch: 'yajl-update'
   spec.add_dependency 'rinku', '~> 1.7', '>= 1.7.3'
   spec.add_dependency 'sanitize', '~> 3.1'
+  spec.add_dependency 'yajl-ruby', '~> 1.1'
 
   spec.add_development_dependency "bundler", "~> 1.7"
   spec.add_development_dependency 'chronic', '>= 0.10.2'

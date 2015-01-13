@@ -1,4 +1,6 @@
 
+require 'newpoc/services/markdown_html_converter'
+
 # Formerly included in a Draper decorator, when we used those pervasively.
 class PostEntity
   module SupportClasses
@@ -25,8 +27,7 @@ class PostEntity
       private
 
       def body_markup(markup)
-        MarkdownHtmlConverter.new.to_html(markup)
-        # markup
+        Newpoc::Services::MarkdownHtmlConverter.new.to_html(markup)
       end
     end # class ImageBodyBuilder
   end # module SupportClasses

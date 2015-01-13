@@ -2,6 +2,8 @@
 require 'active_model'
 require 'instance_variable_setter'
 
+require 'newpoc/services/markdown_html_converter'
+
 require_relative 'user_entity/name_validator'
 
 # Persistence entity-layer representation for User. Not a domain object; used to
@@ -41,7 +43,7 @@ class UserEntity
   end
 
   def formatted_profile
-    MarkdownHtmlConverter.new.to_html profile
+    Newpoc::Services::MarkdownHtmlConverter.new.to_html profile
   end
 
   def guest_user?
