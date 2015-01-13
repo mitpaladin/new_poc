@@ -22,6 +22,7 @@ def maxwidth_image_link_for(path)
 end
 
 module Newpoc
+  # Services available to different Newpoc components.
   module Services
     describe MarkdownHtmlConverter do
       it 'can be constructed' do

@@ -1,5 +1,5 @@
 
-require "newpoc/services/markdown_html_converter/version"
+require 'newpoc/services/markdown_html_converter/version'
 
 require 'html/pipeline'
 require 'pygments'

@@ -10,6 +10,7 @@ require 'newpoc/entity/post/byline_builder'
 module Newpoc
   module Entity
     class Post
+      # *Private* support classes used by Post entity class.
       module SupportClasses
         describe BylineBuilder do
           let(:author) { 'The Author' }

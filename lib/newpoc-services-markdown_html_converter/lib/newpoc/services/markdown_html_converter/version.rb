@@ -1,7 +1,8 @@
 module Newpoc
   module Services
+    # Convert possibly mixed Markdown/HTML content to HTML.
     class MarkdownHtmlConverter
-      VERSION = "0.0.1"
+      VERSION = '0.0.1'
     end
   end
 end

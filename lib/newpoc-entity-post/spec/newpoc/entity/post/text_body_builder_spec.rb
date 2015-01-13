@@ -6,6 +6,7 @@ require 'newpoc/entity/post/text_body_builder'
 module Newpoc
   module Entity
     class Post
+      # *Private* support classes used by Post entity class.
       module SupportClasses
         describe TextBodyBuilder do
           let(:builder) { TextBodyBuilder.new }

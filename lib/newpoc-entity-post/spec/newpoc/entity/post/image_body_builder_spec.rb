@@ -6,6 +6,7 @@ require 'newpoc/entity/post/image_body_builder'
 module Newpoc
   module Entity
     class Post
+      # *Private* support classes used by Post entity class.
       module SupportClasses
         describe ImageBodyBuilder do
           let(:builder) { ImageBodyBuilder.new }
