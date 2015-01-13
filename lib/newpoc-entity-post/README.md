@@ -32,7 +32,7 @@ As noted above, this encapsulates the Post entity used in the `jdickey/new_poc` 
 
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/newpoc-entity-post/fork )
+1. Fork the main app ( https://github.com/jdickey/new_poc/fork )
 1. Create your feature branch (`git checkout -b my-new-feature`)
 1. Ensure that your changes are completely covered by *passing* specs, and comply with the [Ruby Style Guide](https://github.com/bbatsov/ruby-style-guide) as enforced by [RuboCop](https://github.com/bbatsov/rubocop). To verify this, run `bundle exec rake`, noting and repairing any lapses in coverage or style violations;
 1. Commit your changes (`git commit -a`). Please *do not* use a single-line commit message (`git commit -am "some message"`). A good commit message notes what was changed and why in sufficient detail that a relative newcomer to the code can understand your reasoning and your code;
