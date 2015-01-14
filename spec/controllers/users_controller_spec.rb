@@ -164,6 +164,7 @@ describe UsersController do
           expect(response).not_to be_redirection
           user = assigns[:user]
           expect(user).to be_a UserEntity
+          expect(user).to be_invalid
           expect(user).to have(@messages.count).errors
           expect(user.errors.full_messages).to end_with @messages
         end
@@ -171,18 +172,29 @@ describe UsersController do
         it 'an empty name' do
           @params = params.merge name: ''
           params[:name] = ''
-          prefix = 'Name is invalid: '
           @messages = [
-            prefix + "Name can't be blank"
+            "Name can't be blank",
+            'Name is too short (minimum is 6 characters)'
           ]
         end
 
         it 'an invalid email address' do
           @params = params.merge email: 'jruser at example dot com'
-          prefix = 'Name is invalid: '
           @messages = [
-            prefix + 'Email does not appear to be a valid e-mail address'
+            'Email does not appear to be a valid e-mail address'
           ]
+        end
+      end # context 'that result in a visibly invalid user entity, including'
+
+      context 'that result in a visibly valid user entity, including' do
+
+        after :each do
+          post :create, user_data: @params
+          expect(response).not_to be_redirection
+          user = assigns[:user]
+          expect(user).to be_a UserEntity
+          expect(user).to have(@messages.count).errors
+          expect(user.errors.full_messages).to end_with @messages
         end
 
         it 'mismatched passwords' do
@@ -191,13 +203,25 @@ describe UsersController do
             password_confirmation: 'Password'
           }
           @params = params.merge bad_params
-          prefix = 'Name is invalid: '
+          prefix = 'Password is invalid: '
           @messages = [
             prefix + 'Password must match the password confirmation'
           ]
         end
-      end # context 'that result in a visibly invalid user entity, including'
-    end # describe 'with invalid parameters'
+
+        it 'too short passwords' do
+          bad_params = {
+            password: 'pword',
+            password_confirmation: 'pword'
+          }
+          @params = params.merge bad_params
+          prefix = 'Password is invalid: '
+          @messages = [
+            prefix + 'Password must be longer than 7 characters'
+          ]
+        end
+      end # context '
+    end # describe 'with valid entity parameters'
   end # describe "POST 'create'"
 
   describe "GET 'edit'" do

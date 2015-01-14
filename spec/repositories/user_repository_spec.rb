@@ -88,6 +88,23 @@ describe UserRepository do
     it_behaves_like 'the #update method for a Repository'
   end # describe :update'
 
+  describe :attributes_for.to_s do
+    context 'for a dao with no passwords' do
+
+      it 'adds test password' do
+        dao = FactoryGirl.create :user
+        attr = UserRepository.new.send(:attributes_for, dao, [])
+        expect(attr[:password]).to eq 'password'
+      end
+
+      it 'adds no test password per instruction' do
+        dao = FactoryGirl.create :user
+        attr = UserRepository.new.send(:attributes_for, dao, [:no_password])
+        expect(attr[:password]).to be_nil
+      end
+    end
+  end
+
   describe :authenticate.to_s do
     context 'for an existing user' do
       let(:dao) { FactoryGirl.create :user, :saved_user }
