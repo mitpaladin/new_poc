@@ -15,7 +15,9 @@ module Actions
       attributes = FactoryGirl.attributes_for :post, :saved_post,
                                               :published_post,
                                               author_name: author.name
-      PostEntity.new(attributes).tap { |post| PostRepository.new.add post }
+      Newpoc::Entity::Post.new(attributes).tap do |post|
+        PostRepository.new.add post
+      end
     end
 
     # regardless of parameters, these steps wire up the Wisper connection
@@ -38,11 +40,11 @@ module Actions
         describe 'is successful, broadcasting a payload which' do
           let(:payload) { subscriber.payload_for(:success).first }
 
-          it 'is a PostEntity' do
-            expect(payload).to be_a PostEntity
+          it 'is a Newpoc::Entity::Post' do
+            expect(payload).to be_a Newpoc::Entity::Post
           end
 
-          it 'is a PostEntity with correct (updated) attributes' do
+          it 'is a Newpoc::Entity::Post with correct (updated) attributes' do
             unchanged_keys = post.attributes.keys - post_data.keys - [:pubdate]
             unchanged_keys.each { |key| expect(payload[key]).to eq post[key] }
             post_data.keys.each { |k| expect(payload[k]).to eq post_data[k] }
@@ -86,8 +88,8 @@ module Actions
           describe 'is successful, broadcasting a payload which' do
             let(:payload) { subscriber.payload_for(:success).first }
 
-            it 'is a draft PostEntity' do
-              expect(payload).to be_a PostEntity
+            it 'is a draft Newpoc::Entity::Post' do
+              expect(payload).to be_a Newpoc::Entity::Post
               expect(payload).not_to be_published
               expect(payload).to be_draft
             end

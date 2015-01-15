@@ -8,11 +8,11 @@ shared_examples 'a successfully-retrieved post' do
   describe 'is successful, broadcasting a payload which' do
     let(:payload) { subscriber.payload_for(:success).first }
 
-    it 'is a PostEntity' do
-      expect(payload).to be_a PostEntity
+    it 'is a Newpoc::Entity::Post' do
+      expect(payload).to be_a Newpoc::Entity::Post
     end
 
-    it 'is a PostEntity with correct attributes' do
+    it 'is a Newpoc::Entity::Post with correct attributes' do
       attrib_keys = target_post.attributes.keys - [:pubdate]
       attrib_keys.each { |key| expect(payload[key]).to eq target_post[key] }
       if target_post.attributes.key? :pubdate

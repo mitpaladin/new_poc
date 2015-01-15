@@ -7,10 +7,11 @@ require_relative 'shared_examples/a_successfully_retrieved_post'
 
 module Actions
   describe EditPost do
+    let(:post_class) { Newpoc::Entity::Post }
     let(:target_post) do
       attribs = FactoryGirl.attributes_for :post, :saved_post,
                                            author_name: author.name
-      PostEntity.new(attribs).tap { |ret| post_repo.add ret }
+      post_class.new(attribs).tap { |ret| post_repo.add ret }
     end
     let(:post_repo) { PostRepository.new }
     let(:subscriber) { BroadcastSuccessTester.new }

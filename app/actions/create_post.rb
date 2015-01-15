@@ -94,7 +94,7 @@ module Actions
       fail entity.to_json unless result.success?
       # DON'T just use the existing entity; it (shouldn't) have its slug set,
       # whereas the one that's been persisted and passed back through the
-      # `StoreResult` does. (That's how `PostEntity` determines whether it's
+      # `StoreResult` does. (That's how `Entity::Post` determines whether it's
       # been persisted or not: whether the `slug` attribute is set.)
       @entity = result.entity
     end
@@ -108,7 +108,7 @@ module Actions
     def validate_post_data
       attribs = post_data.to_h.symbolize_keys
       attribs[:author_name] ||= current_user.name
-      @entity = PostEntity.new attribs
+      @entity = Newpoc::Entity::Post.new attribs
       return if @entity.valid?
       fail @entity.to_json
     end
