@@ -156,4 +156,22 @@ describe Newpoc::Entity::Post do
       end
     end # describe 'calls the appropriate builder for'
   end # describe '#build_body`
+
+  describe '#build_byline' do
+    let(:fixed) { Time.parse '1 February 2015 12:34:56' }
+    let(:post) { described_class.new published_attribs.merge pubdate: fixed }
+
+    it 'accepts no parameters' do
+      method = post.public_method :build_byline
+      expect(method.arity).to eq 0
+    end
+
+    it 'returns the expected string' do
+      format_str = '<p><time pubdate="pubdate">Posted %s by %s</time></p>'
+      timestamp = fixed.strftime '%a %b %e %Y at %R %Z (%z)'
+      expected = format format_str, timestamp, post.author_name
+      actual = post.build_byline
+      expect(actual).to eq expected
+    end
+  end # describe '#build_byline'
 end # describe Newpoc::Entity::Post

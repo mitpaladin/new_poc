@@ -23,6 +23,8 @@ module Newpoc
       include ActiveAttr::BasicModel
       include ActiveAttr::Serialization
 
+      include SupportClasses::TimestampBuilder
+
       validates :author_name, presence: true
       validates :title, presence: true
       validate :must_have_body_or_title
@@ -45,7 +47,7 @@ module Newpoc
       end
 
       def build_byline
-        BylineBuilder.new(self).to_html
+        SupportClasses::BylineBuilder.new(self).to_html
       end
 
       # callback used by InstanceVariableSetter
