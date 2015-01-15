@@ -21,9 +21,12 @@ module Newpoc
 
           private
 
+          # NOTE: This method *must* be mocked by unit tests, as the converter
+          #       is now part of a different Gem (that can't be required as a
+          #       dependency at present).
           def body_markup(markup)
+            require 'newpoc/services/markdown_html_converter'
             Newpoc::Services::MarkdownHtmlConverter.new.to_html(markup)
-            # markup
           end
 
           def build_document

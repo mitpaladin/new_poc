@@ -3,7 +3,6 @@ require 'spec_helper'
 
 require 'chronic'
 require 'fancy-open-struct'
-require 'pry'
 
 require 'newpoc/entity/post/byline_builder'
 

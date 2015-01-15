@@ -3,11 +3,28 @@ require 'spec_helper'
 
 require_relative 'shared_examples/a_data_mapping_entity'
 
-def expected_figure_markup(image_url, post_body)
-  caption = "<figcaption><p>#{post_body}</p></figcaption>"
-  tag = %(<img src="#{image_url}" style="max-width:100%;">)
-  image = %(<a href="#{image_url}" target="_blank">) + tag + '</a>'
-  '<figure>' + image + caption + '</figure>'
+# Support class for #build_body specs.
+class MarkupTestBuilder
+  attr_reader :builder_name, :caller, :errors
+
+  def initialize(caller_in, builder_name = 'ImageBodyBuilder')
+    @caller = caller_in
+    @builder_name = 'Newpoc::Entity::Post::SupportClasses::' + builder_name
+    @errors = []
+  end
+
+  def build(source)
+    @errors << 'Source and caller differ' unless caller_is?(source)
+    bbc = source.send :body_builder_class
+    unless bbc.name == builder_name
+      @errors << format('Unexpected #body_builder_class "%s"', bbc.name)
+    end
+    'expected markup'
+  end
+
+  def caller_is?(source)
+    caller.slug == source.slug && caller.class == source.class
+  end
 end
 
 describe Newpoc::Entity::Post do
@@ -92,18 +109,6 @@ describe Newpoc::Entity::Post do
         @attribs = { title: title, image_url: image_url, body: body }
       end
 
-      # Entity validation doesn't hit the database, so it can't tell if a name
-      # is actually invalid; all it can do is determine that it's not what it
-      # thinks the guest user name is.
-      # it 'an invalid author name' do
-      #   @attribs = {
-      #     author_name: 'Invalid Author Name',
-      #     title: title,
-      #     image_url: image_url,
-      #     body: body
-      #   }
-      # end
-
       it 'no title' do
         @attribs = {
           author_name: author_name,
@@ -122,31 +127,33 @@ describe Newpoc::Entity::Post do
   end # describe '#valid?''
 
   describe '#build_body' do
-    let(:post) { published_post }
-    let(:text_post) do
-      attribs = post.attributes
-      attribs.delete :image_url
-      described_class.new attribs
+    let(:image_post_attribs) { published_attribs.merge image_url: image_url }
+    let(:post) { described_class.new image_post_attribs }
+    let(:text_post) { described_class.new published_attribs }
+
+    it 'accepts one optional parameter' do
+      method = post.public_method :build_body
+      expect(method.arity).to eq(-1)
     end
 
-    it 'takes no parameters' do
-      message = 'wrong number of arguments (1 for 0)'
-      expect { post.build_body post }.to raise_error ArgumentError, message
-    end
+    describe 'returns the correct markup for' do
 
-    describe 'generates the correct markup for' do
+      after :each do
+        class_name = @class_name || 'ImageBodyBuilder'
+        test_builder = MarkupTestBuilder.new @post, class_name
+        markup = @post.build_body test_builder
+        expect(markup).to eq 'expected markup'
+        expect(test_builder.errors).to be_empty
+      end
+
       it 'an image post' do
-        post_attribs = post.attributes
-        post_attribs[:image_url] = image_url
-        post = described_class.new post_attribs
-        expected = expected_figure_markup(image_url, post.body)
-        expect(post.build_body).to eq expected
+        @post = post
       end
 
       it 'a text post' do
-        expect(text_post.build_body).to eq %(<p>#{post.body}</p>)
+        @post = text_post
+        @class_name = 'TextBodyBuilder'
       end
-    end # describe 'generates the correct markup for'
+    end # describe 'calls the appropriate builder for'
   end # describe '#build_body`
-
-end
+end # describe Newpoc::Entity::Post

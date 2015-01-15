@@ -3,6 +3,15 @@ require 'spec_helper'
 
 require 'newpoc/entity/post/image_body_builder'
 
+# The `#body_markup` method requires and uses the MarkdownHtmlConverter service,
+# which is now packaged separately from this component. That's fine, in the app
+# and its specs...but unit tests at this level can't deal with that, because
+# Rubygems' dependency mechanism expects dependencies to be in a gem repo,
+# somewhere it can grab them from. That doesn't work with unbuilt dependencies.
+def mock_body_markup_for(builder, caption, ret = caption.to_s)
+  allow(builder).to receive(:body_markup).with(caption).and_return ret
+end
+
 module Newpoc
   module Entity
     class Post
@@ -13,12 +22,16 @@ module Newpoc
           let(:image_url) { 'http://www.example.com/image.png' }
           let(:caption) { 'This is a Caption' }
 
-          describe :build do
+          describe '#build' do
 
             describe 'wraps its contents in an outermost tag tag is' do
               let(:obj) { OpenStruct.new image_url: image_url, body: caption }
               let(:fragment) { Nokogiri::HTML.fragment(builder.build obj) }
               let(:elem) { fragment.children.first }
+
+              before :each do
+                mock_body_markup_for(builder, caption) unless @mocked
+              end
 
               it 'a "figure" element' do
                 expect(elem.name).to eq 'figure'
@@ -45,12 +58,16 @@ module Newpoc
                 let(:child_element) { elem.children[1] }
 
                 it 'is a "figcaption" element' do
+                  allow(builder).to receive(:body_markup).with(caption)
+                    .and_return caption
                   expect(child_element.name).to eq 'figcaption'
                 end
 
                 it 'has the defined body as its inner text' do
                   # Stripped so that otherwise irrelevant newline does not break
                   # comparison
+                  allow(builder).to receive(:body_markup).with(caption)
+                    .and_return caption
                   expect(child_element.text.strip).to eq obj.body
                 end
               end # describe 'has a second child element that'
@@ -60,6 +77,11 @@ module Newpoc
               let(:obj) { OpenStruct.new image_url: image_url }
               let(:fragment) { Nokogiri::HTML.fragment(builder.build obj) }
               let(:elem) { fragment.children.first }
+
+              before :each do
+                @mocked = true
+                mock_body_markup_for(builder, nil)
+              end
 
               it 'the "figcaption" is empty' do
                 figcaption = elem.children[1]
@@ -73,9 +95,3 @@ module Newpoc
     end # class Newpoc::Entity::Post
   end # module Newpoc::Entity
 end # module Newpoc
-
-class PostEntity
-  # Support class(es) for image post body builder.
-  module SupportClasses
-  end # module PostEntity::SupportClasses
-end # class PostEntity

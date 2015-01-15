@@ -1,7 +1,6 @@
 
 require 'newpoc/entity/post/version'
 require 'newpoc/support/instance_variable_setter'
-require 'newpoc/services/markdown_html_converter'
 
 require 'active_attr'
 require 'html/pipeline'
@@ -41,9 +40,8 @@ module Newpoc
         instance_values.symbolize_keys
       end
 
-      def build_body
-        fragment = body_builder_class.new.build self
-        convert_body fragment
+      def build_body(builder = body_builder_class.new)
+        builder.build self
       end
 
       def build_byline
@@ -97,9 +95,10 @@ module Newpoc
         end
       end
 
-      def convert_body(fragment)
-        Newpoc::Services::MarkdownHtmlConverter.new.to_html(fragment)
-      end
+      # def convert_body(fragment)
+      #   require 'newpoc/services/markdown_html_converter'
+      #   Newpoc::Services::MarkdownHtmlConverter.new.to_html(fragment)
+      # end
 
       def must_have_body_or_title
         return if body.present? || image_url.present?
