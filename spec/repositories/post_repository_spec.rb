@@ -13,7 +13,7 @@ describe PostRepository do
     ->(entity) { be_saved_post_entity_for(entity) }
   end
   let(:dao_class) { PostDao }
-  let(:entity_class) { PostEntity }
+  let(:entity_class) { Newpoc::Entity::Post }
   let(:factory_class) { PostFactory }
   let(:klass) { PostRepository }
   let(:obj) { klass.new }
