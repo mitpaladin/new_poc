@@ -4,8 +4,6 @@ require 'spec_helper'
 require 'pygments'
 require 'html/pipeline'
 
-require 'pry'
-
 def gfm_at_mention_markdown
   'This mentions @jch in the markup'
 end

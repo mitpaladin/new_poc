@@ -7,7 +7,17 @@ module Newpoc
         # Build text post body.
         class TextBodyBuilder
           def build(obj)
-            "\n#{obj.body}\n"
+            body_markup obj.body
+          end
+
+          private
+
+          # NOTE: This method *must* be mocked by unit tests, as the converter
+          #       is now part of a different Gem (that can't be required as a
+          #       dependency at present).
+          def body_markup(markup)
+            require 'newpoc/services/markdown_html_converter'
+            Newpoc::Services::MarkdownHtmlConverter.new.to_html(markup)
           end
         end # class Newpoc::Entity::Post::SupportClasses::TextBodyBuilder
       end # module Newpoc::Entity::Post::SupportClasses

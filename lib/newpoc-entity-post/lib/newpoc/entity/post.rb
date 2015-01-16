@@ -3,7 +3,6 @@ require 'newpoc/entity/post/version'
 require 'newpoc/support/instance_variable_setter'
 
 require 'active_attr'
-require 'html/pipeline'
 require 'nokogiri'
 
 require_relative 'post/byline_builder'

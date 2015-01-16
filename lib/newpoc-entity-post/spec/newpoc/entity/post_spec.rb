@@ -40,6 +40,7 @@ describe Newpoc::Entity::Post do
       forty_two: 41
     }
   end
+  let(:draft_post) { described_class.new valid_subset }
   let(:published_attribs) { valid_subset.merge pubdate: Time.now }
   let(:published_post) { described_class.new published_attribs }
   let(:valid_subset) do
@@ -109,19 +110,18 @@ describe Newpoc::Entity::Post do
         @attribs = { title: title, image_url: image_url, body: body }
       end
 
+      it 'the guest user as the author' do
+        @attribs = valid_subset.merge author_name: 'Guest User'
+      end
+
       it 'no title' do
-        @attribs = {
-          author_name: author_name,
-          image_url: image_url,
-          body: body
-        }
+        @attribs = valid_subset.reject { |k, _v| k == :title }
       end
 
       it 'no body and no image URL' do
-        @attribs = {
-          author_name: author_name,
-          title: title
-        }
+        @attribs = valid_subset.reject do |k, _v|
+          [:body, :image_url].include? k
+        end
       end
     end # describe 'returns false when initialised with'
   end # describe '#valid?''
@@ -174,4 +174,15 @@ describe Newpoc::Entity::Post do
       expect(actual).to eq expected
     end
   end # describe '#build_byline'
+
+  describe '#post_status' do
+
+    it 'returns "draft" for a draft post' do
+      expect(draft_post.post_status).to eq 'draft'
+    end
+
+    it 'returns "public" for a published post' do
+      expect(published_post.post_status).to eq 'public'
+    end
+  end # describe '#post_status'
 end # describe Newpoc::Entity::Post

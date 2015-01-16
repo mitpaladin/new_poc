@@ -93,7 +93,7 @@ PATH
 PATH
   remote: lib/newpoc-services-markdown_html_converter
   specs:
-    newpoc-services-markdown_html_converter (0.0.1)
+    newpoc-services-markdown_html_converter (0.0.2)
       gemoji (~> 2.1)
       github-linguist (~> 4.2, >= 4.2.5)
       github-markdown (~> 0.6, >= 0.6.8)

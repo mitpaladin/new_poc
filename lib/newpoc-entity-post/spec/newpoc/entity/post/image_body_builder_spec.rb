@@ -18,22 +18,38 @@ module Newpoc
       # *Private* support classes used by Post entity class.
       module SupportClasses
         describe ImageBodyBuilder do
-          let(:builder) { ImageBodyBuilder.new }
+          # ImageBodyBuilder now has an `#initialize` method taking a lambda
+          # which is used to do the Markdown-to-HTML conversion. To use the
+          # default (as in ordinary code), pass nothing, and the default will Do
+          # The Right Thing. However, that default depends on a service that is
+          # external to this unbuilt-dependency "Gem". Since that, too, is
+          # packaged in the same way, mocking the conversion is the only way to
+          # do unit tests. Ptui!
+          let(:builder) { ImageBodyBuilder.new converter }
           let(:image_url) { 'http://www.example.com/image.png' }
           let(:caption) { 'This is a Caption' }
+          let(:converter) do
+            lambda do |markup|
+              ['<div class="ib-mock">', markup, '</div>'].join
+            end
+          end
 
           describe '#build' do
 
-            describe 'wraps its contents in an outermost tag tag is' do
+            describe 'wraps its contents in an outermost tag that' do
               let(:obj) { OpenStruct.new image_url: image_url, body: caption }
               let(:fragment) { Nokogiri::HTML.fragment(builder.build obj) }
-              let(:elem) { fragment.children.first }
+              # let(:elem) { fragment.children.first }
+              let(:elem) do
+                kids = fragment.children
+                kids.first
+              end
 
               before :each do
                 mock_body_markup_for(builder, caption) unless @mocked
               end
 
-              it 'a "figure" element' do
+              it 'is a "figure" element' do
                 expect(elem.name).to eq 'figure'
               end
 
@@ -43,7 +59,8 @@ module Newpoc
               end
 
               describe 'has a first child element that' do
-                let(:child_element) { elem.children.first }
+                # Our mock is wrapping it in a div, remember?
+                let(:child_element) { elem.children.first.children.first }
 
                 it 'is an "img" element' do
                   expect(child_element.name).to eq 'img'
@@ -71,7 +88,7 @@ module Newpoc
                   expect(child_element.text.strip).to eq obj.body
                 end
               end # describe 'has a second child element that'
-            end # describe 'wraps its contents in an outermost tag tag is'
+            end # describe 'wraps its contents in an outermost tag that'
 
             describe 'when called with a missing post body' do
               let(:obj) { OpenStruct.new image_url: image_url }

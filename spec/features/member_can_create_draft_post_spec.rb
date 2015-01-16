@@ -23,7 +23,7 @@ describe 'Member can create a draft post and see' do
     expect(page).to have_selector 'article > header > h3', @post_title
     expect(page).to have_selector 'article > header > p > time'
     expect(page).to have_selector 'article > figure > figcaption', @post_body
-    selector = format 'article > figure > a > img[src="%s"]', @image_url
+    selector = format 'article > figure > p > a > img[src="%s"]', @image_url
     expect(page).to have_selector selector
   end
 end # describe 'Member can create a valid image post and see'

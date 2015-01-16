@@ -35,5 +35,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rubocop", ">= 0.28.0"
   spec.add_development_dependency "simplecov", ">= 0.9.1"
   spec.add_development_dependency 'fancy-open-struct', '>= 0.4.0'
-  spec.add_development_dependency 'pry-byebug'
+  # spec.add_development_dependency 'pry-byebug'
 end
