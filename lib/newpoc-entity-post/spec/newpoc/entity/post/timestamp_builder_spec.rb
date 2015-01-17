@@ -1,11 +1,15 @@
 
 require 'spec_helper'
 
-require 'post_entity/timestamp_builder'
+require 'chronic'
 
-# Dummy test class for testing the EntityShared#timestamp_for function.
+require 'newpoc/entity/post/timestamp_builder'
+
+# Dummy test class for testing the TimestampBuilder#timestamp_for function.
 class DummyTestClass
-  extend EntityShared
+  supclasses = Newpoc::Entity::Post.const_get :SupportClasses
+  builder = supclasses.const_get :TimestampBuilder
+  extend builder
 end
 
 describe DummyTestClass do

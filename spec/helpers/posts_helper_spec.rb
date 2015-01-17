@@ -55,7 +55,7 @@ def new_bhs_build_example_posts(entry_count)
   ret = []
   entry_count.times do
     attribs = FactoryGirl.attributes_for :post, author_name: 'John Smith'
-    ret.push PostEntity.new(attribs)
+    ret.push Newpoc::Entity::Post.new(attribs)
   end
   ret
 end
@@ -106,7 +106,7 @@ describe PostsHelper do
   end # describe :edit_post_form_attributes
 
   describe :status_select_options.to_s do
-    let(:post) { PostEntity.new post_attribs }
+    let(:post) { Newpoc::Entity::Post.new post_attribs }
     let(:actual) { status_select_options post }
     let(:options) { actual.scan(Regexp.new '<option.+?</option>') }
     let(:selected) { options.select { |s| s.match(/selected\=/) } }

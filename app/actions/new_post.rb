@@ -28,7 +28,7 @@ module Actions
     end
 
     def build_entity
-      PostEntity.new author_name: current_user.name
+      Newpoc::Entity::Post.new author_name: current_user.name
     end
 
     def prohibit_guest_access

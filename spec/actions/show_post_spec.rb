@@ -16,7 +16,7 @@ module Actions
     let(:repo) { PostRepository.new }
     let(:subscriber) { BroadcastSuccessTester.new }
     let(:target_post) do
-      PostEntity.new(target_attribs).tap { |post| repo.add post }
+      Newpoc::Entity::Post.new(target_attribs).tap { |post| repo.add post }
     end
 
     before :each do

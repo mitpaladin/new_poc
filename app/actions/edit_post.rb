@@ -52,7 +52,7 @@ module Actions
 
     def dummy_entity
       Naught.build do |config|
-        config.impersonate PostEntity
+        config.impersonate Newpoc::Entity::Post
         config.predicates_return false
         # def author_name
         #   'Guest User'

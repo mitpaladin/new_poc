@@ -20,17 +20,25 @@ describe 'Member can create a draft post and' do
     visit post_path(@post_title.parameterize)
   end
 
-  it 'the newly-entered article details' do
-    visit post_path(@post_title.parameterize)
-    expect(page).to have_selector '.page-header > h1', @post_title
-    expected = %(by #{@user_name})
-    expect(page).to have_selector '.page-header > h1 > small > i', expected
+  describe 'the newly-entered article details, including' do
+    before :each do
+      visit post_path(@post_title.parameterize)
+    end
 
-    # There's got to be an easier way to match Markdown content...
-    md = Redcarpet::Markdown.new Redcarpet::Render::HTML.new
-    pbody = Nokogiri.parse(md.render(@post_body)).children.first
-    # FWIW, be advised that we're matching markup converted to text here...
-    expect(page.find('figcaption')).to have_content pbody.inner_text
-  end
+    it 'the post title' do
+      expect(page).to have_selector '.page-header > h1', @post_title
+    end
 
+    it 'the author byline' do
+      expected = %(by #{@user_name})
+      selector = '.page-header > h1 > small > i'
+      expect(page).to have_selector selector, expected
+    end
+
+    it 'the post body, properly formatted as HTML in the :figcaption tag' do
+      expected = Newpoc::Services::MarkdownHtmlConverter.new.to_html @post_body
+      actual = page.find('figcaption').native.children.first.to_html
+      expect(actual).to eq expected
+    end
+  end # describe 'the newly-entered article details, including'
 end # describe 'Member can create a draft post and'

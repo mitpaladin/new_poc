@@ -51,7 +51,7 @@ class PostsController < ApplicationController
   def on_create_failure(payload)
     message_or_entity = JSON.load payload.message
     fail message_or_entity if message_or_entity.is_a? String
-    invalid_entity = PostEntity.new message_or_entity.symbolize_keys
+    invalid_entity = Newpoc::Entity::Post.new message_or_entity.symbolize_keys
     invalid_entity.valid?   # sets up error messages
     @post = invalid_entity
     render 'new'

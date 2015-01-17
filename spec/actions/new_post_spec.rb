@@ -45,11 +45,11 @@ module Actions
         expect(subscriber).not_to be_failure
       end
 
-      describe 'is successful, broadcasting a PostEntity payload' do
+      describe 'is successful, broadcasting a Newpoc::Entity::Post payload' do
         let(:payload) { subscriber.payload_for(:success).first }
 
         it 'no existing errors' do
-          expect(payload).to be_a PostEntity
+          expect(payload).to be_a Newpoc::Entity::Post
           expect(payload).to have(0).errors
         end
 
@@ -67,7 +67,7 @@ module Actions
           expect(payload).to have(1).attribute
           expect(payload.author_name).to eq current_user.name
         end
-      end # describe 'is successful, broadcasting a PostEntity payload'
+      end # describe 'is successful, broadcasting a Newpoc::Entity::Post ...'
     end # context 'with a Registered User as the current user'
   end # describe Actions::NewPost
 end # module Actions

@@ -1,11 +1,11 @@
 #!/bin/bash
 function rakeall() {
-  bundle exec rake
-  for gemfile in `find lib -name Gemfile.lock`
+  bundle exec rake || return 1
+  for rakefile in `find lib -name Rakefile`
   do
-    pushd `dirname $gemfile`
+    pushd `dirname $rakefile`
     bundle install
-    bundle exec rake
+    bundle exec rake || return 1
     popd
   done
 }
