@@ -5,12 +5,15 @@ module Newpoc
   module Entity
     # Domain entity for a user of the system.
     class User
+      extend Forwardable
       attr_reader :email,
                   :name,
                   :profile,
                   :slug,
                   :created_at,
                   :updated_at
+
+      def_delegator :attributes, :[]
 
       def initialize(attribs)
         @name = attribs[:name]
@@ -32,8 +35,8 @@ module Newpoc
         }
       end
 
-      def [](key)
-        attributes[key]
+      def persisted?
+        !slug.to_s.empty?
       end
     end # class Newpoc::Entity::User
   end
