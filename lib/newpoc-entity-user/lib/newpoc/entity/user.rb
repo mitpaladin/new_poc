@@ -1,11 +1,31 @@
 
+require 'active_model'
+require 'active_support/core_ext'
+require 'validates_email_format_of'
+
 require 'newpoc/entity/user/version'
+require 'newpoc/entity/user/name_validator'
+
+# FIXME: Periodically try disabling this after updating to new release of
+#        ActiveModel and see if they've fixed the conflict w/stdlib Forwardable.
+#        This is per https://github.com/cequel/cequel/issues/193 - another epic
+#        ActiveFail.
+module Forwardable
+  remove_method :delegate
+end
 
 module Newpoc
   module Entity
     # Domain entity for a user of the system.
     class User
       extend Forwardable
+      include ActiveModel::Validations
+
+      # Internal, private support classes for UserEntity
+      module Internals
+      end # module UserEntity::Internals
+      private_constant :Internals
+
       attr_reader :email,
                   :name,
                   :profile,
@@ -14,6 +34,11 @@ module Newpoc
                   :updated_at
 
       def_delegator :attributes, :[]
+
+      # NOTE: No `uniqueness: true` without database access...
+      validates :name, presence: true, length: { minimum: 6 }
+      validate :validate_name
+      validates_email_format_of :email
 
       def initialize(attribs)
         @name = attribs[:name]
@@ -25,18 +50,19 @@ module Newpoc
       end
 
       def attributes
-        {
-          email: email,
-          name: name,
-          profile: profile,
-          slug: slug,
-          created_at: created_at,
-          updated_at: updated_at
-        }
+        instance_values.symbolize_keys
       end
 
       def persisted?
         !slug.to_s.empty?
+      end
+
+      private
+
+      def validate_name
+        Internals::NameValidator.new(name)
+          .validate
+          .add_errors_to_model(self)
       end
     end # class Newpoc::Entity::User
   end

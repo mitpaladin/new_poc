@@ -10,11 +10,14 @@ describe Newpoc::Entity::User do
   end
   let(:valid_subset) do
     {
-      name: 'Joe Blow',
-      email: 'joe@example.com'
+      name: user_name,
+      email: user_email
     }
   end
   let(:obj) { described_class.new valid_subset }
+  let(:user_email) { 'joe@example.com' }
+  let(:user_name) { 'Joe Blow' }
+  let(:user_profile) { 'A *profile*!' }
 
   it 'has a version number' do
     expect(Newpoc::Entity::User::VERSION).not_to be nil
@@ -74,4 +77,55 @@ describe Newpoc::Entity::User do
       expect(obj).not_to be_persisted
     end
   end # describe '#persisted?'
+
+  describe '#valid?' do
+    # No password pair here...
+    describe 'returns true when an instance has' do
+      after :each do
+        obj = described_class.new @attribs
+        expect(obj).to be_valid
+      end
+
+      it 'the minumum valid set of attributes' do
+        @attribs = valid_subset
+      end
+
+      it 'a name, email address and profile string' do
+        @attribs = valid_subset.merge profile: user_profile
+      end
+    end # describe 'returns true when an instance has'
+
+    describe 'returns false when an instance has' do
+      after :each do
+        obj = described_class.new @attribs
+        expect(obj).to be_invalid
+      end
+
+      describe 'a name that is invalid because it' do
+        after :each do
+          @attribs = { name: @name, email: user_email, profile: user_profile }
+        end
+
+        it 'has leading/trailing whitespace' do
+          @name = '  Some  Body '
+        end
+
+        it 'contains invalid whitespace' do
+          @name = "Some\tBody\n"
+        end
+
+        it 'is missing' do
+          @name = nil
+        end
+      end # describe 'a name that is invalid because it'
+
+      it 'no email address' do
+        @attribs = { name: user_name, profile: user_profile }
+      end
+
+      it 'an invalid email address' do
+        @attribs = { name: user_name, email: 'joe at example dot com' }
+      end
+    end
+  end # describe '#valid?'
 end # describe Newpoc::Entity::User
