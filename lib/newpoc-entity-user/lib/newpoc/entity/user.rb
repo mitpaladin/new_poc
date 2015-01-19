@@ -42,14 +42,14 @@ module Newpoc
       validates_email_format_of :email
 
       def initialize(attribs)
-        @markdown_converter = attribs.fetch :markdown_converter,
-                                            default_markdown_converter
+        @markdown_converter = attribs[:markdown_converter] ||
+                              default_markdown_converter
         @name = attribs[:name]
         @email = attribs[:email]
         @slug = attribs[:slug]
         @updated_at = attribs[:updated_at]
-        @profile = attribs.fetch :profile, ''
-        @created_at = attribs.fetch :created_at, Time.now
+        @profile = attribs[:profile] || ''
+        @created_at = attribs[:created_at] || Time.now
       end
 
       def attributes
@@ -78,6 +78,11 @@ module Newpoc
           User.new name: 'Guest User', email: 'guest@example.com',
                    profile: profile
         end
+      end
+
+      # FIXME: Holdover for entity-factory specs. Fixme applies to those specs.
+      def init_attrib_keys
+        %w(created_at email name profile slug updated_at).map(&:to_sym)
       end
 
       private

@@ -6,5 +6,5 @@ describe UserFactory do
   let(:klass) { UserFactory }
   let(:dao) { FactoryGirl.create :user, :saved_user }
 
-  it_behaves_like 'an entity factory for', UserEntity
+  it_behaves_like 'an entity factory for', Newpoc::Entity::User
 end
