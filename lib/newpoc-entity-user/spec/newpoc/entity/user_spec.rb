@@ -139,4 +139,36 @@ describe Newpoc::Entity::User do
       expect(obj).not_to be_guest_user
     end
   end # describe '#guest_user?'
+
+  describe '.guest_user' do
+    it 'has the correct name' do
+      expect(described_class.guest_user.name).to eq 'Guest User'
+    end
+
+    it 'is not persisted' do
+      expect(described_class.guest_user).not_to be_persisted
+    end
+
+    it 'has a nil slug value' do
+      expect(described_class.guest_user.slug).to be_nil
+    end
+  end # describe '.guest_user'
+
+  describe '#sort' do
+    let(:low_user) { described_class.new valid_subset.merge name: 'Abe Zonker' }
+    let(:high_user) { described_class.new valid_subset.merge name: 'Zig Adler' }
+
+    it 'returns the sorted array when source is not in order by name' do
+      items = [high_user, low_user]
+      expect(items.sort).to eq [low_user, high_user]
+    end
+
+    it 'returns a copy of the original array when in order by name' do
+      items = [low_user, high_user]
+      items.sort.each_with_index do |item, index|
+        expect(item).to be items[index]
+      end
+      expect(items.sort).not_to be items
+    end
+  end # describe '#sort'
 end # describe Newpoc::Entity::User

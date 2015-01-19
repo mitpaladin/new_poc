@@ -18,6 +18,7 @@ module Newpoc
   module Entity
     # Domain entity for a user of the system.
     class User
+      include Comparable
       extend Forwardable
       include ActiveModel::Validations
 
@@ -59,6 +60,10 @@ module Newpoc
 
       def persisted?
         !slug.to_s.empty?
+      end
+
+      def <=>(other)
+        name <=> other.name
       end
 
       class << self
