@@ -128,4 +128,15 @@ describe Newpoc::Entity::User do
       end
     end
   end # describe '#valid?'
+
+  describe '#guest_user?' do
+
+    it 'returns true for the Guest User' do
+      expect(described_class.guest_user).to be_guest_user
+    end
+
+    it 'returns false for any other user' do
+      expect(obj).not_to be_guest_user
+    end
+  end # describe '#guest_user?'
 end # describe Newpoc::Entity::User

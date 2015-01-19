@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    newpoc-entity-user (0.0.1)
+    newpoc-entity-user (0.0.2)
       activemodel (>= 3.2)
       validates_email_format_of (>= 1.6.1)
 

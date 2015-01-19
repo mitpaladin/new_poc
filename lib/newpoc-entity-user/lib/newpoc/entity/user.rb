@@ -53,8 +53,20 @@ module Newpoc
         instance_values.symbolize_keys
       end
 
+      def guest_user?
+        name == self.class.guest_user.name
+      end
+
       def persisted?
         !slug.to_s.empty?
+      end
+
+      class << self
+        def guest_user
+          profile = 'No user is presently logged in. I was *never* here.'
+          User.new name: 'Guest User', email: 'guest@example.com',
+                   profile: profile
+        end
       end
 
       private
