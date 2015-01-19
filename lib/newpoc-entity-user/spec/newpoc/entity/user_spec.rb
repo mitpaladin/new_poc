@@ -171,4 +171,27 @@ describe Newpoc::Entity::User do
       expect(items.sort).not_to be items
     end
   end # describe '#sort'
+
+  describe '#formatted_profile' do
+    let(:converter) do
+      klass = Class.new do
+        def to_html(markup)
+          ['START TEST', markup, 'END TEST'].join '|'
+        end
+      end
+      lambda do |markup|
+        klass.new.to_html markup
+      end
+    end
+    let(:profile) { 'This *is* a test.' }
+    let(:user) { described_class.new user_attribs }
+    let(:user_attribs) do
+      valid_subset.merge markdown_converter: converter, profile: profile
+    end
+
+    it 'returns the result of calling the converter on the profile content' do
+      expected = ['START TEST', profile, 'END TEST'].join '|'
+      expect(user.formatted_profile).to eq expected
+    end
+  end # describe '#formatted_profile'
 end # describe Newpoc::Entity::User

@@ -42,6 +42,8 @@ module Newpoc
       validates_email_format_of :email
 
       def initialize(attribs)
+        @markdown_converter = attribs.fetch :markdown_converter,
+                                            default_markdown_converter
         @name = attribs[:name]
         @email = attribs[:email]
         @slug = attribs[:slug]
@@ -52,6 +54,10 @@ module Newpoc
 
       def attributes
         instance_values.symbolize_keys
+      end
+
+      def formatted_profile
+        markdown_converter.call profile
       end
 
       def guest_user?
@@ -75,6 +81,18 @@ module Newpoc
       end
 
       private
+
+      attr_reader :markdown_converter
+
+      def default_markdown_converter
+        # This method's body *WILL NOT* be shown as "covered" in unit-test specs
+        # since this depends on code which is unavailable (and substituted for)
+        # in that context. It *should* be covered in main-app feature specs.
+        lambda do |markup|
+          require 'newpoc/services/markdown_html_converter'
+          Newpoc::Services::MarkdownHtmlConverter.new.to_html markup
+        end
+      end
 
       def validate_name
         Internals::NameValidator.new(name)
