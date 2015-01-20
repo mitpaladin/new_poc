@@ -69,8 +69,8 @@ describe UsersController do
         expect(response).to be_success
       end
 
-      it 'assigns a UserEntity instance to :user' do
-        expect(assigns[:user]).to be_a UserEntity
+      it 'assigns a User entity instance to :user' do
+        expect(assigns[:user]).to be_a Newpoc::Entity::User
       end
 
       it 'renders the :new template' do
@@ -109,8 +109,8 @@ describe UsersController do
         post :create, user_data: params
       end
 
-      it 'assigns the :user item as a UserEntity instance' do
-        expect(assigns[:user]).to be_a UserEntity
+      it 'assigns the :user item as a User entity instance' do
+        expect(assigns[:user]).to be_a Newpoc::Entity::User
       end
 
       it 'persists the User entity corresponding to the :user' do
@@ -140,8 +140,8 @@ describe UsersController do
             @user = assigns[:user]
           end
 
-          it 'assigns a UserEntity to :user' do
-            expect(@user).to be_a UserEntity
+          it 'assigns a User entity to :user' do
+            expect(@user).to be_a Newpoc::Entity::User
           end
 
           it 'does not redirect' do
@@ -163,7 +163,7 @@ describe UsersController do
           post :create, user_data: @params
           expect(response).not_to be_redirection
           user = assigns[:user]
-          expect(user).to be_a UserEntity
+          expect(user).to be_a Newpoc::Entity::User
           expect(user).to be_invalid
           expect(user).to have(@messages.count).errors
           expect(user.errors.full_messages).to end_with @messages
@@ -192,7 +192,7 @@ describe UsersController do
           post :create, user_data: @params
           expect(response).not_to be_redirection
           user = assigns[:user]
-          expect(user).to be_a UserEntity
+          expect(user).to be_a Newpoc::Entity::User
           expect(user).to have(@messages.count).errors
           expect(user.errors.full_messages).to end_with @messages
         end

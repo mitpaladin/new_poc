@@ -49,12 +49,12 @@ module Actions
         let(:current_user) do
           user = UserPasswordEntityFactory.create user_attribs, 'password'
           user_repo.add user
-	  user
+          user
         end
         let(:user_attribs) { FactoryGirl.attributes_for :user }
 
-        describe 'and broadcasts :failure with a payload of a JSON Hash' do
-          let(:data) { FancyOpenStruct.new JSON.load(payload) }
+        describe 'and broadcasts :failure with a payload of a YAML Hash' do
+          let(:data) { FancyOpenStruct.new YAML.load(payload) }
           let(:payload) { subscriber.payload_for(:failure).first }
 
           it 'with one key, :messages' do
@@ -66,7 +66,7 @@ module Actions
             expected = "Already logged in as #{current_user.name}!"
             expect(data.messages.first).to eq expected
           end
-        end # describe 'and broadcasts :failure with a payload of a JSON Hash'
+        end # describe 'and broadcasts :failure with a payload of a YAML Hash'
       end # context 'the request is made from a logged-in user session'
 
       context 'the named user already exists' do
@@ -74,12 +74,15 @@ module Actions
         let(:other_user) do
           user = UserPasswordEntityFactory.create user_attribs, 'password'
           user_repo.add user
+          expect(user[:created_at]).to respond_to :to_time
           user
         end
         let(:user_attribs) { FactoryGirl.attributes_for :user }
 
-        describe 'and broadcasts :failure with a payload of a JSON Hash' do
-          let(:data) { FancyOpenStruct.new JSON.load(payload) }
+        describe 'and broadcasts :failure with a payload of a YAML Hash' do
+          let(:data) do
+            ret = FancyOpenStruct.new YAML.load(payload)
+          end
           let(:payload) { subscriber.payload_for(:failure).first }
 
           it 'with two keys, :attributes and :messages' do
@@ -87,14 +90,10 @@ module Actions
             expect(data.keys.sort).to eq expected_keys
           end
 
-          fit 'with an :attributes hash containing the specified attributes' do
+          it 'with an :attributes hash containing the specified attributes' do
             these_values = data[:attributes].symbolize_keys.delete_if do |_k, v|
               v.nil?
             end
-            # data.attributes[:created_at] has a funky value here, e.g. 28. It
-            # gets that coming back in the JSON payload parsed into `data`.
-            # expect(data[:attributes].created_at).to respond_to :to_time
-            ap [:spec_94, data[:attributes]['created_at']]
             other_values = other_user.attributes.delete_if { |_k, v| v.nil? }
             expect(these_values).to eq other_values
           end
@@ -106,7 +105,7 @@ module Actions
                         'already exists!'].join(' ')
             expect(data.messages.first).to eq expected
           end
-        end # describe 'and broadcasts :failure with a payload of a JSON Hash'
+        end # describe 'and broadcasts :failure with a payload of a YAML Hash'
       end # context 'the named user already exists'
 
       context 'the user name is invalid' do
@@ -118,8 +117,8 @@ module Actions
         end
         let(:user_attribs) { FactoryGirl.attributes_for :user, name: '  Joe ' }
 
-        describe 'and broadcasts :failure with a payload of a JSON Hash' do
-          let(:data) { FancyOpenStruct.new JSON.load(payload) }
+        describe 'and broadcasts :failure with a payload of a YAML Hash' do
+          let(:data) { FancyOpenStruct.new YAML.load(payload) }
           let(:payload) { subscriber.payload_for(:failure).first }
 
           it 'with two keys, :attributes and :messages' do
@@ -127,10 +126,10 @@ module Actions
           end
 
           it 'with an :attributes hash containing the specified attributes' do
-            actual = data[:attributes].symbolize_keys.delete_if do |_k, v|
-              v.nil?
-            end.sort
-            expect(actual).to eq user_attribs.sort
+            actual = data[:attributes].reject { |_k, v| v.nil? } # :updated_at
+            expect(actual[:created_at]).to respond_to :to_time
+            actual.delete :created_at
+            expect(actual).to eq user_attribs
           end
 
           it 'with a :messages array containing the error messages' do
@@ -141,7 +140,7 @@ module Actions
               expect(data[:messages]).to include expected
             end
           end
-        end # describe 'and broadcasts :failure with a payload of a JSON Hash'
+        end # describe 'and broadcasts :failure with a payload of a YAML Hash'
       end # context 'the user name is invalid'
     end # context 'is unsuccessful with parameters that are invalid because'
   end # describe Actions::CreateUser

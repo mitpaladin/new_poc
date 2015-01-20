@@ -15,15 +15,21 @@ module Actions
 
         private
 
+        # CGI.parse will *always* return key/value pairs using *arrays* of
+        # values, even when there is only one. This understandably FUBARs code
+        # expecting simple key/value pairs.
+        def data_from(input)
+          data = CGI.parse input
+          data.each { |k, v| data[k] = v.first }
+          data.symbolize_keys
+        end
+
         def parse(input)
           case input
           when String
-            attrs = FancyOpenStruct.new CGI.parse(input)
+            FancyOpenStruct.new data_from(input)
           else # Hash or OpenStruct
-            attrs = FancyOpenStruct.new input
-          end
-          {}.tap do |ret|
-            attrs.each.map { |k, v| ret[k] = Array(v).first }
+            FancyOpenStruct.new input
           end
         end
       end # class UserDataConverter
@@ -31,14 +37,13 @@ module Actions
     private_constant :Internals
     include Internals
 
-    def initialize(current_user, user_data)
+    def initialize(current_user, user_data_in)
       @current_user = current_user
-      @user_data = UserDataConverter.new(user_data).data
+      @user_data = UserDataConverter.new(user_data_in).data
       @user_slug = @user_data[:slug] || @user_data[:name].parameterize
       @user_data.delete :slug # will be recreated on successful save
-      @password = @user_data[:password] if @user_data[:password]
-      pconf = @user_data[:password_confirmation]
-      @password_confirmation = pconf if pconf
+      @password = @user_data[:password]
+      @password_confirmation = @user_data[:password_confirmation]
     end
 
     def execute
@@ -62,6 +67,11 @@ module Actions
 
     def broadcast_success(payload)
       broadcast :success, payload
+    end
+
+    # FIXME: Remove this once UserRepository twigs to the new User entity.
+    def guest_user_name
+      'Guest User'
     end
 
     def valid_password_field?
@@ -96,8 +106,7 @@ module Actions
     end
 
     def require_guest_user
-      guest_user = user_repo.guest_user.entity
-      return if current_user.name == guest_user.name
+      return if current_user.name == guest_user_name
       fail_for messages: [already_logged_in_message]
     end
 
@@ -141,7 +150,7 @@ module Actions
       attributes = options.fetch :attributes, nil
       data = { messages: messages }
       data[:attributes] = attributes if attributes
-      fail data.to_json
+      fail YAML.dump(data)
     end
   end # class Actions::CreateUser
 end # module Actions
