@@ -53,7 +53,8 @@ module Newpoc
       end
 
       def attributes
-        instance_values.symbolize_keys
+        ret = instance_values.symbolize_keys
+        ret.reject { |k, _v| k.to_s.match(/.*markdown_converter.*/) }
       end
 
       def formatted_profile

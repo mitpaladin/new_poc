@@ -2,6 +2,8 @@
 require 'spec_helper'
 require 'support/broadcast_success_tester'
 
+require 'newpoc/entity/user'
+
 require 'create_user'
 
 module Actions
@@ -29,8 +31,8 @@ module Actions
       describe 'broadcasts :success with a payload of a StoreResult, which' do
         let(:payload) { subscriber.payload_for(:success).first }
 
-        it 'is a UserEntity' do
-          expect(payload).to be_a UserEntity
+        it 'is a User instance' do
+          expect(payload).to be_a Newpoc::Entity::User
         end
 
         it 'has the new user entity attributes in its entity' do
@@ -72,7 +74,7 @@ module Actions
         let(:other_user) do
           user = UserPasswordEntityFactory.create user_attribs, 'password'
           user_repo.add user
-	  user
+          user
         end
         let(:user_attribs) { FactoryGirl.attributes_for :user }
 
@@ -85,10 +87,14 @@ module Actions
             expect(data.keys.sort).to eq expected_keys
           end
 
-          it 'with an :attributes hash containing the specified attributes' do
+          fit 'with an :attributes hash containing the specified attributes' do
             these_values = data[:attributes].symbolize_keys.delete_if do |_k, v|
               v.nil?
             end
+            # data.attributes[:created_at] has a funky value here, e.g. 28. It
+            # gets that coming back in the JSON payload parsed into `data`.
+            # expect(data[:attributes].created_at).to respond_to :to_time
+            ap [:spec_94, data[:attributes]['created_at']]
             other_values = other_user.attributes.delete_if { |_k, v| v.nil? }
             expect(these_values).to eq other_values
           end
