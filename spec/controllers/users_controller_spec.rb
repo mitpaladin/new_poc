@@ -54,7 +54,7 @@ describe UsersController do
     it 'assigns the non-Guest users to the :users item' do
       index_users = assigns[:users]
       users.each_with_index do |user, index|
-        expect(index_users[index]).to be_saved_user_entity_for user
+        expect(index_users[index]).to eq user
       end
     end
   end # describe "GET 'index'"
