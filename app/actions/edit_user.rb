@@ -36,7 +36,7 @@ module Actions
 
     def dummy_entity
       Naught.build do |config|
-        config.impersonate UserEntity
+        config.impersonate Newpoc::Entity::User
         config.predicates_return false
         # def name
         #   'No Such User'
