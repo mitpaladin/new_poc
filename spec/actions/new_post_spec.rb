@@ -5,11 +5,11 @@ require 'new_post'
 
 module Actions
   describe NewPost do
-    let(:klass) { NewPost }
+    let(:user_entity) { Newpoc::Entity::User }
     let(:repo) { UserRepository.new }
     let(:subscriber) { BroadcastSuccessTester.new }
     let(:current_user) do
-      user = UserEntity.new FactoryGirl.attributes_for :user, :saved_user
+      user = user_entity.new FactoryGirl.attributes_for :user, :saved_user
       repo.add user
       user
     end
@@ -21,7 +21,7 @@ module Actions
     end
 
     context 'with the Guest User as the current user' do
-      let(:command) { klass.new repo.guest_user.entity }
+      let(:command) { described_class.new repo.guest_user.entity }
 
       it 'is unsuccessful' do
         expect(subscriber).not_to be_successful
@@ -38,7 +38,7 @@ module Actions
     end # context 'with the Guest User as the current user'
 
     context 'with a Registered User as the current user' do
-      let(:command) { klass.new current_user }
+      let(:command) { described_class.new current_user }
 
       it 'is successful' do
         expect(subscriber).to be_successful
