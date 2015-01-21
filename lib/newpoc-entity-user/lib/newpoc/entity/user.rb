@@ -41,7 +41,8 @@ module Newpoc
       validate :validate_name
       validates_email_format_of :email
 
-      def initialize(attribs)
+      def initialize(attribs_in)
+        attribs = unpack_incoming_attributes attribs_in
         @markdown_converter = attribs[:markdown_converter] ||
                               default_markdown_converter
         @name = attribs[:name]
@@ -98,6 +99,15 @@ module Newpoc
           require 'newpoc/services/markdown_html_converter'
           Newpoc::Services::MarkdownHtmlConverter.new.to_html markup
         end
+      end
+
+      def unpack_incoming_attributes(attribs_in)
+        attribs = if attribs_in.respond_to? :attributes
+                    attribs_in.attributes
+                  else
+                    attribs_in
+                  end
+        attribs.symbolize_keys
       end
 
       def validate_name
