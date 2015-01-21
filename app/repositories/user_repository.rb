@@ -46,8 +46,8 @@ class UserRepository < Newpoc::Repository::Base
   end
 
   def entity_for(user)
-    return factory.create(user.attributes) if user
-    guest_user.entity
+    return guest_user.entity unless user
+    factory.create user.attributes
   end
 
   def errors_for(user)

@@ -17,12 +17,12 @@ shared_examples 'a result with a Guest User entity' do
 end
 
 describe UserRepository do
-  let(:be_entity_for) do
-    ->(entity) { be_saved_user_entity_for(entity) }
-  end
+  # let(:be_entity_for) do
+  #   ->(entity) { be_saved_user_entity_for(entity) }
+  # end
   let(:dao_class) { UserDao }
   let(:factory_class) { UserFactory }
-  let(:entity_class) { UserEntity }
+  let(:entity_class) { Newpoc::Entity::User }
   let(:obj) { described_class.new }
   let(:user_name) { 'Joe Blow' }
   let(:email) { 'jblow@example.com' }

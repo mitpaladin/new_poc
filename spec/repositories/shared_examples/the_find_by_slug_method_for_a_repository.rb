@@ -23,7 +23,7 @@ shared_examples 'the #find_by_slug method for a Repository' do
       expect(result).to be_success
       expect(result.errors).to be_empty
       expect(result.entity).to be_a entity_class
-      expect(result.entity).to be_entity_for.call(entity)
+      expect(result.entity).to eq entity
     end
   end # context 'record exists'
 end # shared_examples 'the #find_by_slug method for a Repository'
