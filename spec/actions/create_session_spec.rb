@@ -57,12 +57,12 @@ module Actions
       describe 'broadcasts :success with a payload which' do
         let(:payload) { subscriber.payload_for(:success).first }
 
-        it 'is a UserEntity' do
-          expect(payload).to be_a UserEntity
+        it 'is a User entity' do
+          expect(payload).to be_a Newpoc::Entity::User
         end
 
         it 'has the correct user attributes' do
-          expect(payload).to be_saved_user_entity_for registered_user
+          expect(payload).to eq registered_user
         end
       end # describe 'broadcasts :success with a payload which'
     end # context 'is successful with valid parameters'
