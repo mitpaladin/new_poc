@@ -11,7 +11,7 @@ module Actions
 
     def execute
       require_guest_user
-      broadcast_success UserEntity.new({})
+      broadcast_success Newpoc::Entity::User.new({})
     rescue RuntimeError => the_error
       broadcast_failure the_error.message
     end

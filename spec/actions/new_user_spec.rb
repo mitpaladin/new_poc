@@ -8,7 +8,8 @@ module Actions
     let(:repo) { UserRepository.new }
     let(:subscriber) { BroadcastSuccessTester.new }
     let(:current_user) do
-      user = UserEntity.new FactoryGirl.attributes_for :user, :saved_user
+      attribs = FactoryGirl.attributes_for :user, :saved_user
+      user = Newpoc::Entity::User.new attribs
       repo.add user
       user
     end
@@ -29,10 +30,12 @@ module Actions
       describe 'is successful, broadcasting a payload which' do
         let(:payload) { subscriber.payload_for(:success).first }
 
-        it 'is a UserEntity with no attribute values' do
-          expect(payload).to be_a UserEntity
+        it 'is a minimal/empty User entity' do
+          expect(payload).to be_a Newpoc::Entity::User
           attribs = payload.attributes.delete_if { |_k, v| v.nil? }
-          expect(attribs).to be_empty
+          [:name, :email, :profile, :slug].each do |attrib_key|
+            expect(attribs[attrib_key].to_s).to be_empty
+          end
         end
       end # describe 'is successful, broadcasting a payload which'
     end # context 'with the Guest User as the current user'
