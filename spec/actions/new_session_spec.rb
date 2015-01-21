@@ -8,6 +8,7 @@ module Actions
   describe NewSession do
     let(:guest_user) { UserRepository.new.guest_user.entity }
     let(:subscriber) { BroadcastSuccessTester.new }
+    let(:user_entity) { Newpoc::Entity::User }
 
     # Regardless of expected success or failure, these are the steps...
     before :each do
@@ -26,15 +27,15 @@ module Actions
       describe 'broadcasts :success with a payload which' do
         let(:payload) { subscriber.payload_for(:success).first }
 
-        it 'is the Guest User UserEntity' do
-          expect(payload).to be_a UserEntity
+        it 'is the Guest User entity' do
+          expect(payload).to be_a user_entity
           expect(payload.slug).to eq 'guest-user'
         end
       end # describe 'broadcasts :success with a payload which'
     end # context 'is successful with valid parameters'
 
     context 'is unsuccessful with invalid parameters' do
-      let(:other_user) { UserEntity.new FactoryGirl.attributes_for(:user) }
+      let(:other_user) { user_entity.new FactoryGirl.attributes_for(:user) }
       let(:command) do
         UserRepository.new.add other_user
         described_class.new other_user
