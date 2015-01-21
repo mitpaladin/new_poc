@@ -18,11 +18,11 @@ module ApplicationHelper
       def initialize(h, which, current_user)
         extend MenuForDetailsSelector.new.select(which)
         @h = h
-        @current_user = UserEntity.new current_user.attributes
-        @markup = if @current_user.registered?
-                    build_html_for_registered_user
-                  else
+        @current_user = current_user
+        @markup = if @current_user.guest_user?
                     build_html_for_guest_user
+                  else
+                    build_html_for_registered_user
                   end
       end
 
