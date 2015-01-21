@@ -77,7 +77,7 @@ module Actions
     class BadDataEntity
       def initialize(data, current_user)
         attribs = current_user.attributes.reject { |s| s.match(/password/) }
-        @entity = UserEntity.new attribs.merge(data)
+        @entity = Newpoc::Entity::User.new attribs.merge(data)
         @entity.invalid?
       end
 

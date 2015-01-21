@@ -31,7 +31,7 @@ module Actions
           let(:user_data) { { email: 'new_user@example.com' } }
 
           it 'successfully' do
-            expect(payload).to be_a UserEntity
+            expect(payload).to be_a Newpoc::Entity::User
             expect(payload[:email]).to eq user_data[:email]
           end
         end # describe 'email address'
@@ -40,7 +40,7 @@ module Actions
           let(:user_data) { { profile: '*Updated* profile.' } }
 
           it 'successfully' do
-            expect(payload).to be_a UserEntity
+            expect(payload).to be_a Newpoc::Entity::User
             expect(payload[:profile]).to eq user_data[:profile]
             entity = UserRepository.new.find_by_slug(payload.slug).entity
             expect(entity[:profile]).to eq user_data[:profile]
@@ -53,7 +53,7 @@ module Actions
         let(:user_data) { { name: 'Somebody Else' } }
 
         it 'name' do
-          expect(payload).to be_a UserEntity
+          expect(payload).to be_a Newpoc::Entity::User
           expect(payload[:name]).not_to eq user_data[:name]
           expect(payload[:name]).to eq current_user[:name]
         end
