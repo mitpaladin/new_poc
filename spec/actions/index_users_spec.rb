@@ -35,7 +35,8 @@ module Actions
 
       it 'is an enumeration of UserEntity instances' do
         expect(payload).to be_an Enumerable
-        payload.each { |user_item| expect(user_item).to be_a UserEntity }
+        entity_class = Newpoc::Entity::User
+        payload.each { |user_item| expect(user_item).to be_a entity_class }
       end
 
       it 'has the correct number of entities' do
@@ -44,7 +45,7 @@ module Actions
 
       it 'has the same entities in the same order as those added' do
         users.each_with_index do |user, index|
-          expect(payload[index]).to be_saved_user_entity_for user
+          expect(payload[index]).to eq user
         end
       end
     end # describe 'is successful, broadcasting a payload which'

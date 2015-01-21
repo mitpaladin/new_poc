@@ -163,7 +163,7 @@ describe PostsController do
     end # context 'for the Guest User'
   end # describe "GET 'new'" (StoreResult removed)
 
-  describe "POST 'create'" do
+  fdescribe "POST 'create'" do
     let(:params) do
       attrs = FactoryGirl.attributes_for :post
       attrs[:author_name] = identity.current_user
@@ -337,7 +337,7 @@ describe PostsController do
 
       context 'by a different user' do
         let(:user) do
-          UserEntity.new FactoryGirl.attributes_for :user, :saved_user
+          Newpoc::User::Entity.new FactoryGirl.attributes_for :user, :saved_user
         end
 
         before :each do

@@ -45,11 +45,11 @@ end # shared_examples 'a successful post'
 
 module Actions
   describe CreatePost do
-    let(:klass) { CreatePost }
     let(:repo) { UserRepository.new }
     let(:subscriber) { BroadcastSuccessTester.new }
     let(:current_user) do
-      user = UserEntity.new FactoryGirl.attributes_for :user, :saved_user
+      attribs = FactoryGirl.attributes_for :user, :saved_user
+      user = Newpoc::Entity::User.new attribs
       repo.add user
       user
     end
@@ -61,7 +61,7 @@ module Actions
     end
 
     context 'with the Guest User as the current user' do
-      let(:command) { klass.new repo.guest_user.entity, post_data }
+      let(:command) { described_class.new repo.guest_user.entity, post_data }
       let(:post_data) { { title: 'A Title', body: 'A Body' } }
       let(:message) { 'Not logged in as a registered user!' }
 
@@ -80,7 +80,7 @@ module Actions
     end # context 'with the Guest User as the current user'
 
     context 'with a Registered User as the current user' do
-      let(:command) { klass.new current_user, post_data }
+      let(:command) { described_class.new current_user, post_data }
 
       context 'with minimal valid post data' do
         let(:post_data) do
