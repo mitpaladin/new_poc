@@ -19,11 +19,34 @@ shared_examples 'the #find_by_slug method for a Repository' do
       obj.find_by_slug entity.slug
     end
 
-    it 'returns the expected StoreResult' do
-      expect(result).to be_success
-      expect(result.errors).to be_empty
-      expect(result.entity).to be_a entity_class
-      expect(result.entity).to eq entity
-    end
+    describe 'returns the expected StoreResult, including' do
+
+      it 'a :success flag of true' do
+        expect(result).to be_success
+      end
+
+      it 'an empty :errors collection' do
+        expect(result.errors).to be_empty
+      end
+
+      describe 'an entity that has the correct' do
+        it 'class' do
+          expect(result.entity).to be_a entity_class
+        end
+
+        it 'domain-data field values' do
+          excluded_attribs = [
+            :created_at, :updated_at, :password, :password_confirmation
+          ]
+          result_attribs = result.entity.attributes.reject do |k, _v|
+            excluded_attribs.include? k
+          end
+          entity_attribs = entity.attributes.reject do |k, _v|
+            excluded_attribs.include? k
+          end
+          expect(result_attribs).to eq entity_attribs
+        end
+      end # describe 'an entity that has the correct'
+    end # describe 'returns the expected StoreResult, including'
   end # context 'record exists'
 end # shared_examples 'the #find_by_slug method for a Repository'

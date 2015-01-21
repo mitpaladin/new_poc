@@ -17,9 +17,9 @@ shared_examples 'a result with a Guest User entity' do
 end
 
 describe UserRepository do
-  # let(:be_entity_for) do
-  #   ->(entity) { be_saved_user_entity_for(entity) }
-  # end
+  let(:be_entity_for) do
+    ->(entity) { be_saved_user_entity_for(entity) }
+  end
   let(:dao_class) { UserDao }
   let(:factory_class) { UserFactory }
   let(:entity_class) { Newpoc::Entity::User }
@@ -58,7 +58,7 @@ describe UserRepository do
     it_behaves_like 'the #initialize method for a Repository'
   end # describe :initialize
 
-  describe :add.to_s do
+  fdescribe :add.to_s do
     it_behaves_like 'the #add method for a Repository'
   end # describe :add
 
