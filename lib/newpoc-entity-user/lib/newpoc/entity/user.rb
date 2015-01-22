@@ -87,6 +87,10 @@ module Newpoc
         %w(created_at email name profile slug updated_at).map(&:to_sym)
       end
 
+      def self.model_name
+        ActiveModel::Name.new self, nil, 'User'
+      end
+
       private
 
       attr_reader :markdown_converter

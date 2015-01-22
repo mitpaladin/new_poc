@@ -8,7 +8,7 @@ describe 'Attempting to register a new user fails with data invalid because' do
     helper = FeatureSpecLoginHelper.new self, user_name: @user_name
     helper.register
     expect(page).to have_css '.alert.alert-danger'
-    expected = '1 error prevented this UserEntity from being saved'
+    expected = '1 error prevented this User from being saved'
     expect(page.find '.alert h2').to have_text expected
     expect(page.find '.alert > ul > li').to have_text @message
   end
