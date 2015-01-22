@@ -58,7 +58,7 @@ describe UserRepository do
     it_behaves_like 'the #initialize method for a Repository'
   end # describe :initialize
 
-  fdescribe :add.to_s do
+  describe :add.to_s do
     it_behaves_like 'the #add method for a Repository'
   end # describe :add
 

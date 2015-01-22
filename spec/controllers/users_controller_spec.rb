@@ -53,8 +53,17 @@ describe UsersController do
 
     it 'assigns the non-Guest users to the :users item' do
       index_users = assigns[:users]
+      attrib_keys = users.first.instance_values.keys.map(&:to_sym)
+      exclusions = [
+        :markdown_converter, :password, :password_confirmation,
+        :created_at, :updated_at
+      ]
+      attrib_keys.reject! { |k| exclusions.include? k }
       users.each_with_index do |user, index|
-        expect(index_users[index]).to eq user
+        index_user = index_users[index]
+        attrib_keys.each do |attrib|
+          expect(index_user[attrib]).to eq user[attrib]
+        end
       end
     end
   end # describe "GET 'index'"
