@@ -1,4 +1,6 @@
 
+require_relative '../custom_matchers/be_same_timestamped_entity_as'
+
 shared_examples 'the #find_by_slug method for a Repository' do
   context 'record not found' do
 
@@ -35,16 +37,7 @@ shared_examples 'the #find_by_slug method for a Repository' do
         end
 
         it 'domain-data field values' do
-          excluded_attribs = [
-            :created_at, :updated_at, :password, :password_confirmation
-          ]
-          result_attribs = result.entity.attributes.reject do |k, _v|
-            excluded_attribs.include? k
-          end
-          entity_attribs = entity.attributes.reject do |k, _v|
-            excluded_attribs.include? k
-          end
-          expect(result_attribs).to eq entity_attribs
+          expect(entity).to be_same_timestamped_entity_as result.entity
         end
       end # describe 'an entity that has the correct'
     end # describe 'returns the expected StoreResult, including'
