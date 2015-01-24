@@ -49,7 +49,7 @@ class TimestampedEntityVerifier
       end
 
       def add_unless(attribute, expected, actual)
-        return self if expected == actual
+        return self if expected == actual || compare_time(expected, actual)
         @items[attribute] = { expected: expected, actual: actual }
         self
       end
@@ -59,6 +59,18 @@ class TimestampedEntityVerifier
       end
 
       private
+
+      def compare_time(t1, t2, allowance = 1.0)
+        return false unless timestamp?(t1) && timestamp?(t2)
+        (t1.to_time - t2.to_time).abs <= allowance
+      end
+
+      def timestamp?(value)
+        _ = value.to_time
+        true
+      rescue ArgumentError
+        false
+      end
 
       def format_item(key)
         fmt = ':%s had the value "%s" but "%s" was expected'
