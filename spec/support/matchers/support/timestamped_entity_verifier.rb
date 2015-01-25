@@ -2,6 +2,16 @@
 # Verifies equality of two entities, which may include timestamps (eg, :pubdate)
 class TimestampedEntityVerifier
   module Internals
+    # Just because there's a #to_datetime method doesn't mean you can *call* it.
+    class TimestampChecker
+      def check(candidate)
+        _ = candidate.to_datetime
+        true
+      rescue ArgumentError
+        false
+      end
+    end # class TimestampedEntityVerifier::Internals::TImestampChecker
+
     # Filters attributes of an entity, separating timestamps from others.
     class AttributeFilter
       attr_reader :attributes, :filtered_attributes, :timestamps
@@ -31,11 +41,9 @@ class TimestampedEntityVerifier
       end
 
       def timestamp?(attribute, value)
-        _ = value.to_datetime
-        @timestamps[attribute] = value
-        true
-      rescue ArgumentError
-        false
+        TimestampChecker.new.check(value).tap do |ret|
+          @timestamps[attribute] = value if ret
+        end
       end
     end # class TimestampedEntityVerifier::Internals::AttributeFilter
 
@@ -66,10 +74,7 @@ class TimestampedEntityVerifier
       end
 
       def timestamp?(value)
-        _ = value.to_time
-        true
-      rescue ArgumentError
-        false
+        TimestampChecker.new.check(value)
       end
 
       def format_item(key)
