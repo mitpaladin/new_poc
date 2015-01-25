@@ -53,8 +53,17 @@ describe UsersController do
 
     it 'assigns the non-Guest users to the :users item' do
       index_users = assigns[:users]
+      attrib_keys = users.first.instance_values.keys.map(&:to_sym)
+      exclusions = [
+        :markdown_converter, :password, :password_confirmation,
+        :created_at, :updated_at
+      ]
+      attrib_keys.reject! { |k| exclusions.include? k }
       users.each_with_index do |user, index|
-        expect(index_users[index]).to be_saved_user_entity_for user
+        index_user = index_users[index]
+        attrib_keys.each do |attrib|
+          expect(index_user[attrib]).to eq user[attrib]
+        end
       end
     end
   end # describe "GET 'index'"
@@ -69,8 +78,8 @@ describe UsersController do
         expect(response).to be_success
       end
 
-      it 'assigns a UserEntity instance to :user' do
-        expect(assigns[:user]).to be_a UserEntity
+      it 'assigns a User entity instance to :user' do
+        expect(assigns[:user]).to be_a Newpoc::Entity::User
       end
 
       it 'renders the :new template' do
@@ -109,8 +118,8 @@ describe UsersController do
         post :create, user_data: params
       end
 
-      it 'assigns the :user item as a UserEntity instance' do
-        expect(assigns[:user]).to be_a UserEntity
+      it 'assigns the :user item as a User entity instance' do
+        expect(assigns[:user]).to be_a Newpoc::Entity::User
       end
 
       it 'persists the User entity corresponding to the :user' do
@@ -140,8 +149,8 @@ describe UsersController do
             @user = assigns[:user]
           end
 
-          it 'assigns a UserEntity to :user' do
-            expect(@user).to be_a UserEntity
+          it 'assigns a User entity to :user' do
+            expect(@user).to be_a Newpoc::Entity::User
           end
 
           it 'does not redirect' do
@@ -163,7 +172,7 @@ describe UsersController do
           post :create, user_data: @params
           expect(response).not_to be_redirection
           user = assigns[:user]
-          expect(user).to be_a UserEntity
+          expect(user).to be_a Newpoc::Entity::User
           expect(user).to be_invalid
           expect(user).to have(@messages.count).errors
           expect(user.errors.full_messages).to end_with @messages
@@ -192,7 +201,7 @@ describe UsersController do
           post :create, user_data: @params
           expect(response).not_to be_redirection
           user = assigns[:user]
-          expect(user).to be_a UserEntity
+          expect(user).to be_a Newpoc::Entity::User
           expect(user).to have(@messages.count).errors
           expect(user.errors.full_messages).to end_with @messages
         end

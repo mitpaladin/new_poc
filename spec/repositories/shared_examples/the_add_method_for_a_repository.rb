@@ -9,11 +9,38 @@ shared_examples 'the #add method for a Repository' do
       expect(added_records).to eq 1
     end
 
-    it 'returns the expected StoreResult' do
-      expect(result).to be_success
-      expect(result.errors).to be_empty
-      expect(result.entity).to be_entity_for.call(entity)
-    end
+    describe 'returns the expected StoreResult, including' do
+
+      it 'a :success flag of true' do
+        expect(result).to be_success
+      end
+
+      it 'an empty :errors collection' do
+        expect(result.errors).to be_empty
+      end
+
+      describe 'an entity that has the correct' do
+        it 'class' do
+          expect(result.entity).to be_a entity_class
+        end
+
+        it 'domain-data field values' do
+          excluded_attribs = [
+            # for Posts and Users
+            :created_at,
+            # for Users
+            :markdown_converter, :password, :password_confirmation, :updated_at
+          ]
+          result_attribs = result.entity.attributes.reject do |k, _v|
+            excluded_attribs.include? k
+          end
+          entity_attribs = entity.attributes.reject do |k, _v|
+            excluded_attribs.include? k
+          end
+          expect(result_attribs).to eq entity_attribs
+        end
+      end # describe 'an entity that has the correct'
+    end # describe 'returns the expected StoreResult, including'
   end # context 'on success'
 
   context 'on failure' do

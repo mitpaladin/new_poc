@@ -10,8 +10,10 @@ class UsersController < ApplicationController
       class UserChecker
         def initialize(payload, controller)
           @controller = controller
-          @data = FancyOpenStruct.new JSON.load(payload)
-          @user = UserEntity.new @data[:attributes] if @data[:attributes]
+          @data = FancyOpenStruct.new YAML.load(payload)
+          if @data[:attributes]
+            @user = Newpoc::Entity::User.new @data[:attributes]
+          end
           @payload = payload
         end
 

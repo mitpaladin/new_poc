@@ -18,11 +18,11 @@ module ApplicationHelper
       def initialize(h, which, current_user)
         extend MenuForDetailsSelector.new.select(which)
         @h = h
-        @current_user = UserEntity.new current_user.attributes
-        @markup = if @current_user.registered?
-                    build_html_for_registered_user
-                  else
+        @current_user = get_entity_for current_user
+        @markup = if @current_user.guest_user?
                     build_html_for_guest_user
+                  else
+                    build_html_for_registered_user
                   end
       end
 
@@ -74,6 +74,11 @@ module ApplicationHelper
           HTMLEntities.new.decode '&nbsp;'
         end
         h.concat item
+      end
+
+      def get_entity_for(user)
+        return user if user.respond_to? :guest_user?
+        Newpoc::Entity::User.new user.attributes.to_h
       end
 
       def logout_params

@@ -17,7 +17,7 @@ module Actions
     context 'for an existing user profile' do
       let(:target_user) do
         user_attribs = FactoryGirl.attributes_for :user, :saved_user
-	user = UserPasswordEntityFactory.create user_attribs, 'password'
+        user = UserPasswordEntityFactory.create user_attribs, 'password'
         repo.add user
         user
       end
@@ -30,9 +30,9 @@ module Actions
       describe 'is successful, broadcasting a payload which' do
         let(:payload) { subscriber.payload_for(:success).first }
 
-        it 'is the requested UserEntity' do
-          expect(payload).to be_a UserEntity
-          expect(payload).to be_saved_user_entity_for target_user
+        it 'is the requested User entity' do
+          expect(payload).to be_a Newpoc::Entity::User
+          expect(payload).to eq target_user
         end
       end # describe 'is successful, broadcasting a payload which'
     end # context 'for an existing user profile' do

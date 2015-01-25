@@ -91,7 +91,7 @@ class UsersController < ApplicationController
 
   def on_update_failure(payload)
     data = FancyOpenStruct.new JSON.parse(payload)
-    @user = UserEntity.new data.entity if data.entity
+    @user = Newpoc::Entity::User.new data.entity if data.entity
     flash[:alert] = data.messages.join '<br/>'
     return render 'edit' if data.entity
     redirect_to root_path

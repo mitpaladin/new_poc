@@ -48,9 +48,9 @@ module Actions
       describe 'is successful, broadcasting a payload which' do
         let(:payload) { subscriber.payload_for(:success).first }
 
-        it 'is a UserEntity corresponding to the current user' do
-          expect(payload).to be_a UserEntity
-          expect(payload).to be_saved_user_entity_for current_user
+        it 'is a User entity corresponding to the current user' do
+          expect(payload).to be_a Newpoc::Entity::User
+          expect(payload).to eq current_user
         end
       end # describe 'is successful, broadcasting a payload which'
     end # context 'with the profile owner as the current user'

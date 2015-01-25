@@ -337,7 +337,7 @@ describe PostsController do
 
       context 'by a different user' do
         let(:user) do
-          UserEntity.new FactoryGirl.attributes_for :user, :saved_user
+          Newpoc::Entity::User.new FactoryGirl.attributes_for :user, :saved_user
         end
 
         before :each do

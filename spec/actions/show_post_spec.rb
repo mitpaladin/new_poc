@@ -9,7 +9,7 @@ module Actions
   describe ShowPost do
     let(:author) do
       attribs = FactoryGirl.attributes_for :user, :saved_user
-      UserEntity.new(attribs).tap { |user| UserRepository.new.add user }
+      user_entity.new(attribs).tap { |user| UserRepository.new.add user }
     end
     let(:command) { described_class.new target_post.slug, current_user }
     let(:guest_user) { UserRepository.new.guest_user.entity }
@@ -18,6 +18,7 @@ module Actions
     let(:target_post) do
       Newpoc::Entity::Post.new(target_attribs).tap { |post| repo.add post }
     end
+    let(:user_entity) { Newpoc::Entity::User }
 
     before :each do
       command.subscribe(subscriber).execute

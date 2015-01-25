@@ -15,10 +15,11 @@ module Actions
     end
     let(:post_repo) { PostRepository.new }
     let(:subscriber) { BroadcastSuccessTester.new }
+    let(:user_entity) { Newpoc::Entity::User }
     let(:user_repo) { UserRepository.new }
     let(:author) do
       attribs = FactoryGirl.attributes_for :user, :saved_user
-      UserEntity.new(attribs).tap { |user| user_repo.add user }
+      user_entity.new(attribs).tap { |user| user_repo.add user }
     end
 
     before :each do
@@ -35,7 +36,7 @@ module Actions
       let(:command) { described_class.new target_post.slug, other_user }
       let(:other_user) do
         attribs = FactoryGirl.attributes_for :user, :saved_user
-        UserEntity.new(attribs).tap { |user| user_repo.add user }
+        user_entity.new(attribs).tap { |user| user_repo.add user }
       end
 
       it 'is not successful' do

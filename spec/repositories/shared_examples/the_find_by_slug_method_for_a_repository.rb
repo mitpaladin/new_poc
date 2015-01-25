@@ -1,4 +1,6 @@
 
+require_relative '../custom_matchers/be_same_timestamped_entity_as'
+
 shared_examples 'the #find_by_slug method for a Repository' do
   context 'record not found' do
 
@@ -19,11 +21,25 @@ shared_examples 'the #find_by_slug method for a Repository' do
       obj.find_by_slug entity.slug
     end
 
-    it 'returns the expected StoreResult' do
-      expect(result).to be_success
-      expect(result.errors).to be_empty
-      expect(result.entity).to be_a entity_class
-      expect(result.entity).to be_entity_for.call(entity)
-    end
+    describe 'returns the expected StoreResult, including' do
+
+      it 'a :success flag of true' do
+        expect(result).to be_success
+      end
+
+      it 'an empty :errors collection' do
+        expect(result.errors).to be_empty
+      end
+
+      describe 'an entity that has the correct' do
+        it 'class' do
+          expect(result.entity).to be_a entity_class
+        end
+
+        it 'domain-data field values' do
+          expect(entity).to be_same_timestamped_entity_as result.entity
+        end
+      end # describe 'an entity that has the correct'
+    end # describe 'returns the expected StoreResult, including'
   end # context 'record exists'
 end # shared_examples 'the #find_by_slug method for a Repository'

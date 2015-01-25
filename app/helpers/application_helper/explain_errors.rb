@@ -26,7 +26,7 @@ module ApplicationHelper
     def explain_errors_for(model_obj)
       message = format '%s prevented this %s from being saved:',
                        pluralize(model_obj.errors.count, 'error'),
-                       model_obj.class.name
+                       model_obj.model_name
       list = build_error_message_list model_obj.errors
       content_tag(:div, attribs_for_error_container, false) do
         concat(content_tag :h2, message)
@@ -35,12 +35,7 @@ module ApplicationHelper
     end
 
     def message_array_for(error_obj)
-      # #message_list is a method on Mutations::ErrorAtom. Oops.
-      # if error_obj.respond_to? :message_list
-      #   error_obj.message_list
-      # else
       error_obj.full_messages
-      # end
     end
   end # module ApplicationHelper::ExplainErrors
 end # module ApplicationHelper
