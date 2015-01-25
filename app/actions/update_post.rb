@@ -95,13 +95,6 @@ module Actions
       @post_repo ||= PostRepository.new
     end
 
-    # ... for #update_entity
-
-    def attributes_from_repo
-      ret = post_repo.find_by_slug(post_slug).entity.attributes
-      ret
-    end
-
     # ... for #validate_slug
 
     def error_message_for_slug
