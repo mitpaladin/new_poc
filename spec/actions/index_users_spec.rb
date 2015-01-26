@@ -1,5 +1,6 @@
 
 require 'spec_helper'
+require_relative '../repositories/custom_matchers/be_same_timestamped_entity_as'
 
 require 'index_users'
 
@@ -45,7 +46,7 @@ module Actions
 
       it 'has the same entities in the same order as those added' do
         users.each_with_index do |user, index|
-          expect(payload[index]).to eq user
+          expect(payload[index]).to be_same_timestamped_entity_as user
         end
       end
     end # describe 'is successful, broadcasting a payload which'
