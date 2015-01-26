@@ -58,18 +58,6 @@ describe Newpoc::Entity::Post do
 
   it_behaves_like 'a data-mapping entity'
 
-  describe 'supports initialisation' do
-    describe 'succeeding' do
-      it 'with any combination of valid field names' do
-        expect { described_class.new valid_subset }.not_to raise_error
-      end
-
-      it 'with invalid field names' do
-        expect { described_class.new invalid_attribs }.not_to raise_error
-      end
-    end # describe 'succeeding'
-  end # describe 'supports initialisation'
-
   describe '#valid?' do
 
     describe 'returns true when initialised with' do

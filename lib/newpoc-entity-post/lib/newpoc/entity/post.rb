@@ -1,6 +1,5 @@
 
 require 'newpoc/entity/post/version'
-require 'newpoc/support/instance_variable_setter'
 
 require 'active_attr'
 require 'nokogiri'
@@ -31,9 +30,13 @@ module Newpoc
       # Without access to the database, we can't *really* validate the author
       # name.
 
+      attr_reader :author_name, :body, :created_at, :image_url, :pubdate,
+                  :slug, :title, :updated_at
+
       def initialize(attribs)
-        init_attrib_keys.each { |attrib| class_eval { attr_reader attrib } }
-        Newpoc::Support::InstanceVariableSetter.new(self).set attribs
+        attrib_keys.each do |attrib|
+          instance_variable_set "@#{attrib}", attribs[attrib]
+        end
         @pubdate ||= Time.now if attribs[:post_status] == 'public'
       end
 
@@ -47,12 +50,6 @@ module Newpoc
 
       def build_byline
         SupportClasses::BylineBuilder.new(self).to_html
-      end
-
-      # callback used by InstanceVariableSetter
-      def init_attrib_keys
-        %w(author_name body image_url slug title pubdate created_at updated_at)
-          .map(&:to_sym)
       end
 
       # we're using FriendlyID for slugs, so...
@@ -78,6 +75,11 @@ module Newpoc
       end
 
       private
+
+      def attrib_keys
+        %w(author_name body image_url slug title pubdate created_at updated_at)
+          .map(&:to_sym)
+      end
 
       def guest_user_name
         'Guest User'

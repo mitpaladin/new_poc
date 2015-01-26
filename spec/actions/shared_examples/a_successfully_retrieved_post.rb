@@ -1,4 +1,6 @@
 
+require_relative '../../repositories/custom_matchers/be_same_timestamped_entity_as'
+
 shared_examples 'a successfully-retrieved post' do
   it 'is successful' do
     expect(subscriber).to be_successful
@@ -13,12 +15,7 @@ shared_examples 'a successfully-retrieved post' do
     end
 
     it 'is a Newpoc::Entity::Post with correct attributes' do
-      attrib_keys = target_post.attributes.keys - [:pubdate]
-      attrib_keys.each { |key| expect(payload[key]).to eq target_post[key] }
-      if target_post.attributes.key? :pubdate
-        expect(payload[:pubdate]).to be_within(0.5.seconds)
-          .of target_post[:pubdate]
-      end
+      expect(payload).to be_same_timestamped_entity_as target_post
     end
   end # describe 'is successful, broadcasting a payload which'
 end # shared_examples 'a successfully-retrieved post'

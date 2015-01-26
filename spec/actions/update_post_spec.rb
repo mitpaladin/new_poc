@@ -1,5 +1,6 @@
 
 require 'spec_helper'
+require_relative '../repositories/custom_matchers/be_same_timestamped_entity_as'
 
 require 'update_post'
 
@@ -45,11 +46,11 @@ module Actions
           end
 
           it 'is a Newpoc::Entity::Post with correct (updated) attributes' do
-            unchanged_keys = post.attributes.keys - post_data.keys - [:pubdate]
-            unchanged_keys.each { |key| expect(payload[key]).to eq post[key] }
-            post_data.keys.each { |k| expect(payload[k]).to eq post_data[k] }
-            expect(payload[:pubdate]).to be_within(0.5.seconds)
-              .of post[:pubdate]
+            expected = post
+            post_data.each_key do |attrib|
+              expected.instance_variable_set "@#{attrib}", post_data[attrib]
+            end
+            expect(payload).to be_same_timestamped_entity_as expected
           end
         end # describe 'is successful, broadcasting a payload which'
       end # context 'updating supported attributes with new valid values'
