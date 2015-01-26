@@ -11,50 +11,45 @@ class UsersController < ApplicationController
         def initialize(payload, controller)
           @controller = controller
           @data = FancyOpenStruct.new YAML.load(payload)
-          if @data[:attributes]
-            @user = Newpoc::Entity::User.new @data[:attributes]
-          end
-          @payload = payload
         end
 
         def parse
-          check_for_invalid_passwords
-          check_for_conflicting_name
-          check_for_other_name_issues
+          attributes = data[:attributes]
+          @user = Newpoc::Entity::User.new(attributes) if attributes
+          record_invalid_password_errors
+          record_existing_name_errors
+          record_other_name_issues
           user
         end
 
         private
 
-        def check_for_invalid_passwords
-          @filtered_msgs = data[:messages].grep(/Password/)
-          return if filtered_msgs.empty?
-          filtered_msgs.each do
-            |msg| user.errors.add :password, padded_filtered_msgs(msg)
+        def record_any_invalid_items_for(item_key, pattern)
+          @filtered_messages = data[:messages].grep pattern
+          return if filtered_messages.empty?
+          filtered_messages.each do |message|
+            user.errors.add item_key, message_text_with_leader(message)
           end
+          self
         end
 
-        def check_for_conflicting_name
-          @filtered_msgs = data[:messages].grep(/already exists/)
-          return if filtered_msgs.empty?
-          filtered_msgs.each do
-            |msg| user.errors.add :name, padded_filtered_msgs(msg)
-          end
+        def record_invalid_password_errors
+          record_any_invalid_items_for(:password, /Password/)
         end
 
-        def check_for_other_name_issues
-          @filtered_msgs = data[:messages].grep(/Name/)
-          return if filtered_msgs.empty?
-          filtered_msgs.each do
-            |msg| user.errors.add :name, padded_filtered_msgs(msg)
-          end
+        def record_existing_name_errors
+          record_any_invalid_items_for(:name, /already exists/)
         end
 
-        def padded_filtered_msgs(messg)
-          'is invalid: ' + messg
+        def record_other_name_issues
+          record_any_invalid_items_for(:name, /Name/)
         end
 
-        attr_reader :controller, :data, :user, :filtered_msgs
+        def message_text_with_leader(message_text)
+          'is invalid: ' + message_text
+        end
+
+        attr_reader :controller, :data, :user, :filtered_messages
       end # class UsersController::Internals::CreateFailure::UserChecker
 
       private_constant :UserChecker
