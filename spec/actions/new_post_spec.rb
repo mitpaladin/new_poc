@@ -64,8 +64,10 @@ module Actions
         end
 
         it 'with the author name as the only assigned attribute' do
-          expect(payload).to have(1).attribute
           expect(payload.author_name).to eq current_user.name
+          payload.attributes.reject { |k, _v| k == :author_name }.each do |_, v|
+            expect(v).to be nil
+          end
         end
       end # describe 'is successful, broadcasting a Newpoc::Entity::Post ...'
     end # context 'with a Registered User as the current user'

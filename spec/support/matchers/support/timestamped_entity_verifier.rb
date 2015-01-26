@@ -5,6 +5,7 @@ class TimestampedEntityVerifier
     # Just because there's a #to_datetime method doesn't mean you can *call* it.
     class TimestampChecker
       def check(candidate)
+        return false if candidate.nil?
         _ = candidate.to_datetime
         true
       rescue ArgumentError
@@ -37,7 +38,7 @@ class TimestampedEntityVerifier
       private
 
       def default_excluded
-        [:created_at, :updated_at, :password, :password_confirmation]
+        [:created_at, :errors, :updated_at, :password, :password_confirmation]
       end
 
       def timestamp?(attribute, value)

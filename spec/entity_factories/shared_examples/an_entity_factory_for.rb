@@ -7,9 +7,16 @@ shared_examples 'an entity factory for' do |entity_class|
       expect(entity).to be_an entity_class
     end
 
-    # FIXME: #init_attrib_keys has outlived its usefulness, or that name has.
     it 'with the same attribute values as the DAO' do
-      entity.init_attrib_keys.each do |attrib|
+      post_keys = %w(author_name body created_at image_url pubdate slug title
+                     updated_at)
+      user_keys = %w(created_at email name profile slug updated_at)
+      attrib_keys = if dao.respond_to?(:author_name)
+                      post_keys
+                    else
+                      user_keys
+                    end
+      attrib_keys.map(&:to_sym).each do |attrib|
         expect(entity.send attrib).to eq dao[attrib]
       end
     end
