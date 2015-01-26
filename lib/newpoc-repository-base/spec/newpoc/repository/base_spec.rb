@@ -237,12 +237,24 @@ module Newpoc
       end # describe 'method #find_by_slug'
 
       describe 'method #update' do
+        let(:dao_subclass) do
+          the_record = record
+          klass = Class.new(FakeDao) do
+            def self.where(_opts = :chain, *_rest)
+              [rec]
+            end
+          end # class
+          # :define_method creates a *closure*, not an ordinary method
+          klass.class.send(:define_method, :rec) do
+            the_record
+          end
+          klass
+        end
         let(:obj) { described_class.new FakeFactory, dao_subclass }
         let(:original_attribs) { { slug: slug, attrib1: 'original' } }
         let(:result) { obj.update slug, updated_attribs }
         let(:slug) { 'the-slug' }
         let(:updated_attribs) { { attrib1: 'updated' } }
-        # let(:record) { OpenStruct.new attributes: original_attribs }
 
         context 'for a valid update' do
           let(:record) do
@@ -258,19 +270,6 @@ module Newpoc
               end
             end # class
             klass.new original_attribs
-          end
-          let(:dao_subclass) do
-            the_record = record
-            klass = Class.new(FakeDao) do
-              def self.where(_opts = :chain, *_rest)
-                [rec]
-              end
-            end # class
-            # :define_method creates a *closure*, not an ordinary method
-            klass.class.send(:define_method, :rec) do
-              the_record
-            end
-            klass
           end
 
           describe 'returns a StoreResult with' do
@@ -312,19 +311,6 @@ module Newpoc
               end
             end # class
             klass.new original_attribs
-          end
-          let(:dao_subclass) do
-            the_record = record
-            klass = Class.new(FakeDao) do
-              def self.where(_opts = :chain, *_rest)
-                [rec]
-              end
-            end # class
-            # :define_method creates a *closure*, not an ordinary method
-            klass.class.send(:define_method, :rec) do
-              the_record
-            end
-            klass
           end
 
           describe 'returns a StoreResult with' do
