@@ -13,7 +13,8 @@ class UsersController < ApplicationController
   include Internals
 
   def index
-    Actions::IndexUsers.new.subscribe(self, prefix: :on_index).execute
+    action = Newpoc::Actions::Users::Index.new(UserRepository.new)
+    action.subscribe(self, prefix: :on_index).execute
   end
 
   def new

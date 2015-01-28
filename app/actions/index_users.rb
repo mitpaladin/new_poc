@@ -1,19 +1,28 @@
 
-module Actions
-  # Wisper-based command object called by Users controller #index action.
-  class IndexUsers
-    include Wisper::Publisher
+module Newpoc
+  module Actions
+    module Users
+      # Wisper-based command object to return a collection of "user" objects.
+      # Whatever they are.
+      class Index
+        include Wisper::Publisher
 
-    def execute
-      # UserRepository#all (currently) filters out the Guest User, which is
-      # exactly what we want here
-      broadcast_success UserRepository.new.all
+        def initialize(repository)
+          @repository = repository
+        end
+
+        def execute
+          broadcast_success repository.all
+        end
+
+        private
+
+        attr_reader :repository
+
+        def broadcast_success(payload)
+          broadcast :success, payload
+        end
+      end # class Newpoc::Actions::Users::Index
     end
-
-    private
-
-    def broadcast_success(payload)
-      broadcast :success, payload
-    end
-  end # class Actions::IndexUsers
-end # module Actions
+  end
+end
