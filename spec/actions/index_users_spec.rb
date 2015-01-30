@@ -1,7 +1,6 @@
 
 require 'spec_helper'
-
-require 'support/broadcast_success_tester'
+require 'wisper_subscription'
 
 require_relative '../repositories/custom_matchers/be_same_timestamped_entity_as'
 
@@ -11,7 +10,7 @@ require 'index_users'
 
 describe Newpoc::Actions::Users::Index do
   let(:repo) { UserRepository.new }
-  let(:subscriber) { ::Actions::BroadcastSuccessTester.new }
+  let(:subscriber) { WisperSubscription.new }
   let(:user_count) { 5 }
   let(:users) { [] }
   let(:command) { described_class.new UserRepository.new }
@@ -23,12 +22,14 @@ describe Newpoc::Actions::Users::Index do
       repo.add user
       users << user
     end
+    subscriber.define_message :success
+    subscriber.define_message :failure
     command.subscribe subscriber
     command.execute
   end
 
   it 'is successful' do
-    expect(subscriber).to be_successful
+    expect(subscriber).to be_success
     expect(subscriber).not_to be_failure
   end
 
@@ -42,7 +43,7 @@ describe Newpoc::Actions::Users::Index do
     end
 
     it 'has the correct number of entities' do
-      expect(payload).to have(users.count).items
+      expect(payload.count).to eq users.count
     end
 
     it 'has the same entities in the same order as those added' do
