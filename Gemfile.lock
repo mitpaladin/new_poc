@@ -71,6 +71,11 @@ GIT
       slim (~> 3.0)
 
 PATH
+  remote: lib/newpoc-action-session-destroy
+  specs:
+    newpoc-action-session-destroy (0.0.1)
+
+PATH
   remote: lib/newpoc-action-user-index
   specs:
     newpoc-action-user-index (0.0.1)
@@ -534,6 +539,7 @@ DEPENDENCIES
   meta_request
   metric_fu-Saikuro
   naught!
+  newpoc-action-session-destroy!
   newpoc-action-user-index!
   newpoc-entity-post!
   newpoc-entity-user!
