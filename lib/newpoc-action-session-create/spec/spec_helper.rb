@@ -7,4 +7,9 @@ end
 
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
+require 'fancy-open-struct'
+
+require 'awesome_print'
+require 'pry'
+
 require 'newpoc/action/session/create'

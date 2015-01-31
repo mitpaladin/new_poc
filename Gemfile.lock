@@ -74,6 +74,8 @@ PATH
   remote: lib/newpoc-action-session-create
   specs:
     newpoc-action-session-create (0.0.1)
+      activesupport (~> 4.0)
+      wisper (~> 1.6)
 
 PATH
   remote: lib/newpoc-action-session-destroy

@@ -1,7 +1,7 @@
 
+require 'newpoc/action/session/create'
 require 'newpoc/action/session/destroy'
 
-require 'create_session'
 require 'new_session'
 
 # SessionsController: actions related to Sessions (logging in and out)
@@ -13,7 +13,8 @@ class SessionsController < ApplicationController
   end
 
   def create
-    Actions::CreateSession.new(params[:name], params[:password])
+    action_params = [params[:name], params[:password], UserRepository.new]
+    Newpoc::Action::Session::Create.new(*action_params)
       .subscribe(self, prefix: :on_create)
       .execute
   end
