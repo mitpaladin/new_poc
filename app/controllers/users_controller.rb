@@ -1,7 +1,8 @@
 
+require 'newpoc/action/user/index'
+
 require 'create_user'
 require 'edit_user'
-require 'index_users'
 require 'new_user'
 require 'show_user'
 require 'update_user'
@@ -13,7 +14,8 @@ class UsersController < ApplicationController
   include Internals
 
   def index
-    Actions::IndexUsers.new.subscribe(self, prefix: :on_index).execute
+    action = Newpoc::Action::User::Index.new(UserRepository.new)
+    action.subscribe(self, prefix: :on_index).execute
   end
 
   def new

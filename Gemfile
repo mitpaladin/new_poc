@@ -5,10 +5,13 @@ ruby '2.1.5'
 source 'https://rubygems.org'
 source 'https://rails-assets.org'
 
+gem 'newpoc-action-user-index', path: 'lib/newpoc-action-user-index'
 gem 'newpoc-entity-post', path: 'lib/newpoc-entity-post'
 gem 'newpoc-entity-user', path: 'lib/newpoc-entity-user'
 gem 'newpoc-repository-base', path: 'lib/newpoc-repository-base'
 gem 'newpoc-services-markdown_html_converter', path: 'lib/newpoc-services-markdown_html_converter'
+
+gem 'wisper_subscription', '>= 0.2.0'
 
 gem 'active_attr'
 gem 'bcrypt-ruby'

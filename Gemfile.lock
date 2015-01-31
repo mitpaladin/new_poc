@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/DatabaseCleaner/database_cleaner.git
-  revision: 5b15b4cd90d969b4da9bb0f1ef4010bddffc5cc6
+  revision: bef9fe27e7fdf470b737c4f9140c7f029f81b607
   specs:
     database_cleaner (1.4.0)
 
@@ -69,6 +69,12 @@ GIT
       activesupport (>= 3.1, < 5.0)
       railties (>= 3.1, < 5.0)
       slim (~> 3.0)
+
+PATH
+  remote: lib/newpoc-action-user-index
+  specs:
+    newpoc-action-user-index (0.0.1)
+      wisper (~> 1.6)
 
 PATH
   remote: lib/newpoc-entity-post
@@ -163,7 +169,7 @@ GEM
     astrolabe (1.3.0)
       parser (>= 2.2.0.pre.3, < 3.0)
     awesome_print (1.6.1)
-    bcrypt (3.1.9)
+    bcrypt (3.1.10)
     bcrypt-ruby (3.1.5)
       bcrypt (>= 3.1.3)
     binding_of_caller (0.7.2)
@@ -183,7 +189,7 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
-    capybara-webkit (1.4.0)
+    capybara-webkit (1.4.1)
       capybara (>= 2.3.0, < 2.5.0)
       json
     charlock_holmes (0.7.3)
@@ -196,7 +202,7 @@ GEM
     coffee-script (2.3.0)
       coffee-script-source
       execjs
-    coffee-script-source (1.8.0)
+    coffee-script-source (1.9.0)
     colored (1.2)
     columnize (0.9.0)
     concord (0.1.5)
@@ -237,7 +243,7 @@ GEM
     globalid (0.3.0)
       activesupport (>= 4.1.0)
     hike (1.2.3)
-    hirb (0.7.2)
+    hirb (0.7.3)
     html-pipeline (1.11.0)
       activesupport (>= 2)
       nokogiri (~> 1.4)
@@ -279,7 +285,7 @@ GEM
     minitest (5.5.1)
     multi_json (1.10.1)
     netrc (0.10.2)
-    nokogiri (1.6.5)
+    nokogiri (1.6.6.2)
       mini_portile (~> 0.6.0)
     nokogumbo (1.2.0)
       nokogiri
@@ -316,9 +322,9 @@ GEM
     pry-theme (1.1.3)
       coderay (~> 1.1)
       json (~> 1.8)
-    pygments.rb (0.6.0)
+    pygments.rb (0.6.2)
       posix-spawn (~> 0.3.6)
-      yajl-ruby (~> 1.1.0)
+      yajl-ruby (~> 1.2.0)
     quiet_assets (1.1.0)
       railties (>= 3.1, < 5.0)
     rack (1.6.0)
@@ -454,7 +460,7 @@ GEM
       multi_json (~> 1.0)
       rack (~> 1.0)
       tilt (~> 1.1, != 1.3.0)
-    sprockets-rails (2.2.3)
+    sprockets-rails (2.2.4)
       actionpack (>= 3.0)
       activesupport (>= 3.0)
       sprockets (>= 2.8, < 4.0)
@@ -494,9 +500,10 @@ GEM
       railties (~> 4.0)
       sprockets-rails (>= 2.0, < 4.0)
     wisper (1.6.0)
+    wisper_subscription (0.2.0)
     xpath (2.0.0)
       nokogiri (~> 1.3)
-    yajl-ruby (1.1.0)
+    yajl-ruby (1.2.1)
     yard (0.8.7.6)
 
 PLATFORMS
@@ -527,6 +534,7 @@ DEPENDENCIES
   meta_request
   metric_fu-Saikuro
   naught!
+  newpoc-action-user-index!
   newpoc-entity-post!
   newpoc-entity-user!
   newpoc-repository-base!
@@ -569,4 +577,5 @@ DEPENDENCIES
   validates_email_format_of
   web-console
   wisper
+  wisper_subscription (>= 0.2.0)
   yajl-ruby
