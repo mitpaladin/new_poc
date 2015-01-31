@@ -71,6 +71,12 @@ GIT
       slim (~> 3.0)
 
 PATH
+  remote: lib/newpoc-action-user-index
+  specs:
+    newpoc-action-user-index (0.0.1)
+      wisper (~> 1.6)
+
+PATH
   remote: lib/newpoc-entity-post
   specs:
     newpoc-entity-post (0.0.4)
@@ -528,6 +534,7 @@ DEPENDENCIES
   meta_request
   metric_fu-Saikuro
   naught!
+  newpoc-action-user-index!
   newpoc-entity-post!
   newpoc-entity-user!
   newpoc-repository-base!

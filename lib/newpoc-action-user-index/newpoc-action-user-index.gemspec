@@ -19,6 +19,8 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency 'wisper', '~> 1.6'
+
+  spec.add_development_dependency 'wisper_subscription'
   spec.add_development_dependency "bundler", "~> 1.7"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec"
@@ -27,4 +29,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'awesome_print'
   spec.add_development_dependency 'pry-byebug'
   spec.add_development_dependency 'pry-doc'
+  spec.add_development_dependency 'fancy-open-struct'
 end
