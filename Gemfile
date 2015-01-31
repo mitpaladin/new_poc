@@ -5,6 +5,7 @@ ruby '2.1.5'
 source 'https://rubygems.org'
 source 'https://rails-assets.org'
 
+gem 'newpoc-action-session-create', path: 'lib/newpoc-action-session-create'
 gem 'newpoc-action-session-destroy', path: 'lib/newpoc-action-session-destroy'
 gem 'newpoc-action-user-index', path: 'lib/newpoc-action-user-index'
 gem 'newpoc-entity-post', path: 'lib/newpoc-entity-post'
