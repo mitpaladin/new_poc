@@ -5,6 +5,7 @@ ruby '2.1.5'
 source 'https://rubygems.org'
 source 'https://rails-assets.org'
 
+gem 'newpoc-action-user-index', path: 'lib/newpoc-action-user-index'
 gem 'newpoc-entity-post', path: 'lib/newpoc-entity-post'
 gem 'newpoc-entity-user', path: 'lib/newpoc-entity-user'
 gem 'newpoc-repository-base', path: 'lib/newpoc-repository-base'
