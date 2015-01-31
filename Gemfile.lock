@@ -74,6 +74,7 @@ PATH
   remote: lib/newpoc-action-session-destroy
   specs:
     newpoc-action-session-destroy (0.0.1)
+      wisper (~> 1.6)
 
 PATH
   remote: lib/newpoc-action-user-index
