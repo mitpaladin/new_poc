@@ -1,7 +1,8 @@
 
+require 'newpoc/action/post/index'
+
 require 'create_post'
 require 'edit_post'
-require 'index_posts'
 require 'new_post'
 require 'show_post'
 require 'update_post'
@@ -9,8 +10,8 @@ require 'update_post'
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
   def index
-    Actions::IndexPosts.new(current_user)
-      .subscribe(self, prefix: :on_index).execute
+    action = Newpoc::Action::Post::Index.new current_user, PostRepository.new
+    action.subscribe(self, prefix: :on_index).execute
   end
 
   def new
