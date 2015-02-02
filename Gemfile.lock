@@ -74,6 +74,7 @@ PATH
   remote: lib/newpoc-action-post-index
   specs:
     newpoc-action-post-index (0.0.1)
+      wisper (~> 1.6)
 
 PATH
   remote: lib/newpoc-action-session-create
