@@ -1,9 +1,9 @@
 
 require 'newpoc/action/user/index'
+require 'newpoc/action/user/new'
 
 require 'create_user'
 require 'edit_user'
-require 'new_user'
 require 'show_user'
 require 'update_user'
 
@@ -19,7 +19,9 @@ class UsersController < ApplicationController
   end
 
   def new
-    Actions::NewUser.new(current_user).subscribe(self, prefix: :on_new).execute
+    action = Newpoc::Action::User::New.new current_user, UserRepository.new,
+                                           Newpoc::Entity::User
+    action.subscribe(self, prefix: :on_new).execute
   end
 
   def create
@@ -74,7 +76,8 @@ class UsersController < ApplicationController
   end
 
   def on_new_failure(payload)
-    redirect_to root_path, flash: { alert: payload }
+    alert = "Already logged in as #{payload.name}!"
+    redirect_to root_path, flash: { alert: alert }
   end
 
   def on_show_success(payload) # rubocop:disable Style/TrivialAccessors
