@@ -1,15 +1,13 @@
 
 require 'newpoc/action/session/create'
 require 'newpoc/action/session/destroy'
-
-require 'new_session'
+require 'newpoc/action/session/new'
 
 # SessionsController: actions related to Sessions (logging in and out)
 class SessionsController < ApplicationController
   def new
-    Actions::NewSession.new(current_user)
-      .subscribe(self, prefix: :on_new)
-      .execute
+    action = Newpoc::Action::Session::New.new current_user, UserRepository.new
+    action.subscribe(self, prefix: :on_new).execute
   end
 
   def create
@@ -51,6 +49,7 @@ class SessionsController < ApplicationController
   end
 
   def on_new_failure(payload)
-    redirect_to root_path, flash: { alert: payload }
+    alert = "Already logged in as #{payload.name}!"
+    redirect_to root_path, flash: { alert: alert }
   end
 end
