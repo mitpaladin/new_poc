@@ -117,6 +117,12 @@ PATH
       yajl-ruby (>= 1.2.1)
 
 PATH
+  remote: lib/newpoc-action-user-show
+  specs:
+    newpoc-action-user-show (0.0.1)
+      wisper (~> 1.6)
+
+PATH
   remote: lib/newpoc-entity-post
   specs:
     newpoc-entity-post (0.0.4)
@@ -581,6 +587,7 @@ DEPENDENCIES
   newpoc-action-session-new!
   newpoc-action-user-index!
   newpoc-action-user-new!
+  newpoc-action-user-show!
   newpoc-entity-post!
   newpoc-entity-user!
   newpoc-repository-base!
