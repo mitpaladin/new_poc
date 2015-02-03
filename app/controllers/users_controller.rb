@@ -1,10 +1,10 @@
 
 require 'newpoc/action/user/index'
 require 'newpoc/action/user/new'
+require 'newpoc/action/user/show'
 
 require 'create_user'
 require 'edit_user'
-require 'show_user'
 require 'update_user'
 
 require_relative 'users_controller/create_failure'
@@ -35,7 +35,8 @@ class UsersController < ApplicationController
   end
 
   def show
-    Actions::ShowUser.new(params[:id]).subscribe(self, prefix: :on_show).execute
+    action = Newpoc::Action::User::Show.new params[:id], UserRepository.new
+    action.subscribe(self, prefix: :on_show).execute
   end
 
   def update
@@ -85,7 +86,8 @@ class UsersController < ApplicationController
   end
 
   def on_show_failure(payload)
-    redirect_to users_path, flash: { alert: payload }
+    alert = "Cannot find user identified by slug #{payload}!"
+    redirect_to users_path, flash: { alert: alert }
   end
 
   def on_update_success(payload)
