@@ -1,9 +1,9 @@
 
 require 'newpoc/action/post/index'
+require 'newpoc/action/post/new'
 
 require 'create_post'
 require 'edit_post'
-require 'new_post'
 require 'show_post'
 require 'update_post'
 
@@ -15,8 +15,9 @@ class PostsController < ApplicationController
   end
 
   def new
-    Actions::NewPost.new(current_user)
-      .subscribe(self, prefix: :on_new).execute
+    action = Newpoc::Action::Post::New.new current_user, UserRepository.new,
+                                           Newpoc::Entity::Post
+    action.subscribe(self, prefix: :on_new).execute
   end
 
   def create

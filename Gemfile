@@ -6,6 +6,7 @@ source 'https://rubygems.org'
 source 'https://rails-assets.org'
 
 gem 'newpoc-action-post-index', path: 'lib/newpoc-action-post-index'
+gem 'newpoc-action-post-new', path: 'lib/newpoc-action-post-new'
 gem 'newpoc-action-session-create', path: 'lib/newpoc-action-session-create'
 gem 'newpoc-action-session-destroy', path: 'lib/newpoc-action-session-destroy'
 gem 'newpoc-action-session-new', path: 'lib/newpoc-action-session-new'
