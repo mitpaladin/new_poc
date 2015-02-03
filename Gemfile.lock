@@ -77,6 +77,13 @@ PATH
       wisper (~> 1.6)
 
 PATH
+  remote: lib/newpoc-action-post-new
+  specs:
+    newpoc-action-post-new (0.0.1)
+      wisper (~> 1.6)
+      yajl-ruby (>= 1.2.1)
+
+PATH
   remote: lib/newpoc-action-session-create
   specs:
     newpoc-action-session-create (0.0.1)
@@ -568,6 +575,7 @@ DEPENDENCIES
   metric_fu-Saikuro
   naught!
   newpoc-action-post-index!
+  newpoc-action-post-new!
   newpoc-action-session-create!
   newpoc-action-session-destroy!
   newpoc-action-session-new!
