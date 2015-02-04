@@ -5,7 +5,21 @@ require 'fancy-open-struct'
 require 'wisper_subscription'
 
 describe Newpoc::Action::User::Edit do
-  let(:user_repo) do
+  let(:current_user) do
+    FancyOpenStruct.new name: current_user_name, slug: current_user_slug
+  end
+  let(:current_user_name) { user_name }
+  let(:current_user_slug) { target_slug }
+  let(:result) do
+    FancyOpenStruct.new entity: the_entity, :success? => result_success
+  end
+  let(:subscriber) { WisperSubscription.new }
+  let(:success_entity) do
+    FancyOpenStruct.new name: user_name, slug: target_slug
+  end
+  let(:target_slug) { 'just-anybody' }
+  let(:user_name) { 'Just Anybody' }
+  let(:user_repository) do
     Class.new do
       def initialize(returned_result)
         @returned_result = returned_result
@@ -16,13 +30,6 @@ describe Newpoc::Action::User::Edit do
       end
     end.new(result)
   end
-  let(:current_user) { FancyOpenStruct.new slug: target_slug }
-  let(:result) do
-    FancyOpenStruct.new entity: the_entity, :success? => result_success
-  end
-  let(:subscriber) { WisperSubscription.new }
-  let(:success_entity) { FancyOpenStruct.new slug: target_slug }
-  let(:target_slug) { 'target_slug' }
 
   it 'has a version number' do
     expect(Newpoc::Action::User::Edit::VERSION).not_to be nil
@@ -30,7 +37,7 @@ describe Newpoc::Action::User::Edit do
 
   context 'with default option settings' do
     let(:command) do
-      described_class.new current_user, user_repo
+      described_class.new target_slug, current_user, user_repository
     end
 
     before :each do
@@ -58,34 +65,60 @@ describe Newpoc::Action::User::Edit do
     end # context 'when the repository query is successful'
 
     context 'when the repository query is unsuccessful' do
-      let(:result_success) { false }
-      let(:the_entity) { nil }
+      context 'because the user is not found' do
+        let(:result_success) { false }
+        let(:the_entity) { nil }
 
-      it 'broadcasts :failure' do
-        expect(subscriber).to be_failure
-      end
-
-      describe 'broadcasts :failure with a payload which' do
-        let(:payload) { subscriber.payload_for(:failure).first }
-
-        it 'is the original target slug' do
-          expect(payload).to eq target_slug
+        it 'broadcasts :failure' do
+          expect(subscriber).to be_failure
         end
-      end # describe 'broadcasts :success with a payload which'
+
+        describe 'broadcasts :failure with a payload which' do
+          let(:payload) { subscriber.payload_for(:failure).first }
+
+          it 'is a hash containing the original target slug' do
+            expect(payload).to respond_to :to_hash
+            expect(payload.keys.count).to eq 1
+            expect(payload[:slug]).to eq target_slug
+          end
+        end # describe 'broadcasts :success with a payload which'
+      end # context 'because the user is not found'
+
+      context 'because the current user does not match the requested user' do
+        let(:result_success) { true }
+        let(:the_entity) { success_entity }
+        let(:current_user_name) { 'Jim Bogus' }
+        let(:current_user_slug) { 'jim-bogus' }
+
+        it 'broadcasts :failure' do
+          expect(subscriber).to be_failure
+        end
+
+        describe 'broadcasts :failure with a payload which' do
+          let(:payload) { subscriber.payload_for(:failure).first }
+
+          it 'is a Hash containing the current and target user names' do
+            expect(payload).to respond_to :to_hash
+            expect(payload.keys.count).to eq 2
+            expect(payload[:current]).to eq current_user_name
+            expect(payload[:not_user]).to eq success_entity.name
+          end
+        end # describe 'broadcasts :success with a payload which'
+      end # context 'because the current user does not match the requested user'
     end # context 'when the repository query is unsuccessful'
   end # context 'with default option settings'
 
   context 'with non-default option settings' do
     let(:command) do
-      described_class.new current_user, user_repo, options
+      described_class.new target_slug, current_user, user_repository, options
     end
     let(:options) { { success: :message_one, failure: :message_two } }
 
     before :each do
-      subscriber.define_message :message_one
-      subscriber.define_message :message_two
       subscriber.define_message :success
       subscriber.define_message :failure
+      subscriber.define_message :message_one
+      subscriber.define_message :message_two
       command.subscribe subscriber
       command.execute
     end
@@ -95,10 +128,10 @@ describe Newpoc::Action::User::Edit do
       let(:the_entity) { success_entity }
 
       it 'broadcasts the specified event for success' do
-        expect(subscriber).to be_message_one
+        expect(subscriber.message_one?).to be true
       end
 
-      it 'does not broadcast the default :success event' do
+      it 'does not broadcast the defcault :success event' do
         expect(subscriber).not_to be_success
       end
     end # context 'when the repository query is successful'
@@ -108,10 +141,10 @@ describe Newpoc::Action::User::Edit do
       let(:the_entity) { nil }
 
       it 'broadcasts the specified event for failure' do
-        expect(subscriber).to be_message_two
+        expect(subscriber.message_two?).to be true
       end
 
-      it 'does not broadcast the default :failure event' do
+      it 'does not broadcast the defcault :failure event' do
         expect(subscriber).not_to be_failure
       end
     end # context 'when the repository query is unsuccessful'
