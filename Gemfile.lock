@@ -84,6 +84,12 @@ PATH
       yajl-ruby (>= 1.2.1)
 
 PATH
+  remote: lib/newpoc-action-post-show
+  specs:
+    newpoc-action-post-show (0.0.1)
+      wisper (~> 1.6)
+
+PATH
   remote: lib/newpoc-action-session-create
   specs:
     newpoc-action-session-create (0.0.1)
@@ -582,6 +588,7 @@ DEPENDENCIES
   naught!
   newpoc-action-post-index!
   newpoc-action-post-new!
+  newpoc-action-post-show!
   newpoc-action-session-create!
   newpoc-action-session-destroy!
   newpoc-action-session-new!
