@@ -1,10 +1,10 @@
 
 require 'newpoc/action/post/index'
 require 'newpoc/action/post/new'
+require 'newpoc/action/post/show'
 
 require 'create_post'
 require 'edit_post'
-require 'show_post'
 require 'update_post'
 
 # PostsController: actions related to Posts within our "fancy" blog.
@@ -31,8 +31,9 @@ class PostsController < ApplicationController
   end
 
   def show
-    Actions::ShowPost.new(params[:id], current_user)
-      .subscribe(self, prefix: :on_show).execute
+    action = Newpoc::Action::Post::Show.new params[:id], current_user,
+                                            PostRepository.new
+    action.subscribe(self, prefix: :on_show).execute
   end
 
   def update
@@ -87,7 +88,8 @@ class PostsController < ApplicationController
   end
 
   def on_show_failure(payload)
-    redirect_to root_path, flash: { alert: payload }
+    alert = "Cannot find post identified by slug: '#{payload}'!"
+    redirect_to root_path, flash: { alert: alert }
   end
 
   def on_update_success(payload)
