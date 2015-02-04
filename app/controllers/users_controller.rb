@@ -1,10 +1,10 @@
 
+require 'newpoc/action/user/edit'
 require 'newpoc/action/user/index'
 require 'newpoc/action/user/new'
 require 'newpoc/action/user/show'
 
 require 'create_user'
-require 'edit_user'
 require 'update_user'
 
 require_relative 'users_controller/create_failure'
@@ -30,8 +30,9 @@ class UsersController < ApplicationController
   end
 
   def edit
-    Actions::EditUser.new(params[:id], current_user)
-      .subscribe(self, prefix: :on_edit).execute
+    action = Newpoc::Action::User::Edit.new params[:id], current_user,
+                                            UserRepository.new
+    action.subscribe(self, prefix: :on_edit).execute
   end
 
   def show
@@ -64,8 +65,11 @@ class UsersController < ApplicationController
     @user = payload
   end
 
+  # FIXME: Hackity hackity hack hack hack!
   def on_edit_failure(payload)
-    redirect_to root_url, flash: { alert: payload }
+    alert = payload
+    alert = "Not logged in as #{payload[:not_user]}!" if payload.key? :not_user
+    redirect_to root_url, flash: { alert: alert }
   end
 
   def on_index_success(payload) # rubocop:disable Style/TrivialAccessors
