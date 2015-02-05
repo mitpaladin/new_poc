@@ -10,20 +10,23 @@ source 'https://rails-assets.org'
 # Gemfile even though the main app only uses them in conjunction with (Gemified)
 # actions. Hence also massive duplication of simple code *in* action "Gems".
 # Why is this? Inter-Gem dependency management is *fxxxing primitive!*
-gem 'newpoc-action-post-index', path: 'lib/newpoc-action-post-index'
-gem 'newpoc-action-post-new', path: 'lib/newpoc-action-post-new'
-gem 'newpoc-action-post-show', path: 'lib/newpoc-action-post-show'
-gem 'newpoc-action-session-create', path: 'lib/newpoc-action-session-create'
-gem 'newpoc-action-session-destroy', path: 'lib/newpoc-action-session-destroy'
-gem 'newpoc-action-session-new', path: 'lib/newpoc-action-session-new'
-gem 'newpoc-action-user-index', path: 'lib/newpoc-action-user-index'
-gem 'newpoc-action-user-edit', path: 'lib/newpoc-action-user-edit'
-gem 'newpoc-action-user-new', path: 'lib/newpoc-action-user-new'
-gem 'newpoc-action-user-show', path: 'lib/newpoc-action-user-show'
-gem 'newpoc-entity-post', path: 'lib/newpoc-entity-post'
-gem 'newpoc-entity-user', path: 'lib/newpoc-entity-user'
-gem 'newpoc-repository-base', path: 'lib/newpoc-repository-base'
-gem 'newpoc-services-markdown_html_converter', path: 'lib/newpoc-services-markdown_html_converter'
+[
+  'action-post-edit',
+  'action-post-index',
+  'action-post-new',
+  'action-post-show',
+  'action-session-create',
+  'action-session-destroy',
+  'action-session-new',
+  'action-user-edit',
+  'action-user-index',
+  'action-user-new',
+  'action-user-show',
+  'entity-post',
+  'entity-user',
+  'repository-base',
+  'services-markdown_html_converter'
+].each { |gem_name| gem "newpoc-#{gem_name}", path: "lib/newpoc-#{gem_name}" }
 
 gem 'wisper_subscription', '>= 0.2.0'
 
