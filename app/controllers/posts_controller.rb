@@ -4,11 +4,30 @@ require 'newpoc/action/post/new'
 require 'newpoc/action/post/show'
 
 require 'create_post'
-require 'edit_post'
 require 'update_post'
 
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
+  module Internals
+    # Build alert message for failed 'edit' action.
+    class ErrorMessageForEdit
+      def initialize(payload)
+        @error_data = Yajl.load payload, symbolize_keys: true
+      end
+
+      def to_s
+        if @error_data.key? :guest_access_prohibited
+          'Not logged in as a registered user!'
+        else
+          bad_author = @error_data[:current_user_name]
+          "User #{bad_author} is not the author of this post!"
+        end
+      end
+    end # class PostsController::Internals::ErrorMessageForEdit
+  end # module PostsController::Internals
+  private_constant :Internals
+  include Internals
+
   def index
     action = Newpoc::Action::Post::Index.new current_user, PostRepository.new
     action.subscribe(self, prefix: :on_index).execute
@@ -26,8 +45,10 @@ class PostsController < ApplicationController
   end
 
   def edit
-    Actions::EditPost.new(params['id'], current_user)
-      .subscribe(self, prefix: :on_edit).execute
+    action = Newpoc::Action::Post::Edit.new params[:id], current_user,
+                                            PostRepository.new,
+                                            UserRepository.new.guest_user.entity
+    action.subscribe(self, prefix: :on_edit).execute
   end
 
   def show
@@ -51,6 +72,7 @@ class PostsController < ApplicationController
     redirect_to root_path, flash: { success: 'Post added!' }
   end
 
+  # FIXME: Internals class to encapsulate logic?
   def on_create_failure(payload)
     message_or_entity = JSON.load payload.message
     fail message_or_entity if message_or_entity.is_a? String
@@ -67,7 +89,8 @@ class PostsController < ApplicationController
   end
 
   def on_edit_failure(payload)
-    redirect_to root_path, flash: { alert: payload }
+    alert = ErrorMessageForEdit.new(payload).to_s
+    redirect_to root_path, flash: { alert: alert }
   end
 
   def on_index_success(payload) # rubocop:disable Style/TrivialAccessors
