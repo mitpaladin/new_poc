@@ -15,6 +15,7 @@ source 'https://rails-assets.org'
   'action-post-index',
   'action-post-new',
   'action-post-show',
+  'action-post-update',
   'action-session-create',
   'action-session-destroy',
   'action-session-new',
