@@ -66,86 +66,118 @@ describe Newpoc::Action::Post::Update do
 
     context 'with a valid post slug as a search key, and' do
       let(:target_slug) { post_slug }
-      let(:post_data) { valid_post_data }
       let(:repo_success_entity) do
         FancyOpenStruct.new author_name: author.name, :valid? => true
       end
 
-      context 'with the post author logged in, it' do
-        let(:current_user) { author }
-        let(:repo_find_result) { repo_success_result }
-        let(:repo_update_result) { repo_success_result }
+      context 'with valid post data, and' do
+        let(:post_data) { valid_post_data }
 
-        it 'broadcasts :success' do
-          expect(subscriber).to be_success
-        end
+        context 'with the post author logged in, it' do
+          let(:current_user) { author }
+          let(:repo_find_result) { repo_success_result }
+          let(:repo_update_result) { repo_success_result }
 
-        describe 'broadcasts :success with a payload which' do
-          let(:payload) { subscriber.payload_for(:success).first }
-
-          it 'is the requested (post) entity' do
-            expect(payload).to eq repo_success_entity
-          end
-        end # describe 'broadcasts :success with a payload which'
-      end # context 'with the post author logged in, it'
-
-      context 'with a different registered user logged in, it' do
-        let(:current_user) { other_user }
-        let(:repo_find_result) { repo_success_result }
-        let(:repo_update_result) { repo_failure_result }
-
-        it 'broadcasts :failure' do
-          expect(subscriber).to be_failure
-        end
-
-        describe 'broadcasts :failure, with a JSON payload which contains' do
-          let(:payload) do
-            input = subscriber.payload_for(:failure).first
-            Yajl.load input, symbolize_keys: true
+          it 'broadcasts :success' do
+            expect(subscriber).to be_success
           end
 
-          it 'two key/value pairs' do
-            expect(payload.size).to eq 2
+          describe 'broadcasts :success with a payload which' do
+            let(:payload) { subscriber.payload_for(:success).first }
+
+            it 'is the requested (post) entity' do
+              expect(payload).to eq repo_success_entity
+            end
+          end # describe 'broadcasts :success with a payload which'
+        end # context 'with the post author logged in, it'
+
+        context 'with a different registered user logged in, it' do
+          let(:current_user) { other_user }
+          let(:repo_find_result) { repo_success_result }
+          let(:repo_update_result) { repo_failure_result }
+
+          it 'broadcasts :failure' do
+            expect(subscriber).to be_failure
           end
 
-          it 'the post author name, using the :author_name key' do
-            expect(payload[:author_name]).to eq author.name
+          describe 'broadcasts :failure, with a JSON payload which contains' do
+            let(:payload) do
+              input = subscriber.payload_for(:failure).first
+              Yajl.load input, symbolize_keys: true
+            end
+
+            it 'two key/value pairs' do
+              expect(payload.size).to eq 2
+            end
+
+            it 'the post author name, using the :author_name key' do
+              expect(payload[:author_name]).to eq author.name
+            end
+
+            it 'the current user name, using the :current_user_name key' do
+              expect(payload[:current_user_name]).to eq current_user.name
+            end
+          end # describe 'broadcasts :failure, with a JSON payload which...'
+        end # context 'with a different registered user logged in, it'
+
+        context 'with no registered user logged in, it' do
+          let(:current_user) { guest_user }
+          let(:repo_find_result) { repo_success_result }
+          let(:repo_update_result) { repo_failure_result }
+
+          it 'broadcasts :failure' do
+            expect(subscriber).to be_failure
           end
 
-          it 'the current user name, using the :current_user_name key' do
-            expect(payload[:current_user_name]).to eq current_user.name
+          describe 'broadcasts :failure, with a JSON payload which contains' do
+            let(:payload) do
+              input = subscriber.payload_for(:failure).first
+              Yajl.load input, symbolize_keys: true
+            end
+
+            it 'one key/value pair' do
+              expect(payload.size).to eq 1
+            end
+
+            it 'the key :guest_access_prohibited' do
+              expect(payload).to have_key :guest_access_prohibited
+            end
+
+            it 'a value of the requested article slug' do
+              expect(payload[:guest_access_prohibited]).to eq target_slug
+            end
+          end # describe 'broadcasts :failure, with a JSON payload which...'
+        end # context 'with no registered user logged in, it'
+      end # context 'with valid post data, and'
+
+      context 'with invalid post data, and' do
+        let(:post_data) { FancyOpenStruct.new body: '', image_url: '' }
+
+        context 'with the post author logged in, it' do
+          let(:current_user) { author }
+          let(:repo_find_result) { repo_success_result }
+          let(:repo_update_result) { repo_failure_result }
+
+          it 'broadcasts :failure' do
+            expect(subscriber).to be_failure
           end
-        end # describe 'broadcasts :failure, with a JSON payload which contains'
-      end # context 'with a different registered user logged in, it'
 
-      context 'with no registered user logged in, it' do
-        let(:current_user) { guest_user }
-        let(:repo_find_result) { repo_success_result }
-        let(:repo_update_result) { repo_failure_result }
+          describe 'broadcasts :failure, with a JSON payload which contains' do
+            let(:payload) do
+              input = subscriber.payload_for(:failure).first
+              Yajl.load input, symbolize_keys: true
+            end
 
-        it 'broadcasts :failure' do
-          expect(subscriber).to be_failure
-        end
+            it 'the specified slug' do
+              expect(payload[:slug]).to eq target_slug
+            end
 
-        describe 'broadcasts :failure, with a JSON payload which contains' do
-          let(:payload) do
-            input = subscriber.payload_for(:failure).first
-            Yajl.load input, symbolize_keys: true
-          end
-
-          it 'one key/value pair' do
-            expect(payload.size).to eq 1
-          end
-
-          it 'the key :guest_access_prohibited' do
-            expect(payload).to have_key :guest_access_prohibited
-          end
-
-          it 'a value of the requested article slug' do
-            expect(payload[:guest_access_prohibited]).to eq target_slug
-          end
-        end # describe 'broadcasts :failure, with a JSON payload which contains'
-      end # context 'with no registered user logged in, it'
+            it 'the invalid input values rejected by the update attempt' do
+              expect(payload[:inputs]).to eq post_data.to_h
+            end
+          end # describe 'broadcasts :failure, with a JSON payload which...'
+        end # context 'with the post author logged in, it'
+      end # context 'with invalid post data, and'
     end # context 'with a valid post slug as a search key, and'
 
     context 'with an invalid post slug as a search key, it' do

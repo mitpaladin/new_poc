@@ -1,12 +1,14 @@
 
 require 'wisper'
 require 'yajl/json_gem'
+# require 'cabin'
 
 require 'newpoc/action/post/update/version'
 require 'newpoc/action/post/update/guest_access_failure'
 require 'newpoc/action/post/update/not_author_failure'
 require 'newpoc/action/post/update/slug_not_found_failure'
 require 'newpoc/action/post/update/post_data_filter'
+require 'newpoc/action/post/update/update_failure'
 
 module Newpoc
   module Action
@@ -30,6 +32,9 @@ module Newpoc
           @guest_user = guest_user
           @success_event = options.fetch :success, :success
           @failure_event = options.fetch :failure, :failure
+          # @logger = Cabin::Channel.new
+          # @logger.level = :debug
+          # @logger.subscribe Logger.new(STDOUT)
         end
         # rubocop:enable Metrics/ParameterLists
 
@@ -62,17 +67,12 @@ module Newpoc
           fail GuestAccessFailure.new(self).to_json
         end
 
-        # NOTE: Assumption in effect: if we can *find* the post, we can *update*
-        #       the post. Rationale: users other than the post author have been
-        #       filtered out by the time this is called. Ergo, no cheecking
-        #       result for call to `post_repository.update`, and no checking for
-        #       validity of the retrieved post. If we get it from the repo and
-        #       it's *not* valid, we've got Big Problems beyond this scope.
         def update_entity
           inputs = post_data
           inputs.delete :post_status
-          post_repository.update slug, inputs
-          post_repository.find_by_slug(slug).entity
+          result = post_repository.update slug, inputs
+          return post_repository.find_by_slug(slug).entity if result.success?
+          fail UpdateFailure.new(slug, inputs).to_json
         end
 
         def validate_slug

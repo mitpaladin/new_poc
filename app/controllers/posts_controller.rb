@@ -2,15 +2,15 @@
 require 'newpoc/action/post/index'
 require 'newpoc/action/post/new'
 require 'newpoc/action/post/show'
+require 'newpoc/action/post/update'
 
 require 'create_post'
-require 'update_post'
 
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
   module Internals
-    # Build alert message for failed 'edit' action.
-    class ErrorMessageForEdit
+    # Build alert message for failed 'edit' or 'update' action.
+    class ErrorMessageBuilder
       def initialize(payload)
         @error_data = Yajl.load payload, symbolize_keys: true
       end
@@ -23,7 +23,7 @@ class PostsController < ApplicationController
           "User #{bad_author} is not the author of this post!"
         end
       end
-    end # class PostsController::Internals::ErrorMessageForEdit
+    end # class PostsController::Internals::ErrorMessageBuilder
   end # module PostsController::Internals
   private_constant :Internals
   include Internals
@@ -58,8 +58,11 @@ class PostsController < ApplicationController
   end
 
   def update
-    Actions::UpdatePost.new(params[:id], params[:post_data], current_user)
-      .subscribe(self, prefix: :on_update).execute
+    guest_user = UserRepository.new.guest_user.entity
+    action = Newpoc::Action::Post::Update.new params[:id], params[:post_data],
+                                              current_user, PostRepository.new,
+                                              guest_user
+    action.subscribe(self, prefix: :on_update).execute
   end
 
   # Action responders must be public to receive Wisper notifications; see
@@ -89,7 +92,7 @@ class PostsController < ApplicationController
   end
 
   def on_edit_failure(payload)
-    alert = ErrorMessageForEdit.new(payload).to_s
+    alert = ErrorMessageBuilder.new(payload).to_s
     redirect_to root_path, flash: { alert: alert }
   end
 
@@ -122,7 +125,7 @@ class PostsController < ApplicationController
   end
 
   def on_update_failure(payload)
-    data = JSON.parse payload
-    redirect_to root_path, flash: { alert: data.join('<br/>') }
+    alert = ErrorMessageBuilder.new(payload).to_s
+    redirect_to root_path, flash: { alert: alert }
   end
 end # class PostsController
