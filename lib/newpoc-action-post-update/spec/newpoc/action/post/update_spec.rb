@@ -42,7 +42,11 @@ describe Newpoc::Action::Post::Update do
   end
   let(:subscriber) { WisperSubscription.new }
   let(:valid_post_data) do
-    FancyOpenStruct.new image_url: image_url, body: post_body
+    ret = FancyOpenStruct.new image_url: image_url, body: post_body
+    ret.class.send(:define_method, :valid?) do
+      true
+    end
+    ret
   end
   let(:post_body) { 'This is the post body after updating.' }
   let(:image_url) { 'http://www.example.com/image794.png' }
@@ -67,7 +71,9 @@ describe Newpoc::Action::Post::Update do
     context 'with a valid post slug as a search key, and' do
       let(:target_slug) { post_slug }
       let(:repo_success_entity) do
-        FancyOpenStruct.new author_name: author.name, :valid? => true
+        FancyOpenStruct.new author_name: author.name,
+                            :valid? => true,
+                            attributes: { author_name: author.name }
       end
 
       context 'with valid post data, and' do

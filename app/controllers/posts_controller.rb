@@ -18,6 +18,10 @@ class PostsController < ApplicationController
       def to_s
         if @error_data.key? :guest_access_prohibited
           'Not logged in as a registered user!'
+        elsif @error_data.key? :created_at
+          entity = Newpoc::Entity::Post.new @error_data
+          entity.valid?
+          entity.errors.full_messages.first
         else
           bad_author = @error_data[:current_user_name]
           "User #{bad_author} is not the author of this post!"
@@ -126,6 +130,8 @@ class PostsController < ApplicationController
 
   def on_update_failure(payload)
     alert = ErrorMessageBuilder.new(payload).to_s
+    q = Newpoc::Entity::Post.new Yajl.load(payload, symbolize_keys: true)
+    ap [:line_129, q.attributes, q.valid?, q.errors.full_messages, alert]
     redirect_to root_path, flash: { alert: alert }
   end
 end # class PostsController

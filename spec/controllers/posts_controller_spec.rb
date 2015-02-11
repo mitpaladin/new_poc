@@ -394,26 +394,52 @@ describe PostsController do
       context 'for the post author' do
         before :each do
           identity.current_user = author
-          patch :update, id: post.slug, post_data: post_data
         end
 
-        it 'redirects to the post page' do
-          expect(response).to redirect_to post_path(post)
-        end
+        context 'with valid post data' do
+          before :each do
+            patch :update, id: post.slug, post_data: post_data
+          end
 
-        it 'assigns the updated post' do
-          actual = assigns[:post]
-          expect(actual.body).to eq post_data[:body]
-          comparison_keys = [:author_name, :imaage_url, :slug, :title]
-          comparison_keys.each do |attrib_key|
-            expect(actual.attributes[attrib_key]).to eq post[attrib_key.to_s]
+          it 'redirects to the post page' do
+            expect(response).to redirect_to post_path(post)
           end
-          comparison_keys = [:pubdate, :created_at]
-          comparison_keys.each do |attrib_key|
-            expect(actual.attributes[attrib_key])
-              .to be_within(0.5.seconds).of post[attrib_key]
+
+          it 'assigns the updated post' do
+            actual = assigns[:post]
+            expect(actual.body).to eq post_data[:body]
+            comparison_keys = [:author_name, :imaage_url, :slug, :title]
+            comparison_keys.each do |attrib_key|
+              expect(actual.attributes[attrib_key]).to eq post[attrib_key.to_s]
+            end
+            comparison_keys = [:pubdate, :created_at]
+            comparison_keys.each do |attrib_key|
+              expect(actual.attributes[attrib_key])
+                .to be_within(0.5.seconds).of post[attrib_key]
+            end
           end
-        end
+        end # context 'with valid post data'
+
+        context 'with invalid post data' do
+          before :each do
+            data = { body: '', image_url: '' }
+            # identity.current_user = author
+            patch :update, id: post.slug, post_data: data
+          end
+
+          it 'redirects to the root path' do
+            expect(response).to redirect_to root_path
+          end
+
+          it 'assigns no :post' do
+            expect(assigns).not_to have_key :post
+          end
+
+          fit 'has the correct flash message' do
+            expected = 'Body must be specified if image URL is omitted'
+            expect(flash[:alert]).to eq expected
+          end
+        end # context 'with invalid post data'
       end # context 'for the post author'
 
       context 'for a registered user other than the post author' do
