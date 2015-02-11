@@ -6,29 +6,13 @@ require 'newpoc/action/post/update'
 
 require 'create_post'
 
+require_relative 'posts_controller/error_message_builder'
+
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
+  # Internal classes exclusively used by PostsController.
   module Internals
-    # Build alert message for failed 'edit' or 'update' action.
-    class ErrorMessageBuilder
-      def initialize(payload)
-        @error_data = Yajl.load payload, symbolize_keys: true
-      end
-
-      def to_s
-        if @error_data.key? :guest_access_prohibited
-          'Not logged in as a registered user!'
-        elsif @error_data.key? :created_at
-          entity = Newpoc::Entity::Post.new @error_data
-          entity.valid?
-          entity.errors.full_messages.first
-        else
-          bad_author = @error_data[:current_user_name]
-          "User #{bad_author} is not the author of this post!"
-        end
-      end
-    end # class PostsController::Internals::ErrorMessageBuilder
-  end # module PostsController::Internals
+  end
   private_constant :Internals
   include Internals
 
@@ -130,8 +114,6 @@ class PostsController < ApplicationController
 
   def on_update_failure(payload)
     alert = ErrorMessageBuilder.new(payload).to_s
-    q = Newpoc::Entity::Post.new Yajl.load(payload, symbolize_keys: true)
-    ap [:line_129, q.attributes, q.valid?, q.errors.full_messages, alert]
     redirect_to root_path, flash: { alert: alert }
   end
 end # class PostsController
