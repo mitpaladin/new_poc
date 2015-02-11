@@ -435,7 +435,7 @@ describe PostsController do
             expect(assigns).not_to have_key :post
           end
 
-          fit 'has the correct flash message' do
+          it 'has the correct flash message' do
             expected = 'Body must be specified if image URL is omitted'
             expect(flash[:alert]).to eq expected
           end

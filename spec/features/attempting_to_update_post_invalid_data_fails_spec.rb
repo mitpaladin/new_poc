@@ -17,7 +17,7 @@ describe 'Attepting to update a post with invalid data' do
       click_button 'Update Post'
     end
 
-    xit 'displays the correct alert error message' do
+    it 'displays the correct alert error message' do
       expected = 'Body must be specified if image URL is omitted'
       expect(page).to have_css '.alert.alert-danger', text: expected
     end
