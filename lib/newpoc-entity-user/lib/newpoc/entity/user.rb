@@ -82,11 +82,6 @@ module Newpoc
         end
       end
 
-      # FIXME: Holdover for entity-factory specs. Fixme applies to those specs.
-      def init_attrib_keys
-        %w(created_at email name profile slug updated_at).map(&:to_sym)
-      end
-
       def self.model_name
         ActiveModel::Name.new self, nil, 'User'
       end

@@ -5,6 +5,7 @@ require 'yajl/json_gem'
 
 require 'newpoc/action/post/update/version'
 require 'newpoc/action/post/update/guest_access_failure'
+require 'newpoc/action/post/update/invalid_attributes_failure'
 require 'newpoc/action/post/update/not_author_failure'
 require 'newpoc/action/post/update/slug_not_found_failure'
 require 'newpoc/action/post/update/post_data_filter'
@@ -42,7 +43,8 @@ module Newpoc
           prohibit_guest_access
           validate_slug
           verify_user_is_author
-          @entity = update_entity
+          validate_updated_attributes
+          update_entity
           broadcast_success entity
         rescue RuntimeError => the_error
           broadcast_failure the_error.message
@@ -67,12 +69,24 @@ module Newpoc
           fail GuestAccessFailure.new(self).to_json
         end
 
-        def update_entity
-          inputs = post_data
-          inputs.delete :post_status
+        def update_entity # rubocop:disable Metrics/AbcSize
+          inputs = post_data.to_h.reject { |k, _v| k == :post_status }
           result = post_repository.update slug, inputs
-          return post_repository.find_by_slug(slug).entity if result.success?
-          fail UpdateFailure.new(slug, inputs).to_json
+          fail UpdateFailure.new(slug, inputs).to_json unless result.success?
+          @entity = post_repository.find_by_slug(slug).entity
+          self
+        end
+
+        def validate_updated_attributes # rubocop:disable Metrics/AbcSize
+          result = post_repository.find_by_slug slug
+          fail SlugNotFoundFailure.new(self).to_json unless result.success?
+          attribs = result.entity.attributes.merge post_data
+          entity = result.entity.class.new attribs
+          unless entity.valid?
+            fail InvalidAttributesFailure.new(attribs).to_json
+          end
+          @entity = entity
+          self
         end
 
         def validate_slug
