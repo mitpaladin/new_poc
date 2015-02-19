@@ -1,9 +1,9 @@
 
-require 'newpoc/repository/base'
+require 'repository/base'
 
 # Intermediary between engine-bound DAO and Entity for Post-related use cases.
-class PostRepository < Newpoc::Repository::Base
+class PostRepository < Repository::Base
   def initialize(factory = PostFactory, dao = PostDao)
-    super factory, dao
+    super factory: factory, dao: dao
   end
 end # class PostRepository
