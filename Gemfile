@@ -28,7 +28,7 @@ source 'https://rails-assets.org'
   'services-markdown_html_converter'
 ].each { |gem_name| gem "newpoc-#{gem_name}", path: "lib/newpoc-#{gem_name}" }
 
-gem 'repository-base', '>= 0.1.1'
+gem 'repository-base', '>= 0.2.0'
 gem 'wisper_subscription', '>= 0.2.0'
 
 gem 'active_attr'

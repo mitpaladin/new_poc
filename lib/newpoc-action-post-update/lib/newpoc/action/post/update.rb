@@ -71,7 +71,8 @@ module Newpoc
 
         def update_entity # rubocop:disable Metrics/AbcSize
           inputs = post_data.to_h.reject { |k, _v| k == :post_status }
-          result = post_repository.update slug, inputs
+          result = post_repository.update identifier: slug,
+                                          updated_attrs: inputs
           fail UpdateFailure.new(slug, inputs).to_json unless result.success?
           @entity = post_repository.find_by_slug(slug).entity
           self

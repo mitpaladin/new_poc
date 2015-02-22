@@ -9,9 +9,8 @@ shared_examples 'the #find_by_slug method for a Repository' do
       expect(result).not_to be_success
       expect(result.entity).to be nil
       expect(result).to have(1).error
-      expected_message = "A record with 'slug'=nothing_here was not found."
-      expect(result.errors.first)
-        .to be_an_error_hash_for :base, expected_message
+      expected = { field: 'slug', message: "not found: 'nothing_here'" }
+      expect(result.errors.first).to eq expected
     end
   end # context 'record not found'
 

@@ -61,14 +61,14 @@ class UserRepository < Repository::Base
 
   def invalid_user_name_or_password
     data = { base: 'Invalid user name or password' }
-    Newpoc::Repository::Internal::ErrorFactory.create data
+    Repository::Support::ErrorFactory.create data
   end
 
   def return_for_invalid_user
     errors = invalid_user_name_or_password
-    Newpoc::Support::StoreResult.new entity: guest_user.entity,
-                                     errors: errors,
-                                     success: false
+    Repository::Support::StoreResult.new entity: guest_user.entity,
+                                         errors: errors,
+                                         success: false
   end
 
   def test_environment?
