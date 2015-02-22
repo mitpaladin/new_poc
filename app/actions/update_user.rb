@@ -48,7 +48,8 @@ module Actions
     end
 
     def update_entity
-      result = user_repo.update current_user.slug, user_data
+      result = user_repo.update identifier: current_user.slug,
+                                updated_attrs: user_data
       @entity = result.entity
       return if result.success?
       # Remember: @entity is `nil` at this point
@@ -103,9 +104,10 @@ module Actions
 
       def check_password_mismatch(user_data)
         return if user_data.password == user_data.password_confirmation
-        message = { base: 'Password must match the password confirmation' }
-        msg = Newpoc::Repository::Internal::ErrorFactory.create message
-        entity.errors[:messages] = msg
+        entity.errors.add :base, 'Password must match the password confirmation'
+        # message = { base: 'Password must match the password confirmation' }
+        # msg = Repository::Support::ErrorFactory.create message
+        # entity.errors[:messages] = msg
       end
     end
     private_constant :BadDataEntity

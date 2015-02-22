@@ -6,7 +6,7 @@ shared_examples 'the #update method for a Repository' do
       entity = r.entity
       new_attribs = OpenStruct.new
       new_attribs[attribute_to_update] = updated_attribute
-      obj.update entity.slug, new_attribs
+      obj.update identifier: entity.slug, updated_attrs: new_attribs
     end
 
     it 'updates the stored record' do
@@ -25,7 +25,7 @@ shared_examples 'the #update method for a Repository' do
     let(:error_message) { 'is busted' }
     let(:mockDao) do
       Class.new(dao_class) do
-        def update_attributes(_attribs)
+        def update(_attribs)
           # And no, this can't use RSpec variables declared earlier. Pffft.
           errors.add :frobulator, 'is busted'
           false
@@ -40,7 +40,7 @@ shared_examples 'the #update method for a Repository' do
       entity = r.entity
       new_attribs = OpenStruct.new
       new_attribs[attribute_to_update] = updated_attribute
-      obj.update entity.slug, new_attribs
+      obj.update identifier: entity.slug, updated_attrs: new_attribs
     end
 
     it 'does not update the stored record' do
@@ -52,8 +52,8 @@ shared_examples 'the #update method for a Repository' do
       expect(result).not_to be_success
       expect(result.entity).to be nil
       expect(result).to have(1).error
-      expect(result.errors.first)
-        .to be_an_error_hash_for error_key, error_message
+      expected = {}.tap { |h| h[error_key] = [error_message] }
+      expect(result.errors.messages).to eq expected
     end
   end # context 'on failure'
 end # shared_examples 'the #update method for a Repository'

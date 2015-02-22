@@ -19,7 +19,7 @@ module Actions
     context 'for a Registered User' do
       let(:current_user) do
         user_attribs = FactoryGirl.attributes_for :user, :saved_user
-	entity = UserPasswordEntityFactory.create user_attribs, 'password'
+        entity = UserPasswordEntityFactory.create user_attribs, 'password'
         user_repo.add entity
         entity
       end
@@ -46,7 +46,47 @@ module Actions
             expect(entity[:profile]).to eq user_data[:profile]
           end
         end # describe 'profile description'
+
+        describe 'password/confirmation pair' do
+          let(:user_data) do
+            {
+              password: 'new password',
+              password_confirmation: 'new password'
+            }
+          end
+
+          it 'successfully, without returning password data' do
+            expect(payload).to be_a Newpoc::Entity::User
+            expect(payload).to be_valid
+            [:password, :password_confirmation, :password_hash].each do |attr|
+              expect(payload.attributes).not_to have_key attr
+            end
+          end
+        end # describe 'password/confirmation pair'
       end # describe "can update that user's own"
+
+      describe 'is notified of errors when' do
+        let(:payload) do
+          data = subscriber.payload_for(:failure).first
+          Yajl.load data, symbolize_keys: true
+        end
+        let(:user_data) do
+          {
+            password: 'password',
+            password_confirmation: 'password confirmation ;-)'
+          }
+        end
+
+        fit 'entered password and confirmation do not match' do
+          expect(payload).to be_a Hash
+          expected = 'Password must match the password confirmation'
+          expect(payload[:messages].first).to eq expected
+          matching_attributes = [:name, :email, :slug, :profile]
+          matching_attributes.each do |attr|
+            expect(payload[:entity][attr]).to eq current_user.attributes[attr]
+          end
+        end
+      end # describe 'is notified of errors when'
 
       describe 'cannot update other attributes, such as' do
         let(:payload) { subscriber.payload_for(:success).first }

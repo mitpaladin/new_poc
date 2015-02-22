@@ -4,7 +4,7 @@ module Newpoc
     module User
       # Retrieves a user entity from the repository; part of `new_poc`.
       class Show
-        VERSION = '0.0.1'
+        VERSION = '0.0.2'
       end
     end
   end

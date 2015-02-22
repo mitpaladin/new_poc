@@ -26,9 +26,11 @@ describe Newpoc::Action::Post::Update do
         @find_result if slug # should always be true; silences RuboCop :P
       end
 
-      def update(_ident, _attributes)
+      # rubocop:disable Lint/UnusedMethodArgument
+      def update(identifier: _ident, updated_attrs: _attributes)
         @update_result
       end
+      # rubocop:enable Lint/UnusedMethodArgument
 
       attr_accessor :returned_result
     end.new(repo_find_result, repo_update_result)

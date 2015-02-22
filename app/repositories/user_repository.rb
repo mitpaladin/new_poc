@@ -1,11 +1,11 @@
 
-require 'newpoc/repository/base'
-require 'newpoc/support/store_result'
+require 'repository/base'
+require 'repository/support/store_result'
 
 # Intermediary between engine-bound DAO and Entity for User-related use cases.
-class UserRepository < Newpoc::Repository::Base
+class UserRepository < Repository::Base
   def initialize(factory = UserFactory, dao = UserDao)
-    super factory, dao
+    super factory: factory, dao: dao
   end
 
   # Don't return the Guest User as part of the results from #all.
@@ -19,18 +19,18 @@ class UserRepository < Newpoc::Repository::Base
 
     user = user_dao.authenticate password
     errors = errors_for user
-    Newpoc::Support::StoreResult.new entity: entity_for(user),
-                                     errors: errors,
-                                     success: errors.empty?
+    Repository::Support::StoreResult.new entity: entity_for(user),
+                                         errors: errors,
+                                         success: errors.empty?
   end
 
   def guest_user
     user_dao = dao.first
-    errors = Newpoc::Repository::Internal::ErrorFactory.create(user_dao.errors)
-    newentity = factory.create(user_dao.attributes)
-    Newpoc::Support::StoreResult.new entity: newentity,
-                                     errors: errors,
-                                     success: errors.empty?
+    errors = Repository::Support::ErrorFactory.create(user_dao.errors)
+    new_entity = factory.create(user_dao.attributes)
+    Repository::Support::StoreResult.new entity: new_entity,
+                                         errors: errors,
+                                         success: errors.empty?
   end
 
   private
@@ -61,14 +61,14 @@ class UserRepository < Newpoc::Repository::Base
 
   def invalid_user_name_or_password
     data = { base: 'Invalid user name or password' }
-    Newpoc::Repository::Internal::ErrorFactory.create data
+    Repository::Support::ErrorFactory.create data
   end
 
   def return_for_invalid_user
     errors = invalid_user_name_or_password
-    Newpoc::Support::StoreResult.new entity: guest_user.entity,
-                                     errors: errors,
-                                     success: false
+    Repository::Support::StoreResult.new entity: guest_user.entity,
+                                         errors: errors,
+                                         success: false
   end
 
   def test_environment?
