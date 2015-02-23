@@ -4,7 +4,8 @@ require 'newpoc/action/user/index'
 require 'newpoc/action/user/new'
 require 'newpoc/action/user/show'
 
-require 'create_user'
+require_relative 'users_controller/action/create'
+# require 'create_user'
 require 'update_user'
 
 require_relative 'users_controller/create_failure'
@@ -12,6 +13,7 @@ require_relative 'users_controller/create_failure'
 # UsersController: actions related to Users within our "fancy" blog.
 class UsersController < ApplicationController
   include Internals
+  private_constant :Internals
 
   def index
     action = Newpoc::Action::User::Index.new(UserRepository.new)
@@ -25,7 +27,7 @@ class UsersController < ApplicationController
   end
 
   def create
-    Actions::CreateUser.new(current_user, params[:user_data])
+    Action::Create.new(current_user, params[:user_data])
       .subscribe(self, prefix: :on_create).execute
   end
 

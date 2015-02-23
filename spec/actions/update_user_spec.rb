@@ -77,7 +77,7 @@ module Actions
           }
         end
 
-        fit 'entered password and confirmation do not match' do
+        it 'entered password and confirmation do not match' do
           expect(payload).to be_a Hash
           expected = 'Password must match the password confirmation'
           expect(payload[:messages].first).to eq expected

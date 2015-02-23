@@ -1,5 +1,6 @@
 
 module Actions
+  # FIXME: Namespace?
   # Why the @internals? So Rubocop doesn't kvetch about how `#success`
   # "ought to be" `#success=`. Pfffft.
   class BroadcastSuccessTester
