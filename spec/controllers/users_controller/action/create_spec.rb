@@ -18,7 +18,9 @@ describe UsersController::Action::Create do
   end
 
   context 'is successful with valid parameters' do
-    let(:command) { described_class.new guest_user, user_data }
+    let(:command) do
+      described_class.new current_user: guest_user, user_data: user_data
+    end
 
     it 'broadcasts success' do
       expect(subscriber).to be_successful
@@ -42,7 +44,9 @@ describe UsersController::Action::Create do
     let(:user_attribs) { FactoryGirl.attributes_for :user }
 
     context 'the request is made from a logged-in user session' do
-      let(:command) { described_class.new current_user, user_data }
+      let(:command) do
+        described_class.new current_user: current_user, user_data: user_data
+      end
       let(:current_user) do
         entity = UserPasswordEntityFactory.create user_attribs, 'password'
         user_repository.add(entity).entity
@@ -65,7 +69,10 @@ describe UsersController::Action::Create do
     end # context 'the request is made from a logged-in user session'
 
     context 'the named user already exists' do
-      let(:command) { described_class.new guest_user, other_user.attributes }
+      let(:command) do
+        described_class.new current_user: guest_user,
+                            user_data: other_user.attributes
+      end
       let(:other_user) do
         user = UserPasswordEntityFactory.create user_attribs, 'password'
         user_repository.add user
@@ -99,7 +106,9 @@ describe UsersController::Action::Create do
     end # context 'the named user already exists'
 
     context 'the user name is invalid' do
-      let(:command) { described_class.new guest_user, user.attributes }
+      let(:command) do
+        described_class.new current_user: guest_user, user_data: user.attributes
+      end
       let(:user) do
         user = UserPasswordEntityFactory.create user_attribs, 'password'
         user_repository.add user

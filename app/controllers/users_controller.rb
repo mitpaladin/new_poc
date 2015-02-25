@@ -25,8 +25,9 @@ class UsersController < ApplicationController
   end
 
   def create
-    Action::Create.new(current_user, params[:user_data])
-      .subscribe(self, prefix: :on_create).execute
+    action = Action::Create.new current_user: current_user,
+                                user_data: params[:user_data]
+    action.subscribe(self, prefix: :on_create).execute
   end
 
   def edit

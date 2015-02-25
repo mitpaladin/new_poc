@@ -42,9 +42,9 @@ class UsersController < ApplicationController
       private_constant :Internals
       include Internals
 
-      def initialize(current_user, user_data_in)
+      def initialize(current_user:, user_data:)
         @current_user = current_user
-        @user_data = UserDataConverter.new(user_data_in).data
+        @user_data = UserDataConverter.new(user_data).data
         @user_slug = @user_data[:slug] || @user_data[:name].parameterize
         @user_data.delete :slug # will be recreated on successful save
         @password = @user_data[:password]
