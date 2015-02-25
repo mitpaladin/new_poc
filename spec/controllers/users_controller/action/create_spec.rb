@@ -29,7 +29,7 @@ describe UsersController::Action::Create do
     describe 'broadcasts :success with a payload of a StoreResult, which' do
       let(:payload) { subscriber.payload_for(:success).first }
 
-      it 'is a User instance' do
+      fit 'is a User instance' do
         expect(payload).to be_a user_entity_class
       end
 
