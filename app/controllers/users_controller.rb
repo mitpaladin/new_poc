@@ -4,9 +4,9 @@ require 'newpoc/action/user/index'
 require 'newpoc/action/user/new'
 require 'newpoc/action/user/show'
 
-require 'create_user'
 require 'update_user'
 
+require_relative 'users_controller/action/create'
 require_relative 'users_controller/create_failure'
 
 # UsersController: actions related to Users within our "fancy" blog.
@@ -25,8 +25,9 @@ class UsersController < ApplicationController
   end
 
   def create
-    Actions::CreateUser.new(current_user, params[:user_data])
-      .subscribe(self, prefix: :on_create).execute
+    action = Action::Create.new current_user: current_user,
+                                user_data: params[:user_data]
+    action.subscribe(self, prefix: :on_create).execute
   end
 
   def edit
