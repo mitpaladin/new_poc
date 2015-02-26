@@ -1,5 +1,8 @@
 
+require_relative 'create/internals/entity_persister'
 require_relative 'create/internals/guest_user_access'
+require_relative 'create/internals/post_data_filter'
+require 'broadcaster'
 
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
@@ -7,56 +10,13 @@ class PostsController < ApplicationController
   module Action
     # Wisper-based command object called by Posts controller #create action.
     class Create
+      # Internal classes used exclusively by PostsController::Action::Create.
+      # (or should be...)
       module Internals
-        # Filters incoming post_data parameter and makes an OpenStruct of it.
-        class PostDataFilter
-          attr_reader :draft_post
-
-          def initialize(post_data)
-            @data = hash_input_data(post_data)
-            @draft_post = false
-          end
-
-          def filter
-            attribs = copy_attributes
-            @draft_post = true if data_defines_draft?
-            OpenStruct.new attribs.to_h.select { |_k, v| v }
-          end
-
-          private
-
-          attr_reader :data
-
-          def copy_attributes
-            ret = Struct.new(*post_attributes).new
-            post_attributes.each do |attrib|
-              ret[attrib] = data[attrib].to_s.strip if data[attrib].present?
-            end
-            ret
-          end
-
-          def data_defines_draft?
-            data[:post_status] == 'draft'
-          end
-
-          def hash_input_data(data)
-            data.send(hasher_for(data)).symbolize_keys
-          end
-
-          def hasher_for(data)
-            return :to_unsafe_h if data.respond_to? :to_unsafe_h
-            :to_h
-          end
-
-          def post_attributes
-            %w(author_name title body image_url slug created_at updated_at
-               pubdate post_status).map(&:to_sym)
-          end
-        end # class Actions::Create::Internals::PostDataFilter
       end
       private_constant :Internals
       include Internals
-      include Wisper::Publisher
+      include Broadcaster
 
       def initialize(current_user:, post_data:)
         filter = PostDataFilter.new(post_data)
@@ -78,22 +38,19 @@ class PostsController < ApplicationController
 
       attr_reader :current_user, :draft_post, :entity, :post_data
 
-      def broadcast_failure(payload)
-        broadcast :failure, payload
-      end
-
-      def broadcast_success(payload)
-        broadcast :success, payload
-      end
-
       def add_entity_to_repository
-        result = PostRepository.new.add entity
-        fail entity.to_json unless result.success?
-        # DON'T just use the existing entity; it (shouldn't) have its slug set,
-        # whereas the one that's been persisted and passed back through the
-        # `StoreResult` does. (That's how `Entity::Post` determines whether it's
-        # been persisted or not: whether the `slug` attribute is set.)
-        @entity = result.entity
+        persister_args = {
+          attributes: post_data,
+          repository: PostRepository.new
+        }
+        EntityPersister.new(persister_args).persist do |attributes|
+          PostFactory.create attributes
+        end
+      end
+
+      def create_new_entity
+        attribs = { author_name: current_user.name }.merge post_data.to_h
+        Newpoc::Entity::Post.new attribs
       end
 
       def prohibit_guest_access
@@ -101,9 +58,7 @@ class PostsController < ApplicationController
       end
 
       def validate_post_data
-        attribs = post_data.to_h.symbolize_keys
-        attribs[:author_name] ||= current_user.name
-        @entity = Newpoc::Entity::Post.new attribs
+        @entity = create_new_entity
         return if @entity.valid?
         fail @entity.to_json
       end

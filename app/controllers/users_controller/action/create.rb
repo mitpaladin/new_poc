@@ -4,7 +4,7 @@ require_relative 'create/internals/guest_user_verifier'
 require_relative 'create/internals/new_entity_verifier'
 require_relative 'create/internals/password_verifier'
 require_relative 'create/internals/user_data_converter'
-require_relative 'create/broadcaster' # definitely going to be reused
+require 'broadcaster'
 
 # UsersController: actions related to Users within our "fancy" blog.
 class UsersController < ApplicationController

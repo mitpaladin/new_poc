@@ -1,11 +1,9 @@
 
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
-  # include Internals
-
-  # Isolating our Action classes within the controller they're associate with.
+  # Isolating our Action classes within the controller they're associated with.
   module Action
-    # Wisper-based command object called by Users controller #new action.
+    # Wisper-based command object called by Users controller #create action.
     class Create
       module Internals
         # Build and raise a RuntimeError with YAML-encoded data as message.

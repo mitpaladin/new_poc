@@ -4,8 +4,6 @@ require 'newpoc/action/post/new'
 require 'newpoc/action/post/show'
 require 'newpoc/action/post/update'
 
-# require 'create_post'
-
 require_relative 'posts_controller/error_message_builder'
 
 require_relative 'posts_controller/action/create'
