@@ -1,5 +1,5 @@
 
-require_relative 'data_object_failure'
+require 'action_support/data_object_failure'
 
 # UsersController: actions related to Users within our "fancy" blog.
 class UsersController < ApplicationController
@@ -11,6 +11,8 @@ class UsersController < ApplicationController
       module Internals
         # Verifies password meets length requirement; raises otherwise.
         class PasswordLengthVerifier
+          include ActionSupport
+
           def initialize(attributes)
             @attributes = attributes
           end

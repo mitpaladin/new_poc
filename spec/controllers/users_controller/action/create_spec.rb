@@ -120,7 +120,7 @@ describe UsersController::Action::Create do
         let(:data) { FancyOpenStruct.new YAML.load(payload) }
         let(:payload) { subscriber.payload_for(:failure).first }
 
-        it 'with two keys, :attributes and :messages' do
+        fit 'with two keys, :attributes and :messages' do
           expect(data.keys.sort).to eq [:attributes, :messages]
         end
 

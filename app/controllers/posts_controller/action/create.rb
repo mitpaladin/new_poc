@@ -1,8 +1,8 @@
 
-require_relative 'create/internals/entity_persister'
-require_relative 'create/internals/guest_user_access'
+require 'action_support/broadcaster'
+require 'action_support/entity_persister'
+require 'action_support/guest_user_access'
 require_relative 'create/internals/post_data_filter'
-require 'broadcaster'
 
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
@@ -16,7 +16,7 @@ class PostsController < ApplicationController
       end
       private_constant :Internals
       include Internals
-      include Broadcaster
+      include ActionSupport::Broadcaster
 
       def initialize(current_user:, post_data:)
         filter = PostDataFilter.new(post_data)
@@ -43,8 +43,8 @@ class PostsController < ApplicationController
           attributes: post_data,
           repository: PostRepository.new
         }
-        EntityPersister.new(persister_args).persist do |attributes|
-          PostFactory.create attributes
+        ActionSupport::EntityPersister.new(persister_args).persist do |attribs|
+          PostFactory.create attribs
         end
       end
 
@@ -54,7 +54,7 @@ class PostsController < ApplicationController
       end
 
       def prohibit_guest_access
-        GuestUserAccess.new(current_user).prohibit
+        ActionSupport::GuestUserAccess.new(current_user).prohibit
       end
 
       def validate_post_data
