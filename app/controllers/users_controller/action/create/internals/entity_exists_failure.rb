@@ -1,5 +1,5 @@
 
-require_relative 'data_object_failure'
+require 'action_support/data_object_failure'
 
 # UsersController: actions related to Users within our "fancy" blog.
 class UsersController < ApplicationController
@@ -9,7 +9,7 @@ class UsersController < ApplicationController
     class Create
       module Internals
         # Error raised by NewEntityVerifier if slugged entity already exists.
-        class EntityExistsFailure < DataObjectFailure
+        class EntityExistsFailure < ActionSupport::DataObjectFailure
           def initialize(slug:, attributes:)
             @slug = slug
             super messages: messages, attributes: attributes

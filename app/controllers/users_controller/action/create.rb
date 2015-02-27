@@ -1,10 +1,10 @@
 
 require_relative 'create/internals/entity_persister'
-require_relative 'create/internals/guest_user_verifier'
 require_relative 'create/internals/new_entity_verifier'
 require_relative 'create/internals/password_verifier'
 require_relative 'create/internals/user_data_converter'
-require 'broadcaster'
+require 'action_support/broadcaster'
+require 'action_support/guest_user_access'
 
 # UsersController: actions related to Users within our "fancy" blog.
 class UsersController < ApplicationController
@@ -17,7 +17,7 @@ class UsersController < ApplicationController
       end
       private_constant :Internals
       include Internals
-      include Broadcaster
+      include ActionSupport::Broadcaster
 
       def initialize(current_user:, user_data:)
         @current_user = current_user
@@ -53,7 +53,7 @@ class UsersController < ApplicationController
       end
 
       def require_guest_user
-        GuestUserVerifier.new(current_user).verify
+        ActionSupport::GuestUserAccess.new(current_user).verify
       end
 
       def verify_entity_does_not_exist

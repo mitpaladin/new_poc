@@ -1,5 +1,5 @@
 
-require_relative 'data_object_failure'
+require 'action_support/data_object_failure'
 
 # UsersController: actions related to Users within our "fancy" blog.
 class UsersController < ApplicationController
@@ -20,8 +20,8 @@ class UsersController < ApplicationController
 
           def match
             return if user_data[:password] == user_data[:password_confirmation]
-            DataObjectFailure.new(attributes: user_data,
-                                  messages: messages).fail
+            ActionSupport::DataObjectFailure.new(attributes: user_data,
+                                                 messages: messages).fail
           end
 
           private

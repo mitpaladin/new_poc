@@ -1,5 +1,5 @@
 
-require_relative 'data_object_failure'
+require 'action_support/data_object_failure'
 
 # UsersController: actions related to Users within our "fancy" blog.
 class UsersController < ApplicationController
@@ -17,8 +17,8 @@ class UsersController < ApplicationController
 
           def verify
             return if password_set? && password_long_enough?
-            DataObjectFailure.new(attributes: attributes,
-                                  messages: messages).fail
+            ActionSupport::DataObjectFailure.new(attributes: attributes,
+                                                 messages: messages).fail
           end
 
           private

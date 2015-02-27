@@ -1,4 +1,6 @@
 
+require 'action_support/data_object_failure'
+
 # UsersController: actions related to Users within our "fancy" blog.
 class UsersController < ApplicationController
   # Isolating our Action classes within the controller they're associate with.
@@ -38,7 +40,7 @@ class UsersController < ApplicationController
               attributes: attributes,
               messages: new_entity.errors.full_messages
             }
-            DataObjectFailure.new(params).fail
+            ActionSupport::DataObjectFailure.new(params).fail
           end
 
           def user_entity_with_passwords
