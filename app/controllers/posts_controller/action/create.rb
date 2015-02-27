@@ -1,7 +1,7 @@
 
-require_relative 'create/internals/entity_persister'
 require_relative 'create/internals/post_data_filter'
 require 'action_support/broadcaster'
+require 'action_support/entity_persister'
 require 'action_support/guest_user_access'
 
 # PostsController: actions related to Posts within our "fancy" blog.

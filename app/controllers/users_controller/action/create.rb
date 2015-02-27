@@ -1,9 +1,9 @@
 
-require_relative 'create/internals/entity_persister'
 require_relative 'create/internals/new_entity_verifier'
 require_relative 'create/internals/password_verifier'
 require_relative 'create/internals/user_data_converter'
 require 'action_support/broadcaster'
+require 'action_support/entity_persister'
 require 'action_support/guest_user_access'
 
 # UsersController: actions related to Users within our "fancy" blog.
