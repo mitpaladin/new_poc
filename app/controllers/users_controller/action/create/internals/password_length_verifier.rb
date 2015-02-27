@@ -19,8 +19,8 @@ class UsersController < ApplicationController
 
           def verify
             return if password_set? && password_long_enough?
-            DataObjectFailure.new(attributes: attributes,
-                                  messages: messages).fail
+            ActionSupport::DataObjectFailure.new(attributes: attributes,
+                                                 messages: messages).fail
           end
 
           private

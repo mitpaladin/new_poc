@@ -1,5 +1,5 @@
 
-# Various support classes for controller-hosted action classes.
+# Supporting code used by and for controller-namespaced Action classes.
 module ActionSupport
   # Encapsulates our standard Wisper-based success/failure notification sending.
   module Broadcaster

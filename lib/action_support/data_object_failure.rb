@@ -1,7 +1,7 @@
 
-# Various support classes for controller-hosted action classes.
+# Supporting code used by and for controller-namespaced Action classes.
 module ActionSupport
-  # Raised by Action or support class when data object (entity) is invalid.
+  # Build and raise a RuntimeError with YAML-encoded data as message.
   class DataObjectFailure
     def initialize(options)
       @data = build_data_from_options options
