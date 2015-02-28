@@ -3,6 +3,7 @@ require_relative 'create/internals/post_data_filter'
 require 'action_support/broadcaster'
 require 'action_support/entity_persister'
 require 'action_support/guest_user_access'
+require 'action_support/repository_adder'
 
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
@@ -41,14 +42,12 @@ class PostsController < ApplicationController
       attr_reader :current_user, :draft_post, :entity, :entity_class, :post_data
 
       def add_entity_to_repository
-        persister_args = {
+        params = {
           attributes: new_entity_attributes,
-          repository: PostRepository.new
+          repository: PostRepository.new,
+          factory_class: PostFactory
         }
-        result = EntityPersister.new(persister_args).persist do |attribs|
-          PostFactory.create attribs
-        end
-        @entity = result.entity
+        @entity = RepositoryAdder.new(params).add.entity
         self
       end
 

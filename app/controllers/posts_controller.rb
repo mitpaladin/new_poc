@@ -4,6 +4,7 @@ require 'newpoc/action/post/new'
 require 'newpoc/action/post/show'
 require 'newpoc/action/post/update'
 
+require_relative 'posts_controller/create_failure_setup'
 require_relative 'posts_controller/error_message_builder'
 
 require_relative 'posts_controller/action/create'
@@ -69,10 +70,7 @@ class PostsController < ApplicationController
   end
 
   def on_create_failure(payload)
-    original = YAML.load(payload.message).symbolize_keys
-    fail original[:messages].first unless original.key? :slug
-    @post = Newpoc::Entity::Post.new original.symbolize_keys
-    @post.valid?   # sets up error messages
+    @post = CreateFailureSetup.new(payload).cleanup.entity
     render 'new'
   rescue RuntimeError => e # not logged in as a registered user
     redirect_to root_path, flash: { alert: e.message }
