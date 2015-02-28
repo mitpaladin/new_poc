@@ -17,12 +17,14 @@ class PostsController < ApplicationController
       private_constant :Internals
       include Internals
       include ActionSupport::Broadcaster
+      include ActionSupport
 
-      def initialize(current_user:, post_data:)
+      def initialize(current_user:, post_data:, entity_class: nil)
         filter = PostDataFilter.new(post_data)
         @post_data = filter.filter
         @draft_post = filter.draft_post
         @current_user = current_user
+        @entity_class = entity_class || Newpoc::Entity::Post
       end
 
       def execute
@@ -36,21 +38,22 @@ class PostsController < ApplicationController
 
       private
 
-      attr_reader :current_user, :draft_post, :entity, :post_data
+      attr_reader :current_user, :draft_post, :entity, :entity_class, :post_data
 
       def add_entity_to_repository
         persister_args = {
-          attributes: post_data,
+          attributes: new_entity_attributes,
           repository: PostRepository.new
         }
-        ActionSupport::EntityPersister.new(persister_args).persist do |attribs|
+        result = EntityPersister.new(persister_args).persist do |attribs|
           PostFactory.create attribs
         end
+        @entity = result.entity
+        self
       end
 
-      def create_new_entity
-        attribs = { author_name: current_user.name }.merge post_data.to_h
-        Newpoc::Entity::Post.new attribs
+      def new_entity_attributes
+        { author_name: current_user.name }.merge post_data.to_h
       end
 
       def prohibit_guest_access
@@ -58,7 +61,7 @@ class PostsController < ApplicationController
       end
 
       def validate_post_data
-        @entity = create_new_entity
+        @entity = entity_class.new new_entity_attributes
         return if @entity.valid?
         fail @entity.to_json
       end

@@ -11,30 +11,33 @@ module ActionSupport
     end
 
     def verify
-      return if current_user.name == guest_user_name
-      DataObjectFailure.new(messages: [already_logged_in_message]).fail
+      return self if current_user.name == guest_user_name
+      DataObjectFailure.new(already_logged_in_errors).fail
     end
 
     def prohibit
-      return unless current_user.name == guest_user_name
-      ActionSupport::DataObjectFailure.new(messages: [not_logged_in_message])
-        .fail
+      return self unless current_user.name == guest_user_name
+      DataObjectFailure.new(not_logged_in_errors).fail
     end
 
     private
 
     attr_reader :current_user, :guest_user_name
 
-    def already_logged_in_message
-      "Already logged in as #{current_user.name}!"
+    def already_logged_in_errors
+      {
+        messages: ["Already logged in as #{current_user.name}!"]
+      }
     end
 
     def default_guest_name
       'Guest User'
     end
 
-    def not_logged_in_message
-      'Not logged in as a registered user!'
+    def not_logged_in_errors
+      {
+        messages: ['Not logged in as a registered user!']
+      }
     end
   end # class ActionSupport::GuestUserAccess
 end # module ActionSupport

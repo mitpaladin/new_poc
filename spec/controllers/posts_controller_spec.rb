@@ -166,7 +166,7 @@ describe PostsController do
   describe "POST 'create'" do
     let(:params) do
       attrs = FactoryGirl.attributes_for :post
-      attrs[:author_name] = identity.current_user
+      attrs[:author_name] = identity.current_user.name
       [:pubdate, :slug].each { |attr| attrs.delete attr }
       attrs
     end

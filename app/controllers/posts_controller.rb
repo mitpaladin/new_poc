@@ -32,7 +32,8 @@ class PostsController < ApplicationController
   end
 
   def create
-    Actions::CreatePost.new(current_user, params[:post_data])
+    Action::Create.new(current_user: current_user,
+                       post_data: params[:post_data])
       .subscribe(self, prefix: :on_create).execute
   end
 
@@ -67,13 +68,11 @@ class PostsController < ApplicationController
     redirect_to root_path, flash: { success: 'Post added!' }
   end
 
-  # FIXME: Internals class to encapsulate logic?
   def on_create_failure(payload)
-    message_or_entity = JSON.load payload.message
-    fail message_or_entity if message_or_entity.is_a? String
-    invalid_entity = Newpoc::Entity::Post.new message_or_entity.symbolize_keys
-    invalid_entity.valid?   # sets up error messages
-    @post = invalid_entity
+    original = YAML.load(payload.message).symbolize_keys
+    fail original[:messages].first unless original.key? :slug
+    @post = Newpoc::Entity::Post.new original.symbolize_keys
+    @post.valid?   # sets up error messages
     render 'new'
   rescue RuntimeError => e # not logged in as a registered user
     redirect_to root_path, flash: { alert: e.message }
