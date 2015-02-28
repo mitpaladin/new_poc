@@ -1,10 +1,10 @@
 
-require_relative 'create/internals/entity_persister'
-require_relative 'create/internals/guest_user_verifier'
 require_relative 'create/internals/new_entity_verifier'
 require_relative 'create/internals/password_verifier'
 require_relative 'create/internals/user_data_converter'
-require_relative 'create/broadcaster' # definitely going to be reused
+require 'action_support/broadcaster'
+require 'action_support/entity_persister'
+require 'action_support/guest_user_access'
 
 # UsersController: actions related to Users within our "fancy" blog.
 class UsersController < ApplicationController
@@ -17,7 +17,7 @@ class UsersController < ApplicationController
       end
       private_constant :Internals
       include Internals
-      include Broadcaster
+      include ActionSupport::Broadcaster
 
       def initialize(current_user:, user_data:)
         @current_user = current_user
@@ -47,13 +47,19 @@ class UsersController < ApplicationController
       end
 
       def add_user_entity_to_repo
-        persister = EntityPersister.new attributes: user_data,
-                                        repository: user_repo
-        @entity = persister.persist.entity
+        persister = ActionSupport::EntityPersister.new attributes: user_data,
+                                                       repository: user_repo
+        @entity = persister.persist do |attributes|
+          password = attributes[:password]
+          UserPasswordEntityFactory.create(attributes, password).tap do |entity|
+            entity.password = password
+            entity.password_confirmation = password
+          end
+        end.entity
       end
 
       def require_guest_user
-        GuestUserVerifier.new(current_user).verify
+        ActionSupport::GuestUserAccess.new(current_user).verify
       end
 
       def verify_entity_does_not_exist

@@ -4,9 +4,10 @@ require 'newpoc/action/post/new'
 require 'newpoc/action/post/show'
 require 'newpoc/action/post/update'
 
-require 'create_post'
-
+require_relative 'posts_controller/create_failure_setup'
 require_relative 'posts_controller/error_message_builder'
+
+require_relative 'posts_controller/action/create'
 
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
@@ -15,6 +16,10 @@ class PostsController < ApplicationController
   end
   private_constant :Internals
   include Internals
+
+  # Isolating our Action classes within the controller they're associated with.
+  module Action
+  end
 
   def index
     action = Newpoc::Action::Post::Index.new current_user, PostRepository.new
@@ -28,7 +33,8 @@ class PostsController < ApplicationController
   end
 
   def create
-    Actions::CreatePost.new(current_user, params[:post_data])
+    Action::Create.new(current_user: current_user,
+                       post_data: params[:post_data])
       .subscribe(self, prefix: :on_create).execute
   end
 
@@ -63,13 +69,8 @@ class PostsController < ApplicationController
     redirect_to root_path, flash: { success: 'Post added!' }
   end
 
-  # FIXME: Internals class to encapsulate logic?
   def on_create_failure(payload)
-    message_or_entity = JSON.load payload.message
-    fail message_or_entity if message_or_entity.is_a? String
-    invalid_entity = Newpoc::Entity::Post.new message_or_entity.symbolize_keys
-    invalid_entity.valid?   # sets up error messages
-    @post = invalid_entity
+    @post = CreateFailureSetup.new(payload).cleanup.entity
     render 'new'
   rescue RuntimeError => e # not logged in as a registered user
     redirect_to root_path, flash: { alert: e.message }
