@@ -89,7 +89,7 @@ describe UsersController::Action::Update do
       end
     end # describe 'is notified of errors when'
 
-    fdescribe 'cannot update other attributes, such as' do
+    describe 'cannot update other attributes, such as' do
       let(:payload) { subscriber.payload_for(:success).first }
       let(:user_data) { { name: 'Somebody Else' } }
 
@@ -100,4 +100,30 @@ describe UsersController::Action::Update do
       end
     end # describe 'cannot update other attributes, such as'
   end # context 'for a Registered User'
+
+  context 'for the Guest User' do
+    let(:user_data) { { profile: 'updated profile.' } }
+    let(:current_user) { user_repo.guest_user.entity }
+
+    describe 'cannot update any attributes, such as :profile,' do
+      it 'is not successful' do
+        expect(subscriber).not_to be_successful
+        expect(subscriber).to be_failure
+      end
+
+      describe 'is not successful, broadcasting a payload which' do
+        let(:payload) do
+          data = YAML.load(subscriber.payload_for(:failure).first)
+          FancyOpenStruct.new data
+        end
+
+        it 'is the expected error message' do
+          expect(payload.to_h).to be_a Hash
+          expect(payload).to have(1).message
+          expected = 'Not logged in as a registered user!'
+          expect(payload.messages.first).to eq expected
+        end
+      end # describe 'is not successful, broadcasting a payload which'
+    end # describe 'cannot update any attributes, such as :profile'
+  end # context 'for the Guest User'
 end # describe UsersController::Action::Update

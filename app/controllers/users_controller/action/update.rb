@@ -107,10 +107,6 @@ class UsersController < ApplicationController
         fail JSON.dump data
       end
 
-      def fail_with_messages(messages)
-        fail JSON.dump(messages: Array(messages))
-      end
-
       def prohibit_guest_access
         ActionSupport::GuestUserAccess.new(current_user).prohibit
       end
