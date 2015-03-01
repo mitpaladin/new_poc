@@ -4,9 +4,8 @@ require 'newpoc/action/user/index'
 require 'newpoc/action/user/new'
 require 'newpoc/action/user/show'
 
-require 'update_user'
-
 require_relative 'users_controller/action/create'
+require_relative 'users_controller/action/update'
 require_relative 'users_controller/create_failure'
 
 # UsersController: actions related to Users within our "fancy" blog.
@@ -42,8 +41,14 @@ class UsersController < ApplicationController
   end
 
   def update
-    Actions::UpdateUser.new(params[:user_data], current_user)
-      .subscribe(self, prefix: :on_update).execute
+    action_params = {
+      user_data: params[:user_data],
+      current_user: current_user
+    }
+    action = Action::Update.new(action_params)
+    action.subscribe(self, prefix: :on_update).execute
+    # Actions::UpdateUser.new(params[:user_data], current_user)
+    #   .subscribe(self, prefix: :on_update).execute
   end
 
   # Action responders must be public to receive Wisper notifications; see
@@ -102,7 +107,7 @@ class UsersController < ApplicationController
   end
 
   def on_update_failure(payload)
-    data = FancyOpenStruct.new JSON.parse(payload)
+    data = FancyOpenStruct.new YAML.load(payload)
     @user = Newpoc::Entity::User.new data.entity if data.entity
     flash[:alert] = data.messages.join '<br/>'
     return render 'edit' if data.entity
