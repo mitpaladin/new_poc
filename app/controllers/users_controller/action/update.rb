@@ -2,81 +2,15 @@
 require 'action_support/broadcaster'
 require 'action_support/guest_user_access'
 
+require_relative 'update/internals/bad_data_entity'
+require_relative 'update/internals/user_data_filter'
+
 class UsersController < ApplicationController
   module Action
     # Encapsulates domain logic to update db record based on entity contents.
     class Update
+      # Internal code called (initially) exclusively from Update class.
       module Internals
-        # Filters out possible extraneous attributes passed in to Update class.
-        class UserDataFilter
-          attr_reader :data
-
-          def initialize(user_data)
-            @user_data = hash_input_data user_data
-          end
-
-          def filter
-            data = user_data.select do |attrib, _v|
-              permitted_attribs.include? attrib
-            end
-            @data = FancyOpenStruct.new data
-            self
-          end
-
-          private
-
-          attr_reader :user_data
-
-          def permitted_attribs
-            [:email, :profile, :password, :password_confirmation]
-          end
-
-          # NOTE: Next 2 methods dupe existing methods of same names in
-          # PostsController::Action::Create::Internals::PostDataFilter.
-          def hash_input_data(data)
-            data.send(hasher_for(data)).symbolize_keys
-          end
-
-          def hasher_for(data)
-            return :to_unsafe_h if data.respond_to? :to_unsafe_h
-            :to_h
-          end
-        end # class UsersController::Action::Update::Internals::UserDataFilter
-
-        # Support class for #fail_with_bad_data
-        class BadDataEntity
-          def initialize(data:, current_user:)
-            attribs = current_user.attributes.reject { |s| s.match(/password/) }
-            @entity = Newpoc::Entity::User.new attribs.merge(data)
-            @entity.invalid?
-          end
-
-          def data_from(user_data)
-            check_password_mismatch user_data
-            build_data
-          end
-
-          private
-
-          attr_reader :entity
-
-          def build_data
-            {
-              messages: entity.errors.full_messages,
-              entity: entity_without_errors
-            }
-          end
-
-          def entity_without_errors
-            entity.attributes.reject { |k, _| k == :errors }
-          end
-
-          def check_password_mismatch(user_data)
-            return if user_data.password == user_data.password_confirmation
-            message = 'Password must match the password confirmation'
-            entity.errors.add :base, message
-          end
-        end
       end
       private_constant :Internals
       include Internals

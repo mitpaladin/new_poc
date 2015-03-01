@@ -1,4 +1,6 @@
 
+require 'action_support/hasher'
+
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
   # Isolating our Action classes within the controller they're associated with.
@@ -11,7 +13,7 @@ class PostsController < ApplicationController
           attr_reader :draft_post
 
           def initialize(post_data)
-            @data = hash_input_data(post_data)
+            @data = ActionSupport::Hasher.convert post_data
             @draft_post = false
           end
 
@@ -35,15 +37,6 @@ class PostsController < ApplicationController
 
           def data_defines_draft?
             data[:post_status] == 'draft'
-          end
-
-          def hash_input_data(data)
-            data.send(hasher_for(data)).symbolize_keys
-          end
-
-          def hasher_for(data)
-            return :to_unsafe_h if data.respond_to? :to_unsafe_h
-            :to_h
           end
 
           def post_attributes
