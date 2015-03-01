@@ -12,11 +12,11 @@ class UsersController < ApplicationController
           attr_reader :data
 
           def initialize(user_data)
-            @user_data = user_data
+            @user_data = hash_input_data user_data
           end
 
           def filter
-            data = user_data.to_unsafe_h.symbolize_keys.select do |attrib, _v|
+            data = user_data.select do |attrib, _v|
               permitted_attribs.include? attrib
             end
             @data = FancyOpenStruct.new data
@@ -30,7 +30,19 @@ class UsersController < ApplicationController
           def permitted_attribs
             [:email, :profile, :password, :password_confirmation]
           end
+
+          # NOTE: Next 2 methods dupe existing methods of same names in
+          # PostsController::Action::Create::Internals::PostDataFilter.
+          def hash_input_data(data)
+            data.send(hasher_for(data)).symbolize_keys
+          end
+
+          def hasher_for(data)
+            return :to_unsafe_h if data.respond_to? :to_unsafe_h
+            :to_h
+          end
         end # class UsersController::Action::Update::Internals::UserDataFilter
+
         # Support class for #fail_with_bad_data
         class BadDataEntity
           def initialize(data:, current_user:)

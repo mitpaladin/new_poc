@@ -17,7 +17,7 @@ describe UsersController::Action::Update do
     command.execute
   end
 
-  xcontext 'for a Registered User' do
+  context 'for a Registered User' do
     let(:current_user) do
       user_attribs = FactoryGirl.attributes_for :user, :saved_user
       entity = UserPasswordEntityFactory.create user_attribs, 'password'
@@ -89,7 +89,7 @@ describe UsersController::Action::Update do
       end
     end # describe 'is notified of errors when'
 
-    describe 'cannot update other attributes, such as' do
+    fdescribe 'cannot update other attributes, such as' do
       let(:payload) { subscriber.payload_for(:success).first }
       let(:user_data) { { name: 'Somebody Else' } }
 
