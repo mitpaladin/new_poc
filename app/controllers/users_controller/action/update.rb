@@ -3,6 +3,7 @@ require 'action_support/broadcaster'
 require 'action_support/guest_user_access'
 
 require_relative 'update/internals/bad_data_entity'
+require_relative 'update/internals/entity_repo_updater'
 require_relative 'update/internals/user_data_filter'
 
 class UsersController < ApplicationController
@@ -35,28 +36,13 @@ class UsersController < ApplicationController
 
       attr_reader :current_user, :user_data
 
-      def fail_with_bad_data(data)
-        data = BadDataEntity.new(data: data, current_user: current_user)
-               .data_from user_data
-        fail JSON.dump data
-      end
-
       def prohibit_guest_access
         ActionSupport::GuestUserAccess.new(current_user).prohibit
       end
 
       def update_entity
-        # binding.pry user_data is empty at this point; why?
-        result = user_repo.update identifier: current_user.slug,
-                                  updated_attrs: user_data
-        @entity = result.entity
-        return if result.success?
-        # Remember: @entity is `nil` at this point
-        fail_with_bad_data user_data
-      end
-
-      def user_repo
-        @user_repo ||= UserRepository.new
+        update_params = { current_user: current_user, user_data: user_data }
+        @entity = EntityRepoUpdater.new(update_params).update.entity
       end
     end # class UsersController::Action::Update
   end

@@ -4,6 +4,8 @@ require 'newpoc/action/user/index'
 require 'newpoc/action/user/new'
 require 'newpoc/action/user/show'
 
+require_relative 'users_controller/edit_failure_redirector'
+
 require_relative 'users_controller/action/create'
 require_relative 'users_controller/action/update'
 require_relative 'users_controller/create_failure'
@@ -47,8 +49,6 @@ class UsersController < ApplicationController
     }
     action = Action::Update.new(action_params)
     action.subscribe(self, prefix: :on_update).execute
-    # Actions::UpdateUser.new(params[:user_data], current_user)
-    #   .subscribe(self, prefix: :on_update).execute
   end
 
   # Action responders must be public to receive Wisper notifications; see
@@ -71,11 +71,8 @@ class UsersController < ApplicationController
     @user = payload
   end
 
-  # FIXME: Hackity hackity hack hack hack!
   def on_edit_failure(payload)
-    alert = payload
-    alert = "Not logged in as #{payload[:not_user]}!" if payload.key? :not_user
-    redirect_to root_url, flash: { alert: alert }
+    EditFailureRedirector.new(payload: payload, helper: self).go
   end
 
   def on_index_success(payload) # rubocop:disable Style/TrivialAccessors

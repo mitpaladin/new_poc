@@ -4,11 +4,11 @@ class UsersController < ApplicationController
     # Encapsulates domain logic to update db record based on entity contents.
     class Update
       module Internals
-        # Support class for #fail_with_bad_data
+        # Support class for EntityRepoUpdater
         class BadDataEntity
           def initialize(data:, current_user:)
             attribs = current_user.attributes.reject { |s| s.match(/password/) }
-            @entity = Newpoc::Entity::User.new attribs.merge(data)
+            @entity = Newpoc::Entity::User.new attribs.to_h.merge(data.to_h)
             @entity.invalid?
           end
 
