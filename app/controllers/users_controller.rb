@@ -1,12 +1,12 @@
 
 require 'newpoc/action/user/edit'
-require 'newpoc/action/user/new'
 require 'newpoc/action/user/show'
 
 require_relative 'users_controller/edit_failure_redirector'
 
 require_relative 'users_controller/action/create'
 require_relative 'users_controller/action/index'
+require_relative 'users_controller/action/new'
 require_relative 'users_controller/action/update'
 require_relative 'users_controller/create_failure'
 
@@ -21,9 +21,9 @@ class UsersController < ApplicationController
   end
 
   def new
-    action = Newpoc::Action::User::New.new current_user, UserRepository.new,
-                                           Newpoc::Entity::User
-    action.subscribe(self, prefix: :on_new).execute
+    Action::New.new(current_user: current_user,
+                    user_repo: UserRepository.new)
+      .subscribe(self, prefix: :on_new).execute
   end
 
   def create
