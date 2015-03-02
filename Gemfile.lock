@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/DatabaseCleaner/database_cleaner.git
-  revision: a159a1e9830d804973cf5d65a9e6615885644f56
+  revision: dc74c6975326a94a21711fb1f1ded2bf5f71273a
   specs:
     database_cleaner (1.4.0)
 
@@ -39,9 +39,9 @@ GIT
 
 GIT
   remote: git://github.com/modeset/teaspoon.git
-  revision: 84441c8ba42488ffe47b7e99833c38c3c8f71449
+  revision: f8c3c82c8466283cc4b2692c6490a7c68195445b
   specs:
-    teaspoon (0.8.0)
+    teaspoon (0.9.0)
       railties (>= 3.2.5, < 5)
 
 GIT
@@ -61,7 +61,7 @@ GIT
 
 GIT
   remote: git://github.com/slim-template/slim-rails.git
-  revision: f84707c10ae9018b9e654852e73e272884e27de1
+  revision: c86bf4bd341b1de4568381e3ed43c227976399af
   specs:
     slim-rails (3.0.1)
       actionmailer (>= 3.1, < 5.0)
@@ -130,12 +130,6 @@ PATH
     newpoc-action-user-edit (0.0.1)
       wisper (~> 1.6)
       yajl-ruby (~> 1.2)
-
-PATH
-  remote: lib/newpoc-action-user-index
-  specs:
-    newpoc-action-user-index (0.0.1)
-      wisper (~> 1.6)
 
 PATH
   remote: lib/newpoc-action-user-new
@@ -320,7 +314,7 @@ GEM
     i18n (0.7.0)
     ice_nine (0.11.1)
     interception (0.5)
-    jbuilder (2.2.7)
+    jbuilder (2.2.8)
       activesupport (>= 3.0.0, < 5)
       multi_json (~> 1.2)
     jquery-rails (4.0.3)
@@ -353,7 +347,7 @@ GEM
     mini_portile (0.6.2)
     minitest (5.5.1)
     multi_json (1.10.1)
-    netrc (0.10.2)
+    netrc (0.10.3)
     nokogiri (1.6.6.2)
       mini_portile (~> 0.6.0)
     nokogumbo (1.2.0)
@@ -418,7 +412,7 @@ GEM
       rails-assets-bootstrap (~> 3.2.0)
     rails-assets-jquery (2.1.3)
     rails-assets-sugar (1.4.1)
-    rails-assets-underscore (1.8.1)
+    rails-assets-underscore (1.8.2)
     rails-deprecated_sanitizer (1.0.3)
       activesupport (>= 4.2.0.alpha)
     rails-dom-testing (1.0.5)
@@ -429,7 +423,7 @@ GEM
       rails (>= 3.2)
     rails-html-sanitizer (1.0.1)
       loofah (~> 2.0)
-    rails_best_practices (1.15.6)
+    rails_best_practices (1.15.7)
       activesupport
       code_analyzer (>= 0.4.3)
       colored
@@ -468,7 +462,7 @@ GEM
       rspec-mocks (~> 3.2.0)
     rspec-collection_matchers (1.1.2)
       rspec-expectations (>= 2.99.0.beta1)
-    rspec-core (3.2.0)
+    rspec-core (3.2.1)
       rspec-support (~> 3.2.0)
     rspec-expectations (3.2.0)
       diff-lcs (>= 1.2.0, < 2.0)
@@ -479,18 +473,18 @@ GEM
     rspec-http (0.11.0)
       rack (~> 1.0)
       rspec (~> 3.0)
-    rspec-mocks (3.2.0)
+    rspec-mocks (3.2.1)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.2.0)
-    rspec-rails (3.2.0)
-      actionpack (>= 3.0, <= 4.2)
-      activesupport (>= 3.0, <= 4.2)
-      railties (>= 3.0, <= 4.2)
+    rspec-rails (3.2.1)
+      actionpack (>= 3.0, < 4.3)
+      activesupport (>= 3.0, < 4.3)
+      railties (>= 3.0, < 4.3)
       rspec-core (~> 3.2.0)
       rspec-expectations (~> 3.2.0)
       rspec-mocks (~> 3.2.0)
       rspec-support (~> 3.2.0)
-    rspec-support (3.2.1)
+    rspec-support (3.2.2)
     rubocop (0.29.1)
       astrolabe (~> 1.3)
       parser (>= 2.2.0.1, < 3.0)
@@ -503,11 +497,11 @@ GEM
     ruby_parser (3.6.4)
       sexp_processor (~> 4.1)
     rugged (0.22.0b5)
-    sanitize (3.1.1)
+    sanitize (3.1.2)
       crass (~> 1.0.1)
       nokogiri (>= 1.4.4)
       nokogumbo (= 1.2.0)
-    sass (3.4.12)
+    sass (3.4.13)
     sass-rails (5.0.1)
       railties (>= 4.0.0, < 5.0)
       sass (~> 3.1)
@@ -527,7 +521,7 @@ GEM
       temple (~> 0.7.3)
       tilt (>= 1.3.3, < 2.1)
     slop (3.6.0)
-    spring (1.3.2)
+    spring (1.3.3)
     sprockets (2.12.3)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -551,7 +545,7 @@ GEM
     tilt (1.4.1)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
-    uglifier (2.7.0)
+    uglifier (2.7.1)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
     uniform_notifier (1.7.0)
@@ -567,10 +561,10 @@ GEM
       macaddr (~> 1.0)
     validates_email_format_of (1.6.2)
       i18n
-    web-console (2.0.0)
-      activemodel (~> 4.0)
+    web-console (2.1.0)
+      activemodel (>= 4.0)
       binding_of_caller (>= 0.7.2)
-      railties (~> 4.0)
+      railties (>= 4.0)
       sprockets-rails (>= 2.0, < 4.0)
     wisper (1.6.0)
     wisper_subscription (0.2.0)
@@ -616,7 +610,6 @@ DEPENDENCIES
   newpoc-action-session-destroy!
   newpoc-action-session-new!
   newpoc-action-user-edit!
-  newpoc-action-user-index!
   newpoc-action-user-new!
   newpoc-action-user-show!
   newpoc-entity-post!

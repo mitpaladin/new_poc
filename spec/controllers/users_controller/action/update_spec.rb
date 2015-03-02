@@ -31,7 +31,7 @@ describe UsersController::Action::Update do
       describe 'email address' do
         let(:user_data) { { email: 'new_user@example.com' } }
 
-        fit 'successfully' do
+        it 'successfully' do
           expect(payload).to be_a Newpoc::Entity::User
           expect(payload[:email]).to eq user_data[:email]
         end
