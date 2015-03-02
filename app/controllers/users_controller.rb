@@ -1,12 +1,12 @@
 
 require 'newpoc/action/user/edit'
-require 'newpoc/action/user/show'
 
 require_relative 'users_controller/edit_failure_redirector'
 
 require_relative 'users_controller/action/create'
 require_relative 'users_controller/action/index'
 require_relative 'users_controller/action/new'
+require_relative 'users_controller/action/show'
 require_relative 'users_controller/action/update'
 require_relative 'users_controller/create_failure'
 
@@ -39,8 +39,9 @@ class UsersController < ApplicationController
   end
 
   def show
-    action = Newpoc::Action::User::Show.new params[:id], UserRepository.new
-    action.subscribe(self, prefix: :on_show).execute
+    Action::Show.new(target_slug: params[:id],
+                     user_repository: UserRepository.new)
+      .subscribe(self, prefix: :on_show).execute
   end
 
   def update

@@ -20,7 +20,6 @@ source 'https://rails-assets.org'
   'action-session-destroy',
   'action-session-new',
   'action-user-edit',
-  'action-user-show',
   'entity-post',
   'entity-user',
   'services-markdown_html_converter'
