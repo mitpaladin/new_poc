@@ -1,9 +1,8 @@
 
-require 'newpoc/action/user/edit'
-
 require_relative 'users_controller/edit_failure_redirector'
 
 require_relative 'users_controller/action/create'
+require_relative 'users_controller/action/edit'
 require_relative 'users_controller/action/index'
 require_relative 'users_controller/action/new'
 require_relative 'users_controller/action/show'
@@ -33,9 +32,9 @@ class UsersController < ApplicationController
   end
 
   def edit
-    action = Newpoc::Action::User::Edit.new params[:id], current_user,
-                                            UserRepository.new
-    action.subscribe(self, prefix: :on_edit).execute
+    Action::Edit.new(slug: params[:id], current_user: current_user,
+                     user_repository: UserRepository.new)
+      .subscribe(self, prefix: :on_edit).execute
   end
 
   def show
