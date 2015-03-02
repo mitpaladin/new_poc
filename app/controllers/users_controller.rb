@@ -1,12 +1,12 @@
 
 require 'newpoc/action/user/edit'
-require 'newpoc/action/user/index'
 require 'newpoc/action/user/new'
 require 'newpoc/action/user/show'
 
 require_relative 'users_controller/edit_failure_redirector'
 
 require_relative 'users_controller/action/create'
+require_relative 'users_controller/action/index'
 require_relative 'users_controller/action/update'
 require_relative 'users_controller/create_failure'
 
@@ -15,8 +15,9 @@ class UsersController < ApplicationController
   include Internals
 
   def index
-    action = Newpoc::Action::User::Index.new(UserRepository.new)
-    action.subscribe(self, prefix: :on_index).execute
+    Action::Index.new(UserRepository.new)
+      .subscribe(self, prefix: :on_index)
+      .execute
   end
 
   def new
