@@ -4,9 +4,10 @@ require 'newpoc/action/user/index'
 require 'newpoc/action/user/new'
 require 'newpoc/action/user/show'
 
-require 'update_user'
+require_relative 'users_controller/edit_failure_redirector'
 
 require_relative 'users_controller/action/create'
+require_relative 'users_controller/action/update'
 require_relative 'users_controller/create_failure'
 
 # UsersController: actions related to Users within our "fancy" blog.
@@ -42,8 +43,12 @@ class UsersController < ApplicationController
   end
 
   def update
-    Actions::UpdateUser.new(params[:user_data], current_user)
-      .subscribe(self, prefix: :on_update).execute
+    action_params = {
+      user_data: params[:user_data],
+      current_user: current_user
+    }
+    action = Action::Update.new(action_params)
+    action.subscribe(self, prefix: :on_update).execute
   end
 
   # Action responders must be public to receive Wisper notifications; see
@@ -66,11 +71,8 @@ class UsersController < ApplicationController
     @user = payload
   end
 
-  # FIXME: Hackity hackity hack hack hack!
   def on_edit_failure(payload)
-    alert = payload
-    alert = "Not logged in as #{payload[:not_user]}!" if payload.key? :not_user
-    redirect_to root_url, flash: { alert: alert }
+    EditFailureRedirector.new(payload: payload, helper: self).go
   end
 
   def on_index_success(payload) # rubocop:disable Style/TrivialAccessors
@@ -102,7 +104,7 @@ class UsersController < ApplicationController
   end
 
   def on_update_failure(payload)
-    data = FancyOpenStruct.new JSON.parse(payload)
+    data = FancyOpenStruct.new YAML.load(payload)
     @user = Newpoc::Entity::User.new data.entity if data.entity
     flash[:alert] = data.messages.join '<br/>'
     return render 'edit' if data.entity
