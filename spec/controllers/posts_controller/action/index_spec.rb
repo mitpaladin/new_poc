@@ -1,3 +1,4 @@
+
 require 'spec_helper'
 
 require 'fancy-open-struct'
@@ -40,8 +41,12 @@ end # shared_examples 'a successful action'
 ### ######################################################################## ###
 ### ######################################################################## ###
 
-describe Newpoc::Action::Post::Index do
+describe PostsController::Action::Index do
   let(:author_name) { 'The Author' }
+  let(:command) do
+    described_class.new current_user: current_user, post_repository: repo
+  end
+  let(:current_user) { guest_user }
   let(:draft_post_count) { 5 }
   let(:draft_posts) do
     draft_post_count.times.map do |n|
@@ -64,44 +69,36 @@ describe Newpoc::Action::Post::Index do
   let(:repo) { FancyOpenStruct.new all: [draft_posts, published_posts].flatten }
   let(:subscriber) { WisperSubscription.new }
 
-  it 'has a version number' do
-    expect(Newpoc::Action::Post::Index::VERSION).not_to be nil
+  before :each do
+    subscriber.define_message :success
+    command.subscribe subscriber
+    command.execute
   end
 
-  context 'with default success-event identifier, it' do
-    let(:command) { described_class.new guest_user, repo }
+  it 'is successful' do
+    expect(subscriber).to be_success
+  end
 
-    before :each do
-      subscriber.define_message :success
-      command.subscribe subscriber
-      command.execute
-    end
+  context 'for the Guest User' do
+    let(:current_user) { guest_user }
 
-    it 'is successful' do
-      expect(subscriber).to be_success
-    end
+    it_behaves_like 'a successful action', 0
+  end # context 'for the Guest User'
 
-    context 'for the Guest User' do
-      let(:command) { described_class.new guest_user, repo }
+  context 'for a registered user' do
+    let(:author_user) { FancyOpenStruct.new name: author_name }
+
+    context 'who has authored draft posts' do
+      let(:current_user) { author_user }
+
+      it_behaves_like 'a successful action', 5 # draft_post_count
+    end # context 'who has authored draft posts'
+
+    context 'who has *not* authored draft posts' do
+      let(:current_user) { other_user }
+      let(:other_user) { FancyOpenStruct.new name: 'Somebody Else' }
 
       it_behaves_like 'a successful action', 0
-    end # context 'for the Guest User'
-
-    context 'for a registered user' do
-      let(:author_user) { FancyOpenStruct.new name: author_name }
-
-      context 'who has authored draft posts' do
-        let(:command) { described_class.new author_user, repo }
-
-        it_behaves_like 'a successful action', 5 # draft_post_count
-      end # context 'who has authored draft posts'
-
-      context 'who has *not* authored draft posts' do
-        let(:command) { described_class.new other_user, repo }
-        let(:other_user) { FancyOpenStruct.new name: 'Somebody Else' }
-
-        it_behaves_like 'a successful action', 0
-      end # context 'who has *not* authored draft posts'
-    end # context 'for a registered user'
-  end # context 'with default success-event identifier, it'
-end
+    end # context 'who has *not* authored draft posts'
+  end # context 'for a registered user'
+end # describe PostsController::Action::Index

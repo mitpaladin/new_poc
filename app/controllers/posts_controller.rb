@@ -1,5 +1,4 @@
 
-require 'newpoc/action/post/index'
 require 'newpoc/action/post/new'
 require 'newpoc/action/post/show'
 require 'newpoc/action/post/update'
@@ -8,6 +7,7 @@ require_relative 'posts_controller/create_failure_setup'
 require_relative 'posts_controller/error_message_builder'
 
 require_relative 'posts_controller/action/create'
+require_relative 'posts_controller/action/index'
 
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
@@ -22,8 +22,10 @@ class PostsController < ApplicationController
   end
 
   def index
-    action = Newpoc::Action::Post::Index.new current_user, PostRepository.new
-    action.subscribe(self, prefix: :on_index).execute
+    Action::Index.new(current_user: current_user,
+                      post_repository: PostRepository.new)
+      .subscribe(self, prefix: :on_index)
+      .execute
   end
 
   def new
@@ -35,7 +37,8 @@ class PostsController < ApplicationController
   def create
     Action::Create.new(current_user: current_user,
                        post_data: params[:post_data])
-      .subscribe(self, prefix: :on_create).execute
+      .subscribe(self, prefix: :on_create)
+      .execute
   end
 
   def edit
