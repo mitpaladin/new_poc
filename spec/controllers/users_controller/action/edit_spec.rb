@@ -90,11 +90,10 @@ describe UsersController::Action::Edit do
       describe 'broadcasts :failure with a payload which' do
         let(:payload) { subscriber.payload_for(:failure).first }
 
-        fit 'is a Hash containing the current and target user names' do
+        it 'is a Hash containing the current and target user names' do
           expect(payload).to respond_to :to_hash
           expect(payload.keys.count).to eq 2
           expect(payload[:current]).to eq current_user_name
-          ap payload
           expect(payload[:not_user]).to eq success_entity.name
         end
       end # describe 'broadcasts :success with a payload which'
