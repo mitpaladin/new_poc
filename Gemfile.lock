@@ -78,12 +78,6 @@ PATH
       yajl-ruby (~> 1.2)
 
 PATH
-  remote: lib/newpoc-action-post-index
-  specs:
-    newpoc-action-post-index (0.0.1)
-      wisper (~> 1.6)
-
-PATH
   remote: lib/newpoc-action-post-new
   specs:
     newpoc-action-post-new (0.0.1)
@@ -582,7 +576,6 @@ DEPENDENCIES
   metric_fu-Saikuro
   naught!
   newpoc-action-post-edit!
-  newpoc-action-post-index!
   newpoc-action-post-new!
   newpoc-action-post-show!
   newpoc-action-post-update!
