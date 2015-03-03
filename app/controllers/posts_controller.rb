@@ -1,5 +1,4 @@
 
-require 'newpoc/action/post/new'
 require 'newpoc/action/post/show'
 require 'newpoc/action/post/update'
 
@@ -8,6 +7,7 @@ require_relative 'posts_controller/error_message_builder'
 
 require_relative 'posts_controller/action/create'
 require_relative 'posts_controller/action/index'
+require_relative 'posts_controller/action/new'
 
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
@@ -29,9 +29,10 @@ class PostsController < ApplicationController
   end
 
   def new
-    action = Newpoc::Action::Post::New.new current_user, UserRepository.new,
-                                           Newpoc::Entity::Post
-    action.subscribe(self, prefix: :on_new).execute
+    Action::New.new(current_user: current_user, repository: UserRepository.new,
+                    entity_class: Newpoc::Entity::Post)
+      .subscribe(self, prefix: :on_new)
+      .execute
   end
 
   def create
