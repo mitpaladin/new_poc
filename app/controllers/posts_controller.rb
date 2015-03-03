@@ -1,5 +1,4 @@
 
-require 'newpoc/action/post/show'
 require 'newpoc/action/post/update'
 
 require_relative 'posts_controller/create_failure_setup'
@@ -8,6 +7,7 @@ require_relative 'posts_controller/error_message_builder'
 require_relative 'posts_controller/action/create'
 require_relative 'posts_controller/action/index'
 require_relative 'posts_controller/action/new'
+require_relative 'posts_controller/action/show'
 
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
@@ -50,9 +50,10 @@ class PostsController < ApplicationController
   end
 
   def show
-    action = Newpoc::Action::Post::Show.new params[:id], current_user,
-                                            PostRepository.new
-    action.subscribe(self, prefix: :on_show).execute
+    Action::Show.new(current_user: current_user, repository: PostRepository.new,
+                     target_slug: params[:id])
+      .subscribe(self, prefix: :on_show)
+      .execute
   end
 
   def update
