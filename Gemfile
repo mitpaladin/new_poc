@@ -12,7 +12,6 @@ source 'https://rails-assets.org'
 # Why is this? Inter-Gem dependency management is *fxxxing primitive!*
 [
   'action-post-edit',
-  'action-post-show',
   'action-post-update',
   'action-session-create',
   'action-session-destroy',
