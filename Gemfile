@@ -11,7 +11,6 @@ source 'https://rails-assets.org'
 # actions. Hence also massive duplication of simple code *in* action "Gems".
 # Why is this? Inter-Gem dependency management is *fxxxing primitive!*
 [
-  'action-post-edit',
   'action-post-update',
   'action-session-create',
   'action-session-destroy',

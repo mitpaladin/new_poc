@@ -5,6 +5,7 @@ require_relative 'posts_controller/create_failure_setup'
 require_relative 'posts_controller/error_message_builder'
 
 require_relative 'posts_controller/action/create'
+require_relative 'posts_controller/action/edit'
 require_relative 'posts_controller/action/index'
 require_relative 'posts_controller/action/new'
 require_relative 'posts_controller/action/show'
@@ -43,10 +44,10 @@ class PostsController < ApplicationController
   end
 
   def edit
-    action = Newpoc::Action::Post::Edit.new params[:id], current_user,
-                                            PostRepository.new,
-                                            UserRepository.new.guest_user.entity
-    action.subscribe(self, prefix: :on_edit).execute
+    Action::Edit.new(slug: params[:id], current_user: current_user,
+                     repository: PostRepository.new)
+      .subscribe(self, prefix: :on_edit)
+      .execute
   end
 
   def show

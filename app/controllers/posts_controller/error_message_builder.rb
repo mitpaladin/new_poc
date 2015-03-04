@@ -25,7 +25,12 @@ class PostsController < ApplicationController
       include Internals
 
       def initialize(payload)
-        @error_data = Yajl.load payload, symbolize_keys: true
+        @error_data = nil
+        begin
+          @error_data = Yajl.load payload, symbolize_keys: true
+        rescue Yajl::ParseError
+          @error_data = YAML.load payload
+        end
         build_matchers
       end
 
