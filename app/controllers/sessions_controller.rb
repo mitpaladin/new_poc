@@ -3,6 +3,8 @@ require 'newpoc/action/session/create'
 require 'newpoc/action/session/destroy'
 require 'newpoc/action/session/new'
 
+require_relative 'sessions_controller/action/destroy'
+
 # SessionsController: actions related to Sessions (logging in and out)
 class SessionsController < ApplicationController
   def new
@@ -18,8 +20,7 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    action = Newpoc::Action::Session::Destroy.new
-    action.subscribe(self, prefix: :on_destroy).execute
+    Action::Destroy.new.subscribe(self, prefix: :on_destroy).execute
   end
 
   # Action responders must be public to receive Wisper notifications; see
