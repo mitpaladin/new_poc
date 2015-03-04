@@ -71,14 +71,6 @@ GIT
       slim (~> 3.0)
 
 PATH
-  remote: lib/newpoc-action-post-update
-  specs:
-    newpoc-action-post-update (0.0.2)
-      cabin
-      wisper (~> 1.6)
-      yajl-ruby (~> 1.2)
-
-PATH
   remote: lib/newpoc-action-session-create
   specs:
     newpoc-action-session-create (0.0.1)
@@ -198,7 +190,6 @@ GEM
       columnize (~> 0.8)
       debugger-linecache (~> 1.2)
       slop (~> 3.6)
-    cabin (0.7.1)
     callsite (0.0.11)
     capybara (2.4.4)
       mime-types (>= 1.16)
@@ -555,7 +546,6 @@ DEPENDENCIES
   meta_request
   metric_fu-Saikuro
   naught!
-  newpoc-action-post-update!
   newpoc-action-session-create!
   newpoc-action-session-destroy!
   newpoc-action-session-new!

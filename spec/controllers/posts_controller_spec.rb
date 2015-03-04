@@ -231,7 +231,7 @@ describe PostsController do
     end # context 'for the Guest User'
   end # describe "POST 'create'" (StoreResult removed)
 
-  fdescribe "GET 'edit'" do
+  describe "GET 'edit'" do
     let(:author) { FactoryGirl.create :user, :saved_user }
     let!(:post) do
       FactoryGirl.create :post, :saved_post, :published_post,
@@ -423,7 +423,6 @@ describe PostsController do
         context 'with invalid post data' do
           before :each do
             data = { body: '', image_url: '' }
-            # identity.current_user = author
             patch :update, id: post.slug, post_data: data
           end
 

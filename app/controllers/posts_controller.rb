@@ -1,5 +1,5 @@
 
-require 'newpoc/action/post/update'
+# require 'newpoc/action/post/update'
 
 require_relative 'posts_controller/create_failure_setup'
 require_relative 'posts_controller/error_message_builder'
@@ -9,6 +9,7 @@ require_relative 'posts_controller/action/edit'
 require_relative 'posts_controller/action/index'
 require_relative 'posts_controller/action/new'
 require_relative 'posts_controller/action/show'
+require_relative 'posts_controller/action/update'
 
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
@@ -58,11 +59,11 @@ class PostsController < ApplicationController
   end
 
   def update
-    guest_user = UserRepository.new.guest_user.entity
-    action = Newpoc::Action::Post::Update.new params[:id], params[:post_data],
-                                              current_user, PostRepository.new,
-                                              guest_user
-    action.subscribe(self, prefix: :on_update).execute
+    Action::Update.new(current_user: current_user, slug: params[:id],
+                       repository: PostRepository.new,
+                       post_data: params[:post_data])
+      .subscribe(self, prefix: :on_update)
+      .execute
   end
 
   # Action responders must be public to receive Wisper notifications; see
