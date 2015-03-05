@@ -84,13 +84,6 @@ PATH
       wisper (~> 1.6)
 
 PATH
-  remote: lib/newpoc-action-session-new
-  specs:
-    newpoc-action-session-new (0.0.1)
-      wisper (~> 1.6)
-      yajl-ruby (>= 1.2.1)
-
-PATH
   remote: lib/newpoc-entity-post
   specs:
     newpoc-entity-post (0.0.4)
@@ -548,7 +541,6 @@ DEPENDENCIES
   naught!
   newpoc-action-session-create!
   newpoc-action-session-destroy!
-  newpoc-action-session-new!
   newpoc-entity-post!
   newpoc-entity-user!
   newpoc-services-markdown_html_converter!

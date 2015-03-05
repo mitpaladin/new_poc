@@ -1,14 +1,19 @@
 
 require 'newpoc/action/session/create'
 require 'newpoc/action/session/destroy'
-require 'newpoc/action/session/new'
 
 require_relative 'sessions_controller/action/destroy'
+require_relative 'sessions_controller/action/new'
 
 # SessionsController: actions related to Sessions (logging in and out)
 class SessionsController < ApplicationController
+  # Isolating our Action classes within the controller they're associated with.
+  module Action
+  end
+
   def new
-    action = Newpoc::Action::Session::New.new current_user, UserRepository.new
+    action = Action::New.new current_user: current_user,
+                             user_repo: UserRepository.new
     action.subscribe(self, prefix: :on_new).execute
   end
 

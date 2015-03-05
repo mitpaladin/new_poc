@@ -13,7 +13,6 @@ source 'https://rails-assets.org'
 [
   'action-session-create',
   'action-session-destroy',
-  'action-session-new',
   'entity-post',
   'entity-user',
   'services-markdown_html_converter'
