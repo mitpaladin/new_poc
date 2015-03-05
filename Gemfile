@@ -113,3 +113,7 @@ group :development, :test do
   gem 'tapout'
   gem 'teaspoon', github: 'modeset/teaspoon'
 end
+
+group :test do
+  gem 'codeclimate-test-reporter', require: nil
+end
