@@ -14,6 +14,10 @@ class ApplicationController < ActionController::Base
     def self.listener_name_for(method_name)
       "on_#{method_name}".to_sym
     end
+
+    def self.subscribe_params_for(method_name)
+      { prefix: listener_name_for(method_name) }
+    end
   end
   private_constant :Internals
 
@@ -56,8 +60,8 @@ class ApplicationController < ActionController::Base
     method_name = action_sym.downcase.to_s
     action_class = Internals.action_class_for self, method_name
     define_method method_name do
-      action_class.new(instance_eval(&block))
-        .subscribe(self, prefix: Internals.listener_name_for(method_name))
+      action = action_class.new(instance_eval(&block))
+      action.subscribe(self, Internals.subscribe_params_for(method_name))
         .execute
     end
   end
