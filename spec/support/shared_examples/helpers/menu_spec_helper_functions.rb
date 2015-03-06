@@ -18,6 +18,19 @@ module AHBMF
     end
   end # class AHBMF::ParamValues
 
+  # Encapsulates parameters for menu-separator helper function below.
+  class MenuSeparatorParamValues
+    attr_reader :current_el, :index, :style
+
+    def initialize(values_in)
+      @index, @current_el, @style = values_in
+    end
+
+    def current_li
+      current_el.children[index]
+    end
+  end # class AHBMF::MenuSeparatorParamValues
+
   # Helper-function list-item validation for the two following functions.
   class ParamListItemValidator
     def initialize(param_values)
@@ -30,6 +43,14 @@ module AHBMF
 
     def list_item_as_indexed_child?
       param_values.current_li.name == 'li'
+    end
+
+    def menu_separator_item?
+      param_values.current_li.text == HTMLEntities.new.decode('&nbsp;')
+    end
+
+    def styled_correctly?
+      param_values.current_li['style'] == param_values.style
     end
 
     private
@@ -68,6 +89,23 @@ module AHBMF
 
     attr_reader :param_obj
   end # class AHBMF::ParamAnchorTagValidator
+
+  # Validation for menu spacer item content.
+  class SpacerInnerTextValidator
+    def initialize(param_obj)
+      @param_obj = param_obj
+    end
+
+    def valid?
+      inner_text = param_obj.current_li.children.first
+      return false unless inner_text.text?
+      inner_text.inner_text == HTMLEntities.new.decode('&nbsp;')
+    end
+
+    private
+
+    attr_reader :param_obj
+  end # class AHBMF::SpacerInnerTextValidator
 end # module AHBMF
 
 def it_behaves_like_a_menu_list_item(params)
@@ -83,14 +121,12 @@ def it_behaves_like_a_menu_list_item(params)
 end
 
 def it_behaves_like_a_menu_separator(params)
-  index, current_el, style = params.values
-  current_li = current_el.children[index]
-  expect(current_li.name).to eq 'li'
-  expect(current_li.text).to eq HTMLEntities.new.decode('&nbsp;')
-  expect(current_li['style']).to eq style
-  inner_text = current_li.children[0]
-  expect(inner_text).to be_text
-  expect(inner_text.inner_text).to eq HTMLEntities.new.decode('&nbsp;')
+  h = AHBMF::MenuSeparatorParamValues.new params.values
+  v = AHBMF::ParamListItemValidator.new h
+  expect(v).to be_list_item_as_indexed_child
+  expect(v).to be_menu_separator_item
+  expect(v).to be_styled_correctly
+  expect(AHBMF::SpacerInnerTextValidator.new h).to be_valid
 end
 
 def separator_style_for(menu_sym)
