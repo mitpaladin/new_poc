@@ -23,47 +23,40 @@ class PostsController < ApplicationController
   module Action
   end
 
-  def index
-    Action::Index.new(current_user: current_user,
-                      post_repository: PostRepository.new)
-      .subscribe(self, prefix: :on_index)
-      .execute
+  def_action(:index) do
+    { current_user: current_user, post_repository: PostRepository.new }
   end
 
-  def new
-    Action::New.new(current_user: current_user, repository: UserRepository.new,
-                    entity_class: Newpoc::Entity::Post)
-      .subscribe(self, prefix: :on_new)
-      .execute
+  def_action(:new) do
+    {
+      current_user: current_user, repository: UserRepository.new,
+      entity_class: Newpoc::Entity::Post
+    }
   end
 
-  def create
-    Action::Create.new(current_user: current_user,
-                       post_data: params[:post_data])
-      .subscribe(self, prefix: :on_create)
-      .execute
+  def_action(:create) do
+    { current_user: current_user, post_data: params[:post_data] }
   end
 
-  def edit
-    Action::Edit.new(slug: params[:id], current_user: current_user,
-                     repository: PostRepository.new)
-      .subscribe(self, prefix: :on_edit)
-      .execute
+  def_action(:edit) do
+    {
+      slug: params[:id], current_user: current_user,
+      repository: PostRepository.new
+    }
   end
 
-  def show
-    Action::Show.new(current_user: current_user, repository: PostRepository.new,
-                     target_slug: params[:id])
-      .subscribe(self, prefix: :on_show)
-      .execute
+  def_action(:show) do
+    {
+      current_user: current_user, repository: PostRepository.new,
+      target_slug: params[:id]
+    }
   end
 
-  def update
-    Action::Update.new(current_user: current_user, slug: params[:id],
-                       repository: PostRepository.new,
-                       post_data: params[:post_data])
-      .subscribe(self, prefix: :on_update)
-      .execute
+  def_action(:update) do
+    {
+      current_user: current_user, slug: params[:id],
+      post_data: params[:post_data], repository: PostRepository.new
+    }
   end
 
   # Action responders must be public to receive Wisper notifications; see

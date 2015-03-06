@@ -13,43 +13,29 @@ require_relative 'users_controller/create_failure'
 class UsersController < ApplicationController
   include Internals
 
-  def index
-    Action::Index.new(UserRepository.new)
-      .subscribe(self, prefix: :on_index)
-      .execute
+  def_action(:index) { UserRepository.new }
+
+  def_action(:new) do
+    { current_user: current_user, user_repo: UserRepository.new }
   end
 
-  def new
-    Action::New.new(current_user: current_user,
-                    user_repo: UserRepository.new)
-      .subscribe(self, prefix: :on_new).execute
+  def_action(:create) do
+    { current_user: current_user, user_data: params[:user_data] }
   end
 
-  def create
-    action = Action::Create.new current_user: current_user,
-                                user_data: params[:user_data]
-    action.subscribe(self, prefix: :on_create).execute
-  end
-
-  def edit
-    Action::Edit.new(slug: params[:id], current_user: current_user,
-                     user_repository: UserRepository.new)
-      .subscribe(self, prefix: :on_edit).execute
-  end
-
-  def show
-    Action::Show.new(target_slug: params[:id],
-                     user_repository: UserRepository.new)
-      .subscribe(self, prefix: :on_show).execute
-  end
-
-  def update
-    action_params = {
-      user_data: params[:user_data],
-      current_user: current_user
+  def_action(:edit) do
+    {
+      slug: params[:id], current_user: current_user,
+      user_repository: UserRepository.new
     }
-    action = Action::Update.new(action_params)
-    action.subscribe(self, prefix: :on_update).execute
+  end
+
+  def_action(:show) do
+    { target_slug: params[:id], user_repository: UserRepository.new }
+  end
+
+  def_action(:update) do
+    { user_data: params[:user_data], current_user: current_user }
   end
 
   # Action responders must be public to receive Wisper notifications; see
