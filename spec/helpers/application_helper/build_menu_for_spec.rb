@@ -6,9 +6,7 @@ require shared_support_dir + 'valid_menu_for_guest_user'
 require shared_support_dir + 'valid_menu_for_registered_user'
 
 describe ApplicationHelper::BuildMenuFor do
-
   describe :build_menu_for.to_s do
-
     it 'is a method taking two parameters' do
       p = public_method :build_menu_for
       expect(p).to be_a Method
@@ -32,5 +30,4 @@ describe ApplicationHelper::BuildMenuFor do
       it_behaves_like this_shared_example, :sidebar
     end # context 'for a Registered User
   end # describe :build_menu_for.to_s
-
 end # describe ApplicationHelper::BuildMenuFor

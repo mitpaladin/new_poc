@@ -3,7 +3,6 @@ require 'support/shared_examples/helpers/menu_spec_helper_functions'
 
 description = 'a menu containing appropriate items for a Guest User'
 shared_examples description do |current_user, menu_sym|
-
   context "when called passing in :#{menu_sym} for a Guest User" do
     let(:built_menu) { build_menu_for menu_sym, current_user }
     let(:container) { Nokogiri.parse built_menu }
@@ -58,7 +57,6 @@ shared_examples description do |current_user, menu_sym|
                                          path: new_session_path,
                                          current_el: current_el
       end
-
     end # describe 'contains a top-level `ul` element that'
   end # context "when called passing in :#{menu_sym} for a Guest User"
 end # shared_examples 'a menu containing appropriate items for a Guest User'

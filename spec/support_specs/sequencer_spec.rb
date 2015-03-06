@@ -20,7 +20,6 @@ describe Sequencer, support: true do
     end # describe 'takes a format string as a parameter and'
 
     describe 'increments the sequence number' do
-
       it 'once when #step is called once' do
         obj.step
         expect(obj.to_str).to eq 'This is a Test 2'

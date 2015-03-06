@@ -31,7 +31,6 @@ module Newpoc
       end
 
       describe 'correctly parses markup including' do
-
         after :each do
           actual = described_class.new.to_html @markup
           if @expected.respond_to? :named_captures # it's a Regexp

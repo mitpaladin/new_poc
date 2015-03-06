@@ -1,6 +1,5 @@
 
 RSpec::Matchers.define :be_saved_post_entity_for do |source|
-
   match do |actual|
     attrs = [
       :author_name,

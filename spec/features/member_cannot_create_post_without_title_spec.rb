@@ -4,7 +4,6 @@ require 'spec_helper'
 require 'support/feature_spec/login_helper'
 
 describe 'Member cannot create post without' do
-
   let(:error_message)   { "Title can't be blank" }
   let(:post_body)       { 'The Body is six feet under, nine edge down.' }
   let(:success_report)  { 'Post added!' }
@@ -21,5 +20,4 @@ describe 'Member cannot create post without' do
     expect(page).to have_text error_message
     expect(page).to_not have_text success_report
   end
-
 end # describe 'Member cannot create post without'

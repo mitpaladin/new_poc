@@ -331,6 +331,5 @@ describe 'HTML::Pipeline simple exploration, demoing' do
         HTML::Pipeline::SyntaxHighlightFilter
       ]
     end
-
   end # describe "all filters we're likely to use in a pipeline"
 end # describe 'HTML::Pipeline simple exploration, demoing'

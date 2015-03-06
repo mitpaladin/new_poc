@@ -136,7 +136,6 @@ describe UsersController do
     end # describe 'with valid parameters'
 
     context 'with invalid parameters' do
-
       context 'that result in an apparently valid user entity, such as' do
         # This tests a new user that would be valid if a user with the same name
         # weren't already registered. At the entity level, it's fine; it takes a
@@ -167,7 +166,6 @@ describe UsersController do
       end # context 'that result in an apparently valid user entity, such as'
 
       context 'that result in a visibly invalid user entity, including' do
-
         after :each do
           post :create, user_data: @params
           expect(response).not_to be_redirection
@@ -196,7 +194,6 @@ describe UsersController do
       end # context 'that result in a visibly invalid user entity, including'
 
       context 'that result in a visibly valid user entity, including' do
-
         after :each do
           post :create, user_data: @params
           expect(response).not_to be_redirection
@@ -238,7 +235,6 @@ describe UsersController do
     let(:user) { FactoryGirl.create :user, :saved_user }
 
     context 'for the Guest User' do
-
       before :each do
         get :edit, id: user.name.parameterize
       end
@@ -258,7 +254,6 @@ describe UsersController do
       end
 
       context 'editing his own record' do
-
         before :each do
           get :edit, id: user.slug
         end

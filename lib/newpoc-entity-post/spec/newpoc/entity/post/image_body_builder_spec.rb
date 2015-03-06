@@ -35,7 +35,6 @@ module Newpoc
           end
 
           describe '#build' do
-
             describe 'wraps its contents in an outermost tag that' do
               let(:obj) { OpenStruct.new image_url: image_url, body: caption }
               let(:fragment) { Nokogiri::HTML.fragment(builder.build obj) }

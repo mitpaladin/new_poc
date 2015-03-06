@@ -61,7 +61,6 @@ describe SessionsController do
   end
 
   describe "GET 'new'" do
-
     context 'for the Guest User' do
       before :each do
         get :new
@@ -98,7 +97,6 @@ describe SessionsController do
   end # describe "GET 'new'"
 
   describe "POST 'create'" do
-
     context 'for the Guest User' do
       describe 'with valid params' do
         let(:user) { FactoryGirl.create :user, :saved_user }
@@ -129,7 +127,6 @@ describe SessionsController do
       end # describe 'with valid params'
 
       describe 'with parameters that are invalid because' do
-
         it_behaves_like 'invalid login credentials', :name
 
         it_behaves_like 'invalid login credentials', :password
@@ -138,7 +135,6 @@ describe SessionsController do
   end # describe "POST 'create'"
 
   describe "DELETE 'destroy'" do
-
     before :each do
       @guest_user = UserDao.first
       user = FactoryGirl.create :user, :saved_user

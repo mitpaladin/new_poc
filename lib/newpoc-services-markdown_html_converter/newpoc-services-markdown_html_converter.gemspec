@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'github-linguist', '~> 4.2', '>= 4.2.5'
   spec.add_dependency 'github-markdown', '~> 0.6', '>= 0.6.8'
   spec.add_dependency 'pygments.rb', '~> 0.5', '>= 0.5.4'
-# gem 'pygments.rb', github: 'lencioni/pygments.rb', branch: 'yajl-update'
+  # gem 'pygments.rb', github: 'lencioni/pygments.rb', branch: 'yajl-update'
   spec.add_dependency 'rinku', '~> 1.7', '>= 1.7.3'
   spec.add_dependency 'sanitize', '~> 3.1'
   spec.add_dependency 'yajl-ruby', '~> 1.1'

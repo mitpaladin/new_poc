@@ -2,7 +2,6 @@
 require 'spec_helper'
 
 describe 'User can view author profile from article page' do
-
   before :each do
     FeatureSpecLoginHelper.new(self).register_and_login
     FeatureSpecNewPostHelper.new(self).create_image_post
@@ -10,7 +9,6 @@ describe 'User can view author profile from article page' do
   end
 
   describe 'by clicking on the author name in the' do
-
     after :each do
       within(:css, @css) { click_link @user_name }
       header = "Articles Authored By #{@user_name}"
@@ -24,7 +22,5 @@ describe 'User can view author profile from article page' do
     it 'article byline' do
       @css = 'div.page-header h1'
     end
-
   end # describe 'by clicking on the author name in the'
-
 end # describe 'User can view author profile from article page'

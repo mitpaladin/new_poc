@@ -1,7 +1,6 @@
 
 shared_examples 'it supports entity initialisation' do
   describe 'supports initialisation' do
-
     describe 'succeeding' do
       it 'with any combination of valid field names' do
         expect { described_class.new valid_subset }.not_to raise_error
@@ -22,7 +21,6 @@ shared_examples 'it supports entity initialisation' do
   end # describe 'supports initialisation'
 
   describe 'instantiating with' do
-
     describe 'valid attribute names' do
       let(:obj) { described_class.new valid_subset }
 

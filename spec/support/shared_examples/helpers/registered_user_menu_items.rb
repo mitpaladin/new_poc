@@ -3,7 +3,6 @@ require 'support/shared_examples/helpers/menu_spec_helper_functions'
 
 description = 'a menu containing appropriate items for a Registered User'
 shared_examples description do |current_user, menu_sym|
-
   context "when called passing in :#{menu_sym} for a Registered User" do
     let(:built_menu) { build_menu_for menu_sym, current_user }
     let(:container) { Nokogiri.parse built_menu }

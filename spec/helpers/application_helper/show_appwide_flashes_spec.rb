@@ -2,15 +2,12 @@
 require 'spec_helper'
 
 describe ApplicationHelper::AppwideFlashes do
-
   describe :show_appwide_flashes.to_s do
-
     it 'returns an empty string when passed an empty flash hash' do
       expect(helper.show_appwide_flashes PseudoFlash.new).to eq ''
     end
 
     describe 'for any single valid call' do
-
       before :each do
         @message = 'This is a notice'
         flashes = PseudoFlash.new
@@ -73,7 +70,6 @@ describe ApplicationHelper::AppwideFlashes do
         end # describe 'has as its first child node'
 
         describe 'has as its second child node' do
-
           before :each do
             @node = @element.children.last
           end
@@ -86,13 +82,10 @@ describe ApplicationHelper::AppwideFlashes do
             expect(@node.text).to eq @message
           end
         end # describe 'has as its second child node'
-
       end # describe 'generates an outer element that'
-
     end # describe 'for any single valid call'
 
     describe 'contains level-specific CSS for a single cell with level' do
-
       after :each do
         flash = PseudoFlash.new
         flash[@level] = @message
@@ -123,11 +116,8 @@ describe ApplicationHelper::AppwideFlashes do
         @message = 'Be alert! The world needs more lerts!'
         @expected_class = 'alert-danger'
       end
-
     end # describe 'contains level-specific CSS for a single cell with level'
-
   end # describe :show_appwide_flashes
-
 end
 
 # "Test double" class for Rails' `ActionDispatch::Flash::FlashHash` class.

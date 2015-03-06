@@ -1,6 +1,5 @@
 
 RSpec::Matchers.define :have_same_blog_content_as do |other_blog|
-
   match do |actual_blog|
     if other_blog == actual_blog
       true

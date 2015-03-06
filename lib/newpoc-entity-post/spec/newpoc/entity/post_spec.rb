@@ -59,9 +59,7 @@ describe Newpoc::Entity::Post do
   it_behaves_like 'a data-mapping entity'
 
   describe '#valid?' do
-
     describe 'returns true when initialised with' do
-
       after :each do
         expect(described_class.new @attribs).to be_valid
       end
@@ -89,7 +87,6 @@ describe Newpoc::Entity::Post do
     end # describe 'returns true when initialised with'
 
     describe 'returns false when initialised with' do
-
       after :each do
         expect(described_class.new @attribs).not_to be_valid
       end
@@ -125,7 +122,6 @@ describe Newpoc::Entity::Post do
     end
 
     describe 'returns the correct markup for' do
-
       after :each do
         class_name = @class_name || 'ImageBodyBuilder'
         test_builder = MarkupTestBuilder.new @post, class_name
@@ -164,7 +160,6 @@ describe Newpoc::Entity::Post do
   end # describe '#build_byline'
 
   describe '#post_status' do
-
     it 'returns "draft" for a draft post' do
       expect(draft_post.post_status).to eq 'draft'
     end

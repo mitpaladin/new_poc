@@ -6,7 +6,6 @@ require 'support/feature_spec/new_post_helper'
 require 'support/feature_spec/timestamp_helper'
 
 describe 'Member can publish articles and' do
-
   before :each do
     FeatureSpecLoginHelper.new(self).register_and_login
     FeatureSpecNewPostHelper.new(self).create_image_post

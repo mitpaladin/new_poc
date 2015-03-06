@@ -17,7 +17,6 @@ shared_examples 'the #all method for a Repository' do
       end
 
       describe 'with items' do
-
         it 'that are entity instances' do
           result.each { |record| expect(record).to be_an entity_class }
         end

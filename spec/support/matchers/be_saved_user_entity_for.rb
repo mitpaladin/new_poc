@@ -1,6 +1,5 @@
 
 RSpec::Matchers.define :be_saved_user_entity_for do |source|
-
   match do |actual|
     @reasons = SavedEntityVerifier.new(source, actual) do
       required_in_source :password, :password_confirmation

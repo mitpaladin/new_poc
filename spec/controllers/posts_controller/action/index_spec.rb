@@ -5,7 +5,6 @@ require 'fancy-open-struct'
 require 'wisper_subscription'
 
 shared_examples 'a successful action' do |expected_drafts|
-
   describe 'is successful, broadcasting a payload which' do
     let(:payload) { subscriber.payload_for(:success).first }
 
@@ -14,7 +13,6 @@ shared_examples 'a successful action' do |expected_drafts|
     end
 
     describe 'contains' do
-
       it 'all published posts' do
         expected_count = published_post_count + expected_drafts
         expect(payload.count).to eq expected_count

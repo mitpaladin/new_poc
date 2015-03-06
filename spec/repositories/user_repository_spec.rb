@@ -90,7 +90,6 @@ describe UserRepository do
 
   describe :attributes_for.to_s do
     context 'for a dao with no passwords' do
-
       it 'adds test password' do
         dao = FactoryGirl.create :user
         attr = UserRepository.new.send(:attributes_for, dao, [])

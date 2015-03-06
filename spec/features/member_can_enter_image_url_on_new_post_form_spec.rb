@@ -4,7 +4,6 @@ require 'spec_helper'
 require 'support/feature_spec/login_helper'
 
 describe 'Member can enter' do
-
   let(:error_message)   { '1 error prevented this PostDao from being saved:' }
   let(:post_body)       { 'The Body is six feet under, nine edge down.' }
   let(:post_title)      { 'Clear Title to This Post' }
@@ -22,5 +21,4 @@ describe 'Member can enter' do
     click_on 'Create Post'
     expect(page).to_not have_text error_message
   end
-
 end # describe 'Member can enter'

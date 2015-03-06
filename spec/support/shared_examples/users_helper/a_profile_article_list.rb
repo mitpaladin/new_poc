@@ -35,7 +35,6 @@ shared_examples 'a profile article list' do |fragment_builder|
     end
 
     describe 'for each li.list-group-item element' do
-
       it 'has a single child element' do
         fragment.children.each do |li|
           expect(li).to have(1).child

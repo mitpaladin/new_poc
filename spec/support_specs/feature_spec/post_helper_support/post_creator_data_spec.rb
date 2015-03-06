@@ -50,7 +50,6 @@ module PostHelperSupport
       end # describe 'updates'
 
       describe 'accepts a parameter to use for the next instance status' do
-
         describe 'with acceptable values of' do
           %w(public draft).each do |status|
             it status do
@@ -126,7 +125,6 @@ module PostHelperSupport
     end # context 'specifying a post-start value'
 
     describe :post_status.to_s do
-
       it 'defaults to "public" unless otherwise specified' do
         expect(PostCreatorData.new.post_status).to eq default_status
       end

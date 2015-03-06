@@ -28,5 +28,4 @@ describe 'New user can sign up by visiting the "Sign Up" page and' do
     expect(page).to have_content landing_page_header
     expect(page).to have_css '.alert.alert-success', text: thank_you
   end
-
 end # describe 'New user can sign up'
