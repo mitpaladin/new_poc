@@ -76,7 +76,7 @@ class PostsController < ApplicationController
     redirect_to root_path, flash: { alert: e.message }
   end
 
-  def on_edit_success(payload) # rubocop:disable Style/TrivialAccessors
+  def on_edit_success(payload)
     @post = payload
   end
 
@@ -85,11 +85,11 @@ class PostsController < ApplicationController
     redirect_to root_path, flash: { alert: alert }
   end
 
-  def on_index_success(payload) # rubocop:disable Style/TrivialAccessors
+  def on_index_success(payload)
     @posts = payload
   end
 
-  def on_new_success(payload) # rubocop:disable Style/TrivialAccessors
+  def on_new_success(payload)
     @post = payload
   end
 
@@ -98,7 +98,7 @@ class PostsController < ApplicationController
     redirect_to root_path, flash: { alert: payload }
   end
 
-  def on_show_success(payload) # rubocop:disable Style/TrivialAccessors
+  def on_show_success(payload)
     @post = payload
   end
 

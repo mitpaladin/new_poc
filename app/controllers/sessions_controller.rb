@@ -48,7 +48,7 @@ class SessionsController < ApplicationController
   # No #on_destroy_failure. Can't happen and, even if it does, we don't want to
   # know about it. So there.
 
-  def on_new_success(payload) # rubocop:disable Style/TrivialAccessors
+  def on_new_success(payload)
     @user = payload
   end
 

@@ -2,3 +2,6 @@
 # default: 15. :confounded:
 Metrics/AbcSize:
   Max: 30
+
+Style/TrivialAccessors:
+  AllowDSLWriters: true
