@@ -1,7 +1,4 @@
 
-inherit_from: .rubocop_todo.yml
-
 # default: 15. :confounded:
 Metrics/AbcSize:
   Max: 30
-
