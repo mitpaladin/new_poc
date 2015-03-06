@@ -4,6 +4,19 @@ require 'current_user_identity'
 # Main application controller. Hang things off here that are needed by multiple
 # controllers (which all subclass this one).
 class ApplicationController < ActionController::Base
+  # Internal code used by ApplicationController, *not* directly by subclasses.
+  module Internals
+    def self.action_class_for(base_class, method_name)
+      action_method = method_name.capitalize.to_sym
+      base_class.const_get(:Action).const_get action_method
+    end
+
+    def self.listener_name_for(method_name)
+      "on_#{method_name}".to_sym
+    end
+  end
+  private_constant :Internals
+
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
@@ -41,10 +54,10 @@ class ApplicationController < ActionController::Base
   #
   def self.def_action(action_sym, &block)
     method_name = action_sym.downcase.to_s
-    action_class = const_get(:Action).const_get method_name.capitalize.to_sym
+    action_class = Internals.action_class_for self, method_name
     define_method method_name do
       action_class.new(instance_eval(&block))
-        .subscribe(self, prefix: "on_#{method_name}".to_sym)
+        .subscribe(self, prefix: Internals.listener_name_for(method_name))
         .execute
     end
   end
