@@ -3,9 +3,7 @@ require 'spec_helper'
 
 describe UserDao do
   describe 'validates' do
-
     describe :name do
-
       it 'as unique' do
         build_user = -> { FactoryGirl.build :user, :new_user, name: 'Joe' }
         user1 = build_user.call
@@ -25,7 +23,6 @@ describe UserDao do
       end
 
       describe 'as conforming to the format for' do
-
         describe 'invalid names' do
           after :each do
             user = FactoryGirl.build :user, name: @name
@@ -57,7 +54,6 @@ describe UserDao do
     end # describe :name
 
     describe :slug do
-
       context 'with a valid name' do
         let(:user) { FactoryGirl.build(:user).tap(&:save!) }
 
@@ -71,7 +67,6 @@ describe UserDao do
       let(:user) { FactoryGirl.build :user }
 
       context 'for a valid email address' do
-
         it 'as valid' do
           user.email = 'user@example.com'
           expect(user).to be_valid
@@ -79,7 +74,6 @@ describe UserDao do
       end # context 'for a valid email address' do
 
       context 'for an invalid email address' do
-
         it 'as valid' do
           user.email = 'user at example dot com'
           expect(user).to_not be_valid

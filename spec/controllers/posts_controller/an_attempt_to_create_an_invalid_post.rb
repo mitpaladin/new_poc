@@ -1,7 +1,6 @@
 
 shared_examples 'an attempt to create an invalid Post' do
   describe 'with an invalid title, the returned post instance is' do
-
     before :each do
       params[:title] = ''
       post :create, post_data: params

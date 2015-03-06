@@ -57,7 +57,6 @@ describe Newpoc::Entity::User do
   end # describe '#attributes'
 
   describe '#[]' do
-
     it 'returns the correct value for an attribute by hash index' do
       expect(obj[:name]).to eq obj.attributes[:name]
     end
@@ -130,7 +129,6 @@ describe Newpoc::Entity::User do
   end # describe '#valid?'
 
   describe '#guest_user?' do
-
     it 'returns true for the Guest User' do
       expect(described_class.guest_user).to be_guest_user
     end

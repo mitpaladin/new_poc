@@ -1,0 +1,7 @@
+
+inherit_from: ../.rubocop.yml
+
+# Offense count: 1
+# Configuration parameters: CountComments.
+Metrics/MethodLength:
+  Max: 11

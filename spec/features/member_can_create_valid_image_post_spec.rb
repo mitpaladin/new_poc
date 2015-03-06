@@ -5,7 +5,6 @@ require 'support/feature_spec/login_helper'
 require 'support/feature_spec/new_post_helper'
 
 describe 'Member can create a valid image post and see' do
-
   before :each do
     FeatureSpecLoginHelper.new(self).register_and_login
     FeatureSpecNewPostHelper.new(self).create_image_post
@@ -22,5 +21,4 @@ describe 'Member can create a valid image post and see' do
     selector = format 'article > figure > p > a > img[src="%s"]', @image_url
     expect(page).to have_selector selector
   end
-
 end # describe 'Member can create a valid image post and see'

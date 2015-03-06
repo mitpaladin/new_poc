@@ -5,7 +5,6 @@ describe PostDao do
   let(:klass) { PostDao }
 
   describe 'supports initialisation' do
-
     it 'with no parameters' do
       expect { klass.new }.not_to raise_error
     end
@@ -24,14 +23,12 @@ describe PostDao do
     let(:title) { 'The Title' }
 
     describe 'is valid for an instance created with' do
-
       it 'an instance with an author name and a title' do
         expect(klass.new author_name: author_name, title: title).to be_valid
       end
     end # describe 'is valid for an instance created with'
 
     describe 'is invalid for an instance created with' do
-
       it 'no parameters' do
         expect(klass.new).not_to be_valid
       end

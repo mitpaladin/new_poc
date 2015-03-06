@@ -20,7 +20,6 @@ shared_examples 'cannot edit the post' do |expected|
 end
 
 describe 'A published post is' do
-
   before :each do
     @login_helper = FeatureSpecLoginHelper.new(self)
     @login_helper.register_and_login

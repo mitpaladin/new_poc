@@ -2,7 +2,6 @@
 require 'spec_helper'
 
 shared_examples 'a form-attributes helper' do |form_name|
-
   describe ":#{form_name}_form_attributes" do
     it 'returns a Hash' do
       expect(subject).to be_a Hash
@@ -40,7 +39,6 @@ shared_examples 'a status-selection control' do
   end
 
   describe 'returns <option> tags for' do
-
     %w(draft public).each do |status|
       it status do
         regex = Regexp.new "value=\"#{status}\""
@@ -140,7 +138,6 @@ describe PostsHelper do
     end
 
     describe 'returns a list of a valid length specified by a parameter' do
-
       context 'when the specified number of entries exist' do
         [1, 10, 50].each do |entry_count|
           it entry_count.to_s do
@@ -152,7 +149,6 @@ describe PostsHelper do
       end # context 'when the specified number of entries exist'
 
       context 'when there are fewer than the specified number of entries' do
-
         it '5' do
           entry_count = Integer(RSpec.current_example.description)
           expected_count = entry_count / 2

@@ -54,7 +54,7 @@ class UsersController < ApplicationController
     render 'new'
   end
 
-  def on_edit_success(payload) # rubocop:disable Style/TrivialAccessors
+  def on_edit_success(payload)
     @user = payload
   end
 
@@ -62,11 +62,11 @@ class UsersController < ApplicationController
     EditFailureRedirector.new(payload: payload, helper: self).go
   end
 
-  def on_index_success(payload) # rubocop:disable Style/TrivialAccessors
+  def on_index_success(payload)
     @users = payload
   end
 
-  def on_new_success(payload) # rubocop:disable Style/TrivialAccessors
+  def on_new_success(payload)
     @user = payload
   end
 
@@ -75,7 +75,7 @@ class UsersController < ApplicationController
     redirect_to root_path, flash: { alert: alert }
   end
 
-  def on_show_success(payload) # rubocop:disable Style/TrivialAccessors
+  def on_show_success(payload)
     @user = payload
   end
 

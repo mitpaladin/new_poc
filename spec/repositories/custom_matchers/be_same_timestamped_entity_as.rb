@@ -1,6 +1,5 @@
 
 RSpec::Matchers.define :be_same_timestamped_entity_as do |source|
-
   match do |actual|
     @verifier = TimestampedEntityVerifier.new source, actual
     @verifier.verify.failures.empty?

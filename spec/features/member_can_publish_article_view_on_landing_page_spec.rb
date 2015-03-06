@@ -5,7 +5,6 @@ require 'support/feature_spec/login_helper'
 require 'support/feature_spec/new_post_helper'
 
 describe 'Member can publish articles and' do
-
   before :each do
     FeatureSpecLoginHelper.new(self).register_and_login
     helper = FeatureSpecNewPostHelper.new(self)

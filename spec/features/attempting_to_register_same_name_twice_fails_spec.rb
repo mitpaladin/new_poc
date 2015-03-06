@@ -14,7 +14,6 @@ describe 'Attempting to register the same user name twice' do
   end
 
   describe 'fails and' do
-
     it 'displays the correct alert error message' do
       expected = "Name is invalid: A record identified by slug '#{user_slug}'" \
         ' already exists!'

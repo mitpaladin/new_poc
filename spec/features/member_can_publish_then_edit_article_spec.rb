@@ -6,7 +6,6 @@ require 'support/feature_spec/new_post_helper'
 require 'support/feature_spec/edit_post_spec_support'
 
 feature 'Member can publish articles and' do
-
   before :each do
     FeatureSpecLoginHelper.new(self).register_and_login
     @data = PostHelperSupport::PostCreatorData.new

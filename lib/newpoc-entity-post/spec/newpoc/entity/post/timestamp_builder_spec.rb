@@ -14,7 +14,6 @@ end
 
 describe DummyTestClass do
   describe :timestamp_for do
-
     describe 'returns a formatted time/date string when' do
       it 'passed an explicit timestamp (having a #to_time method)' do
         the_time = Chronic.parse '21 August 2014 at 15:38:59 '
@@ -32,7 +31,6 @@ describe DummyTestClass do
   end # describe :timestamp_for
 
   describe :timestamp_format do
-
     it 'returns the correct Time#strftime format string' do
       expected = '%a %b %e %Y at %R %Z (%z)'
       expect(DummyTestClass.timestamp_format).to eq expected

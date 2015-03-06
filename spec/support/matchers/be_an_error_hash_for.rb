@@ -1,6 +1,5 @@
 
 RSpec::Matchers.define :be_an_error_hash_for do |field, message|
-
   match do |actual|
     @reasons = []
     @reasons << 'Actual must be a Hash' unless actual.is_a?(Hash)

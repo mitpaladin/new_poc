@@ -17,7 +17,6 @@ def link_css(title)
 end
 
 describe 'Member can create a draft post and see' do
-
   before :each do
     FeatureSpecLoginHelper.new(self).register_and_login
     data = PostHelperSupport::PostCreatorData.new post_status: 'draft'
@@ -34,5 +33,4 @@ describe 'Member can create a draft post and see' do
     link = list_item.find link_css(@post_title)
     expect(link).to have_text expected(@post_title)
   end
-
 end # describe 'Member can create a draft post and see'

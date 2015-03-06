@@ -25,15 +25,10 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
-  def current_user=(new_user) # rubocop:disable Rails/Delegate
-    identity.current_user = new_user
-  end
-  helper_method :current_user=
-
-  def current_user # rubocop:disable Rails/Delegate
-    identity.current_user
-  end
-  helper_method :current_user
+  # Ensure current user is set before any action method is actually called.
+  before_action :identity
+  delegate :current_user, :current_user=, to: :identity
+  helper_method :current_user, :current_user=
 
   private
 

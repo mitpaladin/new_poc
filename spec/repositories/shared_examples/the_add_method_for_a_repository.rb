@@ -10,7 +10,6 @@ shared_examples 'the #add method for a Repository' do
     end
 
     describe 'returns the expected StoreResult, including' do
-
       it 'a :success flag of true' do
         expect(result).to be_success
       end

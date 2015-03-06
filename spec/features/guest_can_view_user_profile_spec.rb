@@ -19,5 +19,4 @@ describe 'Guest can view the profile of a registered user' do
   it 'and not see edit-profile button next to profile header' do
     refute_selector 'h1 button'
   end
-
 end # describe 'Guest can view the profile of a registered user'

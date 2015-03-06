@@ -2,9 +2,7 @@
 require 'spec_helper'
 
 describe ApplicationHelper::ExplainErrors do
-
   describe :explain_errors.to_s do
-
     # Dummy model class to use for testing `#explain_errors` method.
     class DummyModel
       include ActiveModel::Validations
@@ -25,7 +23,6 @@ describe ApplicationHelper::ExplainErrors do
     end
 
     describe 'generates output for errors' do
-
       it 'reported via ActiveModel::Validations' do
         model.throws = true
         expect(model).to_not be_valid  # needed to generate model.errors
@@ -38,5 +35,4 @@ describe ApplicationHelper::ExplainErrors do
       end
     end # describe 'generates output for errors'
   end # describe :explain_errors
-
 end # describe ApplicationHelper::ExplainErrors

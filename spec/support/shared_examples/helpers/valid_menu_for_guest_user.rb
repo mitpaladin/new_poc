@@ -14,5 +14,4 @@ shared_examples description do |menu_sym|
   it_behaves_like 'a menu containing appropriate items for a Guest User',
                   current_user,
                   menu_sym
-
 end # shared_examples 'a valid menu for a Guest User, of a specified style'

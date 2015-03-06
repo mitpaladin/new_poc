@@ -2,7 +2,6 @@
 require 'spec_helper'
 
 describe 'User can view article from landing page' do
-
   before :each do
     FeatureSpecLoginHelper.new(self).register_and_login
     FeatureSpecNewPostHelper.new(self).create_image_post

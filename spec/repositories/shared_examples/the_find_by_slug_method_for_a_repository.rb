@@ -3,7 +3,6 @@ require_relative '../custom_matchers/be_same_timestamped_entity_as'
 
 shared_examples 'the #find_by_slug method for a Repository' do
   context 'record not found' do
-
     it 'returns the expected StoreResult' do
       result = obj.find_by_slug :nothing_here
       expect(result).not_to be_success
@@ -21,7 +20,6 @@ shared_examples 'the #find_by_slug method for a Repository' do
     end
 
     describe 'returns the expected StoreResult, including' do
-
       it 'a :success flag of true' do
         expect(result).to be_success
       end
