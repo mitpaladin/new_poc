@@ -106,27 +106,36 @@ module AHBMF
 
     attr_reader :param_obj
   end # class AHBMF::SpacerInnerTextValidator
+
+  def anchor_tag_in_item?(h)
+    v = ParamAnchorTagValidator.new h
+    v.with_correct_tag_name? && v.with_correct_href_path? &&
+      v.with_correct_data_method? && v.with_correct_text?
+  end
+
+  def non_spacer_menu_item_valid?(h)
+    v = ParamListItemValidator.new h
+    v.list_item_as_indexed_child? && v.indexed_child_with_one_child?
+  end
+
+  def spacer_menu_item_valid?(h)
+    v = ParamListItemValidator.new h
+    v.list_item_as_indexed_child? && v.menu_separator_item? &&
+      v.styled_correctly?
+  end
 end # module AHBMF
+include AHBMF
 
 def it_behaves_like_a_menu_list_item(params)
-  h = AHBMF::ParamValues.new params.values
-  v = AHBMF::ParamListItemValidator.new h
-  expect(v).to be_list_item_as_indexed_child
-  expect(v).to be_indexed_child_with_one_child
-  v = AHBMF::ParamAnchorTagValidator.new h
-  expect(v).to be_with_correct_tag_name
-  expect(v).to be_with_correct_href_path
-  expect(v).to be_with_correct_data_method
-  expect(v).to be_with_correct_text
+  h = ParamValues.new params.values
+  expect(non_spacer_menu_item_valid? h).to be true
+  expect(anchor_tag_in_item? h).to be true
 end
 
 def it_behaves_like_a_menu_separator(params)
-  h = AHBMF::MenuSeparatorParamValues.new params.values
-  v = AHBMF::ParamListItemValidator.new h
-  expect(v).to be_list_item_as_indexed_child
-  expect(v).to be_menu_separator_item
-  expect(v).to be_styled_correctly
-  expect(AHBMF::SpacerInnerTextValidator.new h).to be_valid
+  h = MenuSeparatorParamValues.new params.values
+  expect(spacer_menu_item_valid? h).to be true
+  expect(SpacerInnerTextValidator.new h).to be_valid
 end
 
 def separator_style_for(menu_sym)
