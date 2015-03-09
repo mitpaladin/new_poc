@@ -10,11 +10,11 @@ describe SessionsController::Action::New do
       args = { current_user: true }
       expect do
         described_class.new true, args
-      end.to raise_error ArgumentError, 'missing keyword: user_repo'
+      end.to raise_error ArgumentError, 'wrong number of arguments (1 for 0)'
       args = { user_repo: true }
       expect do
         described_class.new true, args
-      end.to raise_error ArgumentError, 'missing keyword: current_user'
+      end.to raise_error ArgumentError, 'wrong number of arguments (1 for 0)'
     end
   end # describe 'has initialisation that'
 

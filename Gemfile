@@ -1,6 +1,5 @@
 
-# Changing versions? Remember to update ./.ruby-version as well!
-ruby '2.1.5'
+ruby '2.2.1'
 
 source 'https://rubygems.org'
 source 'https://rails-assets.org'
@@ -111,7 +110,7 @@ group :development, :test do
   gem 'ruby-growl'
   gem 'simplecov'
   gem 'tapout'
-  gem 'teaspoon', github: 'modeset/teaspoon'
+  gem 'teaspoon' # , github: 'modeset/teaspoon'
 end
 
 group :test do

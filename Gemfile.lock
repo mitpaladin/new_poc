@@ -12,11 +12,11 @@ GIT
 
 GIT
   remote: git://github.com/ctran/annotate_models.git
-  revision: 038b13c04e575cc0f0c89c702c994166c7dc9955
+  revision: 723176acd26e75bbfab6bab7548563cb60041d28
   specs:
-    annotate (2.6.5)
+    annotate (2.6.6)
       activerecord (>= 2.3.0)
-      rake (>= 0.8.7)
+      rake (~> 10.4.2, >= 10.4.2)
 
 GIT
   remote: git://github.com/danmayer/churn.git
@@ -36,13 +36,6 @@ GIT
   revision: cd72f70a29cc7ff10f254e01d5dd7324f24ddad9
   specs:
     markdown-toolbar (1.0.0)
-
-GIT
-  remote: git://github.com/modeset/teaspoon.git
-  revision: f8c3c82c8466283cc4b2692c6490a7c68195445b
-  specs:
-    teaspoon (0.9.0)
-      railties (>= 3.2.5, < 5)
 
 GIT
   remote: git://github.com/mojombo/chronic.git
@@ -208,7 +201,7 @@ GEM
     erubis (2.7.0)
     escape_utils (1.0.1)
     eventmachine (1.0.7)
-    execjs (2.3.0)
+    execjs (2.4.0)
     factory_girl (4.5.0)
       activesupport (>= 3.0.0)
     factory_girl_rails (4.5.0)
@@ -224,7 +217,7 @@ GEM
       ruby_parser (~> 3.1, > 3.1.0)
       sexp_processor (~> 4.4)
     gemoji (2.1.0)
-    github-linguist (4.4.2)
+    github-linguist (4.4.3)
       charlock_holmes (~> 0.7.3)
       escape_utils (~> 1.0.1)
       mime-types (>= 1.19)
@@ -241,7 +234,7 @@ GEM
     i18n (0.7.0)
     ice_nine (0.11.1)
     interception (0.5)
-    jbuilder (2.2.8)
+    jbuilder (2.2.11)
       activesupport (>= 3.0.0, < 5)
       multi_json (~> 1.2)
     jquery-rails (4.0.3)
@@ -273,7 +266,7 @@ GEM
     mime-types (2.4.3)
     mini_portile (0.6.2)
     minitest (5.5.1)
-    multi_json (1.10.1)
+    multi_json (1.11.0)
     netrc (0.10.3)
     nokogiri (1.6.6.2)
       mini_portile (~> 0.6.0)
@@ -346,7 +339,7 @@ GEM
       activesupport (>= 4.2.0.beta, < 5.0)
       nokogiri (~> 1.6.0)
       rails-deprecated_sanitizer (>= 1.0.1)
-    rails-footnotes (4.1.5)
+    rails-footnotes (4.1.6)
       rails (>= 3.2)
     rails-html-sanitizer (1.0.1)
       loofah (~> 2.0)
@@ -367,15 +360,15 @@ GEM
     rainbow (2.0.0)
     rake (10.4.2)
     rdoc (4.2.0)
-      json (~> 1.4)
-    reek (2.0.0)
+    reek (2.0.1)
       parser (~> 2.2)
       rainbow (~> 2.0)
+      require_all (~> 1.3)
       unparser (~> 0.2.2)
     repository-base (0.2.0)
       repository-support (>= 0.0.3)
-    repository-support (0.0.3)
-      activemodel (>= 3.2.0)
+    repository-support (0.0.4)
+      activemodel (~> 4.2, >= 4.2.0)
     require_all (1.3.2)
     rest-client (1.7.3)
       mime-types (>= 1.16, < 3.0)
@@ -444,7 +437,7 @@ GEM
       multi_json (~> 1.0)
       simplecov-html (~> 0.9.0)
     simplecov-html (0.9.0)
-    slim (3.0.2)
+    slim (3.0.3)
       temple (~> 0.7.3)
       tilt (>= 1.3.3, < 2.1)
     slop (3.6.0)
@@ -462,6 +455,8 @@ GEM
     tapout (0.4.5)
       ansi
       json
+    teaspoon (0.9.1)
+      railties (>= 3.2.5, < 5)
     temple (0.7.5)
     thin (1.6.3)
       daemons (~> 1.0, >= 1.0.9)
@@ -488,7 +483,7 @@ GEM
       macaddr (~> 1.0)
     validates_email_format_of (1.6.2)
       i18n
-    web-console (2.1.0)
+    web-console (2.1.1)
       activemodel (>= 4.0)
       binding_of_caller (>= 0.7.2)
       railties (>= 4.0)
@@ -565,7 +560,7 @@ DEPENDENCIES
   slim-rails!
   spring
   tapout
-  teaspoon!
+  teaspoon
   thin
   uglifier
   validates_email_format_of
