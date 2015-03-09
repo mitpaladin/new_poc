@@ -8,17 +8,13 @@ describe SessionsController::Action::New do
       args = { current_user: true, user_repo: true }
       expect { described_class.new args }.not_to raise_error
       args = { current_user: true }
-      # NOTE: Error messages changed between Ruby 2.1 and Ruby 2.2; 2.1 would
-      #       give the message 'missing keyword: user_repo' for the following
-      #       test; Ruby 2.2 says 'wrong number of arguments (1 for 0)'. *NOT*
-      #       '1 for 2', but '1 for 0'. WTF?
       expect do
         described_class.new true, args
-      end.to raise_error ArgumentError
+      end.to raise_error ArgumentError, 'wrong number of arguments (1 for 0)'
       args = { user_repo: true }
       expect do
         described_class.new true, args
-      end.to raise_error ArgumentError
+      end.to raise_error ArgumentError, 'wrong number of arguments (1 for 0)'
     end
   end # describe 'has initialisation that'
 
