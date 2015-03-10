@@ -14,9 +14,8 @@ allow_failures:
 addons:
   postgresql: "9.3"
 before_script:
+  - cp config/database.yml.travis config/database.yml
   # Carry-over from CodeShip; if we commit to Travis, this can be simplified.
   - bundle exec rake db:schema:load
   - bundle exec rake db:reset
-  # - psql -c "CREATE USER $NEWPOC_DBUSER WITH PASSWORD '$NEWPOC_DBPASS';"
-  # - psql -d postgres -c "alter role $NEWPOC_DBUSER with createdb;"
   - bundle exec rake db:seed
