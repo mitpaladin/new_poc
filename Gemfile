@@ -1,5 +1,5 @@
 
-ruby '2.2.1'
+# ruby '2.2.1'
 
 source 'https://rails-assets.org' do
   gem 'rails-assets-bootstrap', '~> 3.2.0'
