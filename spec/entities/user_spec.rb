@@ -59,4 +59,56 @@ describe Entity::User do
       end
     end
   end # describe 'has an #attributes method that returns'
+
+  describe 'has a #[] method that is' do
+    it 'aliased to the #attributes method' do
+      actual = obj.attributes[:name]
+      # not just same value; same *instance* of same value object
+      expect(actual.hash).to be obj[:name].hash
+    end
+  end # describe 'has a #[] method that is'
+
+  describe 'has a #valid? method that' do
+    describe 'returns true when an instance has' do
+      after :each do
+        expect(described_class.new @attribs).to be_valid
+      end
+
+      it 'the minimum valid set of attributes' do
+        @attribs = minimal_attributes
+      end
+
+      it 'a name, email address and profile string' do
+        @attribs = minimal_attributes.merge profile: 'User Profile'
+      end
+    end # describe 'returns true when an instance has'
+
+    describe 'returns false when an instance has' do
+      after :each do
+        expect(described_class.new @attribs).to be_invalid
+      end
+
+      describe 'a name that is invalid because it' do
+        after :each do
+          @attribs = { name: @name, email: 'user@example.com' }
+        end
+
+        it 'has leading whitespace' do
+          @name = '  Some User'
+        end
+
+        it 'has trailling whitespace' do
+          @name = 'Some User  '
+        end
+
+        it 'contains invalid whitespace' do
+          @name = "Some\tUser\n"
+        end
+
+        it 'is missing' do
+          @name = nil
+        end
+      end # describe 'a name that is invalid because it'
+    end # describe 'returns false when an instance has'
+  end # describe 'has a #valid? method that'
 end # describe Entity::User
