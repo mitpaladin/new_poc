@@ -109,6 +109,20 @@ describe Entity::User do
           @name = nil
         end
       end # describe 'a name that is invalid because it'
+
+      describe 'an email address that is' do
+        after :each do
+          @attribs = { name: 'User Name', email: @email }
+        end
+
+        it 'invalid' do
+          @email = 'This is not a valid email address. Sorry'
+        end
+
+        it 'missing' do
+          @email = nil
+        end
+      end
     end # describe 'returns false when an instance has'
   end # describe 'has a #valid? method that'
 end # describe Entity::User
