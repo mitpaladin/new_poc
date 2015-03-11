@@ -137,7 +137,7 @@ describe Entity::User do
     end
   end # describe 'has a #persisted? method that returns'
 
-  describe 'has a .guest_user method that returns an object that' do
+  describe 'has a .guest_user class method that returns an object that' do
     let(:guest) { described_class.guest_user }
 
     it 'has the correct name' do
@@ -160,5 +160,15 @@ describe Entity::User do
     it 'is not persisted' do
       expect(guest).not_to be_persisted
     end
-  end # describe 'has a #guest_user method that returns an object that'
+  end # describe 'has a .guest_user class method that returns an object that'
+
+  describe 'has a #guest_user? method that returns' do
+    it 'true for the Guest User' do
+      expect(described_class.guest_user).to be_guest_user
+    end
+
+    it 'false for any other User instance' do
+      expect(obj).not_to be_guest_user
+    end
+  end # describe 'has a #guest_user? method that returns'
 end # describe Entity::User

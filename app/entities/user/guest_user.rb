@@ -12,7 +12,11 @@ module Entity
       # Creates a GuestUser instance, having a fixed name and invalid state.
       def initialize
         profile = 'No user is presently logged in. I was *never* here.'
-        super name: 'Guest User', profile: profile
+        super name: self.class.guest_user_name, profile: profile
+      end
+
+      def self.guest_user_name
+        'Guest User'
       end
     end # class Entity::User::GuestUser
     private_constant :GuestUser
@@ -23,6 +27,12 @@ module Entity
     #         invalid, unpersisted, unpersistable state.
     def self.guest_user
       GuestUser.new
+    end
+
+    # The `#guest_user?` method queries if an instance is the Guest User.
+    # @return boolean Returns true for the Guest User; false otherwise.
+    def guest_user?
+      name == GuestUser.guest_user_name
     end
   end # class Entity::User
 end
