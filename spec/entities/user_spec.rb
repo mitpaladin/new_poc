@@ -136,4 +136,29 @@ describe Entity::User do
       expect(obj).not_to be_persisted
     end
   end # describe 'has a #persisted? method that returns'
+
+  describe 'has a .guest_user method that returns an object that' do
+    let(:guest) { described_class.guest_user }
+
+    it 'has the correct name' do
+      expect(guest.name).to eq 'Guest User'
+    end
+
+    it 'has the correct profile text' do
+      expected = 'No user is presently logged in. I was *never* here.'
+      expect(guest.profile).to eq expected
+    end
+
+    it 'has no email address' do
+      expect(guest.email).to be nil
+    end
+
+    it 'is not valid' do
+      expect(guest).not_to be_valid
+    end
+
+    it 'is not persisted' do
+      expect(guest).not_to be_persisted
+    end
+  end # describe 'has a #guest_user method that returns an object that'
 end # describe Entity::User

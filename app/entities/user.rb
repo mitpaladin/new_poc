@@ -1,4 +1,5 @@
 
+require_relative 'user/guest_user'
 require_relative 'user/persistence_status'
 require_relative 'user/validator'
 
