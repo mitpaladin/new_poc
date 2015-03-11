@@ -122,7 +122,18 @@ describe Entity::User do
         it 'missing' do
           @email = nil
         end
-      end
+      end # describe 'an email address that is'
     end # describe 'returns false when an instance has'
   end # describe 'has a #valid? method that'
+
+  describe 'has a #persisted? method that returns' do
+    it 'true if the :slug attribute is present' do
+      obj = described_class.new minimal_attributes.merge slug: 'any-slug'
+      expect(obj).to be_persisted
+    end
+
+    it 'false if the :slug attribute is not present' do
+      expect(obj).not_to be_persisted
+    end
+  end # describe 'has a #persisted? method that returns'
 end # describe Entity::User

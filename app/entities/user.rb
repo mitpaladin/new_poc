@@ -1,4 +1,5 @@
 
+require_relative 'user/persistence_status'
 require_relative 'user/validator'
 
 # Namespace containing all application-defined entities.
@@ -10,8 +11,12 @@ module Entity
   class User
     extend Forwardable
 
+    # `some_obj[:foo]` is an alias for `some_obj.attributes[:foo]`
     def_delegator :attributes, :[]
+    # Validate core attributes
     def_delegators :@validator, :valid?, :invalid?
+    # Delegate knowledge of persistence-status determination
+    def_delegators :@persistence_status, :persisted?, :slug
 
     attr_reader :email, :name, :profile
 
@@ -30,6 +35,7 @@ module Entity
       @name = attributes[:name]
       @email = attributes[:email]
       @profile = attributes[:profile]
+      @persistence_status = PersistenceStatus.new attributes
       @validator = Validator.new self
     end
 
