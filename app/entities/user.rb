@@ -1,6 +1,7 @@
 
 require_relative 'user/guest_user'
 require_relative 'user/persistence_status'
+require_relative 'user/profile_formatter_setup'
 require_relative 'user/validator'
 
 # Namespace containing all application-defined entities.
@@ -11,6 +12,7 @@ module Entity
   # which encapsulates more specific entity-oriented responsibilities.
   class User
     extend Forwardable
+    include Comparable
 
     # `some_obj[:foo]` is an alias for `some_obj.attributes[:foo]`
     def_delegator :attributes, :[]
@@ -38,6 +40,7 @@ module Entity
       @profile = attributes[:profile]
       @persistence_status = PersistenceStatus.new attributes
       @validator = Validator.new self
+      ProfileFormatterSetup.setup entity: self, attributes: attributes
     end
 
     # Returns a Hash containing this instance's attribute values.

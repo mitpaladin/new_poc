@@ -99,7 +99,7 @@ group :development, :test do
   gem 'rspec-http'
   gem 'rspec-rails'
   gem 'ruby-growl'
-  # gem 'simplecov'
+  gem 'simplecov'
   gem 'tapout'
   gem 'teaspoon'
 end

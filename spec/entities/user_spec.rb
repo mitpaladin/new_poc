@@ -199,4 +199,29 @@ describe Entity::User do
       expect(obj1 <=> obj2).to eq 1
     end
   end # describe 'has a #<=> method that returns'
+
+  describe 'has presentation methods including' do
+    describe '#formatted_profile, which' do
+      let(:converter) do
+        klass = Class.new do
+          def to_html(markup)
+            ['START TEST', markup, 'END TEST'].join '|'
+          end
+        end
+        lambda do |markup|
+          klass.new.to_html markup
+        end
+      end
+      let(:profile) { 'This *is* a test.' }
+      let(:user) { described_class.new user_attribs }
+      let(:user_attribs) do
+        minimal_attributes.merge markdown_converter: converter, profile: profile
+      end
+
+      it 'returns the result of calling the injected converter' do
+        expected = ['START TEST', profile, 'END TEST'].join '|'
+        expect(user.formatted_profile).to eq expected
+      end
+    end # describe '#formatted_profile, which'
+  end # describe 'has presentation methods including'
 end # describe Entity::User

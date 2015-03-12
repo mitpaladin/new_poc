@@ -6,11 +6,11 @@ GIT
 
 GIT
   remote: git://github.com/ctran/annotate_models.git
-  revision: d5d55e8bcb4459c66c7ae50c911ab1189ab585d5
+  revision: 52ffefcbe4e89cb172e2007eda0f74ac40798727
   specs:
-    annotate (2.6.7)
-      activerecord (>= 2.3.0)
-      rake (~> 10.4.2, >= 10.4.2)
+    annotate (2.6.8)
+      activerecord (>= 3.2, <= 4.3)
+      rake (~> 10.4)
 
 GIT
   remote: git://github.com/danmayer/churn.git
@@ -458,7 +458,7 @@ GEM
       macaddr (~> 1.0)
     validates_email_format_of (1.6.2)
       i18n
-    web-console (2.1.1)
+    web-console (2.1.2)
       activemodel (>= 4.0)
       binding_of_caller (>= 0.7.2)
       railties (>= 4.0)
@@ -527,6 +527,7 @@ DEPENDENCIES
   ruby-growl
   sass-rails
   sdoc
+  simplecov
   slim-rails!
   spring
   tapout
