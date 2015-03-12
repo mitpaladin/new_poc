@@ -1,19 +1,22 @@
 
+ENV['RAILS_ENV'] ||= 'test'
+
 require 'codeclimate-test-reporter'
 CodeClimate::TestReporter.start
 
-ENV['RAILS_ENV'] ||= 'test'
-if ENV['RAILS_ENV'] == 'test'
-  require 'simplecov'
-  SimpleCov.start 'rails' do
-    add_filter '/vendor/'
-    add_group 'Actions', 'app/actions'
-    add_group 'DAOs', 'app/daos'
-    add_group 'Entities', 'app/entities'
-    add_group 'Repositories', 'app/repositories'
-    add_group 'Services', 'app/services'
-  end
-end
+# SimpleCov doesn't report coverage when CodeClimate coverage is running.
+# Use one or the other, apparently.
+#
+# if ENV['RAILS_ENV'] == 'test'
+#   require 'simplecov'
+#   SimpleCov.start 'rails' do
+#     add_filter '/vendor/'
+#     add_group 'DAOs', 'app/daos'
+#     add_group 'Entities', 'app/entities'
+#     add_group 'Repositories', 'app/repositories'
+#     add_group 'Services', 'app/services'
+#   end
+# end
 
 require File.expand_path('../../config/environment', __FILE__)
 require 'rspec/rails'

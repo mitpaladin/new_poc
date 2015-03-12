@@ -6,9 +6,9 @@ GIT
 
 GIT
   remote: git://github.com/ctran/annotate_models.git
-  revision: 723176acd26e75bbfab6bab7548563cb60041d28
+  revision: d5d55e8bcb4459c66c7ae50c911ab1189ab585d5
   specs:
-    annotate (2.6.6)
+    annotate (2.6.7)
       activerecord (>= 2.3.0)
       rake (~> 10.4.2, >= 10.4.2)
 
@@ -174,7 +174,7 @@ GEM
       adamantium (~> 0.2.0)
       equalizer (~> 0.0.9)
     crass (1.0.1)
-    daemons (1.1.9)
+    daemons (1.2.1)
     database_cleaner (1.4.1)
     debug_inspector (0.0.2)
     debugger-linecache (1.2.0)
@@ -317,7 +317,7 @@ GEM
       rails-deprecated_sanitizer (>= 1.0.1)
     rails-footnotes (4.1.6)
       rails (>= 3.2)
-    rails-html-sanitizer (1.0.1)
+    rails-html-sanitizer (1.0.2)
       loofah (~> 2.0)
     rails_best_practices (1.15.7)
       activesupport
@@ -358,7 +358,7 @@ GEM
       rspec-mocks (~> 3.2.0)
     rspec-collection_matchers (1.1.2)
       rspec-expectations (>= 2.99.0.beta1)
-    rspec-core (3.2.1)
+    rspec-core (3.2.2)
       rspec-support (~> 3.2.0)
     rspec-expectations (3.2.0)
       diff-lcs (>= 1.2.0, < 2.0)
@@ -439,7 +439,7 @@ GEM
       eventmachine (~> 1.0)
       rack (~> 1.0)
     thor (0.19.1)
-    thread_safe (0.3.4)
+    thread_safe (0.3.5)
     tilt (1.4.1)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
@@ -527,7 +527,6 @@ DEPENDENCIES
   ruby-growl
   sass-rails
   sdoc
-  simplecov
   slim-rails!
   spring
   tapout

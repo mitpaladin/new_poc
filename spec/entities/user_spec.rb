@@ -171,4 +171,32 @@ describe Entity::User do
       expect(obj).not_to be_guest_user
     end
   end # describe 'has a #guest_user? method that returns'
+
+  describe 'has a #<=> method that returns' do
+    describe '0 when comparing instance with the same :name value and' do
+      after :each do
+        expect(obj <=> @obj2).to eq 0
+      end
+
+      it 'differing values for other attributes' do
+        @obj2 = described_class.new name: obj.name
+      end
+
+      it 'the same values for other attributes' do
+        @obj2 = described_class.new obj.attributes
+      end
+    end # describe '0 when comparing instance with the same :name value and'
+
+    it "-1 when the other object's :name attribute compares .lt. this one's" do
+      obj1 = described_class.new name: 'Abe Zonker'
+      obj2 = described_class.new name: 'Zig Adler'
+      expect(obj1 <=> obj2).to eq(-1)
+    end
+
+    it "1 when the other object's :name attribute compares .gt. this one's" do
+      obj1 = described_class.new name: 'Zig Adler'
+      obj2 = described_class.new name: 'Abe Zonker'
+      expect(obj1 <=> obj2).to eq 1
+    end
+  end # describe 'has a #<=> method that returns'
 end # describe Entity::User

@@ -45,5 +45,9 @@ module Entity
     def attributes
       instance_values.symbolize_keys
     end
+
+    def <=>(other)
+      name <=> other.name
+    end
   end # class Entity::User
 end
