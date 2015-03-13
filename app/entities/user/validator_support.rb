@@ -10,6 +10,7 @@ module Entity
   class User
     # Class responsible for adding field validation to a User entity.
     class ValidatorSupport
+      # Internal classes used exclusively by ValidatorSupport class.
       module Internals
       end
       private_constant :Internals
