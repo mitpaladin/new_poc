@@ -14,8 +14,8 @@ module Entity
       # uses that attribute (presumably a Proc or lambda) to produce a value
       # based on a different attribute of the entity.
       # @param entity Incoming entity instance to be manipulated as described;
-      # @attributes A Hash-like object whose `:markdown_converter` entry is used
-      #             to initialise a new attribute on the entity.
+      # @param attributes A Hash-like object whose `:markdown_converter` entry
+      #                   is used to initialise a new attribute on the entity.
       def self.setup(entity:, attributes:)
         entity.instance_variable_set :@markdown_converter,
                                      attributes[:markdown_converter]
