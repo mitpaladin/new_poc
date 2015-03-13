@@ -2,7 +2,7 @@
 require_relative 'user/guest_user'
 require_relative 'user/persistence_status'
 require_relative 'user/profile_formatter_setup'
-require_relative 'user/validator'
+require_relative 'user/validator_support'
 
 # Namespace containing all application-defined entities.
 module Entity
@@ -39,7 +39,7 @@ module Entity
       @email = attributes[:email]
       @profile = attributes[:profile]
       @persistence_status = PersistenceStatus.new attributes
-      @validator = Validator.new self
+      ValidatorSupport.setup self
       ProfileFormatterSetup.setup entity: self, attributes: attributes
     end
 
