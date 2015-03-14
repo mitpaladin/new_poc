@@ -33,9 +33,15 @@ module Entity
       # validations, and such. I've long felt that adding state to an object
       # (which is what instance variables *are*) is inferior to modifying its
       # logic via `extend` and other bits of Ruby inheritance/metaprogramming.
+      # @param entity Incoming entity instance to be manipulated.
       def self.setup(entity)
         validator = Validator.new entity
         entity.instance_variable_set :@validator, validator
+        # Validate core attributes
+        entity.class_eval do
+          extend Forwardable
+          def_delegators :@validator, :valid?, :invalid?
+        end
       end
     end # class ValidatorSupport
   end # class Entity::User
