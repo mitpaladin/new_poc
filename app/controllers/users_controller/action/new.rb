@@ -29,8 +29,7 @@ class UsersController < ApplicationController
       end
 
       def guest_user?
-        guest_user = user_repo.guest_user.entity
-        guest_user.name == current_user.name
+        UserFactory.guest_user.name == current_user.name
       end
 
       def success_payload

@@ -55,7 +55,7 @@ describe PostsController::Action::Index do
   end
   let(:first_draft_post_id) { published_post_count + 1 }
   let(:first_published_post_id) { 1 }
-  let(:guest_user) { FancyOpenStruct.new name: 'Guest User' }
+  let(:guest_user) { UserFactory.guest_user }
   let(:published_post_count) { 3 }
   let(:published_posts) do
     published_post_count.times.map do |n|

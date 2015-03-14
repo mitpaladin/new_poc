@@ -4,7 +4,7 @@ require 'current_user_identity'
 require 'support/broadcast_success_tester'
 
 describe UsersController::Action::Create do
-  let(:guest_user) { UserRepository.new.guest_user.entity }
+  let(:guest_user) { UserFactory.guest_user }
   # NOTE: Old `Actions` namespace currently used here. Oops.
   let(:subscriber) { Actions::BroadcastSuccessTester.new }
   let(:user_data) do

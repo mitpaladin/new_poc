@@ -7,7 +7,7 @@ describe UsersController::Action::New do
   let(:command) do
     described_class.new current_user: current_user, user_repo: repo
   end
-  let(:guest_user) { FancyOpenStruct.new name: 'Guest User' }
+  let(:guest_user) { UserFactory.guest_user }
   let(:registered_user) { FancyOpenStruct.new name: 'User Name' }
   let(:repo) do
     guest = FancyOpenStruct.new entity: guest_user

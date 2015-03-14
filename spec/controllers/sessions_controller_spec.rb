@@ -15,7 +15,7 @@ shared_examples 'invalid login credentials' do |invalid_field_sym|
 
   describe description_str do
     before :each do
-      subject.current_user = UserRepository.new.guest_user.entity
+      subject.current_user = UserFactory.guest_user
       post :create, name: name, password: password
     end
 

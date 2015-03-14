@@ -103,7 +103,7 @@ describe UsersController::Action::Update do
 
   context 'for the Guest User' do
     let(:user_data) { { profile: 'updated profile.' } }
-    let(:current_user) { user_repo.guest_user.entity }
+    let(:current_user) { UserFactory.guest_user }
 
     describe 'cannot update any attributes, such as :profile,' do
       it 'is not successful' do

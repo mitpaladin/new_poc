@@ -27,7 +27,7 @@ class SessionsController < ApplicationController
       attr_reader :current_user, :user_repo
 
       def guest_user
-        user_repo.guest_user.entity
+        UserFactory.guest_user
       end
 
       def verify_guest_user
