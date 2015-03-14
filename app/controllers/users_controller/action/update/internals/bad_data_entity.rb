@@ -8,7 +8,7 @@ class UsersController < ApplicationController
         class BadDataEntity
           def initialize(data:, current_user:)
             attribs = current_user.attributes.reject { |s| s.match(/password/) }
-            @entity = Newpoc::Entity::User.new attribs.to_h.merge(data.to_h)
+            @entity = entity_class.new attribs.to_h.merge(data.to_h)
             @entity.invalid?
           end
 
@@ -26,6 +26,10 @@ class UsersController < ApplicationController
               messages: entity.errors.full_messages,
               entity: entity_without_errors
             }
+          end
+
+          def entity_class
+            UserFactory.entity_class
           end
 
           def entity_without_errors

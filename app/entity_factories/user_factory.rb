@@ -5,7 +5,11 @@ require 'newpoc/entity/user'
 class UserFactory
   class << self
     def create(record)
-      Newpoc::Entity::User.new record
+      entity_class.new record
+    end
+
+    def entity_class
+      Newpoc::Entity::User
     end
   end
 end

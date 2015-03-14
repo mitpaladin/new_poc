@@ -22,7 +22,7 @@ describe UserRepository do
   end
   let(:dao_class) { UserDao }
   let(:factory_class) { UserFactory }
-  let(:entity_class) { Newpoc::Entity::User }
+  let(:entity_class) { UserFactory.entity_class }
   let(:obj) { described_class.new }
   let(:user_name) { 'Joe Blow' }
   let(:email) { 'jblow@example.com' }

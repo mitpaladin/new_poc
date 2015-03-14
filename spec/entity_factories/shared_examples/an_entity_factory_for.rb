@@ -21,4 +21,9 @@ shared_examples 'an entity factory for' do |entity_class|
       end
     end
   end # describe ".create returns a #{entity_class}"
+
+  it ".entity_class returns the #{entity_class} class" do
+    expect(described_class).to respond_to :entity_class
+    expect(described_class.entity_class).to be entity_class
+  end
 end

@@ -10,7 +10,7 @@ describe UsersController::Action::Create do
   let(:user_data) do
     FancyOpenStruct.new FactoryGirl.attributes_for(:user, :saved_user)
   end
-  let(:user_entity_class) { Newpoc::Entity::User }
+  let(:user_entity_class) { UserFactory.entity_class }
 
   # regardless of parameters, these steps wire up the Wisper connection
   before :each do

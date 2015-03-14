@@ -47,7 +47,7 @@ describe PostsController::Action::Create do
   let(:subscriber) { Actions::BroadcastSuccessTester.new }
   let(:current_user) do
     attribs = FactoryGirl.attributes_for :user, :saved_user
-    user = Newpoc::Entity::User.new attribs
+    user = UserFactory.create attribs
     repo.add user
     user
   end
