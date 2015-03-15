@@ -4,6 +4,7 @@ require_relative 'user/core_attribute_setup'
 require_relative 'user/guest_user'
 require_relative 'user/persistence_setup'
 require_relative 'user/profile_formatter_setup'
+require_relative 'user/timestamp_setup'
 require_relative 'user/validator_support'
 
 # Namespace containing all application-defined entities.
@@ -20,6 +21,7 @@ module Entity
       CoreAttributeSetup.setup entity: self, attributes: attributes
       PersistenceSetup.setup entity: self, attributes: attributes
       ProfileFormatterSetup.setup entity: self, attributes: attributes
+      TimestampSetup.setup entity: self, attributes: attributes
       ValidatorSupport.setup self
       ComparableSetup.setup self
     end

@@ -1,6 +1,4 @@
 
-require 'newpoc/entity/user'
-
 # Class to create (and setup if needed) instance of DM entity for use cases.
 class UserFactory
   extend Forwardable
@@ -11,7 +9,7 @@ class UserFactory
     end
 
     def entity_class
-      Newpoc::Entity::User
+      Entity::User
     end
 
     delegate :guest_user, to: :entity_class
