@@ -22,8 +22,17 @@ module Entity
         # keyed by variable name as a symbol.
         # @param entity Incoming entity instance to be manipulated.
         def define_methods(entity)
+          entity.define_singleton_method :add_attribute do |attribute, value|
+            class_eval { attr_reader attribute }
+            instance_variable_set "@#{attribute}".to_sym, value
+            @attribute_keys ||= []
+            @attribute_keys.push attribute
+            self
+          end
           entity.define_singleton_method :attributes do
-            instance_values.symbolize_keys
+            instance_values.symbolize_keys.select do |key, _value|
+              @attribute_keys.include? key
+            end
           end
           entity.define_singleton_method :[] do |sym|
             attributes[sym]
@@ -42,10 +51,8 @@ module Entity
         #
         #                   Other attributes passed in `attributes` are ignored.
         def set_instance_variables(entity:, attributes:)
-          items = { :@email => :email, :@name => :name, :@profile => :profile }
-          items.each do |ivar_sym, attribute_sym|
-            entity.instance_variable_set ivar_sym, attributes[attribute_sym]
-          end
+          items = [:email, :name, :profile]
+          items.each { |item| entity.add_attribute item, attributes[item] }
         end
       end # module Entity::User::CoreAttributeSetup::Internals
     end # class Entity::User::CoreAttributeSetup

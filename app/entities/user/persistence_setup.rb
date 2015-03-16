@@ -15,8 +15,7 @@ module Entity
       # @param attributes Named attribute values from which to retrieve the
       #                   `:slug` value.
       def self.setup(entity:, attributes:)
-        entity.instance_variable_set :@slug, attributes[:slug]
-        entity.class_eval { attr_reader :slug }
+        entity.add_attribute :slug, attributes[:slug]
         entity.define_singleton_method :persisted? do
           slug.present?
         end

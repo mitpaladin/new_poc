@@ -17,9 +17,8 @@ module Entity
       #                   `:created_at`, the current time (as UTC) will be used.
       def self.setup(entity:, attributes:)
         created_at = attributes[:created_at] || Time.now.utc
-        entity.instance_variable_set :@created_at, created_at
-        entity.instance_variable_set :@updated_at, attributes[:updated_at]
-        entity.class_eval { attr_reader :created_at, :updated_at }
+        entity.add_attribute :created_at, created_at
+        entity.add_attribute :updated_at, attributes[:updated_at]
       end
     end # class Entity::User::TimestampSetup
   end # class ENtity::User
