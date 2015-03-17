@@ -22,6 +22,11 @@ module Entity
         # keyed by variable name as a symbol.
         # @param entity Incoming entity instance to be manipulated.
         def define_methods(entity)
+          _define_method_add_attribute entity
+          _define_method_attributes entity
+        end
+
+        def _define_method_add_attribute(entity)
           entity.define_singleton_method :add_attribute do |attribute, value|
             class_eval { attr_reader attribute }
             instance_variable_set "@#{attribute}".to_sym, value
@@ -29,6 +34,9 @@ module Entity
             @attribute_keys.push attribute
             self
           end
+        end
+
+        def _define_method_attributes(entity)
           entity.define_singleton_method :attributes do
             instance_values.symbolize_keys.select do |key, _value|
               @attribute_keys.include? key

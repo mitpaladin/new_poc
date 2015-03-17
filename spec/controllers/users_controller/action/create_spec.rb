@@ -34,7 +34,9 @@ describe UsersController::Action::Create do
       end
 
       it 'has the new user entity attributes in its entity' do
-        expect(payload).to be_saved_user_entity_for user_data
+        [:email, :name, :profile, :slug].each do |attrib|
+          expect(payload[attrib]).to eq user_data[attrib]
+        end
       end
     end # describe 'broadcasts :success with a payload of a StoreResult, which'
   end # context 'is successful with valid parameters'

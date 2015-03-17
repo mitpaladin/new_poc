@@ -32,18 +32,13 @@ describe UsersController::Action::New do
     describe 'broadcasts :success with an entity payload containing' do
       let(:payload) { subscriber.payload_for(:success).first }
 
-      it 'an empty :profile string' do
-        expect(payload.profile).to respond_to :to_str
-        expect(payload.profile).to be_empty
-      end
-
       it 'the :created_at timestamp with the current time' do
         expected = Time.current.localtime
         expect(payload.created_at).to be_within(0.5.seconds).of expected
       end
 
-      [:name, :email, :slug, :updated_at].each do |attrib|
-        it "an :#{attrib} value of nil" do
+      it 'a value of nil for all attributes OTHER THAN :created_at' do
+        payload.attributes.reject { |k, _v| k == :created_at }.each do |attrib|
           expect(payload.attributes[attrib]).to be nil
         end
       end
