@@ -25,5 +25,11 @@ module Entity
       ValidatorSupport.setup self
       ComparableSetup.setup self
     end
+
+    # Help ActiveModel separate its oesophagus from its tailpipe.
+    # FIXME: Move to module?
+    def model_name
+      ActiveModel::Name.new self, nil, 'User'
+    end
   end # class Entity::User
 end
