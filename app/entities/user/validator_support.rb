@@ -40,7 +40,7 @@ module Entity
         # Validate core attributes
         entity.class_eval do
           extend Forwardable
-          def_delegators :@validator, :valid?, :invalid?
+          def_delegators :@validator, :valid?, :invalid?, :errors
         end
       end
     end # class ValidatorSupport
