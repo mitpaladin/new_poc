@@ -18,6 +18,14 @@ describe Entity::User do
         expect { described_class.new minimal_attributes }.not_to raise_error
       end
 
+      it 'an "attributes" parameter hash with either symbolic or string keys' do
+        attributes = obj.attributes
+        profile = 'This is a profile string.'
+        attributes['profile'] = profile
+        obj2 = described_class.new attributes
+        expect(obj2.profile).to eq profile
+      end
+
       describe 'invalid attribute names such that' do
         let(:invalid_attributes) do
           {

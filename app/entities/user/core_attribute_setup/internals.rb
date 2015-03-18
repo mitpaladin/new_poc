@@ -38,9 +38,10 @@ module Entity
 
         def _define_method_attributes(entity)
           entity.define_singleton_method :attributes do
-            instance_values.symbolize_keys.select do |key, _value|
+            attrs = instance_values.symbolize_keys.select do |key, _value|
               @attribute_keys.include? key
             end
+            FancyOpenStruct.new attrs
           end
           entity.define_singleton_method :[] do |sym|
             attributes[sym]
