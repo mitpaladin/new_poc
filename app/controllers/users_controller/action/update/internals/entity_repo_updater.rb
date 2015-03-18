@@ -18,6 +18,7 @@ class UsersController < ApplicationController
           end
 
           def update
+            binding.pry
             result = user_repo_class.new.update identifier: current_user.slug,
                                                 updated_attrs: user_data
             @entity = result.entity
@@ -30,7 +31,8 @@ class UsersController < ApplicationController
           attr_reader :current_user, :user_data, :user_repo_class
 
           def fail_with_bad_data
-            data = BadDataEntity.new(data: data, current_user: current_user)
+            data = BadDataEntity.new(data: user_data,
+                                     current_user: current_user)
                    .data_from user_data
             fail JSON.dump data
           end
