@@ -94,7 +94,7 @@ describe UsersController::Action::Create do
           these_values = data[:attributes].symbolize_keys
           other_values = other_user.attributes
           other_values.delete :slug
-          expect(these_values).to eq other_values
+          expect(these_values).to eq other_values.to_h
         end
 
         it 'with a :messages array containing the error message' do

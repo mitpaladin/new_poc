@@ -38,7 +38,10 @@ describe UsersController::Action::New do
       end
 
       it 'a value of nil for all attributes OTHER THAN :created_at' do
-        payload.attributes.reject { |k, _v| k == :created_at }.each do |attrib|
+        attributes_to_check = payload.attributes.keys.reject do |k|
+          k == :created_at
+        end
+        attributes_to_check.each do |attrib|
           expect(payload.attributes[attrib]).to be nil
         end
       end
