@@ -80,7 +80,7 @@ describe UsersController::Action::Update do
 
       it 'entered password and confirmation do not match' do
         expect(payload).to be_a Hash
-        expected = 'Password must match the password confirmation'
+        expected = "Password confirmation doesn't match Password"
         expect(payload[:messages].first).to eq expected
         matching_attributes = [:name, :email, :slug, :profile]
         matching_attributes.each do |attr|
