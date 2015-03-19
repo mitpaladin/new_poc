@@ -3,32 +3,23 @@ require_relative 'user_factory'
 
 # Class to create instance of entities with passwords for use cases.
 class UserPasswordEntityFactory
+  # Internal to containing class only; hidden from outside world.
   module Internals
-    # Encapsulate password and confirmation string; latter defaults to former.
-    class PasswordPair
-      attr_reader :password, :confirmation
-
-      def initialize(password:, confirmation: nil)
-        @password = password
-        @confirmation = confirmation || password
-      end
-    end
-
-    def add_attribute_writers(entity)
-      # Password entities aren't like usual entities; need to be assignable.
-      entity.class_eval { attr_accessor :password, :password_confirmation }
-    end
-
-    def build_passwords(attributes:, password:)
-      confirmation = attributes[:password_confirmation]
+    def add_passwords(entity:, attributes:, password:)
       password ||= attributes[:password]
-      PasswordPair.new password: password, confirmation: confirmation
+      confirmation = attributes[:password_confirmation] || password
+      entity.add_attribute :password, password
+      entity.add_attribute :password_confirmation, confirmation
     end
 
-    def add_validations(entity)
-      entity.class_eval do
-        include ActiveModel::Validations
-        validates :password, confirmation: true
+    def add_validation_method(entity)
+      existing = entity.method :valid? if entity.methods.include?(:valid?)
+      entity.instance_variable_set :@existing_valid, existing
+      entity.define_singleton_method :valid? do
+        return false if password != password_confirmation
+        return false if password.to_s.length < 6
+        return true unless @existing_valid
+        @existing_valid.call
       end
     end
   end
@@ -38,11 +29,11 @@ class UserPasswordEntityFactory
   def self.create(attribs_in, password = nil)
     attribs = attribs_in.symbolize_keys
     entity = UserFactory.create attribs
-    passwords = build_passwords attributes: attribs, password: password
-    entity.add_attribute :password, passwords.password
-    add_attribute_writers entity
-    add_validations entity
-    entity.password_confirmation = passwords.confirmation
+    add_passwords entity: entity, attributes: attribs, password: password
+    # Password entities aren't like usual entities; need to be assignable.
+    entity.class_eval { attr_accessor :password, :password_confirmation }
+    entity.class_eval { include ActiveModel::Validations }
+    add_validation_method entity
     entity
   end
 end

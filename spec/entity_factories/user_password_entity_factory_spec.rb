@@ -35,8 +35,8 @@ describe UserPasswordEntityFactory do
         context 'with no password values specified, returns' do
           let(:obj) { described_class.create valid_attributes }
 
-          it 'true from the #valid? method (not specified in update)' do
-            expect(obj).to be_valid
+          it 'false' do
+            expect(obj).not_to be_valid
           end
 
           it 'nil for the #password attribute' do
@@ -75,12 +75,7 @@ describe UserPasswordEntityFactory do
           end
           let(:obj) { described_class.create attributes }
 
-          fit 'false from the #valid? method' do
-            ap [{ File.basename(__FILE__) => __LINE__ },
-                'the next two should be the same in order to be valid',
-                obj.password, obj.password_confirmation,
-                '#valid? returns',
-                obj.valid?]
+          it 'false from the #valid? method' do
             expect(obj).not_to be_valid
           end
         end # context 'with different password and confirmation specified, ...'
