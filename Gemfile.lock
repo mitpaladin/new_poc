@@ -64,13 +64,6 @@ PATH
       sanitize (>= 3.1.0)
 
 PATH
-  remote: lib/newpoc-entity-user
-  specs:
-    newpoc-entity-user (0.0.2)
-      activemodel (>= 3.2)
-      validates_email_format_of (>= 1.6.1)
-
-PATH
   remote: lib/newpoc-services-markdown_html_converter
   specs:
     newpoc-services-markdown_html_converter (0.0.2)
@@ -496,7 +489,6 @@ DEPENDENCIES
   metric_fu-Saikuro
   naught!
   newpoc-entity-post!
-  newpoc-entity-user!
   newpoc-services-markdown_html_converter!
   pg
   pry
