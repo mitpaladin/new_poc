@@ -47,11 +47,11 @@ describe PostsController::Action::Create do
   let(:subscriber) { Actions::BroadcastSuccessTester.new }
   let(:current_user) do
     attribs = FactoryGirl.attributes_for :user, :saved_user
-    user = Newpoc::Entity::User.new attribs
+    user = UserFactory.create attribs
     repo.add user
     user
   end
-  let(:guest_user) { repo.guest_user.entity }
+  let(:guest_user) { UserFactory.guest_user }
 
   # regardless of parameters, these steps wire up the Wisper connection
   before :each do
@@ -60,7 +60,7 @@ describe PostsController::Action::Create do
 
   context 'with the Guest User as the current user' do
     let(:command) do
-      described_class.new current_user: repo.guest_user.entity,
+      described_class.new current_user: guest_user,
                           post_data: post_data
     end
     let(:post_data) { { title: 'A Title', body: 'A Body' } }

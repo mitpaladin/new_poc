@@ -22,7 +22,7 @@ describe SessionsController::Action::New do
     let(:command) do
       described_class.new current_user: current_user, user_repo: repo
     end
-    let(:guest_user_entity) { FancyOpenStruct.new name: 'Guest User' }
+    let(:guest_user_entity) { UserFactory.guest_user }
     let(:repo) do
       Class.new do
         def initialize(guest)
@@ -47,7 +47,7 @@ describe SessionsController::Action::New do
 
       it 'broadcasts :success, with a payload of the Guest User entity' do
         expect(subscriber).to be_success
-        expect(subscriber.payload_for(:success).first).to be guest_user_entity
+        expect(subscriber.payload_for(:success).first).to be_guest_user
       end
     end
 

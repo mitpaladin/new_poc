@@ -6,11 +6,11 @@ GIT
 
 GIT
   remote: git://github.com/ctran/annotate_models.git
-  revision: 723176acd26e75bbfab6bab7548563cb60041d28
+  revision: 52ffefcbe4e89cb172e2007eda0f74ac40798727
   specs:
-    annotate (2.6.6)
-      activerecord (>= 2.3.0)
-      rake (~> 10.4.2, >= 10.4.2)
+    annotate (2.6.8)
+      activerecord (>= 3.2, <= 4.3)
+      rake (~> 10.4)
 
 GIT
   remote: git://github.com/danmayer/churn.git
@@ -62,13 +62,6 @@ PATH
       pygments.rb
       rinku (>= 1.7.3)
       sanitize (>= 3.1.0)
-
-PATH
-  remote: lib/newpoc-entity-user
-  specs:
-    newpoc-entity-user (0.0.2)
-      activemodel (>= 3.2)
-      validates_email_format_of (>= 1.6.1)
 
 PATH
   remote: lib/newpoc-services-markdown_html_converter
@@ -174,7 +167,7 @@ GEM
       adamantium (~> 0.2.0)
       equalizer (~> 0.0.9)
     crass (1.0.1)
-    daemons (1.1.9)
+    daemons (1.2.1)
     database_cleaner (1.4.1)
     debug_inspector (0.0.2)
     debugger-linecache (1.2.0)
@@ -317,7 +310,7 @@ GEM
       rails-deprecated_sanitizer (>= 1.0.1)
     rails-footnotes (4.1.6)
       rails (>= 3.2)
-    rails-html-sanitizer (1.0.1)
+    rails-html-sanitizer (1.0.2)
       loofah (~> 2.0)
     rails_best_practices (1.15.7)
       activesupport
@@ -358,7 +351,7 @@ GEM
       rspec-mocks (~> 3.2.0)
     rspec-collection_matchers (1.1.2)
       rspec-expectations (>= 2.99.0.beta1)
-    rspec-core (3.2.1)
+    rspec-core (3.2.2)
       rspec-support (~> 3.2.0)
     rspec-expectations (3.2.0)
       diff-lcs (>= 1.2.0, < 2.0)
@@ -439,7 +432,7 @@ GEM
       eventmachine (~> 1.0)
       rack (~> 1.0)
     thor (0.19.1)
-    thread_safe (0.3.4)
+    thread_safe (0.3.5)
     tilt (1.4.1)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
@@ -458,7 +451,7 @@ GEM
       macaddr (~> 1.0)
     validates_email_format_of (1.6.2)
       i18n
-    web-console (2.1.1)
+    web-console (2.1.2)
       activemodel (>= 4.0)
       binding_of_caller (>= 0.7.2)
       railties (>= 4.0)
@@ -496,7 +489,6 @@ DEPENDENCIES
   metric_fu-Saikuro
   naught!
   newpoc-entity-post!
-  newpoc-entity-user!
   newpoc-services-markdown_html_converter!
   pg
   pry

@@ -1,17 +1,20 @@
 
-require 'codeclimate-test-reporter'
-CodeClimate::TestReporter.start
-
 ENV['RAILS_ENV'] ||= 'test'
+
+# CodeClimate::TestReporter.start
 if ENV['RAILS_ENV'] == 'test'
   require 'simplecov'
+  require 'codeclimate-test-reporter'
   SimpleCov.start 'rails' do
     add_filter '/vendor/'
-    add_group 'Actions', 'app/actions'
     add_group 'DAOs', 'app/daos'
     add_group 'Entities', 'app/entities'
     add_group 'Repositories', 'app/repositories'
     add_group 'Services', 'app/services'
+    formatter SimpleCov::Formatter::MultiFormatter[
+      SimpleCov::Formatter::HTMLFormatter,
+      CodeClimate::TestReporter::Formatter
+    ]
   end
 end
 

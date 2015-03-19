@@ -79,7 +79,7 @@ describe UsersController do
       end
 
       it 'assigns a User entity instance to :user' do
-        expect(assigns[:user]).to be_a Newpoc::Entity::User
+        expect(assigns[:user]).to be_a UserFactory.entity_class
       end
 
       it 'renders the :new template' do
@@ -119,7 +119,7 @@ describe UsersController do
       end
 
       it 'assigns the :user item as a User entity instance' do
-        expect(assigns[:user]).to be_a Newpoc::Entity::User
+        expect(assigns[:user]).to be_a UserFactory.entity_class
       end
 
       it 'persists the User entity corresponding to the :user' do
@@ -149,7 +149,7 @@ describe UsersController do
           end
 
           it 'assigns a User entity to :user' do
-            expect(@user).to be_a Newpoc::Entity::User
+            expect(@user).to be_a UserFactory.entity_class
           end
 
           it 'does not redirect' do
@@ -170,7 +170,7 @@ describe UsersController do
           post :create, user_data: @params
           expect(response).not_to be_redirection
           user = assigns[:user]
-          expect(user).to be_a Newpoc::Entity::User
+          expect(user).to be_a UserFactory.entity_class
           expect(user).to be_invalid
           expect(user).to have(@messages.count).errors
           expect(user.errors.full_messages).to end_with @messages
@@ -198,7 +198,7 @@ describe UsersController do
           post :create, user_data: @params
           expect(response).not_to be_redirection
           user = assigns[:user]
-          expect(user).to be_a Newpoc::Entity::User
+          expect(user).to be_a UserFactory.entity_class
           expect(user).to have(@messages.count).errors
           expect(user.errors.full_messages).to end_with @messages
         end

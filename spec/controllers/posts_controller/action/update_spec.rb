@@ -8,9 +8,7 @@ describe PostsController::Action::Update do
   let(:author) do
     FancyOpenStruct.new name: 'The Author', slug: 'the-author'
   end
-  let(:guest_user) do
-    FancyOpenStruct.new name: 'Guest User', slug: 'guest-user'
-  end
+  let(:guest_user) { UserFactory.guest_user }
   let(:other_user) do
     FancyOpenStruct.new name: 'J Random User', slug: 'j-random-user'
   end

@@ -92,7 +92,7 @@ class UsersController < ApplicationController
 
   def on_update_failure(payload)
     data = FancyOpenStruct.new YAML.load(payload)
-    @user = Newpoc::Entity::User.new data.entity if data.entity
+    @user = UserFactory.create data.entity if data.entity
     flash[:alert] = data.messages.join '<br/>'
     return render 'edit' if data.entity
     redirect_to root_path

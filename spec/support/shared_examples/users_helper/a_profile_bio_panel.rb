@@ -1,6 +1,6 @@
 
 shared_examples 'a profile bio panel' do |fragment_builder, h|
-  let(:user_entity) { Newpoc::Entity::User }
+  let(:user_entity) { UserFactory.entity_class }
   let(:user) { user_entity.new FactoryGirl.attributes_for(:user) }
   let(:fragment) do
     builder = ProfileBioPanelBuilder.new user.profile.squish, h

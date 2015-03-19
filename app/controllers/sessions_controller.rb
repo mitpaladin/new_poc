@@ -41,7 +41,7 @@ class SessionsController < ApplicationController
   end
 
   def on_destroy_success(_payload)
-    self.current_user = UserRepository.new.guest_user.entity
+    self.current_user = UserFactory.guest_user
     redirect_to root_url, flash: { success: 'Logged out!' }
   end
 

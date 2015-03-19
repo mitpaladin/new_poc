@@ -9,7 +9,7 @@ describe PostsController::Action::New do
                         entity_class: entity_class
   end
   let(:entity_class) { FancyOpenStruct }
-  let(:guest_user) { FancyOpenStruct.new name: 'Guest User' }
+  let(:guest_user) { UserFactory.guest_user }
   let(:registered_user) { FancyOpenStruct.new name: 'User Name' }
   let(:user_repo) do
     guest = FancyOpenStruct.new entity: guest_user

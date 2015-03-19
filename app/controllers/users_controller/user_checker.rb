@@ -15,7 +15,7 @@ class UsersController < ApplicationController
 
         def parse
           attributes = data[:attributes]
-          @user = Newpoc::Entity::User.new(attributes) if attributes
+          @user = create_user_entity(attributes) if attributes
           record_invalid_password_errors
           record_existing_name_errors
           record_other_name_issues
@@ -23,6 +23,10 @@ class UsersController < ApplicationController
         end
 
         private
+
+        def create_user_entity(attributes)
+          UserFactory.create attributes
+        end
 
         def record_any_invalid_items_for(item_key, pattern)
           @filtered_messages = data[:messages].grep pattern

@@ -13,7 +13,7 @@ class UsersController < ApplicationController
       end
 
       def execute
-        broadcast_success repository.all
+        broadcast_success repository.all.sort
       end
 
       private

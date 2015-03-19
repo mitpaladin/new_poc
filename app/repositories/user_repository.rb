@@ -19,7 +19,8 @@ class UserRepository < Repository::Base
 
     user = user_dao.authenticate password
     errors = errors_for user
-    Repository::Support::StoreResult.new entity: entity_for(user),
+    entity = UserFactory.create(user) if errors.empty?
+    Repository::Support::StoreResult.new entity: entity,
                                          errors: errors,
                                          success: errors.empty?
   end

@@ -7,7 +7,7 @@ describe UsersController::Action::New do
   let(:command) do
     described_class.new current_user: current_user, user_repo: repo
   end
-  let(:guest_user) { FancyOpenStruct.new name: 'Guest User' }
+  let(:guest_user) { UserFactory.guest_user }
   let(:registered_user) { FancyOpenStruct.new name: 'User Name' }
   let(:repo) do
     guest = FancyOpenStruct.new entity: guest_user
@@ -32,18 +32,16 @@ describe UsersController::Action::New do
     describe 'broadcasts :success with an entity payload containing' do
       let(:payload) { subscriber.payload_for(:success).first }
 
-      it 'an empty :profile string' do
-        expect(payload.profile).to respond_to :to_str
-        expect(payload.profile).to be_empty
-      end
-
       it 'the :created_at timestamp with the current time' do
         expected = Time.current.localtime
         expect(payload.created_at).to be_within(0.5.seconds).of expected
       end
 
-      [:name, :email, :slug, :updated_at].each do |attrib|
-        it "an :#{attrib} value of nil" do
+      it 'a value of nil for all attributes OTHER THAN :created_at' do
+        attributes_to_check = payload.attributes.keys.reject do |k|
+          k == :created_at
+        end
+        attributes_to_check.each do |attrib|
           expect(payload.attributes[attrib]).to be nil
         end
       end

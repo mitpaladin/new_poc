@@ -5,7 +5,11 @@ require 'newpoc/entity/post'
 class PostFactory
   class << self
     def create(record)
-      Newpoc::Entity::Post.new record
+      entity_class.new record
+    end
+
+    def entity_class
+      Newpoc::Entity::Post
     end
   end
 end

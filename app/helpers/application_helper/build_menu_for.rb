@@ -78,7 +78,7 @@ module ApplicationHelper
 
       def get_entity_for(user)
         return user if user.respond_to? :guest_user?
-        Newpoc::Entity::User.new user.attributes.to_h
+        UserFactory.create user.attributes.symbolize_keys
       end
 
       def logout_params

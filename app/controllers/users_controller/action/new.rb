@@ -9,23 +9,27 @@ class UsersController < ApplicationController
       def initialize(current_user:, user_repo:)
         @current_user = current_user
         @user_repo = user_repo
-        @entity_class = Newpoc::Entity::User
       end
 
       def execute
         verify_not_logged_in
         broadcast_success success_payload
+        self
       rescue RuntimeError
         broadcast_failure current_user
+        self
       end
 
       private
 
-      attr_reader :current_user, :entity_class, :user_repo
+      attr_reader :current_user, :user_repo
+
+      def entity_class
+        UserFactory.entity_class
+      end
 
       def guest_user?
-        guest_user = user_repo.guest_user.entity
-        guest_user.name == current_user.name
+        UserFactory.guest_user.name == current_user.name
       end
 
       def success_payload

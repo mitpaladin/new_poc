@@ -12,9 +12,7 @@ describe PostsController::Action::Edit do
     described_class.new slug: target_slug, current_user: current_user,
                         repository: post_repo
   end
-  let(:guest_user) do
-    FancyOpenStruct.new name: 'Guest User', slug: 'guest-user'
-  end
+  let(:guest_user) { UserFactory.guest_user }
   let(:other_user) do
     FancyOpenStruct.new name: 'J Random User', slug: 'j-random-user'
   end

@@ -17,7 +17,6 @@ source 'https://rubygems.org'
 # Why is this? Inter-Gem dependency management is *fxxxing primitive!*
 [
   'entity-post',
-  'entity-user',
   'services-markdown_html_converter'
 ].each { |gem_name| gem "newpoc-#{gem_name}", path: "lib/newpoc-#{gem_name}" }
 

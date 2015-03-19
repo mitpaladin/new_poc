@@ -32,7 +32,7 @@ describe UsersController::Action::Update do
         let(:user_data) { { email: 'new_user@example.com' } }
 
         it 'successfully' do
-          expect(payload).to be_a Newpoc::Entity::User
+          expect(payload).to be_a UserFactory.entity_class
           expect(payload[:email]).to eq user_data[:email]
         end
       end # describe 'email address'
@@ -41,7 +41,7 @@ describe UsersController::Action::Update do
         let(:user_data) { { profile: '*Updated* profile.' } }
 
         it 'successfully' do
-          expect(payload).to be_a Newpoc::Entity::User
+          expect(payload).to be_a UserFactory.entity_class
           expect(payload[:profile]).to eq user_data[:profile]
           entity = UserRepository.new.find_by_slug(payload.slug).entity
           expect(entity[:profile]).to eq user_data[:profile]
@@ -57,7 +57,7 @@ describe UsersController::Action::Update do
         end
 
         it 'successfully, without returning password data' do
-          expect(payload).to be_a Newpoc::Entity::User
+          expect(payload).to be_a UserFactory.entity_class
           expect(payload).to be_valid
           [:password, :password_confirmation, :password_hash].each do |attr|
             expect(payload.attributes).not_to have_key attr
@@ -80,7 +80,7 @@ describe UsersController::Action::Update do
 
       it 'entered password and confirmation do not match' do
         expect(payload).to be_a Hash
-        expected = 'Password must match the password confirmation'
+        expected = "Password confirmation doesn't match Password"
         expect(payload[:messages].first).to eq expected
         matching_attributes = [:name, :email, :slug, :profile]
         matching_attributes.each do |attr|
@@ -94,7 +94,7 @@ describe UsersController::Action::Update do
       let(:user_data) { { name: 'Somebody Else' } }
 
       it 'name' do
-        expect(payload).to be_a Newpoc::Entity::User
+        expect(payload).to be_a UserFactory.entity_class
         expect(payload[:name]).not_to eq user_data[:name]
         expect(payload[:name]).to eq current_user[:name]
       end
@@ -103,7 +103,7 @@ describe UsersController::Action::Update do
 
   context 'for the Guest User' do
     let(:user_data) { { profile: 'updated profile.' } }
-    let(:current_user) { user_repo.guest_user.entity }
+    let(:current_user) { UserFactory.guest_user }
 
     describe 'cannot update any attributes, such as :profile,' do
       it 'is not successful' do

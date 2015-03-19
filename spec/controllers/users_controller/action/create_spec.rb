@@ -4,13 +4,13 @@ require 'current_user_identity'
 require 'support/broadcast_success_tester'
 
 describe UsersController::Action::Create do
-  let(:guest_user) { UserRepository.new.guest_user.entity }
+  let(:guest_user) { UserFactory.guest_user }
   # NOTE: Old `Actions` namespace currently used here. Oops.
   let(:subscriber) { Actions::BroadcastSuccessTester.new }
   let(:user_data) do
     FancyOpenStruct.new FactoryGirl.attributes_for(:user, :saved_user)
   end
-  let(:user_entity_class) { Newpoc::Entity::User }
+  let(:user_entity_class) { UserFactory.entity_class }
 
   # regardless of parameters, these steps wire up the Wisper connection
   before :each do
@@ -34,7 +34,9 @@ describe UsersController::Action::Create do
       end
 
       it 'has the new user entity attributes in its entity' do
-        expect(payload).to be_saved_user_entity_for user_data
+        [:email, :name, :profile, :slug].each do |attrib|
+          expect(payload[attrib]).to eq user_data[attrib]
+        end
       end
     end # describe 'broadcasts :success with a payload of a StoreResult, which'
   end # context 'is successful with valid parameters'
@@ -92,7 +94,7 @@ describe UsersController::Action::Create do
           these_values = data[:attributes].symbolize_keys
           other_values = other_user.attributes
           other_values.delete :slug
-          expect(these_values).to eq other_values
+          expect(these_values).to eq other_values.to_h
         end
 
         it 'with a :messages array containing the error message' do
