@@ -22,6 +22,10 @@ module Entity
       end
     end
 
+    def persisted?
+      attributes[:slug].present?
+    end
+
     private
 
     def attrib_keys

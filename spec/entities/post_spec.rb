@@ -8,6 +8,7 @@ require_relative '../../app/entities/post'
 module Entity
   describe Post do
     let(:author_name) { 'An Author' }
+    let(:slug) { title.parameterize }
     let(:title) { 'A Title' }
     let(:valid_attributes) { { title: title, author_name: author_name } }
 
@@ -76,5 +77,18 @@ module Entity
         end
       end
     end # describe 'has an #attributes method that'
+
+    describe 'has a #persisted? method that' do
+      # let(:valid_attributes) { { title: title, author_name: author_name } }
+      let(:attributes_with_slug) { valid_attributes.merge slug: slug }
+
+      it 'returns true if the "slug" attribute is present' do
+        expect(described_class.new attributes_with_slug).to be_persisted
+      end
+
+      it 'returns false if the "slug" attribute is not present' do
+        expect(described_class.new valid_attributes).not_to be_persisted
+      end
+    end # describe 'has a #persisted? method that'
   end
 end
