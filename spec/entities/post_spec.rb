@@ -8,7 +8,8 @@ require_relative '../../app/entities/post'
 module Entity
   describe Post do
     let(:author_name) { 'An Author' }
-    let(:valid_attributes) { { title: 'A Title', author_name: author_name } }
+    let(:title) { 'A Title' }
+    let(:valid_attributes) { { title: title, author_name: author_name } }
 
     describe 'supports initialisation' do
       describe 'raising no error when called with' do
@@ -45,15 +46,35 @@ module Entity
             "title": valid_attributes[:title]
           }
           obj = described_class.new string_attrs
-          expect(obj.title).to eq 'A Title'
+          expect(obj.title).to eq title
         end
       end # context 'valid attribute names as initialisation-hash keys'
 
       context 'a mixture of valid and invalid attribute names as keys' do
-        it 'initialises the valid attributes as specified'
-
-        it 'ignores the attributes specified with invalid keys'
+        it 'ignores the attributes specified with invalid keys' do
+          obj = described_class.new title: title, foo: 'bar', meaning: 42
+          actual = obj.attributes.reject { |_k, v| v.nil? }
+          expect(actual.count).to eq 1
+          expect(actual[:title]).to eq title
+        end
       end # context 'a mixture of valid and invalid attribute names as keys'
     end # describe 'when instantiated with'
+
+    describe 'has an #attributes method that' do
+      let(:obj) { described_class.new valid_attributes }
+      let(:actual) { obj.attributes }
+
+      it 'returns the attributes passed to the initialiser' do
+        valid_attributes.each_pair do |attrib, value|
+          expect(actual[attrib]).to eq value
+        end
+      end
+
+      it 'has nil values for all attributes not passed to the initialiser' do
+        actual.keys.reject { |k| valid_attributes.key? k }.each do |attrib|
+          expect(obj.attributes[attrib]).to be nil
+        end
+      end
+    end # describe 'has an #attributes method that'
   end
 end
