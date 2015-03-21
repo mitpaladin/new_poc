@@ -26,11 +26,34 @@ module Entity
       attributes[:slug].present?
     end
 
+    def valid?
+      valid_title? && valid_author_name? && body_or_image_post?
+    end
+
     private
 
     def attrib_keys
       [:author_name, :body, :created_at, :image_url, :pubdate, :slug, :title,
        :updated_at]
+    end
+
+    def body_or_image_post?
+      return true if attributes[:body].to_s.strip.present?
+      attributes[:image_url].to_s.strip.present?
+    end
+
+    def registered_author?
+      attributes[:author_name] != 'Guest User'
+    end
+
+    def valid_author_name?
+      name = attributes[:author_name]
+      name.present? && name == name.strip && registered_author?
+    end
+
+    def valid_title?
+      title = attributes[:title]
+      title.present? && title == title.strip
     end
   end # class Entity::Post
 end

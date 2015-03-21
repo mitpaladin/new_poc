@@ -8,9 +8,19 @@ require_relative '../../app/entities/post'
 module Entity
   describe Post do
     let(:author_name) { 'An Author' }
+    let(:body) { 'A Post Body Would Go Here.' }
+    let(:guest_user_name) { 'Guest User' }
+    let(:image_url) { 'http://www.example.com/image1.png' }
     let(:slug) { title.parameterize }
     let(:title) { 'A Title' }
-    let(:valid_attributes) { { title: title, author_name: author_name } }
+    let(:valid_attributes) do
+      {
+        author_name: author_name,
+        body: body,
+        image_url: image_url,
+        title: title
+      }
+    end
 
     describe 'supports initialisation' do
       describe 'raising no error when called with' do
@@ -90,5 +100,86 @@ module Entity
         expect(described_class.new valid_attributes).not_to be_persisted
       end
     end # describe 'has a #persisted? method that'
+
+    describe 'has a #valid? method that returns' do
+      describe 'true when initialised with' do
+        after :each do
+          expect(described_class.new @attribs).to be_valid
+        end
+
+        it 'an author name, title and body' do
+          @attribs = { author_name: author_name, title: title, body: body }
+        end
+
+        it 'an author name, title and image URL' do
+          @attribs = {
+            author_name: author_name,
+            title: title,
+            image_url: image_url
+          }
+        end
+
+        it 'an author name, title, image URL and body' do
+          @attribs = {
+            author_name: author_name,
+            title: title,
+            image_url: image_url,
+            body: body
+          }
+        end
+      end # describe 'true when initialised with'
+
+      describe 'false when initialised with' do
+        after :each do
+          expect(described_class.new @attribs).not_to be_valid
+        end
+
+        it 'no title' do
+          @attribs = valid_attributes.reject { |k, _v| k == :title }
+        end
+
+        describe 'a title which has' do
+          after :each do
+            @attribs = valid_attributes.merge title: @title
+          end
+
+          it 'leading whitespace' do
+            @title = " #{title}"
+          end
+
+          it 'traiing whitespace' do
+            @title = "#{title} "
+          end
+        end # describe 'a title which has'
+
+        it 'no author name' do
+          @attribs = valid_attributes.reject { |k, _v| k == :author_name }
+        end
+
+        describe 'an author name which has' do
+          after :each do
+            @attribs = valid_attributes.merge author_name: @author_name
+          end
+
+          it 'leading whitespace' do
+            @author_name = " #{author_name}"
+          end
+
+          it 'trailing whitespace' do
+            @author_name = "#{author_name} "
+          end
+
+          it 'the same value as the guest user name' do
+            @author_name = guest_user_name
+          end
+        end # describe 'an author name which has'
+
+        it 'both a missing image URL and a missing body' do
+          @attribs = valid_attributes.reject do |k, _v|
+            [:image_url, :body].include? k
+          end
+        end
+      end # describe 'false when initialised with'
+    end # describe 'has a #valid? method that returns'
   end
 end
