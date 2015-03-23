@@ -3,7 +3,6 @@ require 'spec_helper'
 
 require_relative '../../app/entities/post'
 # require 'entities/post'
-require_relative 'post_spec/markup_test_builder'
 
 # Namespace containing all application-defined entities.
 module Entity
@@ -197,24 +196,22 @@ module Entity
     describe 'has a #build_body method that' do
       let(:post) { described_class.new valid_attributes }
 
-      it 'accepts one optional parameter' do
-        method = post.public_method :build_body
-        expect(method.arity).to eq(-1)
-      end
-
       describe 'returns the correct markup for' do
         after :each do
-          markup = @post.build_body @test_builder
-          expect(markup).to eq 'expected markup'
-          expect(@test_builder.errors).to be_empty
+          expect(@post.build_body).to eq @expected
         end
 
-        xit 'an image post' do
+        it 'an image post' do
           @post = post
-          @test_builder = MarkupTestBuilder.new @post, 'ImageBodyBuilder'
+          @expected = %(<figure><img src="#{image_url}"><figcaption>) \
+            "<p>#{body}</p></figcaption></figure>"
         end
 
-        it 'a text post'
+        it 'a text post' do
+          post_attribs = valid_attributes.reject { |k, _v| k == :image_url }
+          @post = described_class.new post_attribs
+          @expected = "<p>#{body}</p>"
+        end
       end # describe 'returns the correct markup for'
     end # describe 'has a #build_body method that'
   end

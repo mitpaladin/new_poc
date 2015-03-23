@@ -1,5 +1,6 @@
 
 require_relative 'post/image_body_builder'
+require_relative 'post/text_body_builder'
 
 # Namespace containing all application-defined entities.
 module Entity
@@ -9,13 +10,17 @@ module Entity
   class Post
     # Presentation-ish methods used by current Post entity API.
     module BodyHelper
-      def self.build(entity, builder)
-        builder = body_builder_class.new unless builder.respond_to? :build
+      def self.build(entity)
+        builder = body_builder_class_for(entity).new
         builder.build entity
       end
 
-      def self.body_builder_class
-        Entity::Post::ImageBodyBuilder
+      def self.body_builder_class_for(entity)
+        if entity.image_url.present?
+          Entity::Post::ImageBodyBuilder
+        else
+          Entity::Post::TextBodyBuilder
+        end
       end
     end # module Post::BodyHelper
     private_constant :BodyHelper
@@ -37,8 +42,8 @@ module Entity
       end
     end
 
-    def build_body(builder = :use_default)
-      BodyHelper.build self, builder
+    def build_body
+      BodyHelper.build self
     end
 
     def persisted?
