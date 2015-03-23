@@ -3,6 +3,7 @@ require 'spec_helper'
 
 require_relative '../../app/entities/post'
 # require 'entities/post'
+require_relative 'post_spec/markup_test_builder'
 
 # Namespace containing all application-defined entities.
 module Entity
@@ -181,5 +182,40 @@ module Entity
         end
       end # describe 'false when initialised with'
     end # describe 'has a #valid? method that returns'
+
+    ############################################################################
+    ############################################################################
+    ############################################################################
+    # `#build_body` and `#build_byline` (and arguably `#post_status`) DO NOT   #
+    # BELONG in a "core domain entity". They are *explicitly* presentational   #
+    # details. They originated in helpers and decorators when this was a more  #
+    # traditional Rails-Way app; got lumped into the User entity as temporary  #
+    # expedients, and have long since outlived their welcome.                  #
+    ############################################################################
+    ############################################################################
+    ############################################################################
+    describe 'has a #build_body method that' do
+      let(:post) { described_class.new valid_attributes }
+
+      it 'accepts one optional parameter' do
+        method = post.public_method :build_body
+        expect(method.arity).to eq(-1)
+      end
+
+      describe 'returns the correct markup for' do
+        after :each do
+          markup = @post.build_body @test_builder
+          expect(markup).to eq 'expected markup'
+          expect(@test_builder.errors).to be_empty
+        end
+
+        xit 'an image post' do
+          @post = post
+          @test_builder = MarkupTestBuilder.new @post, 'ImageBodyBuilder'
+        end
+
+        it 'a text post'
+      end # describe 'returns the correct markup for'
+    end # describe 'has a #build_body method that'
   end
 end

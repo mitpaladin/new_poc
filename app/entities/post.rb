@@ -1,10 +1,25 @@
 
+require_relative 'post/image_body_builder'
+
 # Namespace containing all application-defined entities.
 module Entity
   # The Post class encapsulates post-related domain logic of our "fancy" blog.
   # It delegates or defers implementation-specific details such as persistence,
   # user interface, etc.
   class Post
+    # Presentation-ish methods used by current Post entity API.
+    module BodyHelper
+      def self.build(entity, builder)
+        builder = body_builder_class.new unless builder.respond_to? :build
+        builder.build entity
+      end
+
+      def self.body_builder_class
+        Entity::Post::ImageBodyBuilder
+      end
+    end # module Post::BodyHelper
+    private_constant :BodyHelper
+
     attr_reader :author_name, :body, :created_at, :image_url, :pubdate, :slug,
                 :title, :updated_at
 
@@ -20,6 +35,10 @@ module Entity
           ret[attrib] = instance_variable_get "@#{attrib}".to_sym
         end
       end
+    end
+
+    def build_body(builder = :use_default)
+      BodyHelper.build self, builder
     end
 
     def persisted?
