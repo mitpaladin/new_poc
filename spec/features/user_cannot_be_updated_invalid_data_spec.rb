@@ -13,7 +13,7 @@ describe 'A user profile cannot be updated with invalid data; it' do
     click_on 'Update Profile'
   end
 
-  fit 'displays the correct error message' do
+  it 'displays the correct error message' do
     expected = "Password confirmation doesn't match Password"
     expect(page).to have_css '.alert', text: expected
   end

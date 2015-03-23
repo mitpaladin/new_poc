@@ -229,5 +229,21 @@ module Entity
         expect(actual).to eq expected
       end
     end # describe 'has a #build_byline method that'
+
+    describe 'has a #post_status method that' do
+      let(:draft_post) { described_class.new valid_attributes }
+      let(:fixed) { Time.parse '1 February 2015 12:34:56' }
+      let(:published_post) do
+        described_class.new valid_attributes.merge pubdate: fixed
+      end
+
+      it 'returns "draft" for a draft post' do
+        expect(draft_post.post_status).to eq 'draft'
+      end
+
+      it 'returns "public" for a published post' do
+        expect(published_post.post_status).to eq 'public'
+      end
+    end # describe 'has a #post_status method that'
   end
 end

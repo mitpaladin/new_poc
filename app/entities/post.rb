@@ -55,6 +55,11 @@ module Entity
       attributes[:slug].present?
     end
 
+    def post_status
+      return 'draft' unless pubdate
+      'public'
+    end
+
     def valid?
       valid_title? && valid_author_name? && body_or_image_post?
     end
