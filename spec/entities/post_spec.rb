@@ -214,5 +214,20 @@ module Entity
         end
       end # describe 'returns the correct markup for'
     end # describe 'has a #build_body method that'
+
+    describe 'has a #build_byline method that' do
+      let(:fixed) { Time.parse '1 February 2015 12:34:56' }
+      let(:post) { described_class.new valid_attributes.merge pubdate: fixed }
+      let(:expected) do
+        format_str = '<p><time pubdate="pubdate">Posted %s by %s</time></p>'
+        timestamp = fixed.strftime '%a %b %e %Y at %R %Z (%z)'
+        format format_str, timestamp, post.author_name
+      end
+
+      it 'returns the expected string' do
+        actual = post.build_byline
+        expect(actual).to eq expected
+      end
+    end # describe 'has a #build_byline method that'
   end
 end

@@ -1,4 +1,5 @@
 
+require_relative 'post/byline_builder'
 require_relative 'post/image_body_builder'
 require_relative 'post/text_body_builder'
 
@@ -44,6 +45,10 @@ module Entity
 
     def build_body
       BodyHelper.build self
+    end
+
+    def build_byline
+      BylineBuilder.new(self).to_html
     end
 
     def persisted?
