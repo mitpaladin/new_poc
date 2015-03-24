@@ -13,22 +13,22 @@ module Entity
     module Extensions
       # Presentation-oriented "decorator" methods and support.
       module Presentation
-        def self.included(base)
+        def self.extended(base)
           base.extend ClassMethods
         end
 
         def build_body
-          ClassMethods.build self
+          build self
         end
 
         # Class methods for presentation extensions; no instance state affected.
         module ClassMethods
-          def self.build(entity)
+          def build(entity)
             builder = body_builder_class_for(entity).new
             builder.build entity
           end
 
-          def self.body_builder_class_for(entity)
+          def body_builder_class_for(entity)
             return Entity::Post::ImageBodyBuilder if entity.image_url.present?
             Entity::Post::TextBodyBuilder
           end
@@ -56,10 +56,6 @@ module Entity
         end
       end
     end
-
-    # def build_body
-    #   BodyHelper.build self
-    # end
 
     def build_byline
       BylineBuilder.new(self).to_html
