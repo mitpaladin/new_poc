@@ -10,24 +10,38 @@ module Entity
   # user interface, etc.
   class Post
     # Presentation-ish methods used by current Post entity API.
-    module BodyHelper
-      def self.build(entity)
-        builder = body_builder_class_for(entity).new
-        builder.build entity
-      end
-
-      def self.body_builder_class_for(entity)
-        if entity.image_url.present?
-          Entity::Post::ImageBodyBuilder
-        else
-          Entity::Post::TextBodyBuilder
+    module Extensions
+      # Presentation-oriented "decorator" methods and support.
+      module Presentation
+        def self.included(base)
+          base.extend ClassMethods
         end
-      end
-    end # module Post::BodyHelper
-    private_constant :BodyHelper
+
+        def build_body
+          ClassMethods.build self
+        end
+
+        # Class methods for presentation extensions; no instance state affected.
+        module ClassMethods
+          def self.build(entity)
+            builder = body_builder_class_for(entity).new
+            builder.build entity
+          end
+
+          def self.body_builder_class_for(entity)
+            return Entity::Post::ImageBodyBuilder if entity.image_url.present?
+            Entity::Post::TextBodyBuilder
+          end
+        end # module Entity::Post::Extensions::Presentation::ClassMethods
+      end # module Entity::Post::Extensions::Presentation
+    end # module Entity::Post::Extensions
 
     attr_reader :author_name, :body, :created_at, :image_url, :pubdate, :slug,
                 :title, :updated_at
+
+    def self.extend_with_presentation(attributes)
+      Post.new(attributes).extend Extensions::Presentation
+    end
 
     def initialize(attributes)
       attrib_keys.each do |attrib|
@@ -43,9 +57,9 @@ module Entity
       end
     end
 
-    def build_body
-      BodyHelper.build self
-    end
+    # def build_body
+    #   BodyHelper.build self
+    # end
 
     def build_byline
       BylineBuilder.new(self).to_html
