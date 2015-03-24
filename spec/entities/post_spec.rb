@@ -231,10 +231,13 @@ module Entity
     end # describe 'has a #build_byline method that'
 
     describe 'has a #post_status method that' do
-      let(:draft_post) { described_class.new valid_attributes }
+      let(:draft_post) do
+        described_class.extend_with_presentation valid_attributes
+      end
       let(:fixed) { Time.parse '1 February 2015 12:34:56' }
       let(:published_post) do
-        described_class.new valid_attributes.merge pubdate: fixed
+        attribs = valid_attributes.merge pubdate: fixed
+        described_class.extend_with_presentation attribs
       end
 
       it 'returns "draft" for a draft post' do

@@ -21,6 +21,11 @@ module Entity
           build self
         end
 
+        def post_status
+          return 'draft' unless pubdate
+          'public'
+        end
+
         # Class methods for presentation extensions; no instance state affected.
         module ClassMethods
           def build(entity)
@@ -33,6 +38,7 @@ module Entity
             Entity::Post::TextBodyBuilder
           end
         end # module Entity::Post::Extensions::Presentation::ClassMethods
+        private_constant :ClassMethods
       end # module Entity::Post::Extensions::Presentation
     end # module Entity::Post::Extensions
 
@@ -63,11 +69,6 @@ module Entity
 
     def persisted?
       attributes[:slug].present?
-    end
-
-    def post_status
-      return 'draft' unless pubdate
-      'public'
     end
 
     def valid?
