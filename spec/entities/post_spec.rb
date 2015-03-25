@@ -194,7 +194,9 @@ module Entity
     ############################################################################
     ############################################################################
     describe 'has a #build_body method that' do
-      let(:post) { described_class.extend_with_presentation valid_attributes }
+      let(:post) do
+        described_class.new(valid_attributes).extend_with_presentation
+      end
 
       describe 'returns the correct markup for' do
         after :each do
@@ -209,7 +211,7 @@ module Entity
 
         it 'a text post' do
           post_attribs = valid_attributes.reject { |k, _v| k == :image_url }
-          @post = described_class.extend_with_presentation post_attribs
+          @post = described_class.new(post_attribs).extend_with_presentation
           @expected = "<p>#{body}</p>"
         end
       end # describe 'returns the correct markup for'
@@ -232,12 +234,12 @@ module Entity
 
     describe 'has a #post_status method that' do
       let(:draft_post) do
-        described_class.extend_with_presentation valid_attributes
+        described_class.new(valid_attributes).extend_with_presentation
       end
       let(:fixed) { Time.parse '1 February 2015 12:34:56' }
       let(:published_post) do
         attribs = valid_attributes.merge pubdate: fixed
-        described_class.extend_with_presentation attribs
+        described_class.new(attribs).extend_with_presentation
       end
 
       it 'returns "draft" for a draft post' do

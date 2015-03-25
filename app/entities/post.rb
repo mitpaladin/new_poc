@@ -45,8 +45,8 @@ module Entity
     attr_reader :author_name, :body, :created_at, :image_url, :pubdate, :slug,
                 :title, :updated_at
 
-    def self.extend_with_presentation(attributes)
-      Post.new(attributes).extend Extensions::Presentation
+    def extend_with_presentation
+      extend Extensions::Presentation
     end
 
     def initialize(attributes)
