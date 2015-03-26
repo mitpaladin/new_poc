@@ -219,7 +219,10 @@ module Entity
 
     describe 'has a #build_byline method that' do
       let(:fixed) { Time.parse '1 February 2015 12:34:56' }
-      let(:post) { described_class.new valid_attributes.merge pubdate: fixed }
+      let(:post) do
+        described_class.new(valid_attributes.merge(pubdate: fixed))
+          .extend_with_presentation
+      end
       let(:expected) do
         format_str = '<p><time pubdate="pubdate">Posted %s by %s</time></p>'
         timestamp = fixed.strftime '%a %b %e %Y at %R %Z (%z)'

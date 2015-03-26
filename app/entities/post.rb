@@ -1,7 +1,8 @@
 
-require_relative 'post/byline_builder'
-require_relative 'post/image_body_builder'
-require_relative 'post/text_body_builder'
+# require_relative 'post/byline_builder'
+# require_relative 'post/image_body_builder'
+# require_relative 'post/text_body_builder'
+require_relative 'post/extensions/presentation'
 
 # Namespace containing all application-defined entities.
 module Entity
@@ -9,39 +10,6 @@ module Entity
   # It delegates or defers implementation-specific details such as persistence,
   # user interface, etc.
   class Post
-    # Presentation-ish methods used by current Post entity API.
-    module Extensions
-      # Presentation-oriented "decorator" methods and support.
-      module Presentation
-        def self.extended(base)
-          base.extend ClassMethods
-        end
-
-        def build_body
-          build self
-        end
-
-        def post_status
-          return 'draft' unless pubdate
-          'public'
-        end
-
-        # Class methods for presentation extensions; no instance state affected.
-        module ClassMethods
-          def build(entity)
-            builder = body_builder_class_for(entity).new
-            builder.build entity
-          end
-
-          def body_builder_class_for(entity)
-            return Entity::Post::ImageBodyBuilder if entity.image_url.present?
-            Entity::Post::TextBodyBuilder
-          end
-        end # module Entity::Post::Extensions::Presentation::ClassMethods
-        private_constant :ClassMethods
-      end # module Entity::Post::Extensions::Presentation
-    end # module Entity::Post::Extensions
-
     attr_reader :author_name, :body, :created_at, :image_url, :pubdate, :slug,
                 :title, :updated_at
 
@@ -61,10 +29,6 @@ module Entity
           ret[attrib] = instance_variable_get "@#{attrib}".to_sym
         end
       end
-    end
-
-    def build_byline
-      BylineBuilder.new(self).to_html
     end
 
     def persisted?

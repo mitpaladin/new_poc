@@ -2,9 +2,10 @@
 require 'spec_helper'
 
 # FIXME: HACK - Why isn't the source being autoloaded?
-require_relative '../../../app/entities/post/image_body_builder'
+aepep_prefix = '../../../../../app/entities/post/extensions/presentation'
+require_relative "#{aepep_prefix}/image_body_builder"
 
-describe Entity::Post::ImageBodyBuilder do
+describe Entity::Post::Extensions::Presentation::ImageBodyBuilder do
   it 'is initialised with one optional parameter' do
     expect { described_class.new }.not_to raise_error
     param = -> (_param) { 'foo' }
