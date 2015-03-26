@@ -104,7 +104,8 @@ module Entity
     describe 'has a #valid? method that returns' do
       describe 'true when initialised with' do
         after :each do
-          expect(described_class.new @attribs).to be_valid
+          obj = described_class.new(@attribs).extend_with_validation
+          expect(obj).to be_valid
         end
 
         it 'an author name, title and body' do
@@ -131,7 +132,8 @@ module Entity
 
       describe 'false when initialised with' do
         after :each do
-          expect(described_class.new @attribs).not_to be_valid
+          obj = described_class.new(@attribs).extend_with_validation
+          expect(obj).not_to be_valid
         end
 
         it 'no title' do

@@ -9,7 +9,7 @@ module Entity
   # It delegates or defers implementation-specific details such as persistence,
   # user interface, etc.
   class Post
-    # Presentation-ish methods used by current Post entity API.
+    # Extensions to Post entity beyond core attribute manipulation.
     module Extensions
       # Presentation-oriented "decorator" methods and support.
       module Presentation
