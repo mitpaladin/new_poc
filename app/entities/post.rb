@@ -1,4 +1,6 @@
 
+require 'value_object'
+
 require_relative 'post/extensions/presentation'
 require_relative 'post/extensions/validation'
 
@@ -8,8 +10,18 @@ module Entity
   # It delegates or defers implementation-specific details such as persistence,
   # user interface, etc.
   class Post
-    attr_reader :author_name, :body, :created_at, :image_url, :pubdate, :slug,
-                :title, :updated_at
+    extend Forwardable
+
+    # Value object containing attribute definitions used by this class.
+    class Attributes < ValueObject::Base
+      has_fields :author_name, :body, :created_at, :image_url, :pubdate, :slug,
+                 :title, :updated_at
+    end
+    private_constant :Attributes
+
+    attr_reader :attributes
+    def_delegators :@attributes, :author_name, :body, :created_at, :image_url,
+                   :pubdate, :slug, :title, :updated_at
 
     def extend_with_presentation
       extend Extensions::Presentation
@@ -20,28 +32,21 @@ module Entity
     end
 
     def initialize(attributes)
-      attrib_keys.each do |attrib|
-        instance_variable_set "@#{attrib}".to_sym, attributes[attrib]
-      end
+      @attributes = Attributes.new attributes
     end
 
-    def attributes
-      {}.tap do |ret|
-        attrib_keys.each do |attrib|
-          ret[attrib] = instance_variable_get "@#{attrib}".to_sym
-        end
-      end
+    def instance_variable_set(_symbol, _obj)
+      fail "Can't touch this."
     end
 
     def persisted?
-      attributes[:slug].present?
+      slug.present?
     end
 
-    private
-
-    def attrib_keys
-      [:author_name, :body, :created_at, :image_url, :pubdate, :slug, :title,
-       :updated_at]
-    end
+    # To implement an attribute setter, you'd do something like this. Note that
+    # we *replace* the `@attributes` object with a new value object.
+    # def author_name=(value)
+    #   @attributes = attributes.copy_with(:author_name, value)
+    # end
   end # class Entity::Post
 end

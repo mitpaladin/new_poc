@@ -16,21 +16,20 @@ module Entity
         private
 
         def body_or_image_post?
-          return true if attributes[:body].to_s.strip.present?
-          attributes[:image_url].to_s.strip.present?
+          return true if body.to_s.strip.present?
+          image_url.to_s.strip.present?
         end
 
         def registered_author?
-          attributes[:author_name] != 'Guest User'
+          author_name != 'Guest User'
         end
 
         def valid_author_name?
-          name = attributes[:author_name]
-          name.present? && name == name.strip && registered_author?
+          author_name.present? && author_name == author_name.strip &&
+            registered_author?
         end
 
         def valid_title?
-          title = attributes[:title]
           title.present? && title == title.strip
         end
       end # module Entity::Post::Extensions::Validation

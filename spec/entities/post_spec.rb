@@ -64,7 +64,7 @@ module Entity
       context 'a mixture of valid and invalid attribute names as keys' do
         it 'ignores the attributes specified with invalid keys' do
           obj = described_class.new title: title, foo: 'bar', meaning: 42
-          actual = obj.attributes.reject { |_k, v| v.nil? }
+          actual = obj.attributes.to_hash.reject { |_k, v| v.nil? }
           expect(actual.count).to eq 1
           expect(actual[:title]).to eq title
         end
@@ -77,19 +77,24 @@ module Entity
 
       it 'returns the attributes passed to the initialiser' do
         valid_attributes.each_pair do |attrib, value|
-          expect(actual[attrib]).to eq value
+          expect(actual.send attrib).to eq value
         end
       end
 
       it 'has nil values for all attributes not passed to the initialiser' do
-        actual.keys.reject { |k| valid_attributes.key? k }.each do |attrib|
-          expect(obj.attributes[attrib]).to be nil
-        end
+        keys = actual.to_hash.keys.reject { |k| valid_attributes.key? k }
+        keys.each { |attrib| expect(obj.send attrib).to be nil }
       end
     end # describe 'has an #attributes method that'
 
+    describe 'has an #instance_variable_set method that' do
+      it 'raises an error when called' do
+        obj = described_class.new valid_attributes
+        expect { obj.instance_variable_set :@title, 'Oops!' }.to raise_error
+      end
+    end
+
     describe 'has a #persisted? method that' do
-      # let(:valid_attributes) { { title: title, author_name: author_name } }
       let(:attributes_with_slug) { valid_attributes.merge slug: slug }
 
       it 'returns true if the "slug" attribute is present' do
