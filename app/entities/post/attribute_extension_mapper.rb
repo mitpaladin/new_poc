@@ -5,8 +5,6 @@ module Entity
   # It delegates or defers implementation-specific details such as persistence,
   # user interface, etc.
   class Post
-    extend Forwardable
-
     # Iterate extension modules building attribute mappings.
     class AttributeExtensionMapper
       def initialize(extension_container = Extensions)

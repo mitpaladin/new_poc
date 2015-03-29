@@ -1,7 +1,7 @@
 
 require 'value_object'
 
-require_relative 'post/attribute_extension_manager'
+require_relative 'post/attribute_extension_mapper'
 require_relative 'post/extensions/persistence'
 require_relative 'post/extensions/presentation'
 require_relative 'post/extensions/validation'
