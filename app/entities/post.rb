@@ -1,6 +1,8 @@
 
 require 'value_object'
 
+require_relative 'post/attribute_extension_manager'
+require_relative 'post/extensions/persistence'
 require_relative 'post/extensions/presentation'
 require_relative 'post/extensions/validation'
 
@@ -14,14 +16,9 @@ module Entity
 
     # Value object containing attribute definitions used by this class.
     class CoreAttributes < ValueObject::Base
-      has_fields :author_name, :body, :created_at, :image_url, :pubdate, :slug,
-                 :title, :updated_at
+      has_fields :author_name, :body, :image_url, :pubdate, :title
     end
     private_constant :CoreAttributes
-
-    # attr_reader :attributes
-    # def_delegators :@attributes, :author_name, :body, :created_at, :image_url,
-    #                :pubdate, :slug, :title, :updated_at
 
     def extend_with_presentation
       extend Extensions::Presentation
@@ -34,6 +31,11 @@ module Entity
     def initialize(attributes)
       @attributes = {}
       @attributes[:core] = CoreAttributes.new attributes
+      @extension_mapper = AttributeExtensionMapper.new.build do |mapping|
+        mapping[:core] = CoreAttributes.fields
+      end
+      @attributes_in = attributes
+      load_extensions attributes
     end
 
     def instance_variable_set(_symbol, _obj)
@@ -41,24 +43,28 @@ module Entity
     end
 
     def method_missing(method_sym, *arguments, &block)
-      attribs = attributes
-      return super unless attribs.respond_to?(method_sym)
+      return super unless @extension_mapper[method_sym].present?
       # We're asking for an attribute; let's define a reader for it so we
       # don't come here again looking for that attribute
+      attr_set_index = ext_index_symbol_for method_sym
+      attribute_set = @attributes[attr_set_index]
       define_singleton_method method_sym do
-        attributes.send method_sym
+        # Extension not loaded because triggering attributes not set. Bail.
+        return nil unless attribute_set.respond_to? method_sym
+        # We're alive; carry on.
+        attribute_set.send method_sym
       end
       send method_sym
     end
 
     def respond_to?(method, include_private = false)
-      super || attributes.fields.include?(method)
+      super || @extension_mapper[method].present?
     end
 
     def attributes
       all_attributes = collect_attributes
-      # OK; we've a *Hash* of every attribute in the entity; but what we really
-      # want is a *ValueObject*.
+      # Right; we've a *Hash* of every attribute in the entity; but what we
+      # really want is a *ValueObject*.
       attributes_class(all_attributes.keys).new all_attributes
     end
 
@@ -79,6 +85,18 @@ module Entity
         @attributes.each_key do |attributes_set|
           all_attributes.merge! @attributes[attributes_set].to_hash
         end
+      end
+    end
+
+    def ext_index_symbol_for(method_sym)
+      @extension_mapper[method_sym].to_s.split('::').last.downcase.to_sym
+    end
+
+    def load_extensions(attributes)
+      attributes.each_key do |k|
+        extension = @extension_mapper[k]
+        next if [nil, :core].include?(extension)
+        extend extension
       end
     end
   end # class Entity::Post
