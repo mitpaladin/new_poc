@@ -44,12 +44,12 @@ module Entity
       extend Extensions::Validation
     end
 
+    extend Forwardable
+
+    def_delegator :@extension_mapper, :[], :extension_for
+
     def initialize(attributes)
-      @original_attributes = attributes
-      add_attributes_set :core, CoreAttributes.new(attributes)
-      @extension_mapper = AttributeExtensionMapper.new.build do |mapping|
-        mapping[:core] = CoreAttributes.fields
-      end
+      init_attribute_mapping(attributes)
       load_extensions
     end
 
@@ -92,9 +92,9 @@ module Entity
 
     attr_reader :attributes_sets, :original_attributes
 
-    # Called from #initialize and from every optional extension, eg Persistence.
+    # Called from #init_attribute_mapping and from every optional extension,
+    # such as Persistence.
     def add_attributes_set(set_index, values)
-      @attributes_sets ||= AttributesSets.new
       attributes_sets[set_index] = values
     end
 
@@ -103,12 +103,17 @@ module Entity
       extension_for(method_sym).to_s.split('::').last.downcase.to_sym
     end
 
-    # Helper for #initialize, #method_missing, #respond_to? and THEIR helpers.
-    def extension_for(method_sym)
-      @extension_mapper[method_sym]
+    # The first half of #initialize. ONLY setter of instance variables!
+    def init_attribute_mapping(attributes)
+      @original_attributes = attributes
+      @attributes_sets = AttributesSets.new
+      add_attributes_set :core, CoreAttributes.new(attributes)
+      @extension_mapper = AttributeExtensionMapper.new.build do |mapping|
+        mapping[:core] = CoreAttributes.fields
+      end
     end
 
-    # Helper for #initialize.
+    # The last half of #initialize.
     def load_extensions
       original_attributes.each_key do |k|
         extension = extension_for(k)
