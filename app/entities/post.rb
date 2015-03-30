@@ -2,6 +2,7 @@
 require 'value_object'
 
 require_relative 'post/attribute_extension_mapper'
+require_relative 'post/attributes_sets'
 require_relative 'post/extensions/persistence'
 require_relative 'post/extensions/presentation'
 require_relative 'post/extensions/validation'
@@ -45,7 +46,6 @@ module Entity
 
     def initialize(attributes)
       @original_attributes = attributes
-      @attributes_sets = {}
       add_attributes_set :core, CoreAttributes.new(attributes)
       @extension_mapper = AttributeExtensionMapper.new.build do |mapping|
         mapping[:core] = CoreAttributes.fields
@@ -58,11 +58,11 @@ module Entity
     end
 
     def method_missing(method_sym, *arguments, &block)
-      return super unless @extension_mapper[method_sym].present?
+      return super unless extension_for(method_sym).present?
       # We're asking for an attribute; let's define a reader for it so we
       # don't come here again looking for that attribute
       attr_set_index = ext_index_symbol_for method_sym
-      attribute_set = @attributes_sets[attr_set_index]
+      attribute_set = attributes_sets[attr_set_index]
       define_singleton_method method_sym do
         # Extension not loaded because triggering attributes not set. Bail.
         return nil unless attribute_set.respond_to? method_sym
@@ -73,14 +73,11 @@ module Entity
     end
 
     def respond_to?(method, include_private = false)
-      super || @extension_mapper[method].present?
+      super || extension_for(method).present?
     end
 
     def attributes
-      all_attributes = collect_attributes
-      # Right; we've a *Hash* of every attribute in the entity; but what we
-      # really want is a *ValueObject*.
-      attributes_class(all_attributes.keys).new all_attributes
+      attributes_sets.to_value_object
     end
 
     # This will be overridden by the Persistence extension if a `:slug`
@@ -93,33 +90,28 @@ module Entity
 
     private
 
-    attr_reader :original_attributes
+    attr_reader :attributes_sets, :original_attributes
 
+    # Called from #initialize and from every optional extension, eg Persistence.
     def add_attributes_set(set_index, values)
-      @attributes_sets[set_index] = values
+      @attributes_sets ||= AttributesSets.new
+      attributes_sets[set_index] = values
     end
 
-    def attributes_class(attribute_keys)
-      Class.new(ValueObject::Base).tap do |ret|
-        attribute_keys.each { |key| ret.instance_eval { has_fields key } }
-      end
-    end
-
-    def collect_attributes
-      {}.tap do |all_attributes|
-        @attributes_sets.each_key do |attributes_set|
-          all_attributes.merge! @attributes_sets[attributes_set].to_hash
-        end
-      end
-    end
-
+    # Helper for #method_missing.
     def ext_index_symbol_for(method_sym)
-      @extension_mapper[method_sym].to_s.split('::').last.downcase.to_sym
+      extension_for(method_sym).to_s.split('::').last.downcase.to_sym
     end
 
+    # Helper for #initialize, #method_missing, #respond_to? and THEIR helpers.
+    def extension_for(method_sym)
+      @extension_mapper[method_sym]
+    end
+
+    # Helper for #initialize.
     def load_extensions
       original_attributes.each_key do |k|
-        extension = @extension_mapper[k]
+        extension = extension_for(k)
         next if [nil, :core].include?(extension)
         extend extension
       end
