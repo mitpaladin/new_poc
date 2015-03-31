@@ -5,7 +5,7 @@ require 'post'
 class PostFactory
   class << self
     def create(record)
-      entity_class.new record
+      entity_class.new record.attributes.symbolize_keys
     end
 
     def entity_class
