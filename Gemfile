@@ -16,11 +16,10 @@ source 'https://rubygems.org'
 # actions. Hence also massive duplication of simple code *in* action "Gems".
 # Why is this? Inter-Gem dependency management is *fxxxing primitive!*
 [
-  'entity-post',
   'services-markdown_html_converter'
 ].each { |gem_name| gem "newpoc-#{gem_name}", path: "lib/newpoc-#{gem_name}" }
 
-gem 'repository-base', '>= 0.2.0'
+gem 'repository-base', '>= 0.3.1'
 gem 'wisper_subscription', '>= 0.2.0'
 
 gem 'active_attr'

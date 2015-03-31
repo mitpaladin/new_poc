@@ -1,5 +1,5 @@
 
-require 'newpoc/entity/post'
+require 'post'
 
 # Class to create (and setup if needed) instance of DM entity for use cases.
 class PostFactory
@@ -9,7 +9,7 @@ class PostFactory
     end
 
     def entity_class
-      Newpoc::Entity::Post
+      Entity::Post
     end
   end
 end

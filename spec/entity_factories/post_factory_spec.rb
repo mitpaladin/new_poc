@@ -6,5 +6,5 @@ describe PostFactory do
   let(:klass) { PostFactory }
   let(:dao) { FactoryGirl.create :post, :saved_post }
 
-  it_behaves_like 'an entity factory for', Newpoc::Entity::Post
+  it_behaves_like 'an entity factory for', Entity::Post
 end
