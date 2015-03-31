@@ -225,7 +225,11 @@ module Entity
     end # describe 'has a #build_body method that'
 
     describe 'has a #build_byline method that' do
-      let(:fixed) { Time.parse '1 February 2015 12:34:56' }
+      let(:fixed) do
+        Time.zone = 'Asia/Singapore'
+        time_when = Chronic.parse('14 March 2015 at 9:26:54 AM')
+        Time.zone.at(time_when)
+      end
       let(:post) do
         described_class.new(valid_attributes.merge(pubdate: fixed))
           .extend_with_presentation
@@ -246,7 +250,11 @@ module Entity
       let(:draft_post) do
         described_class.new(valid_attributes).extend_with_presentation
       end
-      let(:fixed) { Time.parse '1 February 2015 12:34:56' }
+      let(:fixed) do
+        Time.zone = 'Asia/Singapore'
+        time_when = Chronic.parse('14 March 2015 at 9:26:54 AM')
+        Time.zone.at(time_when)
+      end
       let(:published_post) do
         attribs = valid_attributes.merge pubdate: fixed
         described_class.new(attribs).extend_with_presentation

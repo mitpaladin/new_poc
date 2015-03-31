@@ -1,5 +1,5 @@
 
-require_relative 'timestamp_builder'
+require 'timestamp_builder'
 
 # Namespace containing all application-defined entities.
 module Entity
@@ -14,6 +14,7 @@ module Entity
         # Presentation-ish byline-builder class for posts.
         class BylineBuilder
           extend Forwardable
+          include TimestampBuilder
 
           def_delegator :@entry, :h, :h
 
@@ -62,7 +63,7 @@ module Entity
 
           def pubdate_str
             return 'DRAFT' if draft?
-            TimestampBuilder.timestamp_for entry.pubdate
+            timestamp_for entry.pubdate
           end
         end # class Entity::Post::Extensions::Presentation::BylineBuilder
       end

@@ -52,6 +52,11 @@ module Entity
           return 'draft' if draft?
           'public'
         end
+
+        def pubdate_str
+          return 'DRAFT' if draft?
+          timestamp_for pubdate
+        end
       end # module Entity::Post::Extensions::Publication
     end
   end # class Entity::Post
