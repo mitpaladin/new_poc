@@ -5,6 +5,7 @@ require_relative 'post/attribute_extension_mapper'
 require_relative 'post/attributes_sets'
 require_relative 'post/extensions/persistence'
 require_relative 'post/extensions/presentation'
+require_relative 'post/extensions/publication'
 require_relative 'post/extensions/validation'
 
 # Namespace containing all application-defined entities.
@@ -15,7 +16,7 @@ module Entity
   class Post
     # Value object containing attribute definitions used by this class.
     class CoreAttributes < ValueObject::Base
-      has_fields :author_name, :body, :image_url, :pubdate, :title
+      has_fields :author_name, :body, :image_url, :title
     end
     private_constant :CoreAttributes
 
@@ -80,13 +81,34 @@ module Entity
       attributes_sets.to_value_object
     end
 
-    # This will be overridden by the Persistence extension if a `:slug`
-    # attribute is specified to the initialiser. Of course, since persisting an
-    # entity is supposed to set the `slug` *field*, if the attribute is missing
-    # the entity does not represent a persisted post. QED.
+    # ######################################################################## #
+    # Attribute-driven defaults
+    #
+    # All *public* methods below this point are methods that depend on optional
+    # attribute values passed to the initializer. Those overrides will be added
+    # by `#method_missing` (above) to a `Post` instance depending on the (fixed
+    # in context) attributes.
+    #
+    # Persistence extension override defaults
     def persisted?
       false
     end
+
+    # Publication extension override defaults
+    def draft?
+      true
+    end
+
+    def published?
+      false
+    end
+
+    def post_status
+      'draft'
+    end
+
+    # ######################################################################## #
+    # ######################################################################## #
 
     private
 

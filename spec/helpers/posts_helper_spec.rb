@@ -53,7 +53,7 @@ def new_bhs_build_example_posts(entry_count)
   ret = []
   entry_count.times do
     attribs = FactoryGirl.attributes_for :post, author_name: 'John Smith'
-    ret.push Newpoc::Entity::Post.new(attribs)
+    ret.push PostFactory.entity_class.new(attribs)
   end
   ret
 end
@@ -68,7 +68,7 @@ def new_build_and_publish_posts(count = 10)
   repo = PostRepository.new
   ret = []
   new_bhs_build_example_posts(count).each_with_index do |post, index|
-    attributes = post.attributes.merge pubdate: ages[index]
+    attributes = post.attributes.to_hash.merge pubdate: ages[index]
     published_post = post.class.new attributes
     result = repo.add published_post
     ret.push result.entity
@@ -104,7 +104,7 @@ describe PostsHelper do
   end # describe :edit_post_form_attributes
 
   describe :status_select_options.to_s do
-    let(:post) { Newpoc::Entity::Post.new post_attribs }
+    let(:post) { PostFactory.entity_class.new post_attribs }
     let(:actual) { status_select_options post }
     let(:options) { actual.scan(Regexp.new '<option.+?</option>') }
     let(:selected) { options.select { |s| s.match(/selected\=/) } }
