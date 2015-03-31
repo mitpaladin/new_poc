@@ -1,4 +1,6 @@
 
+require 'timestamp_builder'
+
 # Namespace containing all application-defined entities.
 module Entity
   # The Post class encapsulates post-related domain logic of our "fancy" blog.
@@ -28,6 +30,8 @@ module Entity
           has_fields :pubdate
         end
         private_constant :PublicationAttributes
+
+        include TimestampBuilder
 
         def self.extended(base)
           base.instance_eval do
