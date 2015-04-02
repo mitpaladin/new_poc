@@ -185,14 +185,15 @@ describe PostsController::Action::Create do
       describe 'is unsuccessful, broadcasting a payload with' do
         let(:payload) { subscriber.payload_for(:failure).first }
 
-        fit 'the expected errors' do
+        it 'the expected errors' do
           attribs = JSON.parse(payload.message).symbolize_keys
           entity = PostFactory.entity_class.new(attribs).extend_with_validation
           expect(entity).not_to be_valid
-          # binding.pry
           expect(entity).to have(1).error
           message = entity.errors.full_messages.first
-          expect(message).to eq "Title can't be blank"
+          expected = 'Title must be present and must not contain leading or' \
+            ' trailing whitespace'
+          expect(message).to eq expected
         end
       end # describe 'is unsuccessful, broadcasting a payload with'
     end # context 'with insufficient valid post data'

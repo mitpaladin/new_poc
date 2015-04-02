@@ -1,5 +1,5 @@
 
-# require 'active_model/validations'
+require_relative 'validation/internals'
 
 # Namespace containing all application-defined entities.
 module Entity
@@ -11,46 +11,44 @@ module Entity
     module Extensions
       # Validation logic pertinent to Post entities.
       module Validation
-        # A lovely, simple error-tracking mechanism and, being part of
-        # Active*Model*, should not be too tightly bound to Rails ActiveRecord
-        # internals, you'd think. And you'd apparently be wrong.
-        # include ActiveModel::Validations
+        # Helper module defines module methods for Validations.
+        module ValidationExtensions
+          def add_validation_class_methods(base)
+            base.class.instance_eval do
+              attr_reader :errors
+
+              # Needed for ActiveModel::Errors to work.
+
+              def lookup_ancestors
+                [self]
+              end
+
+              def human_attribute_name(attr, _options = {})
+                attr.to_s.humanize
+              end
+            end
+          end
+        end # module Entity::Post::Extensions::Validation::ValidationExtensions
+        private_constant :ValidationInternals, :ValidationExtensions
+        include ValidationInternals
+        extend ValidationExtensions
+        extend ActiveModel::Naming
+
+        def self.extended(base)
+          base.instance_eval do
+            @errors = ActiveModel::Errors.new self
+          end
+          add_validation_class_methods base
+        end
 
         def valid?
           valid_title? && valid_author_name? && body_or_image_post?
         end
 
-        private
+        # Needed for ActiveModel::Errors to work.
 
-        def author_name_present?
-          string_attr_present? :author_name, author_name
-        end
-
-        def body_or_image_post?
-          return true if body.to_s.strip.present?
-          image_url.to_s.strip.present?
-        end
-
-        def registered_author?
-          return true unless author_name == 'Guest User'
-          # errors.add :author_name, 'must not be the Guest User'
-          false
-        end
-
-        def string_attr_present(_attr_sym, attr)
-          return true if attr.present? && attr == attr.strip
-          # message = "#{attr_sym.to_s.humanize} must be present and must not" \
-          #   ' contain leading or trailing whitespace'
-          # errors.add attr_sym, message
-          false
-        end
-
-        def valid_author_name?
-          author_name_present? && registered_author?
-        end
-
-        def valid_title?
-          string_attr_presetn? :title, title
+        def read_attribute_for_validation(attr)
+          send attr
         end
       end # module Entity::Post::Extensions::Validation
     end
