@@ -43,6 +43,7 @@ module Entity
             ret = body.to_s.strip.present? || image_url.to_s.strip.present?
             return true if ret
             errors.add :body, 'must be present if image URL is missing'
+            false
           end
 
           def registered_author?
