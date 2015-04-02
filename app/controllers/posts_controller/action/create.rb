@@ -25,7 +25,7 @@ class PostsController < ApplicationController
         @post_data = filter.filter
         @draft_post = filter.draft_post
         @current_user = current_user
-        @entity_class = entity_class || Newpoc::Entity::Post
+        @entity_class = entity_class || PostFactory.entity_class
       end
 
       def execute
@@ -60,7 +60,7 @@ class PostsController < ApplicationController
       end
 
       def validate_post_data
-        @entity = entity_class.new new_entity_attributes
+        @entity = entity_class.new(new_entity_attributes).extend_with_validation
         return if @entity.valid?
         fail @entity.to_json
       end

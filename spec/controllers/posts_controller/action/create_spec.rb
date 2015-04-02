@@ -9,7 +9,7 @@ shared_examples 'a successful post that' do
     expect(subscriber).not_to be_failure
   end
 
-  describe 'is successful, broadcasting a Newpoc::Entity::Post payload' do
+  describe 'is successful, broadcasting a Post entity payload' do
     let(:payload) { subscriber.payload_for(:success).first }
 
     it 'which is valid' do
@@ -29,12 +29,13 @@ shared_examples 'a successful post that' do
                  .select { |k, _v| acceptable_keys.include? k }
                  .merge author_name: current_user.name
 
-      expect(payload).to be_a Newpoc::Entity::Post
-      expected.each do |attrib, value|
-        expect(payload.attributes[attrib]).to eq value
+      expect(payload).to be_a PostFactory.entity_class
+      expected.each do |attrib_key, value|
+        attrib = payload.attributes.to_hash[attrib_key]
+        expect(attrib).to eq value
       end
     end
-  end # describe 'is successful, broadcasting a Newpoc::Entity::Post payload'
+  end # describe 'is successful, broadcasting a Post entity payload'
 end # shared_examples 'a successful post that'
 
 # ############################################################################ #
@@ -130,7 +131,7 @@ describe PostsController::Action::Create do
       it 'does not include any invalid initialiser settings' do
         payload = subscriber.payload_for(:success).first
         invalid_data.each_key do |k|
-          expect(payload.attributes).not_to include k
+          expect(payload.attributes.to_hash).not_to include k
         end
       end
     end # context 'with additional but invalid post data'
@@ -161,7 +162,7 @@ describe PostsController::Action::Create do
             author_name: current_user.name,
             title: 'A Title',
             body: 'A Body',
-            post_status: 'public'
+            pubdate: Time.now
           }
         end
 
@@ -184,10 +185,11 @@ describe PostsController::Action::Create do
       describe 'is unsuccessful, broadcasting a payload with' do
         let(:payload) { subscriber.payload_for(:failure).first }
 
-        it 'the expected errors' do
+        fit 'the expected errors' do
           attribs = JSON.parse(payload.message).symbolize_keys
-          entity = Newpoc::Entity::Post.new attribs
+          entity = PostFactory.entity_class.new(attribs).extend_with_validation
           expect(entity).not_to be_valid
+          # binding.pry
           expect(entity).to have(1).error
           message = entity.errors.full_messages.first
           expect(message).to eq "Title can't be blank"

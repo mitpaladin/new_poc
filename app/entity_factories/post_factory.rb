@@ -3,6 +3,7 @@ require 'post'
 
 # Class to create (and setup if needed) instance of DM entity for use cases.
 class PostFactory
+  # Class methods can't use `private` to hide implementation details.
   module Internals
     def as_hash(record)
       h = record.respond_to?(:attributes) ? record.attributes : record

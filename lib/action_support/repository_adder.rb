@@ -15,9 +15,12 @@ module ActionSupport
     def add
       params = { attributes: attributes, repository: repository }
       result = persister_class.new(params).persist do |attribs|
-        factory_class.create attribs
+        factory_class.create(attribs)
       end
-      @entity = result.entity
+      e = result.entity
+      # FIXME: We don't have User entities converted over yet.
+      e.extend_with_validation if e.respond_to?(:extend_with_validation)
+      @entity = e
       self
     end
 
