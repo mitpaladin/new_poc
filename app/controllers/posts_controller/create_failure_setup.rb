@@ -8,32 +8,29 @@ class PostsController < ApplicationController
       attr_reader :entity
 
       def initialize(payload)
-        @payload = payload
-        @entity_class = Newpoc::Entity::Post
+        @payload_data = YAML.load(payload.message).symbolize_keys
       end
 
-      def cleanup
-        fail_if_no_model_included
-        @entity = rebuild_entity
+      def build
+        @entity = build_entity
+        @entity.valid?
         self
       end
 
       private
 
-      attr_reader :entity_class, :payload
+      attr_reader :payload_data
 
-      def fail_if_no_model_included
-        fail payload_data[:messages].first unless payload_data.key? :slug
+      def build_entity
+        entity_class.new(entity_attributes).extend_with_validation
       end
 
-      def payload_data
-        @payload_data ||= YAML.load(payload.message).symbolize_keys
+      def entity_attributes
+        payload_data[:original_attributes]
       end
 
-      def rebuild_entity
-        entity = entity_class.new payload_data
-        entity.valid?
-        entity
+      def entity_class
+        PostFactory.entity_class
       end
     end # class PostsController::Internals::CreateFailureSetup
   end

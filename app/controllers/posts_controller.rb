@@ -1,6 +1,4 @@
 
-# require 'newpoc/action/post/update'
-
 require_relative 'posts_controller/create_failure_setup'
 require_relative 'posts_controller/error_message_builder'
 
@@ -13,15 +11,8 @@ require_relative 'posts_controller/action/update'
 
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
-  # Internal classes exclusively used by PostsController.
-  module Internals
-  end
   private_constant :Internals
   include Internals
-
-  # Isolating our Action classes within the controller they're associated with.
-  module Action
-  end
 
   def_action(:index) do
     { current_user: current_user, post_repository: PostRepository.new }
@@ -30,12 +21,12 @@ class PostsController < ApplicationController
   def_action(:new) do
     {
       current_user: current_user, repository: UserRepository.new,
-      entity_class: Newpoc::Entity::Post
+      entity_class: PostFactory.entity_class
     }
   end
 
   def_action(:create) do
-    { current_user: current_user, post_data: params[:post_data] }
+    { current_user: current_user, post_data: params[:post_data].symbolize_keys }
   end
 
   def_action(:edit) do
@@ -70,7 +61,9 @@ class PostsController < ApplicationController
   end
 
   def on_create_failure(payload)
-    @post = CreateFailureSetup.new(payload).cleanup.entity
+    ap [:on_create_failure_64, payload]
+    binding.pry
+    @post = CreateFailureSetup.new(payload).build.entity
     render 'new'
   rescue RuntimeError => e # not logged in as a registered user
     redirect_to root_path, flash: { alert: e.message }

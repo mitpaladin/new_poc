@@ -133,9 +133,9 @@ describe PostsController do
         expect(response).to be_success
       end
 
-      it 'assigns a new Newpoc::Entity::Post instance to :post' do
+      it 'assigns a new Post entity instance to :post' do
         post = assigns[:post]
-        expect(post).to be_a Newpoc::Entity::Post
+        expect(post).to be_a PostFactory.entity_class
         expect(post).not_to be_persisted
       end
 
@@ -182,8 +182,8 @@ describe PostsController do
           post :create, post_data: params
         end
 
-        it 'assigns the :post item as a Newpoc::Entity::Post instance' do
-          expect(assigns[:post]).to be_a Newpoc::Entity::Post
+        it 'assigns the :post item as a Post entity instance' do
+          expect(assigns[:post]).to be_a PostFactory.entity_class
         end
 
         it 'persists the PostDao instance corresponding to the :post' do
@@ -191,12 +191,10 @@ describe PostsController do
           expect(post).to be_persisted
           dao = PostDao.find_by_slug post.slug
           [:body, :image_url, :slug, :title].each do |attrib|
-            expect(post.attributes[attrib]).to eq dao[attrib]
+            expect(post.attributes.to_hash[attrib]).to eq dao[attrib]
           end
-          [:created_at, :updated_at].each do |attrib|
-            expect(post.attributes[attrib]).to be_within(0.5.seconds)
-              .of dao[attrib]
-          end
+          expect(post.created_at).to be_within(0.5.seconds).of dao.created_at
+          expect(post.updated_at).to be_within(0.5.seconds).of dao.updated_at
         end
 
         it 'redirects to the root path' do
@@ -213,10 +211,11 @@ describe PostsController do
 
     context 'for the Guest User' do
       before :each do
+        ap [:post_data, params]
         post :create, post_data: params
       end
 
-      it 'does not assign a value to the :post item' do
+      fit 'does not assign a value to the :post item' do
         expect(assigns).not_to have_key :post
       end
 
@@ -301,7 +300,7 @@ describe PostsController do
       end
 
       it 'assigns an object to Post' do
-        expect(assigns[:post]).to be_a Newpoc::Entity::Post
+        expect(assigns[:post]).to be_a PostFactory.entity_class
         expect(assigns[:post].title).to eq article.title
       end
 
@@ -326,7 +325,7 @@ describe PostsController do
         end
 
         it 'assigns an object to Post' do
-          expect(assigns[:post]).to be_a Newpoc::Entity::Post
+          expect(assigns[:post]).to be_a PostFactory.entity_class
           expect(assigns[:post].title).to eq article.title
         end
 

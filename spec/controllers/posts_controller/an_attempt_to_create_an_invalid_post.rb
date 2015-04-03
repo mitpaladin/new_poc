@@ -16,7 +16,10 @@ shared_examples 'an attempt to create an invalid Post' do
     end
 
     it 'provides the correct error message' do
-      expect(@post.errors.full_messages).to include "Title can't be blank"
+      expect(@post).to have(1).error
+      expected = 'Title must be present and must not contain leading or' \
+        ' trailing whitespace'
+      expect(@post.errors.full_messages).to include expected
     end
   end # describe 'with an invalid title, the returned post instance is'
 end # shared_examples 'an attempt to create an invalid Post'
