@@ -211,11 +211,10 @@ describe PostsController do
 
     context 'for the Guest User' do
       before :each do
-        ap [:post_data, params]
         post :create, post_data: params
       end
 
-      fit 'does not assign a value to the :post item' do
+      it 'does not assign a value to the :post item' do
         expect(assigns).not_to have_key :post
       end
 

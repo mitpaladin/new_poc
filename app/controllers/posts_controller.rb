@@ -61,9 +61,13 @@ class PostsController < ApplicationController
   end
 
   def on_create_failure(payload)
-    ap [:on_create_failure_64, payload]
-    binding.pry
-    @post = CreateFailureSetup.new(payload).build.entity
+    data = YAML.load(payload.message)
+    fail data if data == payload.message
+    data = FancyOpenStruct.new(data).deep_symbolize_keys
+    @post = PostFactory.create(data[:original_attributes])
+            .extend_with_validation
+    @post.valid?
+    # @post = CreateFailureSetup.new(payload).build.entity
     render 'new'
   rescue RuntimeError => e # not logged in as a registered user
     redirect_to root_path, flash: { alert: e.message }

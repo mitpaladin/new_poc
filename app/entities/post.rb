@@ -50,7 +50,6 @@ module Entity
     def_delegator :@extension_mapper, :[], :extension_for
 
     def initialize(attributes)
-      ap [:line_53, attributes]
       init_attribute_mapping(attributes)
       load_extensions
     end
@@ -134,7 +133,6 @@ module Entity
     # The first half of #initialize. ONLY setter of instance variables!
     def init_attribute_mapping(attributes)
       @original_attributes = attributes
-      ap [:line_136, @original_attributes]
       @attributes_sets = AttributesSets.new
       add_attributes_set :core, CoreAttributes.new(attributes)
       @extension_mapper = AttributeExtensionMapper.new.build do |mapping|
