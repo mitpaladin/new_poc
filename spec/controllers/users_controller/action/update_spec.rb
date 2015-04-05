@@ -112,16 +112,11 @@ describe UsersController::Action::Update do
       end
 
       describe 'is not successful, broadcasting a payload which' do
-        let(:payload) do
-          data = YAML.load(subscriber.payload_for(:failure).first)
-          FancyOpenStruct.new data
-        end
+        let(:payload) { YAML.load(subscriber.payload_for(:failure).first) }
 
         it 'is the expected error message' do
-          expect(payload.to_h).to be_a Hash
-          expect(payload).to have(1).message
           expected = 'Not logged in as a registered user!'
-          expect(payload.messages.first).to eq expected
+          expect(payload).to eq expected
         end
       end # describe 'is not successful, broadcasting a payload which'
     end # describe 'cannot update any attributes, such as :profile'

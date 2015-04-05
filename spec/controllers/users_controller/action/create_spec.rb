@@ -54,20 +54,11 @@ describe UsersController::Action::Create do
         user_repository.add(entity).entity
       end
 
-      describe 'and broadcasts :failure with a payload of a YAML Hash' do
-        let(:data) { FancyOpenStruct.new YAML.load(payload) }
-        let(:payload) { subscriber.payload_for(:failure).first }
-
-        it 'with one key, :messages' do
-          expect(data.keys).to eq [:messages]
-        end
-
-        it 'with a single :messages array item with the error message' do
-          expect(data).to have(1).message
-          expected = "Already logged in as #{current_user.name}!"
-          expect(data.messages.first).to eq expected
-        end
-      end # describe 'and broadcasts :failure with a payload of a YAML Hash'
+      it 'and broadcasts :failure with the correct error message' do
+        actual = subscriber.payload_for(:failure).first
+        expected = "Already logged in as #{current_user.name}!"
+        expect(actual).to eq expected
+      end
     end # context 'the request is made from a logged-in user session'
 
     context 'the named user already exists' do

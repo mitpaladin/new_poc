@@ -91,6 +91,8 @@ class UsersController < ApplicationController
   end
 
   def on_update_failure(payload)
+    payload_is_string = payload == YAML.load(payload)
+    return redirect_to(root_path, alert: payload) if payload_is_string
     data = FancyOpenStruct.new YAML.load(payload)
     @user = UserFactory.create data.entity if data.entity
     flash[:alert] = data.messages.join '<br/>'
