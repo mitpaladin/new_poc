@@ -32,8 +32,7 @@ class PostsController < ApplicationController
       end
 
       def failure_message_from(payload)
-        error_data = YAML.load(payload)
-        error_data[:messages].first
+        payload
       end
 
       def prohibit_guest_access

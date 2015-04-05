@@ -59,22 +59,9 @@ describe PostsController::Action::Edit do
       describe 'broadcasts :failure with a payload which' do
         let(:payload) { subscriber.payload_for(:failure).first }
 
-        describe 'is the expected error data, which' do
-          let(:error_data) { YAML.load payload }
-
-          it 'is Hash-like' do
-            expect(error_data).to respond_to :to_hash
-          end
-
-          it 'has the single key value of :messages' do
-            expect(error_data.keys).to eq [:messages]
-          end
-
-          it 'has the single value of the correct error message' do
-            expected = 'Not logged in as a registered user!'
-            expect(error_data[:messages]).to eq [expected]
-          end
-        end # describe 'is the expected error data, which'
+        it 'is the correct error message' do
+          expect(payload).to eq 'Not logged in as a registered user!'
+        end
       end # describe 'broadcasts :failure with a payload which'
     end # context 'with no currently logged-in user, it'
 
@@ -146,21 +133,8 @@ describe PostsController::Action::Edit do
         describe 'is the expected error data, which' do
           let(:error_data) { YAML.load payload }
 
-          it 'is Hash-like' do
-            expect(error_data).to respond_to :to_hash
-          end
-
-          it 'contains one item' do
-            expect(error_data.count).to eq 1
-          end
-
-          it 'has the single key value of :messages' do
-            expect(error_data.keys).to eq [:messages]
-          end
-
-          it 'has the single value of the correct error message' do
-            expected = 'Not logged in as a registered user!'
-            expect(error_data[:messages]).to eq [expected]
+          it 'is the correct error message' do
+            expect(payload).to eq 'Not logged in as a registered user!'
           end
         end # describe 'is the expected error data, which'
       end # describe 'broadcasts :failure with a payload which'

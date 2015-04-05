@@ -131,25 +131,10 @@ describe PostsController::Action::Update do
           expect(subscriber).to be_failure
         end
 
-        describe 'broadcasts :failure, with a JSON payload which contains' do
-          let(:payload) do
-            input = subscriber.payload_for(:failure).first
-            YAML.load input
-          end
-
-          it 'one key/value pair' do
-            expect(payload.size).to eq 1
-          end
-
-          it 'the key :messages' do
-            expect(payload).to have_key :messages
-          end
-
-          it 'an error message stating that no user is logged in' do
-            expected = 'Not logged in as a registered user!'
-            expect(payload[:messages].first).to eq expected
-          end
-        end # describe 'broadcasts :failure, with a JSON payload which...'
+        it 'broadcasts :failure with the correct error message' do
+          payload = YAML.load(subscriber.payload_for(:failure).first)
+          expect(payload).to eq 'Not logged in as a registered user!'
+        end
       end # context 'with no registered user logged in, it'
     end # context 'with valid post data, and'
   end # context 'with a valid post slug as a search key, and'
