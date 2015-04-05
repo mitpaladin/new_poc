@@ -32,12 +32,9 @@ describe ActionSupport::GuestUserAccess do
         let(:current_user) { FancyOpenStruct.new name: 'Just Anybody' }
 
         it 'raises an error with the correct message' do
-          expected_data = {
-            messages: ["Already logged in as #{current_user.name}!"]
-          }
-          message = YAML.dump expected_data
+          expected = "Already logged in as #{current_user.name}!"
           expect { obj.verify }.to raise_error do |e|
-            expect(e.message).to eq message
+            expect(e.message).to eq expected
           end
         end
       end # context 'a user other than the Guest User'
@@ -48,12 +45,9 @@ describe ActionSupport::GuestUserAccess do
         let(:current_user) { FancyOpenStruct.new name: 'Guest User' }
 
         it 'raises an error with the correct message' do
-          expected_data = {
-            messages: ['Not logged in as a registered user!']
-          }
-          message = YAML.dump expected_data
+          expected = 'Not logged in as a registered user!'
           expect { obj.prohibit }.to raise_error do |e|
-            expect(e.message).to eq message
+            expect(e.message).to eq expected
           end
         end
       end # context 'the Guest User'
