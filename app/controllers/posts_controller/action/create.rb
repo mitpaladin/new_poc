@@ -34,7 +34,6 @@ class PostsController < ApplicationController
         add_entity_to_repository
         broadcast_success @entity
       rescue RuntimeError => message_or_bad_entity
-        ap [:action_38, message_or_bad_entity]
         broadcast_failure message_or_bad_entity
       end
 

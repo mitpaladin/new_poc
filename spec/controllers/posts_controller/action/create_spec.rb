@@ -76,9 +76,8 @@ describe PostsController::Action::Create do
       let(:payload) { subscriber.payload_for(:failure).first }
 
       it 'the expected error' do
-        expect(payload).to respond_to :exception
-        exception = YAML.load payload.message
-        expect(exception[:messages].first).to eq message
+        actual = YAML.load payload.message
+        expect(actual).to eq message
       end
     end # describe 'is unsuccessful, broadcasting a payload with'
   end # context 'with the Guest User as the current user'
