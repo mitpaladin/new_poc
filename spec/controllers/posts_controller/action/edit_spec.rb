@@ -90,28 +90,11 @@ describe PostsController::Action::Edit do
         expect(subscriber).to be_failure
       end
 
-      describe 'broadcasts :failure with a payload which' do
-        let(:payload) { subscriber.payload_for(:failure).first }
-
-        describe 'is the expected error data, which' do
-          let(:error_data) { YAML.load payload, symbolize_keys: true }
-
-          it 'is Hash-like' do
-            expect(error_data).to respond_to :to_hash
-          end
-
-          description = 'reports the current user name using the' \
-            ' :current_user_name key'
-          it description do
-            expect(error_data[:current_user_name]).to eq current_user.name
-          end
-
-          it 'reports the post author name using the :author_name key' do
-            expected = repo_success_entity.author_name
-            expect(error_data[:author_name]).to eq expected
-          end
-        end # describe 'is the expected error data, which'
-      end # describe 'broadcasts :failure with a payload which'
+      it 'broadcasts failure with the correct error message' do
+        payload = subscriber.payload_for(:failure).first
+        parts = ['User ', ' is not the author of this post!']
+        expect(payload).to eq parts.join(current_user.name)
+      end
     end # context 'with a user other than the author logged in, it' do
   end # context 'with a valid post slug as a search key, and'
 

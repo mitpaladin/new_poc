@@ -8,7 +8,7 @@ shared_examples 'an unauthorised user for this post' do |message = nil|
   end
 
   it 'sets the correct flash error message' do
-    expect(flash[:alert]).to match Regexp.new(message)
+    expect(flash[:alert]).to match message
   end
 
   it 'does not assign an object to :post' do

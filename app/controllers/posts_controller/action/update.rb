@@ -59,6 +59,7 @@ class PostsController < ApplicationController
       def update_entity
         inputs = post_data_for_update
         result = repository.update identifier: slug, updated_attrs: inputs
+        ap [:update_62, inputs] unless result.success?
         fail UpdateFailure.new(slug, inputs).to_yaml unless result.success?
         @entity = repository.find_by_slug(slug).entity
       end
@@ -71,17 +72,17 @@ class PostsController < ApplicationController
       end
 
       def validate_updated_attributes
-        attribs = entity.attributes.merge post_data_for_update
-        new_entity = entity.class.new attribs
-        fail YAML.dump(attribs) unless new_entity.valid?
+        attribs = entity.attributes.to_hash.merge post_data_for_update
+        new_entity = PostFactory.entity_class.new(attribs)
+                     .extend_with_validation
+        fail new_entity.errors.full_messages.first unless new_entity.valid?
         @entity = new_entity
       end
 
       def verify_user_is_author
         return if current_user.name == entity.author_name
-        fail NotAuthorFailure.new(current_user_name: current_user.name,
-                                  post: entity)
-          .to_json
+        parts = ['User ', ' is not the author of this post!']
+        fail parts.join(current_user.name)
       end
     end # class PostsController::Action::Update
   end

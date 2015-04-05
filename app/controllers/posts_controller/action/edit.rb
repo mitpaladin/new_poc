@@ -9,26 +9,6 @@ class PostsController < ApplicationController
   module Action
     # Verifies that the current user is permitted to edit a specified post.
     class Edit
-      module Internals
-        # Current user not author of specified post. Bitch about it, as JSON.
-        class NotAuthorFailure
-          def initialize(user_name:, post:)
-            @user_name = user_name
-            @post = post
-          end
-
-          def to_yaml
-            YAML.dump(
-              current_user_name: @user_name,
-              author_name:       @post.author_name,
-              post_slug:         @post.slug.to_s
-            )
-          end
-        end # class Newpoc::Action::Post::Edit::Internals::NotAuthorFailure
-      end
-      private_constant :Internals
-      include Internals
-
       include ActionSupport::Broadcaster
 
       def initialize(slug:, current_user:, repository:)
@@ -63,8 +43,8 @@ class PostsController < ApplicationController
 
       def verify_user_is_author
         return if current_user.name == entity.author_name
-        fail NotAuthorFailure.new(user_name: current_user.name, post: entity)
-          .to_yaml
+        parts = ['User ', ' is not the author of this post!']
+        fail parts.join(current_user.name)
       end
     end # class PostsController::Action::Edit
   end

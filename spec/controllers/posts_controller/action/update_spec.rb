@@ -40,11 +40,12 @@ describe PostsController::Action::Update do
   end
   let(:subscriber) { WisperSubscription.new }
   let(:valid_post_data) do
-    ret = FancyOpenStruct.new image_url: image_url, body: post_body
+    ret = FancyOpenStruct.new image_url: image_url, title: 'A Title',
+                              body: post_body
     ret.class.send(:define_method, :valid?) do
       true
     end
-    ret
+    ret.to_hash
   end
   let(:post_body) { 'This is the post body after updating.' }
   let(:image_url) { 'http://www.example.com/image794.png' }
@@ -98,28 +99,11 @@ describe PostsController::Action::Update do
           expect(subscriber).to be_failure
         end
 
-        describe 'broadcasts :failure, with a JSON payload which contains' do
-          let(:payload) do
-            input = subscriber.payload_for(:failure).first
-            Yajl.load input, symbolize_keys: true
-          end
-
-          it 'two top-level entries, :current_user_name and :post' do
-            expect(payload.keys).to eq [:current_user_name, :post]
-          end
-
-          it 'the current user name, using the :current_user_name key' do
-            expect(payload[:current_user_name]).to eq current_user.name
-          end
-
-          describe 'information about the post, including' do
-            let(:post_payload) { payload[:post] }
-
-            it 'the author name' do
-              expect(post_payload[:author_name]).to eq author.name
-            end
-          end # describe 'information about the post, including'
-        end # describe 'broadcasts :failure, with a JSON payload which...'
+        it 'broadcasts failure with the correct error message' do
+          payload = subscriber.payload_for(:failure).first
+          expected = "User #{current_user.name} is not the author of this post!"
+          expect(payload).to eq expected
+        end
       end # context 'with a different registered user logged in, it'
 
       context 'with no registered user logged in, it' do

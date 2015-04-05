@@ -78,7 +78,8 @@ class PostsController < ApplicationController
   end
 
   def on_edit_failure(payload)
-    alert = ErrorMessageBuilder.new(payload).to_s
+    alert = payload
+    # alert = ErrorMessageBuilder.new(payload).to_s
     redirect_to root_path, flash: { alert: alert }
   end
 
@@ -110,8 +111,8 @@ class PostsController < ApplicationController
     redirect_to post_path(@post.slug), flash: { success: message }
   end
 
-  def on_update_failure(payload)
-    alert = ErrorMessageBuilder.new(payload).to_s
+  def on_update_failure(alert)
+    # alert = ErrorMessageBuilder.new(payload).to_s
     redirect_to root_path, flash: { alert: alert }
   end
 end # class PostsController
