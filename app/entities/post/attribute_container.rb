@@ -14,7 +14,7 @@ module Entity
       def initialize(attributes)
         a = Hash(attributes)
         @attributes = Class.new(ValueObject::Base) do
-          has_fields *(a.keys)
+          has_fields(*(a.keys))
         end.new a
       end
     end # class Entity::Post::AttributeContainer
