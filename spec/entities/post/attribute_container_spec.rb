@@ -42,5 +42,28 @@ module Entity
         end
       end # describe 'a keyed collection of values, such as a'
     end # describe 'can be instantiated with'
+
+    describe 'has an #attributes method that returns' do
+      let(:obj) { described_class.new foo: :bar }
+
+      it 'a ValueObject::Base instance' do
+        expect(obj.attributes).to be_a ValueObject::Base
+      end
+
+      describe 'an object that' do
+        it 'includes the specified attribute values' do
+          expect(obj.attributes.foo).to be :bar
+        end
+
+        it 'includes no other attribute values' do
+          expect(obj.attributes.to_hash.count).to eq 1
+        end
+
+        it 'does not support undefined "attributes"' do
+          expect(obj).not_to respond_to :nonexistent_attribute
+          expect(obj.attributes.to_hash).not_to include :nonexistent_attribute
+        end
+      end # describe 'an object that'
+    end # describe 'has an #attributes method that returns'
   end # describe Entity::Post::AttributeContainer
 end

@@ -9,7 +9,13 @@ module Entity
     # class from change per [this comment](https://github.com/jdickey/new_poc/pull/254#issuecomment-90134058)
     # on PR #254.
     class AttributeContainer
-      def initialize(_attributes)
+      attr_reader :attributes
+
+      def initialize(attributes)
+        a = Hash(attributes)
+        @attributes = Class.new(ValueObject::Base) do
+          has_fields *(a.keys)
+        end.new a
       end
     end # class Entity::Post::AttributeContainer
   end # class Entity::Post
