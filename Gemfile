@@ -39,6 +39,7 @@ gem 'slim-rails', github: 'slim-template/slim-rails'
 gem 'thin'
 gem 'uglifier'
 gem 'validates_email_format_of'
+gem 'value_object'
 gem 'wisper'
 gem 'yajl-ruby'
 

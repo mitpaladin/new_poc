@@ -451,6 +451,8 @@ GEM
       macaddr (~> 1.0)
     validates_email_format_of (1.6.2)
       i18n
+    value_object (0.1.2)
+      activesupport
     web-console (2.1.2)
       activemodel (>= 4.0)
       binding_of_caller (>= 0.7.2)
@@ -527,6 +529,7 @@ DEPENDENCIES
   thin
   uglifier
   validates_email_format_of
+  value_object
   web-console
   wisper
   wisper_subscription (>= 0.2.0)
