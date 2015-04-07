@@ -12,11 +12,31 @@ module Entity
       attr_reader :attributes
 
       def initialize(attributes_in = nil)
+        @attributes = value_object_for attributes_in
+      end
+
+      def define_methods(target)
+        @attributes.fields.each { |field| add_reader_method target, field }
+        self
+      end
+
+      private
+
+      def add_reader_method(target, field)
+        attrs = @attributes
+        target.class_eval do
+          define_method field do
+            attrs.send field
+          end
+        end
+      end
+
+      def value_object_for(attributes_in)
         # NOTE: #deep_symbolize_keys is a Railsism; see [this note](http://apidock.com/rails/Hash/deep_symbolize_keys#1505-Does-not-symbolize-hashes-in-nested-arrays)
         # on apidock.com.
         # NOTE: Passing in something non-Hash-like will die, messily. YHBW.
         a = attributes_in ? attributes_in.to_hash.deep_symbolize_keys : {}
-        @attributes = Class.new(ValueObject::Base) do
+        Class.new(ValueObject::Base) do
           has_fields(*(a.keys))
         end.new a
       end

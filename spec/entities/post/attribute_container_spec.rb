@@ -81,5 +81,30 @@ module Entity
         end # describe 'attributes correctly when initialised with'
       end # describe 'an object that'
     end # describe 'has an #attributes method that returns'
+
+    describe 'has a #define_methods method that' do
+      describe 'adds methods to the parameter object that' do
+        let(:body) { 'A Body' }
+        let(:title) { 'A Title' }
+        let(:params) { { title: title, body: body } }
+
+        let(:obj_class) do
+          Class.new do
+            def initialize(container_class, **attribs_in)
+              @container = container_class.new(attribs_in).define_methods self
+            end
+          end
+        end
+        let(:obj) { obj_class.new described_class, params }
+
+        it 'add reader methods for each attribute' do
+          params.each_key { |field| expect(obj).to respond_to field }
+        end
+
+        it 'return the original attribute value from each reader method' do
+          params.each { |key, value| expect(obj.send key).to eq value }
+        end
+      end # describe 'adds methods to the parameter object that'
+    end # describe 'has a #define_methods method that' do
   end # describe Entity::Post::AttributeContainer
 end
