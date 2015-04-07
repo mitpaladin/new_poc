@@ -128,6 +128,22 @@ module Entity
         valid_attrs.each_key { |attr| expect(obj).to respond_to attr }
         expect(obj).not_to respond_to blacklisted_attr
       end
+
+      describe 'cannot be called after' do
+        after :each do
+          expect { @cont.blacklist [blacklisted_attr] }.to raise_error \
+            RuntimeError, 'Too late to blacklist existing attributes'
+        end
+
+        it 'the #define_methods method has been called on that instance' do
+          @cont = described_class.new(params).define_methods self
+        end
+
+        it 'the #attributes method has been called on that instance' do
+          @cont = described_class.new params
+          _ = @cont.attributes
+        end
+      end # describe 'cannot be called after'
     end # describe 'has a #blacklist method that'
   end # describe Entity::Post::AttributeContainer
 end

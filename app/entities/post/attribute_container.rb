@@ -21,6 +21,7 @@ module Entity
       end
 
       def blacklist(attribs)
+        fail 'Too late to blacklist existing attributes' if @attributes
         @blacklist = attribs.map(&:to_sym)
         self
       end
