@@ -6,6 +6,10 @@ require 'post/attribute_container'
 # Namespace containing all application-defined entities.
 module Entity
   describe Post::AttributeContainer do
+    let(:body) { 'A Body' }
+    let(:title) { 'A Title' }
+    let(:params) { { title: title, body: body } }
+
     describe 'can be instantiated with' do
       after :each do
         expect { described_class.new @attribs }.not_to raise_error
@@ -84,10 +88,6 @@ module Entity
 
     describe 'has a #define_methods method that' do
       describe 'adds methods to the parameter object that' do
-        let(:body) { 'A Body' }
-        let(:title) { 'A Title' }
-        let(:params) { { title: title, body: body } }
-
         let(:obj_class) do
           Class.new do
             def initialize(container_class, **attribs_in)
@@ -108,10 +108,7 @@ module Entity
     end # describe 'has a #define_methods method that' do
 
     describe 'has a #blacklist method that' do
-      let(:body) { 'A Body' }
-      let(:title) { 'A Title' }
       let(:blacklisted_attr) { :body }
-      let(:params) { { title: title, body: body } }
       let(:obj_class) do
         Class.new do
           def initialize(container_class, *blacklisted_attrs, **attribs_in)
@@ -145,5 +142,50 @@ module Entity
         end
       end # describe 'cannot be called after'
     end # describe 'has a #blacklist method that'
+
+    describe 'has a #whitelist method that' do
+      let(:whitelisted_attr) { :body }
+      let(:obj_class) do
+        Class.new do
+          def initialize(container_class, *whitelisted_attrs, **attribs_in)
+            @container = container_class.new(attribs_in)
+                         .whitelist(whitelisted_attrs)
+                         .define_methods self
+          end
+        end
+      end
+      let(:obj) { obj_class.new described_class, whitelisted_attr, params }
+      let(:invalid_attrs) { params.reject { |k, _v| k == whitelisted_attr } }
+
+      it 'has accessor methods only for whitelisted attributes' do
+        invalid_attrs.each_key { |attr| expect(obj).not_to respond_to attr }
+        expect(obj).to respond_to whitelisted_attr
+      end
+
+      it 'does not whitelist blacklisted attributes' do
+        obj = described_class.new(params).blacklist([:body])
+              .whitelist(params.keys)
+        obj.define_methods(obj)
+        expect(obj.attributes.to_hash.keys).to eq [:title]
+        expect(obj).to respond_to :title
+        expect(obj).not_to respond_to :body
+      end
+
+      describe 'cannot be called after' do
+        after :each do
+          expect { @cont.whitelist [whitelisted_attr] }.to raise_error \
+            RuntimeError, 'Too late to whitelist existing attributes'
+        end
+
+        it 'the #define_methods method has been called on that instance' do
+          @cont = described_class.new(params).define_methods self
+        end
+
+        it 'the #attributes method has been called on that instance' do
+          @cont = described_class.new params
+          _ = @cont.attributes
+        end
+      end # describe 'cannot be called after'
+    end # describe 'has a #whitelist method that'
   end # describe Entity::Post::AttributeContainer
 end

@@ -12,12 +12,12 @@ module Entity
       def initialize(inputs = nil)
         @inputs = inputs.to_hash || {}
         @blacklist = []
+        @whitelist = []
       end
 
       def attributes
         return @attributes if @attributes
-        inputs = @inputs.reject { |k, _v| @blacklist.include? k }
-        @attributes = value_object_for inputs
+        @attributes = value_object_for filtered_inputs
       end
 
       def blacklist(attribs)
@@ -31,6 +31,12 @@ module Entity
         self
       end
 
+      def whitelist(attribs)
+        fail 'Too late to whitelist existing attributes' if @attributes
+        @whitelist = attribs.map(&:to_sym)
+        self
+      end
+
       private
 
       def add_reader_method(target, field)
@@ -38,6 +44,14 @@ module Entity
         target.class_eval do
           define_method field do
             attrs.send field
+          end
+        end
+      end
+
+      def filtered_inputs
+        @inputs.reject { |k, _v| @blacklist.include? k }.tap do |inputs|
+          unless @whitelist.empty?
+            inputs.select! { |k, _v| @whitelist.include? k }
           end
         end
       end
