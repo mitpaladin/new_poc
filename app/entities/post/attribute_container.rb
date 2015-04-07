@@ -9,21 +9,31 @@ module Entity
     # class from change per [this comment](https://github.com/jdickey/new_poc/pull/254#issuecomment-90134058)
     # on PR #254.
     class AttributeContainer
-      attr_reader :attributes
+      def initialize(inputs = nil)
+        @inputs = inputs.to_hash || {}
+        @blacklist = []
+      end
 
-      def initialize(attributes_in = nil)
-        @attributes = value_object_for attributes_in
+      def attributes
+        return @attributes if @attributes
+        inputs = @inputs.reject { |k, _v| @blacklist.include? k }
+        @attributes = value_object_for inputs
+      end
+
+      def blacklist(attribs)
+        @blacklist = attribs.map(&:to_sym)
+        self
       end
 
       def define_methods(target)
-        @attributes.fields.each { |field| add_reader_method target, field }
+        attributes.fields.each { |field| add_reader_method target, field }
         self
       end
 
       private
 
       def add_reader_method(target, field)
-        attrs = @attributes
+        attrs = attributes
         target.class_eval do
           define_method field do
             attrs.send field

@@ -106,5 +106,28 @@ module Entity
         end
       end # describe 'adds methods to the parameter object that'
     end # describe 'has a #define_methods method that' do
+
+    describe 'has a #blacklist method that' do
+      let(:body) { 'A Body' }
+      let(:title) { 'A Title' }
+      let(:blacklisted_attr) { :body }
+      let(:params) { { title: title, body: body } }
+      let(:obj_class) do
+        Class.new do
+          def initialize(container_class, *blacklisted_attrs, **attribs_in)
+            @container = container_class.new(attribs_in)
+                         .blacklist(blacklisted_attrs)
+                         .define_methods self
+          end
+        end
+      end
+      let(:obj) { obj_class.new described_class, blacklisted_attr, params }
+      let(:valid_attrs) { params.reject { |k, _v| k == blacklisted_attr } }
+
+      it 'does not have accessor methods for blacklisted attributes' do
+        valid_attrs.each_key { |attr| expect(obj).to respond_to attr }
+        expect(obj).not_to respond_to blacklisted_attr
+      end
+    end # describe 'has a #blacklist method that'
   end # describe Entity::Post::AttributeContainer
 end
