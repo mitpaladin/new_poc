@@ -43,6 +43,14 @@ module Entity
       end # describe 'a keyed collection of values, such as a'
     end # describe 'can be instantiated with'
 
+    describe 'it cannot be instantiated with' do
+      it 'something that does not respond to #to_hash' do
+        expected = /undefined method \`to_hash\'/
+        expect { described_class.new 'oops' }.to raise_error NoMethodError,
+                                                             expected
+      end
+    end
+
     describe 'has an #attributes method that returns' do
       let(:obj) { described_class.new foo: :bar }
 
@@ -63,6 +71,14 @@ module Entity
           expect(obj).not_to respond_to :nonexistent_attribute
           expect(obj.attributes.to_hash).not_to include :nonexistent_attribute
         end
+
+        describe 'attributes correctly when initialised with' do
+          it 'string keys' do
+            obj = described_class.new 'foo' => :bar, 'meaning' => 42
+            expect(obj.attributes.foo).to be :bar
+            expect(obj.attributes.to_hash[:meaning]).to be 42
+          end
+        end # describe 'attributes correctly when initialised with'
       end # describe 'an object that'
     end # describe 'has an #attributes method that returns'
   end # describe Entity::Post::AttributeContainer
