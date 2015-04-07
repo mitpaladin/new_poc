@@ -37,6 +37,20 @@ module Entity
         self
       end
 
+      def self.blacklist_from(source, *blacklisted_attrs)
+        attributes = source.attributes.to_hash.reject do |k, _v|
+          blacklisted_attrs.include? k
+        end
+        source.class.new attributes
+      end
+
+      def self.whitelist_from(source, *whitelisted_attrs)
+        attributes = source.attributes.to_hash.select do |k, _v|
+          whitelisted_attrs.include? k
+        end
+        source.class.new attributes
+      end
+
       private
 
       def add_reader_method(target, field)

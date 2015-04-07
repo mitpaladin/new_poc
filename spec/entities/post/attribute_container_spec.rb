@@ -187,5 +187,47 @@ module Entity
         end
       end # describe 'cannot be called after'
     end # describe 'has a #whitelist method that'
+
+    describe 'has a .blacklist_from class method that' do
+      let(:blacklisted_param) { :body }
+      let(:src) { described_class.new params }
+
+      it 'produces an object without the blacklisted attributes' do
+        obj = described_class.blacklist_from src, blacklisted_param
+        expect(src.attributes.to_hash).to include blacklisted_param
+        expect(obj.attributes.to_hash).not_to include blacklisted_param
+      end
+
+      it 'renders its source unable to call #blacklist' do
+        message = 'Too late to blacklist existing attributes'
+        _ = described_class.blacklist_from src, blacklisted_param
+        expect { src.blacklist blacklisted_param }.to raise_error RuntimeError,
+                                                                  message
+      end
+    end # describe 'has a .blacklist_from class method that'
+
+    describe 'has a .whitelist_from class method that' do
+      let(:whitelisted_param) { :body }
+      let(:other_params) do
+        params.keys.reject { |k| k == whitelisted_param }
+      end
+      let(:src) { described_class.new params }
+
+      it 'produces an object without the whitelisted attributes' do
+        obj = described_class.whitelist_from src, whitelisted_param
+        expect(obj.attributes.to_hash).to include whitelisted_param
+        other_params.each do |attr|
+          expect(src.attributes.to_hash).to include attr
+          expect(obj.attributes.to_hash).not_to include attr
+        end
+      end
+
+      it 'renders its source unable to call #whitelist' do
+        message = 'Too late to whitelist existing attributes'
+        _ = described_class.whitelist_from src, whitelisted_param
+        expect { src.whitelist whitelisted_param }.to raise_error RuntimeError,
+                                                                  message
+      end
+    end # describe 'has a .whitelist_from class method that'
   end # describe Entity::Post::AttributeContainer
 end
