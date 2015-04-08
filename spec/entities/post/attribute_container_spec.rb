@@ -86,6 +86,16 @@ module Entity
       end # describe 'an object that'
     end # describe 'has an #attributes method that returns'
 
+    describe 'has a #keys method that returns' do
+      let(:obj) do
+        described_class.new foo: 'bar', bar: 'none', sense: nil, meaning: 42
+      end
+
+      it 'an array of symbols identifying the attributes in the instance' do
+        expect(obj.keys.sort).to eq [:bar, :foo, :meaning, :sense]
+      end
+    end
+
     describe 'has a .blacklist_from class method that' do
       let(:blacklisted_param) { :body }
       let(:src) { described_class.new params }

@@ -9,11 +9,15 @@ module Entity
     # class from change per [this comment](https://github.com/jdickey/new_poc/pull/254#issuecomment-90134058)
     # on PR #254.
     class AttributeContainer
+      extend Forwardable
+
       attr_reader :attributes
 
       def initialize(attributes_in = {})
         @attributes = value_object_for attributes_in.to_hash
       end
+
+      def_delegator :@attributes, :fields, :keys
 
       def self.blacklist_from(source, *blacklisted_attrs)
         attributes = source.attributes.to_hash.reject do |k, _v|
