@@ -86,108 +86,6 @@ module Entity
       end # describe 'an object that'
     end # describe 'has an #attributes method that returns'
 
-    describe 'has a #define_methods method that' do
-      describe 'adds methods to the parameter object that' do
-        let(:obj_class) do
-          Class.new do
-            def initialize(container_class, **attribs_in)
-              @container = container_class.new(attribs_in).define_methods self
-            end
-          end
-        end
-        let(:obj) { obj_class.new described_class, params }
-
-        it 'add reader methods for each attribute' do
-          params.each_key { |field| expect(obj).to respond_to field }
-        end
-
-        it 'return the original attribute value from each reader method' do
-          params.each { |key, value| expect(obj.send key).to eq value }
-        end
-      end # describe 'adds methods to the parameter object that'
-    end # describe 'has a #define_methods method that' do
-
-    describe 'has a #blacklist method that' do
-      let(:blacklisted_attr) { :body }
-      let(:obj_class) do
-        Class.new do
-          def initialize(container_class, *blacklisted_attrs, **attribs_in)
-            @container = container_class.new(attribs_in)
-                         .blacklist(blacklisted_attrs)
-                         .define_methods self
-          end
-        end
-      end
-      let(:obj) { obj_class.new described_class, blacklisted_attr, params }
-      let(:valid_attrs) { params.reject { |k, _v| k == blacklisted_attr } }
-
-      it 'does not have accessor methods for blacklisted attributes' do
-        valid_attrs.each_key { |attr| expect(obj).to respond_to attr }
-        expect(obj).not_to respond_to blacklisted_attr
-      end
-
-      describe 'cannot be called after' do
-        after :each do
-          expect { @cont.blacklist [blacklisted_attr] }.to raise_error \
-            RuntimeError, 'Too late to blacklist existing attributes'
-        end
-
-        it 'the #define_methods method has been called on that instance' do
-          @cont = described_class.new(params).define_methods self
-        end
-
-        it 'the #attributes method has been called on that instance' do
-          @cont = described_class.new params
-          _ = @cont.attributes
-        end
-      end # describe 'cannot be called after'
-    end # describe 'has a #blacklist method that'
-
-    describe 'has a #whitelist method that' do
-      let(:whitelisted_attr) { :body }
-      let(:obj_class) do
-        Class.new do
-          def initialize(container_class, *whitelisted_attrs, **attribs_in)
-            @container = container_class.new(attribs_in)
-                         .whitelist(whitelisted_attrs)
-                         .define_methods self
-          end
-        end
-      end
-      let(:obj) { obj_class.new described_class, whitelisted_attr, params }
-      let(:invalid_attrs) { params.reject { |k, _v| k == whitelisted_attr } }
-
-      it 'has accessor methods only for whitelisted attributes' do
-        invalid_attrs.each_key { |attr| expect(obj).not_to respond_to attr }
-        expect(obj).to respond_to whitelisted_attr
-      end
-
-      it 'does not whitelist blacklisted attributes' do
-        obj = described_class.new(params).blacklist([:body])
-              .whitelist(params.keys)
-        obj.define_methods(obj)
-        expect(obj.attributes.to_hash.keys).to eq [:title]
-        expect(obj).to respond_to :title
-        expect(obj).not_to respond_to :body
-      end
-
-      describe 'cannot be called after' do
-        after :each do
-          expect { @cont.whitelist [whitelisted_attr] }.to raise_error \
-            RuntimeError, 'Too late to whitelist existing attributes'
-        end
-
-        it 'the #define_methods method has been called on that instance' do
-          @cont = described_class.new(params).define_methods self
-        end
-
-        it 'the #attributes method has been called on that instance' do
-          @cont = described_class.new params
-          _ = @cont.attributes
-        end
-      end # describe 'cannot be called after'
-    end # describe 'has a #whitelist method that'
-
     describe 'has a .blacklist_from class method that' do
       let(:blacklisted_param) { :body }
       let(:src) { described_class.new params }
@@ -196,13 +94,6 @@ module Entity
         obj = described_class.blacklist_from src, blacklisted_param
         expect(src.attributes.to_hash).to include blacklisted_param
         expect(obj.attributes.to_hash).not_to include blacklisted_param
-      end
-
-      it 'renders its source unable to call #blacklist' do
-        message = 'Too late to blacklist existing attributes'
-        _ = described_class.blacklist_from src, blacklisted_param
-        expect { src.blacklist blacklisted_param }.to raise_error RuntimeError,
-                                                                  message
       end
     end # describe 'has a .blacklist_from class method that'
 
@@ -220,13 +111,6 @@ module Entity
           expect(src.attributes.to_hash).to include attr
           expect(obj.attributes.to_hash).not_to include attr
         end
-      end
-
-      it 'renders its source unable to call #whitelist' do
-        message = 'Too late to whitelist existing attributes'
-        _ = described_class.whitelist_from src, whitelisted_param
-        expect { src.whitelist whitelisted_param }.to raise_error RuntimeError,
-                                                                  message
       end
     end # describe 'has a .whitelist_from class method that'
   end # describe Entity::Post::AttributeContainer
