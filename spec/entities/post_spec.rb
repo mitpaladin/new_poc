@@ -1,8 +1,7 @@
 
 require 'spec_helper'
 
-require_relative '../../app/entities/post'
-# require 'entities/post'
+require 'post'
 
 # Namespace containing all application-defined entities.
 module Entity
@@ -50,9 +49,18 @@ module Entity
       end # context 'valid attribute names as initialisation-hash keys'
 
       context 'a mixture of valid and invalid attribute names as keys' do
-        it 'initialises the valid attributes as specified'
+        let(:attribs) { { foo: 'bar', sense: nil }.merge valid_attributes }
+        let(:obj) { described_class.new attribs }
 
-        it 'ignores the attributes specified with invalid keys'
+        it 'initialises the valid attributes as specified' do
+          expect(obj.title).to eq valid_attributes[:title]
+          expect(obj.author_name).to eq valid_attributes[:author_name]
+        end
+
+        it 'ignores the attributes specified with invalid keys' do
+          expect(obj).not_to respond_to :foo
+          expect(obj).not_to respond_to :sense
+        end
       end # context 'a mixture of valid and invalid attribute names as keys'
     end # describe 'when instantiated with'
   end

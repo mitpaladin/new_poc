@@ -7,17 +7,21 @@ module Entity
   # It delegates or defers implementation-specific details such as persistence,
   # user interface, etc.
   class Post
+    extend Forwardable
+
     def initialize(attributes_in)
       init_attributes attributes_in
       define_attribute_readers
     end
 
+    def_delegator :@attributes, :attributes
+
     private
 
     def define_attribute_readers
-      @attributes.attributes.to_hash.each_key do |key|
+      attributes.to_hash.each_key do |key|
         self.class.send :define_method, key do
-          @attributes.attributes.send key
+          attributes.send key
         end
       end
     end
