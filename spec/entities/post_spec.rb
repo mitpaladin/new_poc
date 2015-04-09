@@ -77,13 +77,13 @@ module Entity
         end
       end # context 'an entity with valid attributes'
 
-      context 'an entity that is invalid because it has a title that is' do
+      context 'an entity that is invalid because it has a title that' do
         let(:obj) { described_class.new attributes_with_bad_title }
         let(:attributes_with_bad_title) do
           valid_attributes.merge title: @bad_title
         end
 
-        context 'missing' do
+        context 'is missing' do
           before :each do
             @bad_title = nil
           end
@@ -100,8 +100,86 @@ module Entity
             expected = { title: 'must be present' }
             expect(obj.errors.first).to eq expected
           end
-        end # context 'missing'
-      end # context 'an entity that is invalid because it has a title that is'
+        end # context 'is missing'
+
+        context 'is blank' do
+          before :each do
+            @bad_title = '  '
+          end
+
+          it 'is recognised as invalid' do
+            expect(obj).not_to be_valid
+          end
+
+          it 'reports a single error' do
+            expect(obj).to have(1).error
+          end
+
+          it 'reports that the title must not be blank' do
+            expected = { title: 'must not be blank' }
+            expect(obj.errors.first).to eq expected
+          end
+        end # context 'is blank'
+
+        context 'contains whitespace' do
+          context 'at the start of the title' do
+            before :each do
+              @bad_title = '  A Title'
+            end
+
+            it 'is recognised as invalid' do
+              expect(obj).not_to be_valid
+            end
+
+            it 'reports a single error' do
+              expect(obj).to have(1).error
+            end
+
+            it 'reports that the title must not have leading whitespace' do
+              expected = { title: 'must not have leading whitespace' }
+              expect(obj.errors.first).to eq expected
+            end
+          end # context 'at the start of the title'
+
+          context 'at the end of the title' do
+            before :each do
+              @bad_title = 'A Title  '
+            end
+
+            it 'is recognised as invalid' do
+              expect(obj).not_to be_valid
+            end
+
+            it 'reports a single error' do
+              expect(obj).to have(1).error
+            end
+
+            it 'reports that the title must not have trailing whitespace' do
+              expected = { title: 'must not have trailing whitespace' }
+              expect(obj.errors.first).to eq expected
+            end
+          end # context 'at the end of the title'
+
+          context 'in adjacent positions within the title' do
+            before :each do
+              @bad_title = 'A     Title'
+            end
+
+            it 'is recognised as invalid' do
+              expect(obj).not_to be_valid
+            end
+
+            it 'reports a single error' do
+              expect(obj).to have(1).error
+            end
+
+            it 'reports that the title must not have extra whitespace' do
+              expected = { title: 'must not have extra internal whitespace' }
+              expect(obj.errors.first).to eq expected
+            end
+          end # context 'in adjacent positions within the title'
+        end # context 'contains whitespace'
+      end # context 'an entity that is invalid because it has a title that'
     end # describe 'validates core attributes such that'
-  end
+  end # describe Post
 end

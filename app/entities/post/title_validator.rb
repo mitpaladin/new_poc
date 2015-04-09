@@ -19,10 +19,12 @@ module Entity
       end
 
       def valid?
-        return true if title.present?
         @errors = []
-        add_error 'must be present'
-        false
+        present? &&
+          not_blank? &&
+          no_leading_whitespace? &&
+          no_trailing_whitespace? &&
+          no_extra_whitespace?
       end
 
       private
@@ -32,6 +34,42 @@ module Entity
       def add_error(message)
         entry = { title: message }
         @errors.push entry
+      end
+
+      def message_for(id_sym)
+        {
+          no_extra: 'must not have extra internal whitespace',
+          no_leading: 'must not have leading whitespace',
+          no_trailing: 'must not have trailing whitespace',
+          not_blank: 'must not be blank',
+          present: 'must be present'
+        }[id_sym]
+      end
+
+      def validate(message_id, &_block)
+        return true if yield(title)
+        add_error message_for(message_id)
+        false
+      end
+
+      def no_leading_whitespace?
+        validate(:no_leading) { |title| title == title.lstrip }
+      end
+
+      def no_extra_whitespace?
+        validate(:no_extra) { |title| title == title.gsub(/\s+/, ' ') }
+      end
+
+      def no_trailing_whitespace?
+        validate(:no_trailing) { |title| title == title.strip }
+      end
+
+      def not_blank?
+        validate(:not_blank) { |title| title.strip.present? }
+      end
+
+      def present?
+        validate(:present) { |title| title }
       end
     end # class Entity::Post::TitleValidator
   end # class Entity::Post
