@@ -20,11 +20,12 @@ module Entity
 
       def valid?
         @errors = []
-        present? &&
-          not_blank? &&
-          no_leading_whitespace? &&
-          no_trailing_whitespace? &&
-          no_extra_whitespace?
+        return false unless present?
+        not_blank?
+        no_leading_whitespace?
+        no_trailing_whitespace?
+        no_extra_whitespace?
+        @errors.empty?
       end
 
       private
@@ -53,19 +54,23 @@ module Entity
       end
 
       def no_leading_whitespace?
-        validate(:no_leading) { |title| title == title.lstrip }
+        validate(:no_leading) do |title|
+          title.to_s.rstrip == title.to_s.rstrip.lstrip
+        end
       end
 
       def no_extra_whitespace?
-        validate(:no_extra) { |title| title == title.gsub(/\s+/, ' ') }
+        validate(:no_extra) do |title|
+          title.to_s.strip == title.to_s.strip.gsub(/\s+/, ' ')
+        end
       end
 
       def no_trailing_whitespace?
-        validate(:no_trailing) { |title| title == title.strip }
+        validate(:no_trailing) { |title| title.to_s.lstrip == title.to_s.strip }
       end
 
       def not_blank?
-        validate(:not_blank) { |title| title.strip.present? }
+        validate(:not_blank) { |title| title.to_s.strip.present? }
       end
 
       def present?
