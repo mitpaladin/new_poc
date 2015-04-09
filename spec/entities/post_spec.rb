@@ -63,5 +63,45 @@ module Entity
         end
       end # context 'a mixture of valid and invalid attribute names as keys'
     end # describe 'when instantiated with'
+
+    describe 'validates core attributes such that' do
+      context 'an entity with valid attributes' do
+        let(:obj) { described_class.new valid_attributes }
+
+        it 'is recognised as valid' do
+          expect(obj).to be_valid
+        end
+
+        it 'has no errors' do
+          expect(obj.errors).to be_empty
+        end
+      end # context 'an entity with valid attributes'
+
+      context 'an entity that is invalid because it has a title that is' do
+        let(:obj) { described_class.new attributes_with_bad_title }
+        let(:attributes_with_bad_title) do
+          valid_attributes.merge title: @bad_title
+        end
+
+        context 'missing' do
+          before :each do
+            @bad_title = nil
+          end
+
+          it 'is recognised as invalid' do
+            expect(obj).not_to be_valid
+          end
+
+          it 'reports a single error' do
+            expect(obj).to have(1).error
+          end
+
+          it 'reports that the title must be present' do
+            expected = { title: 'must be present' }
+            expect(obj.errors.first).to eq expected
+          end
+        end # context 'missing'
+      end # context 'an entity that is invalid because it has a title that is'
+    end # describe 'validates core attributes such that'
   end
 end

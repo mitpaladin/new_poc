@@ -58,7 +58,7 @@ group :development do
   gem 'metric_fu-Saikuro', require: false
   gem 'churn', github: 'danmayer/churn', require: false
   gem 'roodi', require: false
-  gem 'rubocop', require: false
+  gem 'rubocop', '~> 0.29.1', require: false
 
   gem 'annotate', github: 'ctran/annotate_models'
   # gem 'better_errors' # replaced by 'web-console'
