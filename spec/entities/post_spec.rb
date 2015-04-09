@@ -7,7 +7,17 @@ require 'post'
 module Entity
   describe Post do
     let(:author_name) { 'An Author' }
-    let(:valid_attributes) { { title: 'A Title', author_name: author_name } }
+    let(:valid_attributes) do
+      {
+        author_name: author_name,
+        body: valid_body,
+        image_url: valid_image_url,
+        title: valid_title
+      }
+    end
+    let(:valid_body) { 'A Body' }
+    let(:valid_image_url) { 'http://www.example.com/image1.png' }
+    let(:valid_title) { 'A Title' }
 
     describe 'supports initialisation' do
       describe 'raising no error when called with' do
@@ -102,6 +112,8 @@ module Entity
           end
         end
       end # context 'an entity with an invalid title attribute'
+
+      context 'an entity with an invalid '
     end # describe 'validates core attributes such that'
   end # describe Post
 end

@@ -44,7 +44,7 @@ module Entity
 
     def init_attributes(attributes_in)
       attrs = AttributeContainer.new attributes_in
-      whitelist = [:author_name, :title]
+      whitelist = [:author_name, :body, :image_url, :title]
       @attributes = AttributeContainer.whitelist_from attrs, *whitelist
     end
   end # class Entity::Post
