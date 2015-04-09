@@ -87,33 +87,52 @@ module Entity
         end
       end # context 'an entity with valid attributes'
 
-      context 'an entity with an invalid title attribute' do
-        let(:obj) { described_class.new attributes_with_bad_title }
-        let(:attributes_with_bad_title) do
-          valid_attributes.merge title: title
-        end
-        let(:title) { " \nAn\t Invalid Title\r\n" }
+      describe 'an entity with an invalid' do
+        let(:obj) { described_class.new attributes }
 
-        it 'is recognised as invalid' do
-          expect(obj).not_to be_valid
-        end
+        context 'title attribute' do
+          let(:attributes) { valid_attributes.merge title: title }
+          let(:title) { " \nAn\t Invalid Title\r\n" }
 
-        it 'reports three errors' do
-          expect(obj).to have(3).errors
-        end
+          it 'is recognised as invalid' do
+            expect(obj).not_to be_valid
+          end
 
-        it 'reports each type of invalid whitespace in the title' do
-          [
-            { title: 'must not have leading whitespace' },
-            { title: 'must not have trailing whitespace' },
-            { title: 'must not have leading whitespace' }
-          ].each do |expected|
-            expect(obj.errors).to include expected
+          it 'reports three errors' do
+            expect(obj).to have(3).errors
+          end
+
+          it 'reports each type of invalid whitespace in the title' do
+            [
+              { title: 'must not have leading whitespace' },
+              { title: 'must not have trailing whitespace' },
+              { title: 'must not have leading whitespace' }
+            ].each do |expected|
+              expect(obj.errors).to include expected
+            end
+          end
+        end # context 'title attribute'
+
+        context 'body attribute' do
+          let(:attributes) { valid_attributes.merge invalid_attributes }
+          let(:invalid_attributes) { { body: nil, image_url: nil } }
+
+          it 'is recognised as invalid' do
+            expect(obj).not_to be_valid
+          end
+
+          it 'reports one error' do
+            expect(obj).to have(1).error
+          end
+
+          it 'reports that the body must be specified if no image URL' do
+            expected = {
+              body: 'may not be empty if image URL is missing or empty'
+            }
+            expect(obj.errors.first).to eq expected
           end
         end
-      end # context 'an entity with an invalid title attribute'
-
-      context 'an entity with an invalid '
+      end # describe 'an entity with an invalid'
     end # describe 'validates core attributes such that'
   end # describe Post
 end

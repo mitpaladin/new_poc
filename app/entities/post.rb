@@ -1,5 +1,6 @@
 
 require_relative 'post/attribute_container'
+require_relative 'post/body_validator'
 require_relative 'post/title_validator'
 
 # Namespace containing all application-defined entities.
@@ -19,11 +20,11 @@ module Entity
     def_delegator :@attributes, :attributes
 
     def errors
-      validators[:title].errors
+      validators[:body].errors + validators[:title].errors
     end
 
     def valid?
-      validators[:title].valid?
+      validators[:title].valid? && validators[:body].valid?
     end
 
     private
@@ -40,6 +41,7 @@ module Entity
 
     def define_validators
       @validators = { title: TitleValidator.new(attributes) }
+      @validators[:body] = BodyValidator.new attributes
     end
 
     def init_attributes(attributes_in)
