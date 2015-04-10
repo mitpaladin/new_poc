@@ -121,15 +121,16 @@ module Entity
             expect(obj).not_to be_valid
           end
 
-          it 'reports one error' do
-            expect(obj).to have(1).error
+          it 'reports two errors' do
+            expect(obj).to have(2).errors
           end
 
-          it 'reports that the body must be specified if no image URL' do
-            expected = {
-              body: 'may not be empty if image URL is missing or empty'
-            }
-            expect(obj.errors.first).to eq expected
+          it 'reports that either the body or image URL must be present' do
+            expected = [
+              { body: 'may not be empty if image URL is missing or empty' },
+              { image_url: 'may not be empty if body is missing or empty' }
+            ]
+            expect(obj.errors).to eq expected
           end
         end
       end # describe 'an entity with an invalid'
