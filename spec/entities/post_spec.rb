@@ -113,7 +113,7 @@ module Entity
           end
         end # context 'title attribute'
 
-        context 'body attribute' do
+        context 'body attribute AND image URL attribute' do
           let(:attributes) { valid_attributes.merge invalid_attributes }
           let(:invalid_attributes) { { body: nil, image_url: nil } }
 
@@ -132,7 +132,7 @@ module Entity
             ]
             expect(obj.errors).to eq expected
           end
-        end
+        end # context 'body attribute AND image URL attribute'
       end # describe 'an entity with an invalid'
     end # describe 'validates core attributes such that'
   end # describe Post
