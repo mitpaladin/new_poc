@@ -1,8 +1,6 @@
 
 require_relative 'post/attribute_container'
-require_relative 'post/body_validator'
-require_relative 'post/image_url_validator'
-require_relative 'post/title_validator'
+require_relative 'post/validator_grouping'
 
 # Namespace containing all application-defined entities.
 module Entity
@@ -15,22 +13,13 @@ module Entity
     def initialize(attributes_in)
       init_attributes attributes_in
       define_attribute_readers
-      define_validators
+      @validators = ValidatorGrouping.new attributes_in
     end
 
     def_delegator :@attributes, :attributes
-
-    def errors
-      validators.values.inject([]) { |a, e| a + e.errors }
-    end
-
-    def valid?
-      validators.select { |_k, validator| !validator.valid? }.empty?
-    end
+    def_delegators :@validators, :errors, :valid?
 
     private
-
-    attr_reader :validators
 
     def define_attribute_readers
       attributes.to_hash.each_key do |key|
@@ -38,12 +27,6 @@ module Entity
           attributes.send key
         end
       end
-    end
-
-    def define_validators
-      @validators = { title: TitleValidator.new(attributes) }
-      @validators[:body] = BodyValidator.new attributes
-      @validators[:image_url] = ImageUrlValidator.new attributes
     end
 
     def init_attributes(attributes_in)
