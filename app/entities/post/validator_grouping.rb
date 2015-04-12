@@ -1,4 +1,5 @@
 
+require_relative 'validators/author_name'
 require_relative 'validators/body'
 require_relative 'validators/image_url'
 require_relative 'validators/title'
