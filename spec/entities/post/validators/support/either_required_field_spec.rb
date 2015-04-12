@@ -1,15 +1,15 @@
 
 require 'spec_helper'
 
-require 'post/either_required_field_validator'
+require 'post/validators/support/either_required_field'
 
-require_relative 'shared/valid_with_no_errors'
-require_relative 'shared/invalid_without_valid_primary'
-require_relative 'shared/a_primary_attribute'
+require_relative '../../shared/valid_with_no_errors'
+require_relative '../../shared/invalid_without_valid_primary'
+require_relative '../../shared/a_primary_attribute'
 
 # Namespace containing all application-defined entities.
 module Entity
-  describe Post::EitherRequiredFieldValidator do
+  describe Post::Validators::Support::EitherRequiredField do
     let(:attributes) { FancyOpenStruct.new first: attrib1, second: attrib2 }
     let(:obj) do
       described_class.new attributes: attributes, primary: :first,
@@ -28,5 +28,5 @@ module Entity
 
       it_behaves_like 'a primary attribute', 'it is valid'
     end # context 'when a secondary attribute is specified'
-  end # describe Post::EitherRequiredFieldValidator
+  end # describe Post::Validators::Support::EitherRequiredField
 end

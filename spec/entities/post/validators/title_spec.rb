@@ -1,11 +1,11 @@
 
 require 'spec_helper'
 
-require 'post/title_validator'
+require 'post/validators/title'
 
 # Namespace containing all application-defined entities.
 module Entity
-  describe Post::TitleValidator do
+  describe Post::Validators::Title do
     let(:attributes) { FancyOpenStruct.new title: title }
     let(:obj) { described_class.new attributes }
 
@@ -131,5 +131,5 @@ module Entity
         end
       end # context 'has multiple errors'
     end # context 'when initialised with a title that is invalid because it'
-  end # describe Post::TitleValidator
+  end # describe Post::Validators::Title
 end

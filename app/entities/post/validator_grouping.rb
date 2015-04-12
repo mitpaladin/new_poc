@@ -1,7 +1,8 @@
 
-require_relative 'body_validator'
-require_relative 'image_url_validator'
-require_relative 'title_validator'
+require_relative 'validators/body'
+require_relative 'validators/image_url'
+require_relative 'validators/title'
+require_relative 'validator_grouping/discoverer'
 
 # Namespace containing all application-defined entities.
 module Entity
@@ -17,13 +18,11 @@ module Entity
     class ValidatorGrouping
       def initialize(attributes)
         @validators = {}
-        add :title, TitleValidator.new(attributes)
-        add :body, BodyValidator.new(attributes)
-        add :image_url, ImageUrlValidator.new(attributes)
+        Discoverer.new(self).each { |k, v| add k, v.new(attributes) }
       end
 
       def add(key, validator)
-        @validators[key] = validator
+        validators[key] = validator
         self
       end
 
