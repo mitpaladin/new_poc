@@ -210,6 +210,37 @@ describe PostsHelper do
         expect(post.pubdate < last_date).to be true
         last_date = post.pubdate
       end
+      true
     end
   end # describe 'summarise_posts'
+
+  describe 'build_body' do
+    let(:actual) { build_body post }
+
+    context 'for a text post' do
+      let(:post) { FactoryGirl.build :post }
+
+      it 'returns the post body wrapped in an HTML :p tag pair' do
+        expected = ['<p>', '</p>'].join post.body
+        expect(actual).to eq expected
+      end
+    end
+
+    context 'for an image post' do
+      let(:post) { FactoryGirl.build :post, :image_post }
+
+      it 'returns an HTML fragment wrapped in an outer :figure tag pair' do
+        expect(actual).to match(/<figure>.+<\/figure>/m)
+      end
+
+      it 'contains the image URL within an :img tag' do
+        expect(actual).to match(/<img src="#{post.image_url}">/)
+      end
+
+      it 'contains the post body wrapped in a :figcaption tag pair' do
+        expected = %r{<figcaption><p>#{post.body}</p></figcaption}m
+        expect(actual).to match expected
+      end
+    end
+  end # describe 'build_body'
 end # describe PostsHelper

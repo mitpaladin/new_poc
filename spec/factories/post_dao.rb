@@ -7,10 +7,14 @@ FactoryGirl.define do
   factory :post, class: 'PostDao' do
     title { generate :title }
     body 'The Body'
-    image_url 'http://example.com/image1.png'
     author_name 'Just Anybody'
+    image_url nil
     pubdate nil
     slug nil
+
+    trait :image_post do
+      image_url 'http://example.com/image1.png'
+    end
 
     trait :saved_post do
       # See https://norman.github.io/friendly_id/file.Guide.html#Deciding_When_to_Generate_New_Slugs

@@ -1,4 +1,7 @@
 
+# for Decorations::Posts::HtmlBodyBuilder class.
+require 'posts/html_body_builder'
+
 # Old-style junk drawer of view-helper functions, etc.
 module PostsHelper
   def new_post_form_attributes(_params = {})
@@ -33,6 +36,10 @@ module PostsHelper
       sorter -> (data) { the_sorter.call data }
     end
     summ.summarise(@posts)
+  end
+
+  def build_body(post)
+    Decorations::Posts::HtmlBodyBuilder.new.build post
   end
 
   private
