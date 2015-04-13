@@ -25,6 +25,7 @@ module Decorations
 
     describe 'has a #build method that when called with a Post' do
       let(:obj) { described_class.new }
+      let(:actual) { obj.build post }
 
       context 'not containing an image URL' do
         let(:post) { FancyOpenStruct.new title: 'Post Title' }
@@ -32,7 +33,7 @@ module Decorations
         it 'wraps a simple string body in an HTML paragraph tag pair' do
           post.body = 'Simple Text'
           expected = ['<p>', '</p>'].join post.body
-          expect(obj.build(post)).to eq expected
+          expect(actual).to eq expected
         end
 
         it 'converts a body containing Markdown to HTML' do
@@ -52,9 +53,31 @@ module Decorations
 
       context 'containing an image URL' do
         let(:post) do
+          body = 'Default `Post` Body Text'
           url = 'http://www.example.com/image1.png'
-          FancyOpenStruct.new title: 'Post Title', image_url: url
+          FancyOpenStruct.new title: 'Post Title', image_url: url, body: body
         end
+
+        it 'returns markup enclosed in a :figure tag pair' do
+          expected = /\A\<figure\>(.*)\<\/figure\>\z/m
+          expect(actual).to match expected
+        end
+
+        describe 'returns markup enclosed in a :figure tag pair, with' do
+          it 'an :img tag as the first child of the :figure' do
+            expected = /\A<figure><img src="(.+)">.+<\/figure>\z/m
+            expect(actual).to match(expected)
+            expect(actual.match(expected).captures.first).to eq post.image_url
+          end
+
+          it 'a :figcaption tag pair as the last child of the :figure' do
+            expected = %r{\A<figure>.+<figcaption>(.+)</figcaption></figure>\z}m
+            converter = Newpoc::Services::MarkdownHtmlConverter.new
+            caption = converter.to_html post.body
+            expect(actual).to match(expected)
+            expect(actual.match(expected).captures.first).to eq caption
+          end
+        end # describe 'returns markup enclosed in a :figure tag pair, with'
       end # context 'containing an image URL'
     end # describe 'has a #build method that when called with a Post'
   end # describe Posts::HtmlBodyBuilder

@@ -1,6 +1,8 @@
 
 require 'newpoc/services/markdown_html_converter'
 
+require_relative 'html_body_builder/image_post_builder'
+
 # POROs that act as presentational support for entities.
 module Decorations
   # Decorations for `Post` entities. D'oh!
@@ -36,7 +38,7 @@ module Decorations
       # fragment.
       def build(post)
         @post = post
-        return markdown_converter.to_html(post.body) if text_post?
+        return body_markup(post.body) if text_post?
         build_image_post
       end
 
@@ -44,7 +46,13 @@ module Decorations
 
       attr_reader :markdown_converter, :post
 
+      def body_markup(markup)
+        markdown_converter.to_html markup
+      end
+
       def build_image_post
+        ImagePostBuilder.new(image_url: post.image_url,
+                             body_html: body_markup(post.body)).to_html
       end
 
       def default_markdown_converter
