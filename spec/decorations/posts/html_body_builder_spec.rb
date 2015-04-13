@@ -40,6 +40,7 @@ module Decorations
           expected = "<p>This <em>is</em> a <code>test</code>.</p>\n\n" \
             "<ol>\n<li>Foo;</li>\n<li>Bar.</li>\n</ol><p>All done.</p>"
           expect(obj.build(post)).to eq expected
+          # forcing Git update.
         end
       end # context 'not containing an image URL'
 
