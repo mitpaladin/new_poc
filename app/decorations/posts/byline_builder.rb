@@ -17,7 +17,7 @@ module Decorations
 
       private
 
-      attr_reader :author_name, :pubdate
+      attr_reader :author_name, :pubdate, :updated_at
 
       def attributes_for(post)
         if post.respond_to? :to_hash
@@ -52,6 +52,7 @@ module Decorations
         attributes = attributes_for post
         @pubdate = attributes[:pubdate]
         @author_name = attributes[:author_name]
+        @updated_at = attributes[:updated_at] || Time.now.utc
         enforce_author_name
       end
 
@@ -67,22 +68,11 @@ module Decorations
       end
 
       def innermost_parts
-        # if draft?
-        #   ['Drafted', data_str(entry.updated_at)]
-        # else
-        #   ['Posted', pubdate_str]
-        # end
-        ['Posted', pubdate_str]
-      end
-
-      def data_str(data)
-        timestamp_for data.localtime
-        # data.localtime.strftime '%a %b %e %Y at %R %Z (%z)'
-      end
-
-      def pubdate_str
-        return 'DRAFT' if draft?
-        timestamp_for pubdate
+        if draft?
+          ['Drafted', timestamp_for(updated_at.localtime)]
+        else
+          ['Posted', timestamp_for(pubdate)]
+        end
       end
     end # class Decorations::Posts::BylineBuilder
   end

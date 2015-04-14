@@ -3,6 +3,9 @@ require 'spec_helper'
 
 require 'posts/byline_builder'
 
+require_relative 'byline_builder/correct_containing_tags.rb'
+require_relative 'byline_builder/formatted_time_tag'
+
 # POROs that act as presentational support for entities.
 module Decorations
   describe Posts::BylineBuilder do
@@ -69,24 +72,20 @@ module Decorations
         context 'for a published post' do
           let(:post) { FactoryGirl.build :post, :published_post }
 
-          it 'which is a :p tag pair wrapping a :time tag pair' do
-            expect(actual).to match %r{<p><time.*>.+</time></p>}
-          end
+          it_behaves_like 'it has correct containing tags'
 
-          it 'has an attribute value of "pubdate" for the :time tag :pubdate' do
-            expect(actual).to match(/<time pubdate="pubdate">.+<\/time>/)
-          end
-
-          it 'has content for the :time tag in the correct format' do
-            expected = /<time.+>Posted (.+) by (.+)<\/time>/
-            match_data = actual.match expected
-            expect(match_data).not_to be_nil
-            expect(match_data.captures.last).to eq post.author_name
-            timestamp = Time.parse match_data.captures.first
-            # RSpec can be *slow*.
-            expect(timestamp.utc).to be_within(1.minute).of post.pubdate
-          end
+          it_behaves_like 'a correctly-formatted :time tag', 'Posted', :pubdate
         end # context 'for a published post'
+
+        context 'for a draft post' do
+          let!(:build_time) { Time.now.utc }
+          let!(:post) { FactoryGirl.build :post }
+
+          it_behaves_like 'it has correct containing tags'
+
+          it_behaves_like 'a correctly-formatted :time tag', 'Drafted',
+                          :updated_at
+        end # context 'for a draft post'
       end # describe 'produces a return value as an HTML fragment'
     end # describe 'has a #build method that'
   end # describe Posts::BylineBuilder
