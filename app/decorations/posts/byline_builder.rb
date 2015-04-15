@@ -11,7 +11,7 @@ module Decorations
     # Builds an HTML fragment (a paragraph) containing a timestamp and author-
     # name attribution.
     class BylineBuilder
-      def build(post)
+      def self.build(post)
         MarkupBuilder.new(Attributes.new post).to_html
       end
     end # class Decorations::Posts::BylineBuilder
