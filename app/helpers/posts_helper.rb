@@ -1,6 +1,7 @@
 
 # for Decorations::Posts::HtmlBodyBuilder class.
 require 'posts/html_body_builder'
+require 'posts/byline_builder'
 
 # Old-style junk drawer of view-helper functions, etc.
 module PostsHelper
@@ -40,6 +41,10 @@ module PostsHelper
 
   def build_body(post)
     Decorations::Posts::HtmlBodyBuilder.new.build post
+  end
+
+  def build_byline(post)
+    Decorations::Posts::BylineBuilder.build post
   end
 
   private

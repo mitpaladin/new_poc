@@ -243,4 +243,48 @@ describe PostsHelper do
       end
     end
   end # describe 'build_body'
+
+  describe 'build_byline' do
+    let(:actual) { build_byline post }
+
+    context 'whether for a draft or published post, returns a fragment that' do
+      let(:post) { FactoryGirl.build :post }
+
+      it 'is contained within :p and :time tags' do
+        expect(actual).to match %r{<p><time .*>.+</time></p>}
+      end
+
+      it 'with a :time tag having a :pubdate attribute' do
+        expect(actual).to match(/<p><time pubdate="pubdate">/)
+      end
+
+      it 'contains a properly-formatted timestamp' do
+        # Will match, e.g., 'Thu Apr 16 2015 at 00:40 SGT (+0800)' or
+        # 'Thu Apr 15 2015 at 12:40 EDT (-0400)'
+        regex = '(?-mix:[[:alpha:]]{3} [[:alpha:]]{3} \\d{1,2} \\d{4}' \
+          ' at \\d{1,2}:\\d{2} [[:alpha:]]{3} \\([\\+,\\-]\\d{4}\\))'
+        expect(actual).to match regex
+      end
+
+      it 'contains post-author attribution at the end of the content' do
+        expect(actual).to match %r{ by #{post.author_name}</time></p>}
+      end
+    end # context '... for a draft or published post, returns a fragment that'
+
+    context 'for a published post' do
+      let(:post) { FactoryGirl.build :post, :published_post }
+
+      it 'has text content beginning with the word "Posted"' do
+        expect(actual).to match(/<p><time .*>Posted .+/)
+      end
+    end # context 'for a published post'
+
+    context 'for a draft post' do
+      let(:post) { FactoryGirl.build :post }
+
+      it 'has text content beginning with the word "Drafted"' do
+        expect(actual).to match(/<p><time .*>Drafted .+/)
+      end
+    end # context 'for a published post'
+  end # describe 'build_byline'
 end # describe PostsHelper
