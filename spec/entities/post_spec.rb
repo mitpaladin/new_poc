@@ -50,9 +50,9 @@ module Entity
 
         it 'when keys are specified either as strings or symbols' do
           string_attrs = {
-            author_name: valid_attributes[:author_name],
-            "title": valid_attributes[:title]
+            author_name: valid_attributes[:author_name]
           }
+          string_attrs['title'] = valid_attributes[:title]
           obj = described_class.new string_attrs
           expect(obj.title).to eq 'A Title'
         end
