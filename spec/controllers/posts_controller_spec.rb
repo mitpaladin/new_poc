@@ -133,9 +133,9 @@ describe PostsController do
         expect(response).to be_success
       end
 
-      it 'assigns a new Newpoc::Entity::Post instance to :post' do
+      it 'assigns a new Post-entity instance to :post' do
         post = assigns[:post]
-        expect(post).to be_a Newpoc::Entity::Post
+        expect(post).to be_a PostFactory.entity_class
         expect(post).not_to be_persisted
       end
 
@@ -182,8 +182,8 @@ describe PostsController do
           post :create, post_data: params
         end
 
-        it 'assigns the :post item as a Newpoc::Entity::Post instance' do
-          expect(assigns[:post]).to be_a Newpoc::Entity::Post
+        it 'assigns the :post item as a Post-entity instance' do
+          expect(assigns[:post]).to be_a PostFactory.entity_class
         end
 
         it 'persists the PostDao instance corresponding to the :post' do
@@ -301,7 +301,7 @@ describe PostsController do
       end
 
       it 'assigns an object to Post' do
-        expect(assigns[:post]).to be_a Newpoc::Entity::Post
+        expect(assigns[:post]).to be_a PostFactory.entity_class
         expect(assigns[:post].title).to eq article.title
       end
 
