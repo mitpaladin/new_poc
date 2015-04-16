@@ -25,7 +25,7 @@ class PostsController < ApplicationController
         @post_data = filter.filter
         @draft_post = filter.draft_post
         @current_user = current_user
-        @entity_class = entity_class || Newpoc::Entity::Post
+        @entity_class = entity_class || PostFactory.entity_class
       end
 
       def execute
