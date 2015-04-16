@@ -71,7 +71,8 @@ class TimestampedEntityVerifier
 
       def compare_time(t1, t2, allowance = 1.0)
         return false unless timestamp?(t1) && timestamp?(t2)
-        (t1.to_time - t2.to_time).abs <= allowance
+        # (t1.to_time - t2.to_time).abs <= allowance
+        (t1 - t2).abs <= allowance
       end
 
       def timestamp?(value)
@@ -126,8 +127,8 @@ class TimestampedEntityVerifier
 
   def check_timestamps(source_filter, actual_filter)
     source_filter.timestamps.each_key do |key|
-      ref_value = source_filter.attributes[key].to_time
-      other_value = actual_filter.attributes[key].to_time
+      ref_value = source_filter.attributes[key]
+      other_value = actual_filter.attributes[key]
       @failures.add_unless key, ref_value, other_value
     end
     self

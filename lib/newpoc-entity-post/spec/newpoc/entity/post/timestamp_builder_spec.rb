@@ -13,9 +13,13 @@ class DummyTestClass
 end
 
 describe DummyTestClass do
+  before :each do
+    Time.zone = 'Asia/Singapore'
+  end
+
   describe :timestamp_for do
     describe 'returns a formatted time/date string when' do
-      it 'passed an explicit timestamp (having a #to_time method)' do
+      fit 'passed an explicit timestamp (having a #to_time method)' do
         the_time = Chronic.parse '21 August 2014 at 15:38:59 '
         pattern_str = 'Thu Aug 21 2014 at 15:38' \
           ' [[:upper:]]{3} \([\+\-][[:digit:]]{4}\)'
@@ -24,7 +28,7 @@ describe DummyTestClass do
       end
 
       it 'called without a parameter, as if called using the current time' do
-        expected = DateTime.now.to_time.strftime DummyTestClass.timestamp_format
+        expected = Time.zone.now.strftime DummyTestClass.timestamp_format
         expect(DummyTestClass.timestamp_for).to eq expected
       end
     end # describe 'returns a formatted time/date string when'

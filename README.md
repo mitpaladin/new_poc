@@ -37,7 +37,7 @@ What we're *no longer* using:
 
 * `ActiveInteraction` for DSOs. It's brilliant, and works very well *if* your app is "close enough" to The Rails Way to use `ActiveRecord::Base`, or at least `ActiveModel`. We're no longer doing so, we're using simple command-pattern POROs that *selectively* mix in ActiveModel support as needed (via [ActiveAttr](https://github.com/cgriego/active_attr));
 * [Draper](https://github.com/drapergem/draper), for Rails model "decorators"; the Gem has also been described as providing ViewModels. We're not interacting directly with Rails models in our view (or helper) code now that we've gone through the process of isolating ActiveRecord (see above) so this too, while awesome at what it does, isn't something we use any more.
-
+* "Unbuilt Rails dependencies" or, as I call them, "pseudo-Gems", as described in [this Pivotal Labs blog post](pivotallabs.com/unbuilt-rails-dependencies-how-to-design-for-loosely-coupled-highly-cohesive-components-within-a-rails-application/). This technique, after experimentation, appears most suitable for Rails engines or other similarly large-scale, high-level "black boxes". Losing the ability for one "Gem" to reference and use another turns out to be a deal-breaker.
 
 ### What is this "success" you speak of?
 

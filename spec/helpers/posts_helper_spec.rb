@@ -205,11 +205,86 @@ describe PostsHelper do
     it 'sorts the entries in reverse order by pubdate' do
       @posts = new_build_and_publish_posts
       entries = summarise_posts
-      last_date = DateTime.now
+      last_date = Time.zone.now
       entries.each do |post|
         expect(post.pubdate < last_date).to be true
         last_date = post.pubdate
       end
+      true
     end
   end # describe 'summarise_posts'
+
+  describe 'build_body' do
+    let(:actual) { build_body post }
+
+    context 'for a text post' do
+      let(:post) { FactoryGirl.build :post }
+
+      it 'returns the post body wrapped in an HTML :p tag pair' do
+        expected = ['<p>', '</p>'].join post.body
+        expect(actual).to eq expected
+      end
+    end
+
+    context 'for an image post' do
+      let(:post) { FactoryGirl.build :post, :image_post }
+
+      it 'returns an HTML fragment wrapped in an outer :figure tag pair' do
+        expect(actual).to match(%r{<figure>.+</figure>}m)
+      end
+
+      it 'contains the image URL within an :img tag' do
+        expect(actual).to match(/<img src="#{post.image_url}">/)
+      end
+
+      it 'contains the post body wrapped in a :figcaption tag pair' do
+        expected = %r{<figcaption><p>#{post.body}</p></figcaption}m
+        expect(actual).to match expected
+      end
+    end
+  end # describe 'build_body'
+
+  describe 'build_byline' do
+    let(:actual) { build_byline post }
+
+    context 'whether for a draft or published post, returns a fragment that' do
+      let(:post) { FactoryGirl.build :post }
+
+      it 'is contained within :p and :time tags' do
+        expect(actual).to match %r{<p><time .*>.+</time></p>}
+      end
+
+      it 'with a :time tag having a :pubdate attribute' do
+        expect(actual).to match(/<p><time pubdate="pubdate">/)
+      end
+
+      it 'contains a properly-formatted timestamp' do
+        # Will match, e.g., 'Thu Apr 16 2015 at 00:40 SGT (+0800)' or
+        # 'Thu Apr 15 2015 at 12:40 EDT (-0400)'
+        regex = '(?-mix:[[:alpha:]]{3} [[:alpha:]]{3} \\d{1,2} \\d{4}' \
+          ' at \\d{1,2}:\\d{2} [[:alpha:]]{3} \\([\\+,\\-]\\d{4}\\))'
+        expect(actual).to match regex
+      end
+
+      it 'contains post-author attribution at the end of the content' do
+        expect(actual).to match %r{ by #{post.author_name}</time></p>}
+      end
+    end # context '... for a draft or published post, returns a fragment that'
+
+    context 'for a published post' do
+      let(:post) { FactoryGirl.build :post, :published_post }
+
+      it 'has text content beginning with the word "Posted"' do
+        expect(actual).to match(/<p><time .*>Posted .+/)
+      end
+    end # context 'for a published post'
+
+    context 'for a draft post' do
+      let(:post) { FactoryGirl.build :post }
+
+      it 'has text content beginning with the word "Drafted"' do
+        expect(actual).to match(/<p><time .*>Drafted .+/)
+      end
+    end # context 'for a published post'
+  end # describe 'build_byline'
 end # describe PostsHelper

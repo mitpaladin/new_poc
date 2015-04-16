@@ -9,7 +9,7 @@ describe UserFactory do
   it_behaves_like 'an entity factory for', Entity::User
 
   describe 'has a .guest_user class method returning an instance that' do
-    let(:created_at) { Time.now }
+    let(:created_at) { Time.zone.now }
     let(:guest) { described_class.guest_user }
 
     it 'asserts that it is a Guest User' do

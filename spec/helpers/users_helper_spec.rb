@@ -9,6 +9,10 @@ require 'support/shared_examples/users_helper/a_profile_bio_panel'
 describe UsersHelper do
   let(:user) { FactoryGirl.create :user, :saved_user }
 
+  before :each do
+    Time.zone = 'Asia/Singapore'
+  end
+
   describe :profile_article_list.to_s do
     fragment_builder = lambda do |markup|
       Nokogiri.parse(markup).children.first

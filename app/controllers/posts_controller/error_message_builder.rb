@@ -35,7 +35,7 @@ class PostsController < ApplicationController
       end
 
       def to_s
-        matcher = matchers.select { |m| m.key? @error_data }.first
+        matcher = matchers.find { |m| m.key? @error_data }
         return "Unknown error: no match for #{@error_data}" unless matcher
         matcher.call @error_data
       end

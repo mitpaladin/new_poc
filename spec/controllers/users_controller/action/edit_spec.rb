@@ -15,7 +15,7 @@ describe UsersController::Action::Edit do
   let(:current_user_name) { user_name }
   let(:current_user_slug) { target_slug }
   let(:result) do
-    FancyOpenStruct.new entity: the_entity, :success? => result_success
+    FancyOpenStruct.new entity: the_entity, success?: result_success
   end
   let(:subscriber) { WisperSubscription.new }
   let(:success_entity) do

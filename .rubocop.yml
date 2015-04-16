@@ -5,3 +5,6 @@ Metrics/AbcSize:
 
 Style/TrivialAccessors:
   AllowDSLWriters: true
+
+Style/Documentation:
+  Enabled: false

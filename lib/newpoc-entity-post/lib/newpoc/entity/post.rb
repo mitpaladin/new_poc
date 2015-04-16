@@ -37,7 +37,7 @@ module Newpoc
         attrib_keys.each do |attrib|
           instance_variable_set "@#{attrib}", attribs[attrib]
         end
-        @pubdate ||= Time.now if attribs[:post_status] == 'public'
+        @pubdate ||= Time.zone.now if attribs[:post_status] == 'public'
       end
 
       def attributes
