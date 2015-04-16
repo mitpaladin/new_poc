@@ -54,7 +54,7 @@ class PostsController < ApplicationController
 
       def self.bad_attributes_matcher
         Message.new(:created_at) do |error_data|
-          entity = Newpoc::Entity::Post.new error_data
+          entity = PostFactory.create error_data
           entity.valid?
           entity.errors.full_messages.first
         end
