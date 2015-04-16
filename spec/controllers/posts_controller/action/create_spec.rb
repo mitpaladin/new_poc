@@ -9,7 +9,7 @@ shared_examples 'a successful post that' do
     expect(subscriber).not_to be_failure
   end
 
-  describe 'is successful, broadcasting a Newpoc::Entity::Post payload' do
+  describe 'is successful, broadcasting a Post-entity payload' do
     let(:payload) { subscriber.payload_for(:success).first }
 
     it 'which is valid' do
@@ -29,12 +29,12 @@ shared_examples 'a successful post that' do
                  .select { |k, _v| acceptable_keys.include? k }
                  .merge author_name: current_user.name
 
-      expect(payload).to be_a Newpoc::Entity::Post
+      expect(payload).to be_a PostFactory.entity_class
       expected.each do |attrib, value|
         expect(payload.attributes[attrib]).to eq value
       end
     end
-  end # describe 'is successful, broadcasting a Newpoc::Entity::Post payload'
+  end # describe 'is successful, broadcasting a Post-entity payload'
 end # shared_examples 'a successful post that'
 
 # ############################################################################ #
@@ -186,7 +186,7 @@ describe PostsController::Action::Create do
 
         it 'the expected errors' do
           attribs = JSON.parse(payload.message).symbolize_keys
-          entity = Newpoc::Entity::Post.new attribs
+          entity = PostFactory.create attribs
           expect(entity).not_to be_valid
           expect(entity).to have(1).error
           message = entity.errors.full_messages.first

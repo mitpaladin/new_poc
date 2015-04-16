@@ -9,7 +9,7 @@ class PostsController < ApplicationController
 
       def initialize(payload)
         @payload = payload
-        @entity_class = Newpoc::Entity::Post
+        @entity_class = PostFactory.entity_class
       end
 
       def cleanup

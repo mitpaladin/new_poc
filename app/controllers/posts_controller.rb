@@ -1,6 +1,4 @@
 
-# require 'newpoc/action/post/update'
-
 require_relative 'posts_controller/create_failure_setup'
 require_relative 'posts_controller/error_message_builder'
 
@@ -30,7 +28,7 @@ class PostsController < ApplicationController
   def_action(:new) do
     {
       current_user: current_user, repository: UserRepository.new,
-      entity_class: Newpoc::Entity::Post
+      entity_class: PostFactory.entity_class
     }
   end
 
