@@ -468,7 +468,7 @@ describe PostsController do
       end
 
       it 'that publishes the post' do
-        post_data = { pubdate: Time.now }
+        post_data = { pubdate: Time.zone.now }
         identity.current_user = author
         expect(post.pubdate).to be nil  # draft, unpublished
         patch :update, id: post.slug, post_data: post_data

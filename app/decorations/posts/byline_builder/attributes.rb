@@ -37,7 +37,7 @@ module Decorations
         def updated_time_for(attrs)
           return attrs[:updated_at] if attrs[:updated_at]
           return attrs[:pubdate] if attrs[:pubdate]
-          Time.now.utc
+          Time.zone.now
         end
 
         def value_object_from(attrs)

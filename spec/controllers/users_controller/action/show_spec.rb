@@ -9,7 +9,7 @@ describe UsersController::Action::Show do
     described_class.new target_slug: target_slug, user_repository: user_repo
   end
   let(:result) do
-    FancyOpenStruct.new :entity => the_entity, :success? => result_success
+    FancyOpenStruct.new entity: the_entity, success?: result_success
   end
   let(:subscriber) { WisperSubscription.new }
   let(:success_entity) { 'THE ENTITY' }

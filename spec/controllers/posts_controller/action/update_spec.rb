@@ -33,10 +33,10 @@ describe PostsController::Action::Update do
   end
   let(:post_slug) { 'post-slug' }
   let(:repo_failure_result) do
-    FancyOpenStruct.new entity: nil, :success? => false
+    FancyOpenStruct.new entity: nil, success?: false
   end
   let(:repo_success_result) do
-    FancyOpenStruct.new entity: repo_success_entity, :success? => true
+    FancyOpenStruct.new entity: repo_success_entity, success?: true
   end
   let(:subscriber) { WisperSubscription.new }
   let(:valid_post_data) do
@@ -64,7 +64,7 @@ describe PostsController::Action::Update do
     let(:target_slug) { post_slug }
     let(:repo_success_entity) do
       FancyOpenStruct.new author_name: author.name,
-                          :valid? => true,
+                          valid?: true,
                           attributes: { author_name: author.name }
     end
 

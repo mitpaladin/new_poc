@@ -29,10 +29,10 @@ describe PostsController::Action::Edit do
   end
   let(:post_slug) { 'post-slug' }
   let(:repo_failure_result) do
-    FancyOpenStruct.new entity: nil, :success? => false
+    FancyOpenStruct.new entity: nil, success?: false
   end
   let(:repo_success_result) do
-    FancyOpenStruct.new entity: repo_success_entity, :success? => true
+    FancyOpenStruct.new entity: repo_success_entity, success?: true
   end
   let(:subscriber) { WisperSubscription.new }
   let(:repo_success_entity) do

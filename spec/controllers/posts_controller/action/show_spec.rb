@@ -21,7 +21,7 @@ describe PostsController::Action::Show do
     end.new(result)
   end
   let(:result) do
-    FancyOpenStruct.new :entity => the_entity, :success? => result_success
+    FancyOpenStruct.new entity: the_entity, success?: result_success
   end
   let(:subscriber) { WisperSubscription.new }
   let(:success_entity) { FancyOpenStruct.new author_name: entity_author_name }

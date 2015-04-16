@@ -2,7 +2,7 @@
 shared_examples 'a correctly-formatted :time tag' do |status_string, time_in|
   describe 'has correct content for the :time tag, with' do
     let(:match_data) do
-      expected = /<time.+>#{status_string} (.+) by (.+)<\/time>/
+      expected = %r{<time.+>#{status_string} (.+) by (.+)</time>}
       actual.match expected
     end
     # let(:status_string) { 'Posted' }
@@ -13,7 +13,7 @@ shared_examples 'a correctly-formatted :time tag' do |status_string, time_in|
         :what_time_is_it_anyway?
       end
     end
-    let(:time_value) { post.send(time_in) || Time.now.utc }
+    let(:time_value) { post.send(time_in) || Time.zone.now }
 
     it 'the correct overall format' do
       expect(match_data).not_to be nil
@@ -24,9 +24,9 @@ shared_examples 'a correctly-formatted :time tag' do |status_string, time_in|
     end
 
     it 'the correct time specified in the timestamp' do
-      timestamp = Time.parse what_time
+      timestamp = Time.zone.parse what_time
       # RSpec can be *slow*.
-      expect(timestamp.utc).to be_within(1.minute).of time_value
+      expect(timestamp).to be_within(1.minute).of time_value
     end
 
     it 'the timestamp in the correct semi-expanded format' do

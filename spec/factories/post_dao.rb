@@ -22,7 +22,7 @@ FactoryGirl.define do
     end
 
     trait :published_post do
-      pubdate { Time.now }
+      pubdate { Time.zone.now }
     end
   end
 end

@@ -10,7 +10,7 @@ require_relative 'byline_builder/formatted_time_tag'
 module Decorations
   describe Posts::BylineBuilder do
     let(:author_name) { 'Some User' }
-    let(:pubdate) { Time.parse '14 March 2015 12:34:56' }
+    let(:pubdate) { Time.zone.parse '14 March 2015 12:34:56' }
 
     describe 'has a .build method that' do
       it 'requires one parameter' do
@@ -24,20 +24,20 @@ module Decorations
           attr_obj = FancyOpenStruct.new attr_hash
           expect { described_class.build attr_obj }.not_to raise_error
           attr_instance = Class.new(ValueObject::Base) do
-                            has_fields(*attr_hash.keys)
-                          end.new attr_hash
+            has_fields(*attr_hash.keys)
+          end.new attr_hash
           expect { described_class.build attr_instance }.not_to raise_error
         end
 
         it 'has an #attributes method returning a Hash-like object' do
           attr_hash = { author_name: author_name, pubdate: pubdate }
           post = Class.new do
-                   attr_reader :attributes
+            attr_reader :attributes
 
-                   def initialize(attributes)
-                    @attributes = attributes
-                   end
-                 end.new attr_hash
+            def initialize(attributes)
+              @attributes = attributes
+            end
+          end.new attr_hash
           expect { described_class.build post }.not_to raise_error
         end
       end # describe 'accepts a parameter that'
@@ -68,7 +68,7 @@ module Decorations
         end # context 'for a published post'
 
         context 'for a draft post' do
-          let!(:build_time) { Time.now.utc }
+          let!(:build_time) { Time.zone.now }
           let!(:post) { FactoryGirl.build :post }
 
           it_behaves_like 'it has correct containing tags'

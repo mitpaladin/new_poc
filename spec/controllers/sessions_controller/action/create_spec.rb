@@ -20,7 +20,7 @@ describe SessionsController::Action::Create do
     let(:repo) do
       Class.new do
         def authenticate(_user_name, _password)
-          FancyOpenStruct.new :success? => true, entity: 'valid_entity'
+          FancyOpenStruct.new success?: true, entity: 'valid_entity'
         end
       end.new
     end
@@ -44,7 +44,7 @@ describe SessionsController::Action::Create do
       Class.new do
         def authenticate(_user_name, _password)
           error = FancyOpenStruct.new message: 'Invalid user name or password'
-          FancyOpenStruct.new :failure? => true, entity: nil,
+          FancyOpenStruct.new failure?: true, entity: nil,
                               errors: [error]
         end
       end.new

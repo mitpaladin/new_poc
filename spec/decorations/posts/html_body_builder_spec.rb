@@ -59,13 +59,13 @@ module Decorations
         end
 
         it 'returns markup enclosed in a :figure tag pair' do
-          expected = /\A\<figure\>(.*)\<\/figure\>\z/m
+          expected = %r{\A<figure>(.*)</figure>\z}m
           expect(actual).to match expected
         end
 
         describe 'returns markup enclosed in a :figure tag pair, with' do
           it 'an :img tag as the first child of the :figure' do
-            expected = /\A<figure><img src="(.+)">.+<\/figure>\z/m
+            expected = %r{\A<figure><img src="(.+)">.+</figure>\z}m
             expect(actual).to match(expected)
             expect(actual.match(expected).captures.first).to eq post.image_url
           end

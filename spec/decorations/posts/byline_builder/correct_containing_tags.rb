@@ -5,6 +5,6 @@ shared_examples 'it has correct containing tags' do
   end
 
   it 'has an attribute value of "pubdate" for the :time tag :pubdate' do
-    expect(actual).to match(/<time pubdate="pubdate">.+<\/time>/)
+    expect(actual).to match %r{<time pubdate="pubdate">.+</time>}
   end
 end

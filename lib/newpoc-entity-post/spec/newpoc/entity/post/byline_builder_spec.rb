@@ -16,7 +16,7 @@ module Newpoc
           let(:builder) { described_class.new params }
           let(:params) do
             FancyOpenStruct.new author_name: author,
-                                :draft? =>  false,
+                                draft?: false,
                                 updated_at: updated_at,
                                 pubdate_str: pubdate_str
           end

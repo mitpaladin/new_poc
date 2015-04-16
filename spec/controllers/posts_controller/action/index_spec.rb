@@ -50,7 +50,7 @@ describe PostsController::Action::Index do
     draft_post_count.times.map do |n|
       FancyOpenStruct.new title: "Title #{n + first_draft_post_id}",
                           author_name: author_name,
-                          :published? => false
+                          published?: false
     end
   end
   let(:first_draft_post_id) { published_post_count + 1 }
@@ -61,7 +61,7 @@ describe PostsController::Action::Index do
     published_post_count.times.map do |n|
       FancyOpenStruct.new title: "Title #{n + first_published_post_id}",
                           author_name: author_name,
-                          :published? => true
+                          published?: true
     end
   end
   let(:repo) { FancyOpenStruct.new all: [draft_posts, published_posts].flatten }

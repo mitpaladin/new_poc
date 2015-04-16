@@ -41,7 +41,7 @@ describe Newpoc::Entity::Post do
     }
   end
   let(:draft_post) { described_class.new valid_subset }
-  let(:published_attribs) { valid_subset.merge pubdate: Time.now }
+  let(:published_attribs) { valid_subset.merge pubdate: Time.zone.now }
   let(:published_post) { described_class.new published_attribs }
   let(:valid_subset) do
     {
@@ -50,6 +50,10 @@ describe Newpoc::Entity::Post do
       author_name: author_name,
       body: body
     }
+  end
+
+  before :each do
+    Time.zone = 'Asia/Singapore'
   end
 
   it 'has a version number' do
@@ -142,7 +146,7 @@ describe Newpoc::Entity::Post do
   end # describe '#build_body`
 
   describe '#build_byline' do
-    let(:fixed) { Time.parse '1 February 2015 12:34:56' }
+    let(:fixed) { Time.zone.parse '1 February 2015 12:34:56' }
     let(:post) { described_class.new published_attribs.merge pubdate: fixed }
 
     it 'accepts no parameters' do

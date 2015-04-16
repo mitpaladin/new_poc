@@ -16,7 +16,7 @@ module Entity
       #                   attributes on the entity. If no value is supplied for
       #                   `:created_at`, the current time (as UTC) will be used.
       def self.setup(entity:, attributes:)
-        created_at = attributes[:created_at] || Time.now.utc
+        created_at = attributes[:created_at] || Time.zone.now
         entity.add_attribute :created_at, created_at
         entity.add_attribute :updated_at, attributes[:updated_at]
       end

@@ -5,7 +5,7 @@ require 'timestamp_builder'
 class FeatureSpecTimestampHelper
   extend TimestampBuilder
 
-  def self.to_timestamp_s(the_time = Time.now)
+  def self.to_timestamp_s(the_time = Time.zone.now)
     timestamp_for the_time
   end
 end

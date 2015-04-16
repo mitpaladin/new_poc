@@ -205,7 +205,7 @@ describe PostsHelper do
     it 'sorts the entries in reverse order by pubdate' do
       @posts = new_build_and_publish_posts
       entries = summarise_posts
-      last_date = DateTime.now
+      last_date = Time.zone.now
       entries.each do |post|
         expect(post.pubdate < last_date).to be true
         last_date = post.pubdate
@@ -230,7 +230,7 @@ describe PostsHelper do
       let(:post) { FactoryGirl.build :post, :image_post }
 
       it 'returns an HTML fragment wrapped in an outer :figure tag pair' do
-        expect(actual).to match(/<figure>.+<\/figure>/m)
+        expect(actual).to match(%r{<figure>.+</figure>}m)
       end
 
       it 'contains the image URL within an :img tag' do
