@@ -326,7 +326,7 @@ describe PostsController do
         end
 
         it 'assigns an object to Post' do
-          expect(assigns[:post]).to be_a Newpoc::Entity::Post
+          expect(assigns[:post]).to be_a PostFactory.entity_class
           expect(assigns[:post].title).to eq article.title
         end
 
