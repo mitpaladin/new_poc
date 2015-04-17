@@ -31,7 +31,7 @@ shared_examples 'a successful post that' do
 
       expect(payload).to be_a PostFactory.entity_class
       expected.each do |attrib, value|
-        expect(payload.attributes[attrib]).to eq value
+        expect(payload.attributes.to_hash[attrib]).to eq value
       end
     end
   end # describe 'is successful, broadcasting a Post-entity payload'
@@ -130,7 +130,7 @@ describe PostsController::Action::Create do
       it 'does not include any invalid initialiser settings' do
         payload = subscriber.payload_for(:success).first
         invalid_data.each_key do |k|
-          expect(payload.attributes).not_to include k
+          expect(payload.attributes.to_hash).not_to include k
         end
       end
     end # context 'with additional but invalid post data'
@@ -143,8 +143,8 @@ describe PostsController::Action::Create do
           {
             author_name: current_user.name,
             title: 'A Title',
-            body: 'A Body',
-            post_status: 'draft'
+            body: 'A Body'
+            # post_status: 'draft'
           }
         end
 
@@ -161,7 +161,8 @@ describe PostsController::Action::Create do
             author_name: current_user.name,
             title: 'A Title',
             body: 'A Body',
-            post_status: 'public'
+            pubdate: Time.zone.now
+            # post_status: 'public'
           }
         end
 

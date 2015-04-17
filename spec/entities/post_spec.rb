@@ -73,5 +73,82 @@ module Entity
         end
       end # context 'a mixture of valid and invalid attribute names as keys'
     end # describe 'when instantiated with'
+
+    describe 'has a #to_json method that serialises an instance' do
+      let(:obj) { described_class.new(attributes).tap(&:valid?) }
+
+      context 'with no errors' do
+        let(:attributes) do
+          FactoryGirl.attributes_for :post, :image_post, :saved_post,
+                                     :published_post
+        end
+
+        describe 'serialises a Hash with' do
+          let(:new_obj) { JSON.load obj.to_json }
+
+          it 'a single key, "attributes"' do
+            expect(new_obj).to be_a Hash
+            expect(new_obj.keys).to eq ['attributes']
+          end
+
+          describe 'a value for "attributes" of a Hash with' do
+            let(:new_attrs) { new_obj['attributes'] }
+
+            it 'keys matching the keys of the original attributes as strings' do
+              expect(new_attrs.keys).to eq attributes.stringify_keys.keys
+            end
+
+            it 'values matching string values of the original attributes' do
+              # attributes[:pubdate] is a TimeWithZone-like thing, not a string
+              new_pubdate = new_attrs.delete 'pubdate'
+              original_pubdate = attributes.delete :pubdate
+              expect(new_attrs.symbolize_keys).to eq attributes
+              expect(new_pubdate.to_json).to eq original_pubdate.to_json
+            end
+          end # describe 'a value for "attributes" of a Hash with'
+        end # describe 'serialises a Hash with'
+      end # context 'with no errors'
+
+      describe 'with errors that' do
+        let(:attributes) do
+          FactoryGirl.attributes_for :post, :image_post, :saved_post,
+                                     :published_post,
+                                     title: '', author_name: nil
+        end
+
+        describe 'serialises a Hash with' do
+          let(:new_obj) { JSON.load obj.to_json }
+
+          it 'two keys, "attributes" and "errors"' do
+            expect(new_obj).to be_a Hash
+            expect(new_obj.keys).to eq %w(attributes errors)
+          end
+
+          describe 'correct error information, including' do
+            let(:error_info) { new_obj['errors'] }
+
+            it 'an array of two Hashes' do
+              expect(error_info).to respond_to :to_ary
+              expect(error_info).to have(2).items
+              error_info.each { |item| expect(item).to respond_to :to_hash }
+            end
+
+            describe 'with the' do
+              it 'first error hash reporting a missing author name' do
+                error = error_info.first
+                expect(error.keys.first).to eq 'author_name'
+                expect(error.values.first).to eq 'must be present'
+              end
+
+              it 'second error hash reporting a blank title' do
+                error = error_info.last
+                expect(error.keys.first).to eq 'title'
+                expect(error.values.first).to eq 'must not be blank'
+              end
+            end # describe 'with the'
+          end
+        end # describe 'serialises a Hash with'
+      end # describe 'with errors that'
+    end # describe 'has a #to_json method that serialises an instance'
   end # describe Post
 end

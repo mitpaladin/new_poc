@@ -1,6 +1,6 @@
 
 require 'newpoc/entity/post'
-# require 'post'
+require 'post'
 
 # Class to create (and setup if needed) instance of DM entity for use cases.
 class PostFactory

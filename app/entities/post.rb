@@ -19,6 +19,17 @@ module Entity
     def_delegator :@attributes, :attributes
     def_delegators :@validators, :errors, :valid?
 
+    # FIXME: Publication-attribute dependent Demeter violation
+    def draft?
+      !@attributes.attributes.pubdate.present?
+    end
+
+    def to_json
+      { attributes: attributes }.tap do |r|
+        r[:errors] = errors unless errors.empty?
+      end.to_json
+    end
+
     private
 
     def define_attribute_readers
