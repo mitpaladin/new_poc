@@ -23,15 +23,19 @@ module Entity
 
     def define_attribute_readers
       attributes.to_hash.each_key do |key|
-        self.class.send :define_method, key do
-          attributes.send key
-        end
+        class_eval { def_delegator :attributes, key }
       end
     end
 
     def init_attributes(attributes_in)
       attrs = AttributeContainer.new attributes_in
-      whitelist = [:author_name, :body, :image_url, :title]
+      whitelist = [
+        # core attributes
+        :author_name, :body, :image_url, :title,
+        # publication attributes
+        :pubdate, :slug,
+        # persistence attributes
+        :created_at, :updated_at]
       @attributes = AttributeContainer.whitelist_from attrs, *whitelist
     end
   end # class Entity::Post
