@@ -30,10 +30,10 @@ shared_examples 'the #add method for a Repository' do
             # for Users
             :markdown_converter, :password, :password_confirmation, :updated_at
           ]
-          result_attribs = result.entity.attributes.reject do |k, _v|
+          result_attribs = result.entity.attributes.to_hash.reject do |k, _v|
             excluded_attribs.include? k
           end
-          entity_attribs = entity.attributes.reject do |k, _v|
+          entity_attribs = entity.attributes.to_hash.reject do |k, _v|
             excluded_attribs.include? k
           end
           expect(result_attribs).to eq entity_attribs

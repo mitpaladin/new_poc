@@ -29,7 +29,7 @@ class TimestampedEntityVerifier
 
       def filter
         @timestamps = {}
-        @filtered_attributes = @attributes.reject do |attrib, value|
+        @filtered_attributes = @attributes.to_hash.reject do |attrib, value|
           @excluded.include?(attrib) || timestamp?(attrib, value)
         end
         self
@@ -112,7 +112,8 @@ class TimestampedEntityVerifier
 
   def check_attrib(source_filter, actual_filter)
     source_filter.filter.filtered_attributes.each do |attrib, value|
-      @failures.add_unless attrib, value, actual_filter.attributes[attrib]
+      actual_attrib = actual_filter.attributes.to_hash[attrib]
+      @failures.add_unless attrib, value, actual_attrib
       yield(attrib) if block_given?
     end
     self
@@ -127,8 +128,8 @@ class TimestampedEntityVerifier
 
   def check_timestamps(source_filter, actual_filter)
     source_filter.timestamps.each_key do |key|
-      ref_value = source_filter.attributes[key]
-      other_value = actual_filter.attributes[key]
+      ref_value = source_filter.attributes.to_hash[key]
+      other_value = actual_filter.attributes.to_hash[key]
       @failures.add_unless key, ref_value, other_value
     end
     self
