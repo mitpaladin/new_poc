@@ -166,7 +166,9 @@ describe PostsController::Action::Create do
           }
         end
 
-        it_behaves_like 'a successful post that'
+        fcontext 'DUMMY ISOLATION CONTEXT' do
+          it_behaves_like 'a successful post that'
+        end
 
         it 'is not a draft post' do
           expect(actual).not_to be_draft
@@ -175,7 +177,7 @@ describe PostsController::Action::Create do
     end # context 'with post status set to'
 
     context 'with insufficient valid post data' do
-      let(:post_data) { { body: 'A Body' } }
+      let(:post_data) { { body: 'A Body All Alone' } }
 
       it 'is unsuccessful' do
         expect(subscriber).not_to be_successful
@@ -185,13 +187,23 @@ describe PostsController::Action::Create do
       describe 'is unsuccessful, broadcasting a payload with' do
         let(:payload) { subscriber.payload_for(:failure).first }
 
+        def entity_attributes(json_string)
+          data = JSON.parse(json_string).deep_symbolize_keys
+          return data[:attributes] if data.key? :attributes
+          data
+        end
+
         it 'the expected errors' do
-          attribs = JSON.parse(payload.message).symbolize_keys
-          entity = PostFactory.create attribs
+          entity = PostFactory.create entity_attributes(payload.message)
           expect(entity).not_to be_valid
           expect(entity).to have(1).error
           message = entity.errors.full_messages.first
-          expect(message).to eq "Title can't be blank"
+          # FIXME: Changes!
+          acceptable = [
+            "Title can't be blank",  # old entity
+            'Title must be present'  # new entity
+          ]
+          expect(acceptable).to include message
         end
       end # describe 'is unsuccessful, broadcasting a payload with'
     end # context 'with insufficient valid post data'

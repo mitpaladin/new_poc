@@ -53,7 +53,8 @@ module Entity
 
         def no_consecutive_whitespace
           stripped = author_name.strip
-          return self if stripped == stripped.squeeze || blank?
+          spaces_ok = stripped == stripped.gsub(/\s+/, ' ')
+          return self if spaces_ok || blank?
           add_error 'must not have consecutive internal whitespace'
         end
 
