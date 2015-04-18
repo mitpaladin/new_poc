@@ -74,6 +74,40 @@ module Entity
       end # context 'a mixture of valid and invalid attribute names as keys'
     end # describe 'when instantiated with'
 
+    describe 'has an #errors method that' do
+      it 'returns an ActiveModel::Errors instance' do
+        expect(described_class.new({}).errors).to be_an ActiveModel::Errors
+      end
+
+      it 'reports that a valid instance has no errors' do
+        obj = described_class.new valid_attributes
+        expect(obj.errors).to be_empty
+        expect(obj).to be_valid
+      end
+
+      describe 'reports that an invalid instance' do
+        let(:attribs) { valid_attributes.merge author_name: nil, title: '' }
+        let(:obj) { described_class.new attribs }
+
+        before :each do
+          obj.valid?
+        end
+
+        it 'has the correct number of errors' do
+          expect(obj.errors).to have(2).messages
+        end
+
+        it 'must have a value for the :author_name attribute' do
+          expected = 'Author name must be present'
+          expect(obj.errors.full_messages).to include expected
+        end
+
+        it 'must have a value for the :title attribute that is not blank' do
+          expect(obj.errors.full_messages).to include 'Title must not be blank'
+        end
+      end # describe 'reports that an invalid instance'
+    end # describe 'has an #errors method that'
+
     describe 'has a #to_json method that serialises an instance' do
       let(:obj) { described_class.new(attributes).tap(&:valid?) }
 

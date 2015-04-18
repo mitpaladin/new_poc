@@ -1,5 +1,6 @@
 
 require_relative 'post/attribute_container'
+require_relative 'post/error_converter'
 require_relative 'post/validator_grouping'
 
 # Namespace containing all application-defined entities.
@@ -9,6 +10,8 @@ module Entity
   # user interface, etc.
   class Post
     extend Forwardable
+    def_delegator :@attributes, :attributes
+    def_delegators :@validators, :valid?
 
     def initialize(attributes_in)
       init_attributes attributes_in
@@ -16,17 +19,18 @@ module Entity
       @validators = ValidatorGrouping.new attributes_in
     end
 
-    def_delegator :@attributes, :attributes
-    def_delegators :@validators, :errors, :valid?
-
     # FIXME: Publication-attribute dependent Demeter violation
     def draft?
-      !@attributes.attributes.pubdate.present?
+      !attributes.pubdate.present?
+    end
+
+    def errors
+      ErrorConverter.new(@validators.errors).errors
     end
 
     def to_json
       { attributes: attributes }.tap do |r|
-        r[:errors] = errors unless errors.empty?
+        r[:errors] = @validators.errors unless @validators.errors.empty?
       end.to_json
     end
 
