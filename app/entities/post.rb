@@ -29,7 +29,7 @@ module Entity
     end
 
     def to_json
-      { attributes: attributes }.tap do |r|
+      attributes.to_hash.deep_symbolize_keys.tap do |r|
         r[:errors] = @validators.errors unless @validators.errors.empty?
       end.to_json
     end

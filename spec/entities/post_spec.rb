@@ -120,26 +120,18 @@ module Entity
         describe 'serialises a Hash with' do
           let(:new_obj) { JSON.load obj.to_json }
 
-          it 'a single key, "attributes"' do
+          it 'keys matching the keys of the original attributes as strings' do
             expect(new_obj).to be_a Hash
-            expect(new_obj.keys).to eq ['attributes']
+            expect(new_obj.keys).to eq attributes.stringify_keys.keys
           end
 
-          describe 'a value for "attributes" of a Hash with' do
-            let(:new_attrs) { new_obj['attributes'] }
-
-            it 'keys matching the keys of the original attributes as strings' do
-              expect(new_attrs.keys).to eq attributes.stringify_keys.keys
-            end
-
-            it 'values matching string values of the original attributes' do
-              # attributes[:pubdate] is a TimeWithZone-like thing, not a string
-              new_pubdate = new_attrs.delete 'pubdate'
-              original_pubdate = attributes.delete :pubdate
-              expect(new_attrs.symbolize_keys).to eq attributes
-              expect(new_pubdate.to_json).to eq original_pubdate.to_json
-            end
-          end # describe 'a value for "attributes" of a Hash with'
+          it 'values matching string values of the original attributes' do
+            # attributes[:pubdate] is a TimeWithZone-like thing, not a string
+            new_pubdate = new_obj.delete 'pubdate'
+            original_pubdate = attributes.delete :pubdate
+            expect(new_obj.symbolize_keys).to eq attributes
+            expect(new_pubdate.to_json).to eq original_pubdate.to_json
+          end
         end # describe 'serialises a Hash with'
       end # context 'with no errors'
 
@@ -153,9 +145,10 @@ module Entity
         describe 'serialises a Hash with' do
           let(:new_obj) { JSON.load obj.to_json }
 
-          it 'two keys, "attributes" and "errors"' do
+          it 'keys for the original attributes, plus "errors"' do
             expect(new_obj).to be_a Hash
-            expect(new_obj.keys).to eq %w(attributes errors)
+            expected_keys = %w(errors) + attributes.stringify_keys.keys
+            expect(new_obj.keys.sort).to eq expected_keys.sort
           end
 
           describe 'correct error information, including' do

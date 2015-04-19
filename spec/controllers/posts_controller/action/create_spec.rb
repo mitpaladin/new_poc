@@ -166,9 +166,7 @@ describe PostsController::Action::Create do
           }
         end
 
-        fcontext 'DUMMY ISOLATION CONTEXT' do
-          it_behaves_like 'a successful post that'
-        end
+        it_behaves_like 'a successful post that'
 
         it 'is not a draft post' do
           expect(actual).not_to be_draft
