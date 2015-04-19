@@ -71,7 +71,7 @@ class PostsController < ApplicationController
       end
 
       def validate_updated_attributes
-        attribs = entity.attributes.merge post_data_for_update
+        attribs = entity.attributes.to_hash.merge post_data_for_update
         new_entity = entity.class.new attribs
         fail YAML.dump(attribs) unless new_entity.valid?
         @entity = new_entity

@@ -10,7 +10,8 @@ shared_examples 'it is invalid without a valid body' do
 
   it 'reports that the body may not be empty if no image URL' do
     expected = {
-      image_url: 'may not be empty if body is missing or empty'
+      # image_url: 'may not be empty if body is missing or empty'
+      image_url: 'must be specified if body is omitted'
     }
     expect(obj.errors.first).to eq expected
   end

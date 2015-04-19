@@ -191,10 +191,10 @@ describe PostsController do
           expect(post).to be_persisted
           dao = PostDao.find_by_slug post.slug
           [:body, :image_url, :slug, :title].each do |attrib|
-            expect(post.attributes[attrib]).to eq dao[attrib]
+            expect(post.attributes.to_hash[attrib]).to eq dao[attrib]
           end
           [:created_at, :updated_at].each do |attrib|
-            expect(post.attributes[attrib]).to be_within(0.5.seconds)
+            expect(post.attributes.to_hash[attrib]).to be_within(0.5.seconds)
               .of dao[attrib]
           end
         end
@@ -276,9 +276,10 @@ describe PostsController do
       it 'assigns the :post variable' do
         assigned = assigns[:post]
         [:body, :image_url, :slug, :title].each do |attrib|
-          expect(assigned.attributes[attrib]).to eq post[attrib]
+          expect(assigned.attributes.to_hash[attrib]).to eq post[attrib]
         end
-        expect(assigned[:pubdate]).to be_within(0.5.seconds).of post[:pubdate]
+        actual_pubdate = assigned.attributes.to_hash[:pubdate]
+        expect(actual_pubdate).to be_within(0.5.seconds).of post[:pubdate]
       end
     end # context 'when the logged-in user is the post author'
   end # describe "GET 'edit'" (StoreResult removed)
@@ -410,11 +411,12 @@ describe PostsController do
             expect(actual.body).to eq post_data[:body]
             comparison_keys = [:author_name, :imaage_url, :slug, :title]
             comparison_keys.each do |attrib_key|
-              expect(actual.attributes[attrib_key]).to eq post[attrib_key.to_s]
+              expected = post[attrib_key.to_s]
+              expect(actual.attributes.to_hash[attrib_key]).to eq expected
             end
             comparison_keys = [:pubdate, :created_at]
             comparison_keys.each do |attrib_key|
-              expect(actual.attributes[attrib_key])
+              expect(actual.attributes.to_hash[attrib_key])
                 .to be_within(0.5.seconds).of post[attrib_key]
             end
           end
@@ -435,7 +437,10 @@ describe PostsController do
           end
 
           it 'has the correct flash message' do
+            # FIXME: Old message
             expected = 'Body must be specified if image URL is omitted'
+            # proposed new message
+            # expected 'Body may not be empty if image URL is missing or empty'
             expect(flash[:alert]).to eq expected
           end
         end # context 'with invalid post data'

@@ -27,3 +27,5 @@ class PostFactory
     end
   end
 end
+
+# puts "ENTITY CLASS IS #{PostFactory.entity_class.name}".purple

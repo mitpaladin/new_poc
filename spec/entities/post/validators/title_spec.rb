@@ -34,7 +34,7 @@ module Entity
         end
 
         it 'reports that the title must be present' do
-          expected = { title: 'must be present' }
+          expected = { title: "can't be blank" }
           expect(obj.errors.first).to eq expected
         end
       end # context 'is missing, it'

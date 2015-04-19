@@ -177,5 +177,41 @@ module Entity
         end # describe 'serialises a Hash with'
       end # describe 'with errors that'
     end # describe 'has a #to_json method that serialises an instance'
+
+    describe 'has a #published? method that, when called on an entity that' do
+      context 'has a :pubdate attribute value that' do
+        let(:attributes) { valid_attributes.merge pubdate: Time.zone.now }
+
+        it 'returns true' do
+          expect(described_class.new(attributes)).to be_published
+        end
+      end # context 'has a :pubdate attribute value that'
+
+      context 'does not have a :pubdate attribute value that' do
+        it 'returns false' do
+          expect(described_class.new(valid_attributes)).not_to be_published
+        end
+      end # context 'does not have a :pubdate attribute value that'
+    end # describe 'has a #published? method ... when called on an entity that'
+
+    describe 'has a #persisted? method that, when called on an entity that' do
+      context 'has a :slug attribute value that' do
+        let(:attributes) do
+          valid_attributes.merge slug: valid_title.parameterize
+        end
+
+        it 'returns true' do
+          expect(described_class.new(attributes)).to be_persisted
+        end
+      end # context 'has a :slug attribute value that'
+
+      context 'does not have a :slug attribute value that' do
+        let(:attributes) { valid_attributes }
+
+        it 'returns false' do
+          expect(described_class.new(attributes)).not_to be_persisted
+        end
+      end # context 'does not have a :slug attribute value that'
+    end # describe '... #persisted? method that, when called on an entity that'
   end # describe Post
 end

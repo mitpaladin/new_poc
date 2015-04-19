@@ -45,7 +45,7 @@ module Entity
             no_leading: 'must not have leading whitespace',
             no_trailing: 'must not have trailing whitespace',
             not_blank: 'must not be blank',
-            present: 'must be present'
+            present: "can't be blank"
           }[id_sym]
         end
 

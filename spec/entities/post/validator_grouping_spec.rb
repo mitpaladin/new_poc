@@ -72,8 +72,8 @@ module Entity
 
           it 'reports that either the body or image URL must be present' do
             expected = [
-              { body: 'may not be empty if image URL is missing or empty' },
-              { image_url: 'may not be empty if body is missing or empty' }
+              { body: 'must be specified if image URL is omitted' },
+              { image_url: 'must be specified if body is omitted' }
             ]
             expect(obj.errors).to eq expected
           end

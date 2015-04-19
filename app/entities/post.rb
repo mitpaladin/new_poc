@@ -21,7 +21,16 @@ module Entity
 
     # FIXME: Publication-attribute dependent Demeter violation
     def draft?
-      !attributes.pubdate.present?
+      !attributes.to_hash[:pubdate].present?
+    end
+
+    def published?
+      !draft?
+    end
+
+    # FIXME: Persistence-attribute dependent Demeter violation
+    def persisted?
+      attributes.to_hash[:slug].present?
     end
 
     def errors
@@ -48,9 +57,9 @@ module Entity
         # core attributes
         :author_name, :body, :image_url, :title,
         # publication attributes
-        :pubdate, :slug,
+        :pubdate,
         # persistence attributes
-        :created_at, :updated_at]
+        :created_at, :slug, :updated_at]
       @attributes = AttributeContainer.whitelist_from attrs, *whitelist
     end
   end # class Entity::Post

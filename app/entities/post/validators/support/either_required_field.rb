@@ -43,7 +43,10 @@ module Entity
           end
 
           def error_entry
-            message = "may not be empty if #{other_name} is missing or empty"
+            # FIXME: old message
+            message = "must be specified if #{other_name} is omitted"
+            # proposed new message
+            # message = "may not be empty if #{other_name} is missing or empty"
             {}.tap do |ret|
               ret[primary] = message
             end

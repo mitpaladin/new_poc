@@ -8,32 +8,35 @@ class PostsController < ApplicationController
       attr_reader :entity
 
       def initialize(payload)
-        @payload = payload
-        @entity_class = PostFactory.entity_class
+        @payload_data = YAML.load(payload.message).symbolize_keys
       end
 
       def cleanup
+        rebuild_entity
         fail_if_no_model_included
-        @entity = rebuild_entity
-        self
       end
 
       private
 
-      attr_reader :entity_class, :payload
+      attr_reader :payload_data
 
       def fail_if_no_model_included
-        fail payload_data[:messages].first unless payload_data.key? :slug
+        return self unless no_model_included? # if it's a message only
+        @entity = nil
+        fail payload_data[:messages].first
       end
 
-      def payload_data
-        @payload_data ||= YAML.load(payload.message).symbolize_keys
+      def no_model_included?
+        attrs = entity.attributes.to_hash
+        keys = attrs.keys.reject do |k|
+          [:validation_context, :errors].include? k
+        end
+        keys.map { |k| attrs[k] }.reject(&:nil?).empty?
       end
 
       def rebuild_entity
-        entity = entity_class.new payload_data
-        entity.valid?
-        entity
+        @entity = PostFactory.create(payload_data).tap(&:valid?)
+        self
       end
     end # class PostsController::Internals::CreateFailureSetup
   end
