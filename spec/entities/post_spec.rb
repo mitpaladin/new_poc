@@ -213,5 +213,34 @@ module Entity
         end
       end # context 'does not have a :slug attribute value that'
     end # describe '... #persisted? method that, when called on an entity that'
+
+    describe 'has a #pubdate_str method that, when called on an entity that' do
+      let(:attributes) { valid_attributes.merge other_attributes }
+      let(:obj) { described_class.new attributes }
+      let(:actual) { obj.pubdate_str }
+
+      before :each do
+        Time.zone = 'Asia/Singapore' if Time.zone.utc_offset.zero?
+      end
+
+      context 'has a :pubdate attribute value, returns' do
+        let(:other_attributes) do
+          { slug: valid_title.parameterize, pubdate: pubdate }
+        end
+        let(:pubdate) { Time.zone.parse '14 March 2015 09:26' }
+
+        it 'the formatted publication date' do
+          expect(actual).to eq 'Sat Mar 14 2015 at 09:26 SGT (+0800)'
+        end
+      end # context 'has a :pubdate attribute value, returns'
+
+      context 'has no :pubdate attribute value, returns' do
+        let(:other_attributes) { {} }
+
+        it 'the string "DRAFT"' do
+          expect(actual).to eq 'DRAFT'
+        end
+      end # context 'has no :pubdate attribute value, returns'
+    end # describe '... #pubdate_str method that, when called on an entity that'
   end # describe Post
 end

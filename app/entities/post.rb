@@ -19,13 +19,19 @@ module Entity
       @validators = ValidatorGrouping.new attributes_in
     end
 
-    # FIXME: Publication-attribute dependent Demeter violation
+    # FIXME: Publication-attribute dependent Demeter violations
     def draft?
       !attributes.to_hash[:pubdate].present?
     end
 
     def published?
       !draft?
+    end
+
+    def pubdate_str
+      return 'DRAFT' if draft?
+      extend TimestampBuilder
+      timestamp_for pubdate
     end
 
     # FIXME: Persistence-attribute dependent Demeter violation
