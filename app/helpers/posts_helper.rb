@@ -61,9 +61,19 @@ module PostsHelper
 
   def sorter_hack
     lambda do |data|
-      drafts = data.select(&:draft?).sort_by(&:updated_at)
-      posts = data.select(&:published?).sort_by(&:pubdate)
+      drafts = data.select(&:draft?).sort_by do |post|
+        sort_by_timestamp post, :updated_at, :created_at
+      end
+      posts = data.select(&:published?).sort_by do |post|
+        sort_by_timestamp post, :pubdate
+      end
       [posts, drafts].flatten
     end
+  end
+
+  def sort_by_timestamp(post, *fields)
+    selectors = post.attributes.to_hash.select { |k, _v| fields.include? k }
+    return Time.zone.now if selectors.empty?
+    selectors.first
   end
 end

@@ -1,53 +1,8 @@
 
 require 'spec_helper'
 
-shared_examples 'a form-attributes helper' do |form_name|
-  describe ":#{form_name}_form_attributes" do
-    it 'returns a Hash' do
-      expect(subject).to be_a Hash
-    end
-
-    describe 'has top-level keys for' do
-      [:html, :role, :url].each do |key|
-        it ":#{key}" do
-          expect(subject).to have_key key
-        end
-      end
-    end # describe 'has top-level keys for'
-
-    describe 'has an :html sub-hash that contains the correct values for' do
-      it 'the :id key' do
-        expect(subject[:html][:id]).to eq form_name
-      end
-
-      it 'the :class key' do
-        classes = subject[:html][:class].split(/\s+/)
-        expect(classes).to include 'form-horizontal'
-        expect(classes).to include form_name
-      end
-    end # describe 'has an :html sub-hash that contains the correct values for'
-
-    it 'has a :role item with the value "form" as an ARIA instruction' do
-      expect(subject[:role]).to eq 'form'
-    end
-  end # describe ":#{form_name}_form_attributes"
-end
-
-shared_examples 'a status-selection control' do
-  it 'returns two HTML <option> tags' do
-    expect(options.count).to eq 2
-  end
-
-  describe 'returns <option> tags for' do
-    %w(draft public).each do |status|
-      it status do
-        regex = Regexp.new "value=\"#{status}\""
-        match = options.select { |s| s.match regex }
-        expect(match).not_to be nil
-      end
-    end
-  end # describe 'returns <option> tags for'
-end
+require_relative 'posts_helper/form_attributes_helper'
+require_relative 'posts_helper/status_selection_control'
 
 def new_bhs_build_example_posts(entry_count)
   [].tap do |ret|
@@ -68,7 +23,7 @@ def new_build_and_publish_posts(count = 10)
   repo = PostRepository.new
   ret = []
   new_bhs_build_example_posts(count).each_with_index do |post, index|
-    attributes = post.attributes.merge pubdate: ages[index]
+    attributes = post.attributes.to_hash.merge pubdate: ages[index]
     published_post = post.class.new attributes
     result = repo.add published_post
     ret.push result.entity
@@ -160,7 +115,7 @@ describe PostsHelper do
     end # describe 'returns a list of a valid length specified by a parameter'
 
     description = 'includes both published and authored draft entries such' \
-        ' that it'
+        ' that it has the'
     describe description do
       let(:total_entry_count) { 10 }
       let(:published_post_count) { 8 }
@@ -177,26 +132,26 @@ describe PostsHelper do
         allow(helper).to receive(:current_user).and_return user
       end
 
-      it 'has the correct total number of entries' do
+      it 'correct total number of entries' do
         expect(entries.count).to eq total_entry_count
       end
 
-      it 'has the correct number of draft entries' do
+      it 'correct number of draft entries' do
         drafts = entries.reject(&:published?)
         expect(drafts).to have(draft_post_count).entries
       end
 
-      it 'has the draft entries at the start of the summary' do
+      it 'draft entries at the start of the summary' do
         drafts = entries.take draft_post_count
         drafts.each { |post| expect(post).not_to be_published }
       end
 
-      it 'has the correct number of published entries' do
+      it 'correct number of published entries' do
         posts = entries.select(&:published?)
         expect(posts).to have(published_post_count).entries
       end
 
-      it 'has the published entries at the end of the summary' do
+      it 'published entries at the end of the summary' do
         posts = entries.drop draft_post_count
         posts.each { |post| expect(post).to be_published }
       end
