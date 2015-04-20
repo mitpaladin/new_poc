@@ -182,19 +182,20 @@ describe PostsController do
           post :create, post_data: params
         end
 
-        it 'assigns the :post item as a Post-entity instance' do
-          expect(assigns[:post]).to be_a PostFactory.entity_class
+        it 'assigns the :post item as a Post DAO instance' do
+          expect(assigns[:post]).to be_a PostDao
         end
 
         it 'persists the PostDao instance corresponding to the :post' do
           post = assigns[:post]
           expect(post).to be_persisted
+          post_attribs = post.attributes.to_hash.symbolize_keys
           dao = PostDao.find_by_slug post.slug
           [:body, :image_url, :slug, :title].each do |attrib|
-            expect(post.attributes.to_hash[attrib]).to eq dao[attrib]
+            expect(post_attribs[attrib]).to eq dao[attrib]
           end
           [:created_at, :updated_at].each do |attrib|
-            expect(post.attributes.to_hash[attrib]).to be_within(0.5.seconds)
+            expect(post_attribs[attrib]).to be_within(0.5.seconds)
               .of dao[attrib]
           end
         end

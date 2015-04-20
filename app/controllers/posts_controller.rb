@@ -9,6 +9,8 @@ require_relative 'posts_controller/action/new'
 require_relative 'posts_controller/action/show'
 require_relative 'posts_controller/action/update'
 
+require_relative 'posts_controller/responder/create_success'
+
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
   # Internal classes exclusively used by PostsController.
@@ -63,8 +65,9 @@ class PostsController < ApplicationController
   # called directly.)
 
   def on_create_success(entity)
-    @post = entity
-    redirect_to root_path, flash: { success: 'Post added!' }
+    Responder::CreateSuccess.new(self).respond_to entity
+    # @post = entity
+    # redirect_to root_path, flash: { success: 'Post added!' }
   end
 
   def on_create_failure(payload)
