@@ -13,7 +13,6 @@ describe 'User can view article from landing page' do
   end
 
   it 'by clicking on the article title' do
-    binding.pry
     click_link @post_title
     expect(page).to have_css 'dl > dd', @user_name
   end

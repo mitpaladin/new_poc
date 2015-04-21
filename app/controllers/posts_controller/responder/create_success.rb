@@ -23,7 +23,7 @@ class PostsController < ApplicationController
       end
 
       def respond_to(payload)
-        set_dao_ivar(payload)
+        assign_dao_ivar(payload)
         redirect_to_root
       end
 
@@ -32,7 +32,8 @@ class PostsController < ApplicationController
       attr_reader :post_setter, :redirect_to, :root_path
 
       def dao_from_entity(entity)
-        PostDao.new(entity.attributes.to_hash).tap { |dao| dao.save }
+        # PostDao.new(entity.attributes.to_hash).tap { |dao| dao.save }
+        PostDao.new(entity.attributes.to_hash) # .tap { |dao| dao.save }
       end
 
       def flash_options
@@ -43,7 +44,7 @@ class PostsController < ApplicationController
         redirect_to.call root_path.call, flash_options
       end
 
-      def set_dao_ivar(entity)
+      def assign_dao_ivar(entity)
         post_setter.call dao_from_entity(entity)
         self
       end

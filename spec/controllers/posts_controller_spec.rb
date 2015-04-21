@@ -186,9 +186,9 @@ describe PostsController do
           expect(assigns[:post]).to be_a PostDao
         end
 
-        it 'persists the PostDao instance corresponding to the :post' do
+        it 'does not persist the PostDao instance corresponding to the :post' do
           post = assigns[:post]
-          expect(post).to be_persisted
+          expect(post).not_to be_persisted
           post_attribs = post.attributes.to_hash.symbolize_keys
           dao = PostDao.find_by_slug post.slug
           [:body, :image_url, :slug, :title].each do |attrib|

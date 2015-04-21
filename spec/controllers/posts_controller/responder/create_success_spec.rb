@@ -77,10 +77,10 @@ describe PostsController::Responder::CreateSuccess do
       end
 
       describe 'assigns the :@post ivar on the controller such that' do
-        it 'is a valid, persisted PostDao' do
+        it 'is a valid, unpersisted PostDao' do
           expect(dao).to be_a PostDao
           expect(dao).to be_valid
-          expect(dao).to be_persisted
+          expect(dao).not_to be_persisted
         end
 
         description = 'the DAO fields reflect the non-persistence-timestamp' \
@@ -104,9 +104,9 @@ describe PostsController::Responder::CreateSuccess do
           expect(fake_controller).to have(1).redirect
           path, options = fake_controller.redirects.first
           expect(path).to eq fake_controller.root_path_literal
-          expect(options).to eq( flash: { success: 'Post added!' } )
+          expect(options).to eq(flash: { success: 'Post added!' })
         end
       end # describe 'calls the #redirect_to method on the controller'
     end # context 'when passed a valid entity, it'
   end # describe 'has a #respond_to method that'
-end # describe PostsController::Responder::CreateSuccess 
+end # describe PostsController::Responder::CreateSuccess
