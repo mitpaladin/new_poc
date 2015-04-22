@@ -277,9 +277,10 @@ describe PostsController do
       it 'assigns the :post variable' do
         assigned = assigns[:post]
         [:body, :image_url, :slug, :title].each do |attrib|
-          expect(assigned.attributes.to_hash[attrib]).to eq post[attrib]
+          actual = assigned.attributes.to_hash.symbolize_keys[attrib]
+          expect(actual).to eq post[attrib]
         end
-        actual_pubdate = assigned.attributes.to_hash[:pubdate]
+        actual_pubdate = assigned.attributes.to_hash.symbolize_keys[:pubdate]
         expect(actual_pubdate).to be_within(0.5.seconds).of post[:pubdate]
       end
     end # context 'when the logged-in user is the post author'

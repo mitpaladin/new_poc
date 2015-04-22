@@ -14,21 +14,14 @@ class PostsController < ApplicationController
       end
 
       def respond_to(payload)
-        assign_dao_ivar(payload)
+        repo = PostRepository.new
+        repo.update identifier: payload.slug, updated_attrs: payload.attributes
+        post_setter.call repo.dao.find(payload.slug)
       end
 
       private
 
       attr_reader :post_setter
-
-      def dao_from_entity(entity)
-        PostDao.new(entity.attributes.to_hash)
-      end
-
-      def assign_dao_ivar(entity)
-        post_setter.call dao_from_entity(entity)
-        self
-      end
     end # class PostsController::Responder::EditSuccess
   end
 end # class PostsController

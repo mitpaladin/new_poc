@@ -66,8 +66,6 @@ class PostsController < ApplicationController
 
   def on_create_success(entity)
     Responder::CreateSuccess.new(self).respond_to entity
-    # @post = entity
-    # redirect_to root_path, flash: { success: 'Post added!' }
   end
 
   def on_create_failure(payload)
@@ -78,7 +76,7 @@ class PostsController < ApplicationController
   end
 
   def on_edit_success(payload)
-    @post = payload
+    Responder::EditSuccess.new(self).respond_to payload
   end
 
   def on_edit_failure(payload)

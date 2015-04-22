@@ -42,9 +42,11 @@ describe PostsController::Responder::EditSuccess do
 
     context 'when passed a valid entity, it' do
       let(:entity) do
-        attribs = FactoryGirl.attributes_for :post, :image_post, :saved_post,
-                                             :published_post
-        PostFactory.create attribs
+        # Yes, this needs a real, honest-to-`$DEITY` database record -- at least
+        # until `Repository::Base` gets some sort of test-mode stunt double.
+        dao = FactoryGirl.create :post, :image_post, :saved_post,
+                                 :published_post
+        PostFactory.create dao.attributes.symbolize_keys
       end
       let(:ivar_pair) { fake_controller.ivars_set.first }
       let(:dao) { ivar_pair[1] }
@@ -55,10 +57,10 @@ describe PostsController::Responder::EditSuccess do
       end
 
       describe 'assigns the :@post ivar on the controller such that' do
-        it 'is a valid, unpersisted PostDao' do
+        it 'is a valid, persisted PostDao' do
           expect(dao).to be_a PostDao
           expect(dao).to be_valid
-          expect(dao).not_to be_persisted
+          expect(dao).to be_persisted
         end
 
         description = 'the DAO fields reflect the non-persistence-timestamp' \
