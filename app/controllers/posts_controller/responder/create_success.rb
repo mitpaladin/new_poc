@@ -32,8 +32,7 @@ class PostsController < ApplicationController
       attr_reader :post_setter, :redirect_to, :root_path
 
       def dao_from_entity(entity)
-        # PostDao.new(entity.attributes.to_hash).tap { |dao| dao.save }
-        PostDao.new(entity.attributes.to_hash) # .tap { |dao| dao.save }
+        PostDao.new(entity.attributes.to_hash)
       end
 
       def flash_options
