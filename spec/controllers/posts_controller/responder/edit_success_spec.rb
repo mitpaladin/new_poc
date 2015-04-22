@@ -67,11 +67,12 @@ describe PostsController::Responder::EditSuccess do
           ' attribute fields in the entity'
         it description do
           entity_fields = entity.attributes.to_hash.reject do |k, _v|
-            [:created_at, :updated_at].include? k
+            [:created_at, :pubdate, :updated_at].include? k
           end
           entity_fields.each_pair do |attrib, value|
             expect(dao[attrib]).to eq value
           end
+          expect(dao[:pubdate]).to be_within(3.seconds).of entity.pubdate
         end
       end # describe 'assigns the :@post ivar on the controller such that'
     end # context 'when passed a valid entity, it'
