@@ -16,9 +16,8 @@ class PostsController < ApplicationController
       end
 
       def respond_to(entities)
-        repo = PostRepository.new
         daos = []
-        entities.each { |entity| daos.push repo.dao.find(entity.slug) }
+        entities.each { |entity| daos.push dao_for(entity) }
         posts_setter.call daos
         self
       end
@@ -26,6 +25,16 @@ class PostsController < ApplicationController
       private
 
       attr_reader :posts_setter
+
+      def dao_for(entity)
+        repo.dao.find(entity.slug).tap do |dao|
+          dao.extend PostDao::Presentation
+        end
+      end
+
+      def repo
+        @repo ||= PostRepository.new
+      end
     end # class PostsController::Responder::IndexSuccess
   end
 end # class PostsController

@@ -85,11 +85,7 @@ class PostsController < ApplicationController
   end
 
   def on_index_success(payload)
-    ret = Responder::IndexSuccess.new(self).respond_to payload
-    # FIXME: WhyTF doesn't PostDaoHelper automatically get loaded by Rails?
-    posts, @posts = @posts, []
-    posts.each { |p| @posts.push p.extend(PostDaoHelper) }
-    ret
+    Responder::IndexSuccess.new(self).respond_to payload
   end
 
   def on_new_success(payload)

@@ -40,7 +40,7 @@ describe PostsController::Responder::IndexSuccess do
       obj.respond_to entities
     end
 
-    describe 'assigns to the controller @post instance variable' do
+    describe 'assigns to the controller @posts instance variable' do
       let(:entities) do
         # Yes, this needs real, honest-to-`$DEITY` database records -- at least
         # until we get around to using a Repository DAO that stubs/mocks DB
@@ -82,6 +82,12 @@ describe PostsController::Responder::IndexSuccess do
             end
             expect(dao[:pubdate]).to be_within(3.seconds).of entity.pubdate
           end # entities.each_with_index
+        end
+
+        it 'each post being extended with the presentation module' do
+          [:build_body, :build_byline].each do |method_sym|
+            daos.each { |dao| expect(dao).to respond_to method_sym }
+          end
         end
       end # describe 'as expected, including'
     end # describe 'assigns to the controller @post instance variable'
