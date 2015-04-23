@@ -13,7 +13,7 @@ describe PostsController::Responder::EditSuccess do
         end.new
       end
 
-      it 'implements the three required controller methods' do
+      it 'implements the required controller method' do
         expect { described_class.new param }.not_to raise_error
       end
     end # context 'succeeds when passed a parameter that'
@@ -43,7 +43,8 @@ describe PostsController::Responder::EditSuccess do
     context 'when passed a valid entity, it' do
       let(:entity) do
         # Yes, this needs a real, honest-to-`$DEITY` database record -- at least
-        # until `Repository::Base` gets some sort of test-mode stunt double.
+        # until we get around to using a Repository DAO that stubs/mocks DB
+        # access.
         dao = FactoryGirl.create :post, :image_post, :saved_post,
                                  :published_post
         PostFactory.create dao.attributes.symbolize_keys
