@@ -31,6 +31,10 @@ class PostDao < ActiveRecord::Base
     self.pubdate = pubdate_for_status(new_status)
   end
 
+  def published?
+    !draft?
+  end
+
   private
 
   def pubdate_for_status(new_status)

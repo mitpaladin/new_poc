@@ -106,4 +106,18 @@ describe PostDao do
       end
     end # context 'for a published post'
   end # describe 'has a method #draft? that' do
+
+  describe 'has a method #published? that' do
+    context 'for a draft post' do
+      it 'returns false' do
+        expect(draft_post).not_to be_published
+      end
+    end # context 'for a draft post'
+
+    context 'for a published post' do
+      it 'returns true' do
+        expect(published_post).to be_published
+      end
+    end # context 'for a published post'
+  end # describe 'has a method #published? that'
 end # describe PostDao
