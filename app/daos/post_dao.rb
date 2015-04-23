@@ -17,34 +17,4 @@ class PostDao < ActiveRecord::Base
       [:title, :author_name]
     ]
   end
-
-  def draft?
-    pubdate.nil?
-  end
-
-  def post_status
-    pubdate ? 'public' : 'draft'
-  end
-
-  def post_status=(new_status)
-    return unless new_status
-    self.pubdate = pubdate_for_status(new_status)
-  end
-
-  def published?
-    !draft?
-  end
-
-  private
-
-  def pubdate_for_status(new_status)
-    case new_status
-    when 'public'
-      Time.zone.now
-    when 'draft'
-      nil
-    else
-      pubdate
-    end
-  end
 end # class PostDao

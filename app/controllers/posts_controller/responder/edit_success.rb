@@ -10,7 +10,10 @@ class PostsController < ApplicationController
     # variable on the passed-in controller, and redirects.
     class EditSuccess
       def initialize(controller)
-        @post_setter = -> (dao) { controller.instance_variable_set :@post, dao }
+        @post_setter = lambda do |dao|
+          dao.extend PostDao::Presentation
+          controller.instance_variable_set :@post, dao
+        end
       end
 
       def respond_to(payload)

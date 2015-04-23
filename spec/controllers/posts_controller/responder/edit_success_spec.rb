@@ -75,6 +75,12 @@ describe PostsController::Responder::EditSuccess do
           end
           expect(dao[:pubdate]).to be_within(3.seconds).of entity.pubdate
         end
+
+        it 'the DAO instance is extended with the presentation module' do
+          [:draft?, :published?].each do |method_sym|
+            expect(dao).to respond_to method_sym
+          end
+        end
       end # describe 'assigns the :@post ivar on the controller such that'
     end # context 'when passed a valid entity, it'
   end # describe 'has a #respond_to method that'
