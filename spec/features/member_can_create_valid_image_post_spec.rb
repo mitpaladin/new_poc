@@ -27,7 +27,7 @@ describe 'Member can create a valid image post and see' do
       expect(page).to have_selector 'article > figure > figcaption', @post_body
     end
 
-    xit 'the post image, inside a link to it' do
+    it 'the post image, inside a link to it' do
       selector = format 'article > figure > p > a > img[src="%s"]', @image_url
       expect(page).to have_selector selector
     end
