@@ -133,9 +133,9 @@ describe PostsController do
         expect(response).to be_success
       end
 
-      it 'assigns a new Post-entity instance to :post' do
+      it 'assigns a new Post DAO instance to :post' do
         post = assigns[:post]
-        expect(post).to be_a PostFactory.entity_class
+        expect(post).to be_a PostRepository.new.dao
         expect(post).not_to be_persisted
       end
 

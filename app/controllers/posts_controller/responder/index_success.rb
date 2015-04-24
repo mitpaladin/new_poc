@@ -6,8 +6,9 @@ class PostsController < ApplicationController
   # A Responder responds to the reported result of an application action in an
   # implementation-appropriate manner.
   module Responder
-    # Takes an entity as input, assigns a (new) DAO instance to an instance
-    # variable on the passed-in controller, and redirects.
+    # Takes an enumeration of entities as input, creates an Array of DAO
+    # instances and assigns that to an instance variable on the passed-in
+    # controller, and returns.
     class IndexSuccess
       def initialize(controller)
         @posts_setter = lambda do |daos|
