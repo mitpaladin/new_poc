@@ -22,8 +22,8 @@ class PostFactory
     end
 
     def entity_class
-      Newpoc::Entity::Post
-      # Entity::Post
+      # Newpoc::Entity::Post
+      Entity::Post
     end
   end
 end

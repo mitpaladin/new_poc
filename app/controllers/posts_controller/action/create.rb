@@ -52,7 +52,9 @@ class PostsController < ApplicationController
       end
 
       def new_entity_attributes
-        { author_name: current_user.name }.merge post_data.to_h
+        ret = { author_name: current_user.name }.merge post_data.to_h
+        ret[:pubdate] = Time.zone.now if post_data.post_status == 'public'
+        ret
       end
 
       def prohibit_guest_access

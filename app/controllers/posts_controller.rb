@@ -69,7 +69,12 @@ class PostsController < ApplicationController
   end
 
   def on_create_failure(payload)
-    @post = CreateFailureSetup.new(payload).cleanup.entity
+    entity = CreateFailureSetup.new(payload).cleanup.entity
+    @post = PostRepository.new.dao.new(entity.attributes.to_hash).tap do |post|
+      post.extend PostDao::Presentation
+    end
+    @post.valid?
+
     render 'new'
   rescue RuntimeError => e # not logged in as a registered user
     redirect_to root_path, flash: { alert: e.message }
@@ -111,7 +116,6 @@ class PostsController < ApplicationController
   end
 
   def on_update_failure(payload)
-    alert = ErrorMessageBuilder.new(payload).to_s
-    redirect_to root_path, flash: { alert: alert }
+    Responder::UpdateFailure.new(self).respond_to payload
   end
 end # class PostsController

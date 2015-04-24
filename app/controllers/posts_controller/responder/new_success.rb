@@ -17,7 +17,8 @@ class PostsController < ApplicationController
       end
 
       def respond_to(entity)
-        post_setter.call dao_for(entity)
+        dao = dao_for entity
+        post_setter.call dao
         self
       end
 
@@ -26,7 +27,7 @@ class PostsController < ApplicationController
       attr_reader :post_setter
 
       def dao_for(entity)
-        repo.dao.new(entity.attributes).tap do |dao|
+        repo.dao.new(entity.attributes.to_hash).tap do |dao|
           dao.extend PostDao::Presentation
         end
       end
