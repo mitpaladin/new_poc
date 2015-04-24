@@ -26,6 +26,7 @@ describe PostsController::Responder::UpdateSuccess do
   end # describe 'initialisation'
 
   describe 'has a #respond_to method that' do
+    let(:time_window) { 0.5.seconds }
     let(:fake_controller) do
       Class.new do
         attr_reader :ivars_set, :redirects, :post_path_calls
@@ -82,14 +83,20 @@ describe PostsController::Responder::UpdateSuccess do
           expect(dao).to be_valid
         end
 
-        description = 'the DAO fields reflect the non-persistence-timestamp' \
+        description = 'the DAO fields reflect the non-timestamp' \
           ' attribute fields in the entity'
         it description do
           entity_fields = entity.attributes.to_hash.reject do |k, _v|
-            [:created_at, :updated_at].include? k
+            [:created_at, :updated_at, :pubdate].include? k
           end
           entity_fields.each_pair do |attrib, value|
             expect(dao[attrib]).to eq value
+          end
+        end
+
+        it 'the non-updated DAO field timestamps match those in the entity' do
+          [:pubdate, :created_at, :updated_at].each do |t|
+            expect(dao.send t).to be_within(time_window).of entity.send t
           end
         end
       end # describe 'assigns the :@post ivar on the controller such that'
