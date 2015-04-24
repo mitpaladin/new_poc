@@ -17,6 +17,8 @@ class PostDao < ActiveRecord::Base
   # bringing in a new Gem dependency to add to the floating crapshoot that is
   # `Gemfile.lock`.
   module Presentation
+    include TimestampBuilder
+
     def build_body
       Decorations::Posts::HtmlBodyBuilder.new.build self
     end
@@ -36,6 +38,11 @@ class PostDao < ActiveRecord::Base
     def post_status=(new_status)
       return unless new_status
       self.pubdate = pubdate_for_status(new_status)
+    end
+
+    def pubdate_str
+      return 'DRAFT' if draft?
+      timestamp_for pubdate
     end
 
     def published?

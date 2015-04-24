@@ -303,9 +303,10 @@ describe PostsController do
         expect(response).to be_ok
       end
 
-      it 'assigns an object to Post' do
-        expect(assigns[:post]).to be_a PostFactory.entity_class
-        expect(assigns[:post].title).to eq article.title
+      it 'assigns an existing Post DAO instance to :post' do
+        post = assigns[:post]
+        expect(post).to be_a PostRepository.new.dao
+        expect(post).to be_persisted
       end
 
       it 'renders the :show template' do
@@ -328,8 +329,8 @@ describe PostsController do
           expect(response).to be_ok
         end
 
-        it 'assigns an object to Post' do
-          expect(assigns[:post]).to be_a PostFactory.entity_class
+        it 'assigns an existing Post DAO instance to Post' do
+          expect(assigns[:post]).to be_a PostRepository.new.dao
           expect(assigns[:post].title).to eq article.title
         end
 

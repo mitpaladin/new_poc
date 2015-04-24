@@ -28,6 +28,22 @@ describe PostDao::Presentation do
     end # context 'for a published post'
   end # describe 'has a method #draft? that' do
 
+  describe 'has a method #pubdate_str that' do
+    context 'for a draft post' do
+      it 'returns "DRAFT"' do
+        expect(draft_post.pubdate_str).to eq 'DRAFT'
+      end
+    end # context 'for a draft post'
+
+    context 'for a published post' do
+      it 'returns the formatted publication timestamp' do
+        extend TimestampBuilder
+        expected = timestamp_for(published_post.pubdate)
+        expect(published_post.pubdate_str).to eq expected
+      end
+    end # context 'for a published post'
+  end # describe 'has a method #pubdate_str that'
+
   describe 'has a method #published? that' do
     context 'for a draft post' do
       it 'returns false' do

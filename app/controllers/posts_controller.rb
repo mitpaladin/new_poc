@@ -98,7 +98,7 @@ class PostsController < ApplicationController
   end
 
   def on_show_success(payload)
-    @post = payload
+    Responder::ShowSuccess.new(self).respond_to payload
   end
 
   def on_show_failure(payload)
