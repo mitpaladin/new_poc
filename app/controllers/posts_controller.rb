@@ -107,9 +107,7 @@ class PostsController < ApplicationController
   end
 
   def on_update_success(payload)
-    @post = payload
-    message = "Post '#{@post.title}' successfully updated."
-    redirect_to post_path(@post.slug), flash: { success: message }
+    Responder::UpdateSuccess.new(self).respond_to payload
   end
 
   def on_update_failure(payload)

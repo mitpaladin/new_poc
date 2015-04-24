@@ -7,6 +7,7 @@ require_relative 'posts_controller/an_unauthorised_user_for_this_post'
 # Posts controller dispatches post-specific actions
 describe PostsController do
   let(:identity) { CurrentUserIdentity.new session }
+  let(:time_limit) { 0.5.seconds }
 
   describe :routing.to_s, type: :routing do
     it { expect(get posts_path).to route_to 'posts#index' }
@@ -195,8 +196,7 @@ describe PostsController do
             expect(post_attribs[attrib]).to eq dao[attrib]
           end
           [:created_at, :updated_at].each do |attrib|
-            expect(post_attribs[attrib]).to be_within(0.5.seconds)
-              .of dao[attrib]
+            expect(post_attribs[attrib]).to be_within(time_limit).of dao[attrib]
           end
         end
 
@@ -281,7 +281,7 @@ describe PostsController do
           expect(actual).to eq post[attrib]
         end
         actual_pubdate = assigned.attributes.to_hash.symbolize_keys[:pubdate]
-        expect(actual_pubdate).to be_within(0.5.seconds).of post[:pubdate]
+        expect(actual_pubdate).to be_within(time_limit).of post[:pubdate]
       end
     end # context 'when the logged-in user is the post author'
   end # describe "GET 'edit'" (StoreResult removed)
@@ -410,19 +410,50 @@ describe PostsController do
           end
 
           it 'assigns the updated post' do
-            actual = assigns[:post]
-            expect(actual.body).to eq post_data[:body]
-            comparison_keys = [:author_name, :imaage_url, :slug, :title]
-            comparison_keys.each do |attrib_key|
-              expected = post[attrib_key.to_s]
-              expect(actual.attributes.to_hash[attrib_key]).to eq expected
-            end
-            comparison_keys = [:pubdate, :created_at]
-            comparison_keys.each do |attrib_key|
-              expect(actual.attributes.to_hash[attrib_key])
-                .to be_within(0.5.seconds).of post[attrib_key]
-            end
+            expect(assigns[:post]).to be_a PostRepository.new.dao
           end
+
+          describe 'assigns the updated post such that' do
+            let(:actual) { assigns[:post] }
+            let(:timestamp_keys) { [:pubdate, :created_at, :updated_at] }
+            let(:unchanged_keys) do
+              actual.attributes.symbolize_keys
+                .select { |_k, v| v.present? }.keys
+                .reject { |k| timestamp_keys.include? k }
+                .reject { |k| post_data.keys.include? k }
+            end
+
+            describe 'has the new values for' do
+              it 'the updated attributes' do
+                post_data.each_pair do |attrib_key, value|
+                  expect(actual.send attrib_key).to eq value
+                end
+              end
+
+              it 'the :updated_at timestamp' do
+                timestamp = actual.updated_at
+                expect(timestamp).to be > post.updated_at
+                expect(timestamp).to be_within(time_limit).of Time.zone.now
+              end
+            end # describe 'has the new values for'
+
+            describe 'has the original values for' do
+              it 'other non-timestamp attributes' do
+                unchanged_keys.each do |attrib_key|
+                  expect(actual.send attrib_key).to eq post.send(attrib_key)
+                end
+              end
+
+              it 'the :created_at timestamp' do
+                expected = post.created_at
+                expect(actual.created_at).to be_within(time_limit).of expected
+              end
+
+              it 'the :pubdate timestamp' do
+                expect(actual.pubdate).to be_within(time_limit).of post.pubdate
+              end
+            end
+          end # describe 'assigns the updated post such that'
         end # context 'with valid post data'
 
         context 'with invalid post data' do
