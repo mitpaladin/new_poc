@@ -65,5 +65,8 @@ class PostsController < ApplicationController
         "User #{current_user.name} is not the author of this post!"
       end
     end # class PostsController::Responder::UpdateFailure
+
+    class EditFailure < UpdateFailure
+    end # class PostsController::Responder::EditFailure
   end
 end # class PostsController

@@ -84,9 +84,9 @@ class PostsController < ApplicationController
     Responder::EditSuccess.new(self).respond_to payload
   end
 
+  # Actual Edit and Update failure logic is identical.
   def on_edit_failure(payload)
-    alert = ErrorMessageBuilder.new(payload).to_s
-    redirect_to root_path, flash: { alert: alert }
+    Responder::EditFailure.new(self).respond_to payload
   end
 
   def on_index_success(payload)
