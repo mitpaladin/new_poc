@@ -107,8 +107,7 @@ class PostsController < ApplicationController
   end
 
   def on_show_failure(payload)
-    alert = "Cannot find post identified by slug: '#{payload}'!"
-    redirect_to root_path, flash: { alert: alert }
+    Responder::ShowFailure.new(self).respond_to payload
   end
 
   def on_update_success(payload)

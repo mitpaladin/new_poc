@@ -8,7 +8,7 @@ class PostsController < ApplicationController
     # an invalid DAO, passes the string to an error-message builder object, and
     # redirects to the root path using that error message for an alert flash.
     #
-    # Makes use of two methods on the controller passed into `#initialize`:
+    # Makes use of these methods on the controller passed into `#initialize`:
     #
     # 1. `:current_user`;
     # 2. `:redirect_to`; and
