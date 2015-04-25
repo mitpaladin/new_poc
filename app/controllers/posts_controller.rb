@@ -98,8 +98,7 @@ class PostsController < ApplicationController
   end
 
   def on_new_failure(payload)
-    # Only supported error is for the guest user
-    redirect_to root_path, flash: { alert: payload }
+    Responder::NewFailure.new(self).respond_to payload
   end
 
   def on_show_success(payload)
