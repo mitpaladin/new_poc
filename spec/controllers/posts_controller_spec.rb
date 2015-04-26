@@ -1,7 +1,6 @@
 
 require 'spec_helper'
 
-require_relative 'posts_controller/an_attempt_to_create_an_invalid_post'
 require_relative 'posts_controller/an_unauthorised_user_for_this_post'
 
 # Posts controller dispatches post-specific actions
@@ -209,10 +208,28 @@ describe PostsController do
         end
       end # describe 'with valid parameters'
 
-      it_behaves_like 'an attempt to create an invalid Post'
+      xdescribe 'with an invalid title, the returned post instance is' do
+        before :each do
+          params[:title] = ''
+          post :create, post_data: params
+          @post = assigns[:post]
+        end
+
+        it 'not persisted' do
+          expect(@post).not_to be_persisted
+        end
+
+        xit 'is invalid' do
+          expect(@post).to_not be_valid
+        end
+
+        xit 'provides the correct error message' do
+          expect(@post.errors.full_messages).to include "Title can't be blank"
+        end
+      end # describe 'with an invalid title, the returned post instance is'
     end # context 'for a Registered User'
 
-    context 'for the Guest User' do
+    xcontext 'for the Guest User' do
       before :each do
         post :create, post_data: params
       end

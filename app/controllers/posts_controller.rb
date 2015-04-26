@@ -10,6 +10,7 @@ require_relative 'posts_controller/action/show'
 require_relative 'posts_controller/action/update'
 
 require_relative 'posts_controller/responder/create_success'
+require_relative 'posts_controller/responder/update_failure'
 
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
@@ -69,15 +70,7 @@ class PostsController < ApplicationController
   end
 
   def on_create_failure(payload)
-    entity = CreateFailureSetup.new(payload).cleanup.entity
-    @post = PostRepository.new.dao.new(entity.attributes.to_hash).tap do |post|
-      post.extend PostDao::Presentation
-    end
-    @post.valid?
-
-    render 'new'
-  rescue RuntimeError => e # not logged in as a registered user
-    redirect_to root_path, flash: { alert: e.message }
+    Responder::CreateFailure.new(self).respond_to payload
   end
 
   def on_edit_success(payload)
