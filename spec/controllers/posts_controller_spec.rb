@@ -1,12 +1,12 @@
 
 require 'spec_helper'
 
-require_relative 'posts_controller/an_attempt_to_create_an_invalid_post'
 require_relative 'posts_controller/an_unauthorised_user_for_this_post'
 
 # Posts controller dispatches post-specific actions
 describe PostsController do
   let(:identity) { CurrentUserIdentity.new session }
+  let(:time_limit) { 0.5.seconds }
 
   describe :routing.to_s, type: :routing do
     it { expect(get posts_path).to route_to 'posts#index' }
@@ -133,9 +133,9 @@ describe PostsController do
         expect(response).to be_success
       end
 
-      it 'assigns a new Post-entity instance to :post' do
+      it 'assigns a new Post DAO instance to :post' do
         post = assigns[:post]
-        expect(post).to be_a PostFactory.entity_class
+        expect(post).to be_a PostRepository.new.dao
         expect(post).not_to be_persisted
       end
 
@@ -195,8 +195,7 @@ describe PostsController do
             expect(post_attribs[attrib]).to eq dao[attrib]
           end
           [:created_at, :updated_at].each do |attrib|
-            expect(post_attribs[attrib]).to be_within(0.5.seconds)
-              .of dao[attrib]
+            expect(post_attribs[attrib]).to be_within(time_limit).of dao[attrib]
           end
         end
 
@@ -209,7 +208,25 @@ describe PostsController do
         end
       end # describe 'with valid parameters'
 
-      it_behaves_like 'an attempt to create an invalid Post'
+      describe 'with an invalid title, the returned post instance' do
+        before :each do
+          params[:title] = ''
+          post :create, post_data: params
+          @post = assigns[:post]
+        end
+
+        it 'is not persisted' do
+          expect(@post).not_to be_persisted
+        end
+
+        it 'is invalid' do
+          expect(@post).to_not be_valid
+        end
+
+        it 'provides the correct error message' do
+          expect(@post.errors.full_messages).to include "Title can't be blank"
+        end
+      end # describe 'with an invalid title, the returned post instance'
     end # context 'for a Registered User'
 
     context 'for the Guest User' do
@@ -277,10 +294,11 @@ describe PostsController do
       it 'assigns the :post variable' do
         assigned = assigns[:post]
         [:body, :image_url, :slug, :title].each do |attrib|
-          expect(assigned.attributes.to_hash[attrib]).to eq post[attrib]
+          actual = assigned.attributes.to_hash.symbolize_keys[attrib]
+          expect(actual).to eq post[attrib]
         end
-        actual_pubdate = assigned.attributes.to_hash[:pubdate]
-        expect(actual_pubdate).to be_within(0.5.seconds).of post[:pubdate]
+        actual_pubdate = assigned.attributes.to_hash.symbolize_keys[:pubdate]
+        expect(actual_pubdate).to be_within(time_limit).of post[:pubdate]
       end
     end # context 'when the logged-in user is the post author'
   end # describe "GET 'edit'" (StoreResult removed)
@@ -302,9 +320,10 @@ describe PostsController do
         expect(response).to be_ok
       end
 
-      it 'assigns an object to Post' do
-        expect(assigns[:post]).to be_a PostFactory.entity_class
-        expect(assigns[:post].title).to eq article.title
+      it 'assigns an existing Post DAO instance to :post' do
+        post = assigns[:post]
+        expect(post).to be_a PostRepository.new.dao
+        expect(post).to be_persisted
       end
 
       it 'renders the :show template' do
@@ -327,8 +346,8 @@ describe PostsController do
           expect(response).to be_ok
         end
 
-        it 'assigns an object to Post' do
-          expect(assigns[:post]).to be_a PostFactory.entity_class
+        it 'assigns an existing Post DAO instance to Post' do
+          expect(assigns[:post]).to be_a PostRepository.new.dao
           expect(assigns[:post].title).to eq article.title
         end
 
@@ -408,19 +427,50 @@ describe PostsController do
           end
 
           it 'assigns the updated post' do
-            actual = assigns[:post]
-            expect(actual.body).to eq post_data[:body]
-            comparison_keys = [:author_name, :imaage_url, :slug, :title]
-            comparison_keys.each do |attrib_key|
-              expected = post[attrib_key.to_s]
-              expect(actual.attributes.to_hash[attrib_key]).to eq expected
-            end
-            comparison_keys = [:pubdate, :created_at]
-            comparison_keys.each do |attrib_key|
-              expect(actual.attributes.to_hash[attrib_key])
-                .to be_within(0.5.seconds).of post[attrib_key]
-            end
+            expect(assigns[:post]).to be_a PostRepository.new.dao
           end
+
+          describe 'assigns the updated post such that' do
+            let(:actual) { assigns[:post] }
+            let(:timestamp_keys) { [:pubdate, :created_at, :updated_at] }
+            let(:unchanged_keys) do
+              actual.attributes.symbolize_keys
+                .select { |_k, v| v.present? }.keys
+                .reject { |k| timestamp_keys.include? k }
+                .reject { |k| post_data.keys.include? k }
+            end
+
+            describe 'has the new values for' do
+              it 'the updated attributes' do
+                post_data.each_pair do |attrib_key, value|
+                  expect(actual.send attrib_key).to eq value
+                end
+              end
+
+              it 'the :updated_at timestamp' do
+                timestamp = actual.updated_at
+                expect(timestamp).to be > post.updated_at
+                expect(timestamp).to be_within(time_limit).of Time.zone.now
+              end
+            end # describe 'has the new values for'
+
+            describe 'has the original values for' do
+              it 'other non-timestamp attributes' do
+                unchanged_keys.each do |attrib_key|
+                  expect(actual.send attrib_key).to eq post.send(attrib_key)
+                end
+              end
+
+              it 'the :created_at timestamp' do
+                expected = post.created_at
+                expect(actual.created_at).to be_within(time_limit).of expected
+              end
+
+              it 'the :pubdate timestamp' do
+                expect(actual.pubdate).to be_within(time_limit).of post.pubdate
+              end
+            end
+          end # describe 'assigns the updated post such that'
         end # context 'with valid post data'
 
         context 'with invalid post data' do

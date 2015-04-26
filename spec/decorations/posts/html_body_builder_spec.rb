@@ -64,11 +64,25 @@ module Decorations
         end
 
         describe 'returns markup enclosed in a :figure tag pair, with' do
-          it 'an :img tag as the first child of the :figure' do
-            expected = %r{\A<figure><img src="(.+)">.+</figure>\z}m
+          it 'the first child of the :figure being an :a tag pair' do
+            expected = %r{<figure><p><a .+>.+?</a></p><figcaption>}
             expect(actual).to match(expected)
-            expect(actual.match(expected).captures.first).to eq post.image_url
           end
+
+          describe 'the :a tag pair' do
+            let(:enclosed) do
+              actual.match(%r{<figure><p>(<a .+>.+?</a>)</p><figcaption>})[1]
+            end
+
+            it 'has the post image URL as its "href" attribute' do
+              expect(enclosed).to match(/.+ href="#{post.image_url}" .+/)
+            end
+
+            it 'encloses an :img tag whose "src" is the post image URL' do
+              inner = /<a .+><img src="#{post.image_url}" .+><\/a>/
+              expect(enclosed).to match inner
+            end
+          end # describe 'the :a tag pair'
 
           it 'a :figcaption tag pair as the last child of the :figure' do
             expected = %r{\A<figure>.+<figcaption>(.+)</figcaption></figure>\z}m

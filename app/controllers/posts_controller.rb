@@ -10,6 +10,7 @@ require_relative 'posts_controller/action/show'
 require_relative 'posts_controller/action/update'
 
 require_relative 'posts_controller/responder/create_success'
+require_relative 'posts_controller/responder/update_failure'
 
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
@@ -66,56 +67,46 @@ class PostsController < ApplicationController
 
   def on_create_success(entity)
     Responder::CreateSuccess.new(self).respond_to entity
-    # @post = entity
-    # redirect_to root_path, flash: { success: 'Post added!' }
   end
 
   def on_create_failure(payload)
-    @post = CreateFailureSetup.new(payload).cleanup.entity
-    render 'new'
-  rescue RuntimeError => e # not logged in as a registered user
-    redirect_to root_path, flash: { alert: e.message }
+    Responder::CreateFailure.new(self).respond_to payload
   end
 
   def on_edit_success(payload)
-    @post = payload
+    Responder::EditSuccess.new(self).respond_to payload
   end
 
+  # Actual Edit and Update failure logic is identical.
   def on_edit_failure(payload)
-    alert = ErrorMessageBuilder.new(payload).to_s
-    redirect_to root_path, flash: { alert: alert }
+    Responder::EditFailure.new(self).respond_to payload
   end
 
   def on_index_success(payload)
-    @posts = payload
+    Responder::IndexSuccess.new(self).respond_to payload
   end
 
   def on_new_success(payload)
-    @post = payload
+    Responder::NewSuccess.new(self).respond_to payload
   end
 
   def on_new_failure(payload)
-    # Only supported error is for the guest user
-    redirect_to root_path, flash: { alert: payload }
+    Responder::NewFailure.new(self).respond_to payload
   end
 
   def on_show_success(payload)
-    @post = payload
+    Responder::ShowSuccess.new(self).respond_to payload
   end
 
   def on_show_failure(payload)
-    alert = "Cannot find post identified by slug: '#{payload}'!"
-    redirect_to root_path, flash: { alert: alert }
+    Responder::ShowFailure.new(self).respond_to payload
   end
 
   def on_update_success(payload)
-    @post = payload
-    message = "Post '#{@post.title}' successfully updated."
-    redirect_to post_path(@post.slug), flash: { success: message }
+    Responder::UpdateSuccess.new(self).respond_to payload
   end
 
   def on_update_failure(payload)
-    alert = ErrorMessageBuilder.new(payload).to_s
-    redirect_to root_path, flash: { alert: alert }
+    Responder::UpdateFailure.new(self).respond_to payload
   end
 end # class PostsController

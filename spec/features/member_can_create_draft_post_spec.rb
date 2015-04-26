@@ -15,14 +15,27 @@ describe 'Member can create a draft post and see' do
     expect(page).to have_text 'Post added!'
   end
 
-  it 'the newly-entered article details' do
+  it 'the "well" area where posts should be displayed is not empty' do
     well = page.find('.well').native
     expect(well).not_to have(0).children
-
-    expect(page).to have_selector 'article > header > h3', @post_title
-    expect(page).to have_selector 'article > header > p > time'
-    expect(page).to have_selector 'article > figure > figcaption', @post_body
-    selector = format 'article > figure > p > a > img[src="%s"]', @image_url
-    expect(page).to have_selector selector
   end
+
+  describe 'the newly-entered article details, including' do
+    it 'the post title' do
+      expect(page).to have_selector 'article > header > h3', @post_title
+    end
+
+    it 'the post timestamp' do
+      expect(page).to have_selector 'article > header > p > time'
+    end
+
+    it 'the post body' do
+      expect(page).to have_selector 'article > figure > figcaption', @post_body
+    end
+
+    it 'the post image, inside a link to it' do
+      selector = format 'article > figure > p > a > img[src="%s"]', @image_url
+      expect(page).to have_selector selector
+    end
+  end # describe 'the newly-entered article details, including'
 end # describe 'Member can create a valid image post and see'

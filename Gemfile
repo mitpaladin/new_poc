@@ -16,7 +16,6 @@ source 'https://rubygems.org'
 # actions. Hence also massive duplication of simple code *in* action "Gems".
 # Why is this? Inter-Gem dependency management is *fxxxing primitive!*
 [
-  'entity-post',
   'services-markdown_html_converter'
 ].each { |gem_name| gem "newpoc-#{gem_name}", path: "lib/newpoc-#{gem_name}" }
 

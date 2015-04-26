@@ -36,7 +36,7 @@ module Decorations
         attr_reader :body, :doc, :image_url
 
         def build_figcaption
-          FigCaption.new(doc: doc, body_html: body).to_html
+          FigCaption.new(doc: doc, content: body).to_html
         end
 
         def build_image

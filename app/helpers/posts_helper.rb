@@ -39,14 +39,6 @@ module PostsHelper
     summ.summarise(@posts)
   end
 
-  def build_body(post)
-    Decorations::Posts::HtmlBodyBuilder.new.build post
-  end
-
-  def build_byline(post)
-    Decorations::Posts::BylineBuilder.build post
-  end
-
   private
 
   def shared_post_form_attributes(which)
