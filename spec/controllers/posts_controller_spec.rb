@@ -208,28 +208,28 @@ describe PostsController do
         end
       end # describe 'with valid parameters'
 
-      xdescribe 'with an invalid title, the returned post instance is' do
+      describe 'with an invalid title, the returned post instance' do
         before :each do
           params[:title] = ''
           post :create, post_data: params
           @post = assigns[:post]
         end
 
-        it 'not persisted' do
+        it 'is not persisted' do
           expect(@post).not_to be_persisted
         end
 
-        xit 'is invalid' do
+        it 'is invalid' do
           expect(@post).to_not be_valid
         end
 
-        xit 'provides the correct error message' do
+        it 'provides the correct error message' do
           expect(@post.errors.full_messages).to include "Title can't be blank"
         end
-      end # describe 'with an invalid title, the returned post instance is'
+      end # describe 'with an invalid title, the returned post instance'
     end # context 'for a Registered User'
 
-    xcontext 'for the Guest User' do
+    context 'for the Guest User' do
       before :each do
         post :create, post_data: params
       end
