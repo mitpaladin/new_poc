@@ -10,15 +10,6 @@ end
 
 source 'https://rubygems.org'
 
-# *One* problem with "unbuilt Rails dependencies" is that they can't depend on
-# *each other*. Hence, including `entity` and `services` "Gems" in main app
-# Gemfile even though the main app only uses them in conjunction with (Gemified)
-# actions. Hence also massive duplication of simple code *in* action "Gems".
-# Why is this? Inter-Gem dependency management is *fxxxing primitive!*
-[
-  'services-markdown_html_converter'
-].each { |gem_name| gem "newpoc-#{gem_name}", path: "lib/newpoc-#{gem_name}" }
-
 gem 'repository-base', '>= 0.2.0'
 gem 'wisper_subscription', '>= 0.2.0'
 
@@ -26,13 +17,20 @@ gem 'active_attr'
 gem 'bcrypt-ruby'
 gem 'coffee-rails'
 gem 'fancy-open-struct'
-gem 'friendly_id' # , github: 'petergoldstein/friendly_id', ref: '64a37ddddf'
+gem 'friendly_id'
+gem 'gemoji'
+gem 'github-linguist'
+gem 'github-markdown'
 gem 'htmlentities'
+gem 'html-pipeline'
 gem 'jquery-rails'
 gem 'markdown-toolbar', github: 'fuksito/markdown-toolbar'
 gem 'naught', github: 'avdi/naught'
 gem 'pg'
+gem 'pygments.rb'
 gem 'rails', '4.2.0'
+gem 'rinku'
+gem 'sanitizer'
 gem 'sass-rails'
 gem 'slim-rails', github: 'slim-template/slim-rails'
 gem 'thin'

@@ -12,7 +12,7 @@ module Decorations
       end
 
       it 'with a MarkdownHtmlConverter instance' do
-        converter = Newpoc::Services::MarkdownHtmlConverter.new
+        converter = MarkdownHtmlConverter.new
         expect { described_class.new converter }.not_to raise_error
       end
     end # describe 'can be initialised'
@@ -86,7 +86,7 @@ module Decorations
 
           it 'a :figcaption tag pair as the last child of the :figure' do
             expected = %r{\A<figure>.+<figcaption>(.+)</figcaption></figure>\z}m
-            converter = Newpoc::Services::MarkdownHtmlConverter.new
+            converter = MarkdownHtmlConverter.new
             caption = converter.to_html post.body
             expect(actual).to match(expected)
             expect(actual.match(expected).captures.first).to eq caption

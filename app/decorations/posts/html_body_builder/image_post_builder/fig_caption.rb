@@ -1,7 +1,7 @@
 
 require 'nokogiri'
 
-require 'newpoc/services/markdown_html_converter'
+require 'markdown_html_converter'
 
 require_relative 'element'
 
@@ -38,7 +38,7 @@ module Decorations
           attr_reader :content
 
           def markup
-            Newpoc::Services::MarkdownHtmlConverter.new.to_html content
+            MarkdownHtmlConverter.new.to_html content
           end
         end # class ...::Posts::HtmlBodyBuilder::ImagePostBuilder::FigCaption
       end # class Decorations::Posts::HtmlBodyBuilder::ImagePostBuilder

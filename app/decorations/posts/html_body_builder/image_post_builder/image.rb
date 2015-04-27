@@ -25,7 +25,7 @@ module Decorations
 
           def to_html
             markup = element('img').tap { |img| img[:src] = @image_url }
-            Newpoc::Services::MarkdownHtmlConverter.new.to_html markup.to_html
+            MarkdownHtmlConverter.new.to_html markup.to_html
           end
         end # class Decorations::Posts::HtmlBodyBuilder::ImagePostBuilder::Image
       end # class Decorations::Posts::HtmlBodyBuilder::ImagePostBuilder
