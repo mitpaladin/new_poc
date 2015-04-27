@@ -1,5 +1,5 @@
 
-require 'newpoc/services/markdown_html_converter'
+require 'markdown_html_converter'
 
 # Namespace containing all application-defined entities.
 module Entity
@@ -20,7 +20,7 @@ module Entity
           key = :markdown_converter
           return attributes[key] if attributes[key].respond_to? :call
           lambda do |markup|
-            Newpoc::Services::MarkdownHtmlConverter.new.to_html markup
+            MarkdownHtmlConverter.new.to_html markup
           end
         end
       end

@@ -35,7 +35,7 @@ describe 'Member can create a draft post and' do
     end
 
     it 'the post body, properly formatted as HTML in the :figcaption tag' do
-      expected = Newpoc::Services::MarkdownHtmlConverter.new.to_html @post_body
+      expected = MarkdownHtmlConverter.new.to_html @post_body
       actual = page.find('figcaption').native.children.first.to_html
       expect(actual).to eq expected
     end

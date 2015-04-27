@@ -1,5 +1,5 @@
 
-require 'newpoc/services/markdown_html_converter'
+require 'markdown_html_converter'
 
 require_relative 'html_body_builder/image_post_builder'
 
@@ -56,7 +56,7 @@ module Decorations
       end
 
       def default_markdown_converter
-        Newpoc::Services::MarkdownHtmlConverter.new
+        MarkdownHtmlConverter.new
       end
 
       def text_post?
