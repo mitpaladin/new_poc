@@ -1,5 +1,5 @@
 
-# ruby '2.2.1'
+# ruby '2.2.2'
 
 source 'https://rails-assets.org' do
   gem 'rails-assets-bootstrap', '~> 3.2.0'
@@ -28,7 +28,7 @@ gem 'markdown-toolbar', github: 'fuksito/markdown-toolbar'
 gem 'naught', github: 'avdi/naught'
 gem 'pg'
 gem 'pygments.rb'
-gem 'rails', '4.2.0'
+gem 'rails', '4.2.1'
 gem 'rinku'
 gem 'sanitizer'
 gem 'sass-rails'
