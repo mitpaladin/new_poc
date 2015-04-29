@@ -8,14 +8,16 @@ require_relative 'shared_examples/the_delete_method_for_a_repository'
 require_relative 'shared_examples/the_find_by_slug_method_for_a_repository'
 require_relative 'shared_examples/the_update_method_for_a_repository'
 
-describe PostRepository do
+require_relative '../../app/repositories/post'
+
+describe Repository::Post do
   let(:be_entity_for) do
     ->(entity) { be_saved_post_entity_for(entity) }
   end
   let(:dao_class) { PostDao }
   let(:entity_class) { PostFactory.entity_class }
   let(:factory_class) { PostFactory }
-  let(:klass) { PostRepository }
+  let(:klass) { Repository::Post }
   let(:obj) { klass.new }
   let(:entity_attributes) do
     FactoryGirl.attributes_for :post, :saved_post, :published_post
@@ -61,4 +63,4 @@ describe PostRepository do
 
     it_behaves_like 'the #update method for a Repository'
   end # describe :update
-end # describe PostRepository
+end # describe Repository::Post

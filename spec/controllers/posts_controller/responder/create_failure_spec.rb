@@ -86,7 +86,7 @@ describe PostsController::Responder::CreateFailure do
 
         describe 'assigning an invalid Post DAO instance' do
           it 'to the controller @post ivar' do
-            expect(fake_controller.post).to be_a PostRepository.new.dao
+            expect(fake_controller.post).to be_a Repository::Post.new.dao
           end
 
           it 'that is invalid for the correct reason' do

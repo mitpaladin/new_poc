@@ -29,7 +29,7 @@ describe UsersController do
   end
 
   describe "GET 'index'" do
-    let(:repo) { UserRepository.new }
+    let(:repo) { Repository::User.new }
     let(:user_count) { 5 }
     let(:users) { [] }
 
@@ -91,7 +91,7 @@ describe UsersController do
       let(:user_attrs) { FactoryGirl.attributes_for :user, :saved_user }
       let(:user) do
         user = UserPasswordEntityFactory.create user_attrs, 'password'
-        UserRepository.new.add user
+        Repository::User.new.add user
         user
       end
 
@@ -300,7 +300,7 @@ describe UsersController do
       let(:target_user) do
         user_attribs = FactoryGirl.attributes_for(:user, :saved_user)
         entity = UserPasswordEntityFactory.create user_attribs, 'password'
-        UserRepository.new.add entity
+        Repository::User.new.add entity
         entity
       end
 

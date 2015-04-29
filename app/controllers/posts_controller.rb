@@ -25,12 +25,12 @@ class PostsController < ApplicationController
   end
 
   def_action(:index) do
-    { current_user: current_user, post_repository: PostRepository.new }
+    { current_user: current_user, post_repository: Repository::Post.new }
   end
 
   def_action(:new) do
     {
-      current_user: current_user, repository: UserRepository.new,
+      current_user: current_user, repository: Repository::User.new,
       entity_class: PostFactory.entity_class
     }
   end
@@ -42,13 +42,13 @@ class PostsController < ApplicationController
   def_action(:edit) do
     {
       slug: params[:id], current_user: current_user,
-      repository: PostRepository.new
+      repository: Repository::Post.new
     }
   end
 
   def_action(:show) do
     {
-      current_user: current_user, repository: PostRepository.new,
+      current_user: current_user, repository: Repository::Post.new,
       target_slug: params[:id]
     }
   end
@@ -56,7 +56,7 @@ class PostsController < ApplicationController
   def_action(:update) do
     {
       current_user: current_user, slug: params[:id],
-      post_data: params[:post_data], repository: PostRepository.new
+      post_data: params[:post_data], repository: Repository::Post.new
     }
   end
 

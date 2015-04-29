@@ -39,8 +39,8 @@ class UsersController < ApplicationController
       end
 
       def update_entity
-        result = UserRepository.new.update identifier: current_user.slug,
-                                           updated_attrs: user_data
+        result = Repository::User.new.update identifier: current_user.slug,
+                                             updated_attrs: user_data
         @entity = result.entity
         return if result.errors.empty?
         ret = { messages: result.errors.full_messages }

@@ -70,7 +70,7 @@ class UsersController < ApplicationController
       # Support methods
 
       def user_repo
-        @user_repo ||= UserRepository.new
+        @user_repo ||= Repository::User.new
       end
     end # class UsersController::Action::Create
   end # module UsersController::Action
