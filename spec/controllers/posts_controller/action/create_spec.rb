@@ -42,7 +42,7 @@ end # shared_examples 'a successful post that'
 # ############################################################################ #
 
 describe PostsController::Action::Create do
-  let(:repo) { UserRepository.new }
+  let(:repo) { Repository::User.new }
   # NOTE: Old `Actions` namespace currently used here. Oops.
   let(:subscriber) { Actions::BroadcastSuccessTester.new }
   let(:current_user) do

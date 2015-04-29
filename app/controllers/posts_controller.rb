@@ -30,7 +30,7 @@ class PostsController < ApplicationController
 
   def_action(:new) do
     {
-      current_user: current_user, repository: UserRepository.new,
+      current_user: current_user, repository: Repository::User.new,
       entity_class: PostFactory.entity_class
     }
   end

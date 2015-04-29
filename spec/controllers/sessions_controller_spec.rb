@@ -40,7 +40,7 @@ describe SessionsController do
   let(:registered_user) do
     user_attribs = FactoryGirl.attributes_for(:user, :saved_user)
     user = UserPasswordEntityFactory.create user_attribs, 'password'
-    UserRepository.new.add user
+    Repository::User.new.add user
     user
   end
 
