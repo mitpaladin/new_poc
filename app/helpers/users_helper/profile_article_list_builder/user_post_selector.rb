@@ -9,7 +9,7 @@ class ProfileArticleListBuilder
     end
 
     def build_list
-      PostRepository.new.all.select { |post| visible? post }
+      Repository::Post.new.all.select { |post| visible? post }
     end
 
     private

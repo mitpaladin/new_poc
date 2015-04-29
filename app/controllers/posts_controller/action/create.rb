@@ -44,7 +44,7 @@ class PostsController < ApplicationController
       def add_entity_to_repository
         params = {
           attributes: new_entity_attributes,
-          repository: PostRepository.new,
+          repository: Repository::Post.new,
           factory_class: PostFactory
         }
         @entity = RepositoryAdder.new(params).add.entity

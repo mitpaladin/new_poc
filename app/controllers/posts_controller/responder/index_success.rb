@@ -34,7 +34,7 @@ class PostsController < ApplicationController
       end
 
       def repo
-        @repo ||= PostRepository.new
+        @repo ||= Repository::Post.new
       end
     end # class PostsController::Responder::IndexSuccess
   end
