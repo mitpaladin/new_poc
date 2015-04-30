@@ -1,4 +1,6 @@
 
+require 'contracts'
+
 require 'markdown_html_converter'
 
 require_relative 'html_body_builder/image_post_builder'
@@ -15,14 +17,15 @@ module Decorations
     # 2. the post body and image URL within a `figure`; see #build for details.
     #
     class HtmlBodyBuilder
+      include Contracts
       # Overriding the default `markdown_converter` parameter is mostly
       # useful for situations where the app makes use of Pivotal's "unbuilt
       # Rails dependency" idiom. As we're no longer doing that, we *could*
       # just rip it out entirely. One step at a time.
+      Contract Maybe[MarkdownHtmlConverter] => HtmlBodyBuilder
       def initialize(markdown_converter = default_markdown_converter)
         @markdown_converter = markdown_converter
-        return if markdown_converter.respond_to? :to_html
-        fail ArgumentError, 'parameter must respond to the :to_html message'
+        self
       end
 
       # Builds an HTML representation of the post contents, in a format that
@@ -36,6 +39,7 @@ module Decorations
       # image URL wrapped in an `img` tag pair, and a `figcaption` tag pair
       # containing the (converted) post body, returning the generated `figure`
       # fragment.
+      Contract RespondTo[:body] => String
       def build(post)
         @post = post
         return body_markup(post.body) if text_post?
