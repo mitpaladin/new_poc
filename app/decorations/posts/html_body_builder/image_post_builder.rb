@@ -1,4 +1,6 @@
 
+require 'contracts'
+
 require_relative 'image_post_builder/fig_caption'
 require_relative 'image_post_builder/figure'
 require_relative 'image_post_builder/image'
@@ -18,12 +20,22 @@ module Decorations
       # Builds image-post body, with HTML :img and :figcaption wrapped in a
       # :figure.
       class ImagePostBuilder
+        include Contracts
+
+        INIT_PARAMS = {
+          body_html: Maybe[String],
+          image_url: Maybe[String]
+        }
+
+        Contract INIT_PARAMS => ImagePostBuilder
         def initialize(body_html:, image_url:)
           @body = body_html
           @image_url = image_url
           @doc = document
+          self
         end
 
+        Contract None => String
         def to_html
           figure = Figure.new(doc)
           figure.figcaption = build_figcaption

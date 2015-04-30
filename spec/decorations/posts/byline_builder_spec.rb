@@ -13,8 +13,8 @@ module Decorations
     let(:pubdate) { Time.zone.parse '14 March 2015 12:34:56' }
 
     describe 'has a .build method that' do
-      it 'requires one parameter' do
-        expect(described_class.method(:build).arity).to eq 1
+      it 'accepts one parameter' do
+        expect(described_class.method(:build).arity.abs).to eq 1
       end
 
       describe 'accepts a parameter that' do
@@ -44,15 +44,19 @@ module Decorations
 
       describe 'rejects a parameter that' do
         it 'is neither Hash-like nor has an #attributes method' do
-          message = 'Post must expose its attributes either through an' \
-            ' #attributes or #to_hash method'
-          expect { described_class.build :bogus }.to raise_error message
+          message = 'Expected: Decorations::Posts::BylineBuilder::InitContract'
+          expect { described_class.build :bogus }.to violate_a_param_contract
+            .identified_by(described_class.const_get :InitContract)
+            .with_arg(:bogus)
+            .returning(String)
         end
 
         it 'lacks an :author_name attribute' do
           attribs = { pubdate: pubdate }
-          message = 'post must have an :author_name attribute value'
-          expect { described_class.build attribs }.to raise_error message
+          expect { described_class.build attribs }.to violate_a_param_contract
+            .identified_by(described_class.const_get :InitContract)
+            .with_arg(attribs)
+            .returning(String)
         end
       end # describe 'rejects a parameter that'
 

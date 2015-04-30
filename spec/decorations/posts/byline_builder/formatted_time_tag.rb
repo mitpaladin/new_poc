@@ -32,8 +32,8 @@ shared_examples 'a correctly-formatted :time tag' do |status_string, time_in|
     it 'the timestamp in the correct semi-expanded format' do
       # Will match, e.g., 'Thu Apr 16 2015 at 00:40 SGT (+0800)' or
       # 'Thu Apr 15 2015 at 12:40 EDT (-0400)'
-      regex = '(?-mix:[[:alpha:]]{3} [[:alpha:]]{3} \\d{1,2} \\d{4}' \
-        ' at \\d{1,2}:\\d{2} [[:alpha:]]{3} \\([\\+,\\-]\\d{4}\\))'
+      regex = '[[:alpha:]]{3} [[:alpha:]]{3} {1,2}\d{1,2} \d{4}' \
+        ' at \d{2}:\d{2} [[:upper:]]{3} \([-+]\d{4}\)'
       expect(what_time).to match regex
     end
   end # describe 'has correct content for the :time tag, with'

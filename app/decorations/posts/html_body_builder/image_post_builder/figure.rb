@@ -1,4 +1,6 @@
 
+require 'contracts'
+
 require_relative 'element'
 
 # POROs that act as presentational support for entities.
@@ -16,17 +18,22 @@ module Decorations
       # Builds image-post body, with HTML :img and :figcaption wrapped in a
       # :figure.
       class ImagePostBuilder
+        include Contracts
+
         # Wraps building an HTML :figure element, which then ought to have its
         # `figcaption` and `img` attributes set before calling the `#to_html`
         # method.
         class Figure < Element
           attr_writer :figcaption, :img
 
+          Contract Nokogiri::HTML::Document => Figure
           def initialize(doc)
             super
             @figure = element 'figure'
+            self
           end
 
+          Contract None => String
           def to_html
             figure << img << figcaption
             figure.to_html save_with: html_save_options

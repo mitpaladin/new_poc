@@ -1,4 +1,6 @@
 
+require 'contracts'
+
 # POROs that act as presentational support for entities.
 module Decorations
   # Decorations for `Post` entities. D'oh!
@@ -17,9 +19,9 @@ module Decorations
         # Base class to wrap building an HTML element using Nokogiri. MUST
         # override the `#to_html` method.
         class Element
-          def initialize(doc)
-            @doc = doc
-          end
+          include Contracts
+
+          attr_init :doc
 
           def to_html
             fail 'Must override #to_html in a subclass'
@@ -27,12 +29,12 @@ module Decorations
 
           # protected
 
-          attr_reader :doc
-
+          Contract String => Nokogiri::XML::Element
           def element(tag)
             Nokogiri::XML::Element.new tag, doc
           end
 
+          Contract None => Fixnum
           def html_save_options
             so = Nokogiri::XML::Node::SaveOptions
             so::AS_HTML + so::NO_DECLARATION + so::NO_EMPTY_TAGS
