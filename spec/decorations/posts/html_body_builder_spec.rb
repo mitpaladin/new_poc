@@ -12,19 +12,17 @@ module Decorations
       end
 
       it 'with a MarkdownHtmlConverter instance' do
-        converter = MarkdownHtmlConverter.new
-        expect { described_class.new converter }.not_to raise_error
+        params = { markdown_converter: MarkdownHtmlConverter.new }
+        expect { described_class.new params }.not_to raise_error
       end
     end # describe 'can be initialised'
 
     it 'cannot be initialised with an invalid parameter' do
-      expected = 'parameter must respond to the :to_html message'
-      expect { described_class.new 'bogus' }.to raise_error do |e|
-        expect(e).to be_a ParamContractError
-        expect(e.data[:arg]).to eq 'bogus'
-        expect(e.data[:contract].to_s).to eq 'MarkdownHtmlConverter or nil'
-        expect(e.data[:arg_pos]).to eq 1
-      end
+      params = { markdown_converter: 'bogus' }
+      expect { described_class.new params }.to violate_a_param_contract
+        .with_arg('bogus')
+        .returning(Contracts::Bool)
+        .identified_by_either_or([MarkdownHtmlConverter, nil])
     end
 
     describe 'has a #build method that when called with a Post' do

@@ -22,11 +22,15 @@ module Decorations
       # useful for situations where the app makes use of Pivotal's "unbuilt
       # Rails dependency" idiom. As we're no longer doing that, we *could*
       # just rip it out entirely. One step at a time.
-      Contract Maybe[MarkdownHtmlConverter] => HtmlBodyBuilder
-      def initialize(markdown_converter = default_markdown_converter)
-        @markdown_converter = markdown_converter
-        self
+      attr_init markdown_converter: nil do
+        validate_initialiser! markdown_converter
+        @markdown_converter ||= default_markdown_converter
       end
+      # Contract Maybe[MarkdownHtmlConverter] => HtmlBodyBuilder
+      # def initialize(markdown_converter = default_markdown_converter)
+      #   @markdown_converter = markdown_converter
+      #   self
+      # end
 
       # Builds an HTML representation of the post contents, in a format that
       # depends on whether the `Post`'s `image_url` attribute is present.
@@ -48,23 +52,32 @@ module Decorations
 
       private
 
-      attr_reader :markdown_converter, :post
+      attr_reader :post
 
+      Contract String => String
       def body_markup(markup)
         markdown_converter.to_html markup
       end
 
+      Contract None => String
       def build_image_post
         ImagePostBuilder.new(image_url: post.image_url,
                              body_html: body_markup(post.body)).to_html
       end
 
+      Contract None => MarkdownHtmlConverter
       def default_markdown_converter
         MarkdownHtmlConverter.new
       end
 
+      Contract None => Bool
       def text_post?
         post.image_url.present? == false
+      end
+
+      Contract Maybe[MarkdownHtmlConverter] => Bool
+      def validate_initialiser!(_markdown_converter)
+        true
       end
     end # class Decorations::Posts::HtmpBodyBuilder
   end
