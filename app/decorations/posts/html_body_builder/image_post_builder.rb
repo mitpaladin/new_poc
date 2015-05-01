@@ -22,17 +22,9 @@ module Decorations
       class ImagePostBuilder
         include Contracts
 
-        INIT_PARAMS = {
-          body_html: Maybe[String],
-          image_url: Maybe[String]
-        }
-
-        Contract INIT_PARAMS => ImagePostBuilder
-        def initialize(body_html:, image_url:)
-          @body = body_html
-          @image_url = image_url
-          @doc = document
-          self
+        attr_init body: nil, image_url: nil do
+          validate_initialisers! body, image_url
+          @doc = Nokogiri::HTML::Document.new
         end
 
         Contract None => String
@@ -45,18 +37,21 @@ module Decorations
 
         private
 
-        attr_reader :body, :doc, :image_url
+        attr_reader :doc
 
+        Contract None => String
         def build_figcaption
           FigCaption.new(doc: doc, content: body).to_html
         end
 
+        Contract None => String
         def build_image
           Image.new(doc: doc, image_url: image_url).to_html
         end
 
-        def document
-          Nokogiri::HTML::Document.new
+        Contract Maybe[String], Maybe[String] => Bool
+        def validate_initialisers!(_body, _image_url)
+          true
         end
       end # class Decorations::Posts::HtmlBodyBuilder::ImagePostBuilder
     end # class Decorations::Posts::HtmlBodyBuilder

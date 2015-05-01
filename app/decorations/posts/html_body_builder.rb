@@ -62,7 +62,7 @@ module Decorations
       Contract None => String
       def build_image_post
         ImagePostBuilder.new(image_url: post.image_url,
-                             body_html: body_markup(post.body)).to_html
+                             body: body_markup(post.body)).to_html
       end
 
       Contract None => MarkdownHtmlConverter
