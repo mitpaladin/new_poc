@@ -24,18 +24,9 @@ module Decorations
         # Wraps building an HTML :figcaption element from a Markdown post body
         # (remembering that HTML is a valid subset of Markdown).
         class FigCaption < Element
-          # INIT_PARAMS has to be public to be used in a Contract on a public
-          # method. Obviously.
-          INIT_PARAMS = {
-            doc: Nokogiri::HTML::Document,
-            content: String
-          }
-
-          Contract INIT_PARAMS => FigCaption
-          def initialize(doc:, content:)
-            super doc
-            @content = content
-            self
+          attr_init :doc, :content do
+            # super doc
+            validate_initialisers! doc, content
           end
 
           Contract None => String
@@ -51,6 +42,11 @@ module Decorations
           Contract None => String
           def markup
             MarkdownHtmlConverter.new.to_html content
+          end
+
+          Contract Nokogiri::HTML::Document, String => Bool
+          def validate_initialisers!(_doc, _content)
+            true
           end
         end # class ...::Posts::HtmlBodyBuilder::ImagePostBuilder::FigCaption
       end # class Decorations::Posts::HtmlBodyBuilder::ImagePostBuilder

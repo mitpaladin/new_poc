@@ -41,7 +41,7 @@ module Decorations
 
         Contract None => String
         def build_figcaption
-          FigCaption.new(doc: doc, content: body).to_html
+          FigCaption.new(doc, body).to_html
         end
 
         Contract None => String

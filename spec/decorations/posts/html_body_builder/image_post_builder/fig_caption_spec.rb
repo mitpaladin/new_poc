@@ -10,7 +10,7 @@ describe Decorations::Posts::HtmlBodyBuilder::ImagePostBuilder::FigCaption do
 
   describe 'has a #to_html method that correctly builds a figcaption from' do
     after :each do
-      obj = described_class.new doc: doc, content: @caption
+      obj = described_class.new doc, @caption
       expect(obj.to_html).to eq @expected
     end
 
