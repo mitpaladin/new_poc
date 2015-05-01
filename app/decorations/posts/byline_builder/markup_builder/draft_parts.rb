@@ -11,10 +11,14 @@ module Decorations
         # Content differentiating listing of a draft post from that of a public
         # post.
         module DraftParts
+          include Contracts
+
+          Contract None => String
           def status
             'Drafted'
           end
 
+          Contract None => ActiveSupport::TimeWithZone
           def what_time
             attributes.updated_at
           end
