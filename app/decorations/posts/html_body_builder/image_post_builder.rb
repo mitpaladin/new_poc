@@ -29,10 +29,7 @@ module Decorations
 
         Contract None => String
         def to_html
-          figure = Figure.new(doc)
-          figure.figcaption = build_figcaption
-          figure.img = build_image
-          figure.to_html
+          Figure.new(doc, build_figcaption, build_image).to_html
         end
 
         private
