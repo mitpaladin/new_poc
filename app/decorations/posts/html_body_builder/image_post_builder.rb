@@ -43,7 +43,7 @@ module Decorations
 
         Contract None => String
         def build_image
-          Image.new(doc: doc, image_url: image_url).to_html
+          Image.new(doc, image_url).to_html
         end
 
         Contract Maybe[String], Maybe[String] => Bool

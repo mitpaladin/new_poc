@@ -18,24 +18,30 @@ module Decorations
       class ImagePostBuilder
         # Wraps building an HTML :img element from an "image url" string.
         class Image < Element
+          module Internals
+            def default_converter
+              MarkdownHtmlConverter.new
+            end
+          end
+          extend Internals
           include Contracts
 
-          INIT_PARAMS = {
-            doc: Nokogiri::HTML::Document,
-            image_url: String
-          }
-
-          Contract INIT_PARAMS => Image
-          def initialize(doc:, image_url:)
-            super doc
-            @image_url = image_url
-            self
+          attr_init :doc, :image_url, markdown_converter: default_converter do
+            validate_initialisers! doc, image_url, markdown_converter
           end
 
           Contract None => String
           def to_html
             markup = element('img').tap { |img| img[:src] = @image_url }
-            MarkdownHtmlConverter.new.to_html markup.to_html
+            markdown_converter.to_html markup.to_html
+          end
+
+          private
+
+          Contract Nokogiri::HTML::Document, String,
+                   MarkdownHtmlConverter => Bool
+          def validate_initialisers!(_doc, _image_url, _converter)
+            true
           end
         end # class Decorations::Posts::HtmlBodyBuilder::ImagePostBuilder::Image
       end # class Decorations::Posts::HtmlBodyBuilder::ImagePostBuilder

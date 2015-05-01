@@ -4,7 +4,7 @@ require 'spec_helper'
 describe Decorations::Posts::HtmlBodyBuilder::ImagePostBuilder::Image do
   let(:doc) { Nokogiri::HTML::Document.new }
   let(:image_url) { 'http://example.com/image1.png' }
-  let(:actual) { described_class.new(doc: doc, image_url: image_url).to_html }
+  let(:actual) { described_class.new(doc, image_url).to_html }
   let(:outer_regex) { %r{\A<p>(<a .+>.+</a>)</p>\z} }
 
   describe 'returns HTML markup that' do
