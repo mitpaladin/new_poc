@@ -1,4 +1,6 @@
 
+require 'timestamp_builder'
+
 require_relative 'markup_builder/published_parts'
 require_relative 'markup_builder/draft_parts'
 
@@ -12,10 +14,11 @@ module Decorations
       # Builds presentational markup for a byline with specified attributes.
       class MarkupBuilder
         extend Forwardable
+        include TimestampBuilder
 
-        def initialize(attributes)
-          @attributes = attributes
-          @content_class = pubdate ? PublishedParts : DraftParts
+        attr_init :attributes do
+          extend PublishedParts if pubdate
+          extend DraftParts unless pubdate
         end
 
         def to_html
@@ -27,7 +30,12 @@ module Decorations
 
         private
 
-        def_delegators :@attributes, :author_name, :pubdate, :updated_at
+        def_delegators :attributes, :author_name, :pubdate, :updated_at
+
+        def content
+          [status, timestamp_for(what_time), 'by', attributes.author_name]
+            .join ' '
+        end
 
         def doc
           @doc ||= Nokogiri::HTML::Document.new
@@ -44,7 +52,7 @@ module Decorations
         def inner
           element('time').tap do |time_tag|
             time_tag[:pubdate] = 'pubdate'
-            time_tag << @content_class.new(@attributes).content
+            time_tag << content
           end
         end
       end # class Decorations::Posts::BylineBuilder::MarkupBuilder

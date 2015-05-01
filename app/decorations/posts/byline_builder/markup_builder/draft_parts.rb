@@ -1,6 +1,4 @@
 
-require_relative 'parts_base'
-
 # POROs that act as presentational support for entities.
 module Decorations
   # Decorations for `Post` entities. D'oh!
@@ -10,16 +8,17 @@ module Decorations
     class BylineBuilder
       # Builds presentational markup for a byline with specified attributes.
       class MarkupBuilder
-        # Generates content for draft-post byline based on post attributes.
-        class DraftParts < PartsBase
+        # Content differentiating listing of a draft post from that of a public
+        # post.
+        module DraftParts
           def status
             'Drafted'
           end
 
           def what_time
-            attributes.updated_at.localtime
+            attributes.updated_at
           end
-        end # class Decorations::Posts::BylineBuilder::MarkupBuilder::DraftParts
+        end
       end # class Decorations::Posts::BylineBuilder::MarkupBuilder
     end # class Decorations::Posts::BylineBuilder
   end
