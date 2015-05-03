@@ -42,7 +42,7 @@ describe UsersController::Action::Create do
   end # context 'is successful with valid parameters'
 
   context 'is unsuccessful with parameters that are invalid because' do
-    let(:user_repository) { Repository::User.new }
+    let(:user_repository) { UserRepository.new }
     let(:user_attribs) { FactoryGirl.attributes_for :user }
 
     context 'the request is made from a logged-in user session' do

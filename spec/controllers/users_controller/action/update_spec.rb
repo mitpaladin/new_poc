@@ -9,7 +9,7 @@ describe UsersController::Action::Update do
   end
   # NOTE: Old `Actions` namespace currently used here. Oops.
   let(:subscriber) { Actions::BroadcastSuccessTester.new }
-  let(:user_repo) { Repository::User.new }
+  let(:user_repo) { UserRepository.new }
 
   # regardless of parameters, these steps wire up the Wisper connection
   before :each do
@@ -43,7 +43,7 @@ describe UsersController::Action::Update do
         it 'successfully' do
           expect(payload).to be_a UserFactory.entity_class
           expect(payload[:profile]).to eq user_data[:profile]
-          entity = Repository::User.new.find_by_slug(payload.slug).entity
+          entity = UserRepository.new.find_by_slug(payload.slug).entity
           expect(entity[:profile]).to eq user_data[:profile]
         end
       end # describe 'profile description'

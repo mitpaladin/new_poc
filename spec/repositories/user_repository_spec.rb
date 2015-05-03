@@ -8,8 +8,6 @@ require_relative 'shared_examples/the_delete_method_for_a_repository'
 require_relative 'shared_examples/the_find_by_slug_method_for_a_repository'
 require_relative 'shared_examples/the_update_method_for_a_repository'
 
-require_relative '../../app/repositories/user'
-
 shared_examples 'a result with a Guest User entity' do
   it 'is a successful result with a Guest User entity' do
     expect(result).to be_success
@@ -18,7 +16,7 @@ shared_examples 'a result with a Guest User entity' do
   end
 end
 
-describe Repository::User do
+describe UserRepository do
   let(:be_entity_for) do
     ->(entity) { be_saved_user_entity_for(entity) }
   end
@@ -94,13 +92,13 @@ describe Repository::User do
     context 'for a dao with no passwords' do
       it 'adds test password' do
         dao = FactoryGirl.create :user
-        attr = Repository::User.new.send(:attributes_for, dao, [])
+        attr = UserRepository.new.send(:attributes_for, dao, [])
         expect(attr[:password]).to eq 'password'
       end
 
       it 'adds no test password per instruction' do
         dao = FactoryGirl.create :user
-        attr = Repository::User.new.send(:attributes_for, dao, [:no_password])
+        attr = UserRepository.new.send(:attributes_for, dao, [:no_password])
         expect(attr[:password]).to be_nil
       end
     end
@@ -142,4 +140,4 @@ describe Repository::User do
       end # context 'with a correct password'
     end # context 'for an existing user'
   end # describe :authenticate
-end # describe Repository::User
+end # describe UserRepository
