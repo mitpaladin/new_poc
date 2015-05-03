@@ -44,7 +44,7 @@ class PostsController < ApplicationController
 
       def invalid_data_alert
         entity = PostFactory.create(attribs).tap(&:valid?)
-        dao = Repository::Post.new.dao.new attribs
+        dao = PostRepository.new.dao.new attribs
         entity.errors.each { |attrib, msg| dao.errors.add attrib, msg }
         dao.errors.full_messages.first
       end

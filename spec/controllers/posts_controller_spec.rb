@@ -135,7 +135,7 @@ describe PostsController do
 
       it 'assigns a new Post DAO instance to :post' do
         post = assigns[:post]
-        expect(post).to be_a Repository::Post.new.dao
+        expect(post).to be_a PostRepository.new.dao
         expect(post).not_to be_persisted
       end
 
@@ -322,7 +322,7 @@ describe PostsController do
 
       it 'assigns an existing Post DAO instance to :post' do
         post = assigns[:post]
-        expect(post).to be_a Repository::Post.new.dao
+        expect(post).to be_a PostRepository.new.dao
         expect(post).to be_persisted
       end
 
@@ -347,7 +347,7 @@ describe PostsController do
         end
 
         it 'assigns an existing Post DAO instance to Post' do
-          expect(assigns[:post]).to be_a Repository::Post.new.dao
+          expect(assigns[:post]).to be_a PostRepository.new.dao
           expect(assigns[:post].title).to eq article.title
         end
 
@@ -427,7 +427,7 @@ describe PostsController do
           end
 
           it 'assigns the updated post' do
-            expect(assigns[:post]).to be_a Repository::Post.new.dao
+            expect(assigns[:post]).to be_a PostRepository.new.dao
           end
 
           describe 'assigns the updated post such that' do

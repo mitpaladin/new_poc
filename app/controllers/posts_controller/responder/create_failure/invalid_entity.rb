@@ -32,7 +32,7 @@ class PostsController < ApplicationController
         def call(payload)
           attribs = JSON.parse(payload.message).deep_symbolize_keys
                     .reject { |k, _v| [:errors].include? k }
-          post = Repository::Post.new.dao.new(attribs).tap do |p|
+          post = PostRepository.new.dao.new(attribs).tap do |p|
             p.extend(PostDao::Presentation).valid?
           end
           post_setter.call post
