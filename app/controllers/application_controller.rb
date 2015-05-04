@@ -1,4 +1,7 @@
 
+require 'contracts'
+require 'app_contracts'
+
 require 'current_user_identity'
 
 # Main application controller. Hang things off here that are needed by multiple
@@ -6,20 +9,27 @@ require 'current_user_identity'
 class ApplicationController < ActionController::Base
   # Internal code used by ApplicationController, *not* directly by subclasses.
   module Internals
+    include Contracts
+    include Contracts::Modules
+
+    Contract ControllerInstance, Any => Class
     def self.action_class_for(base_class, method_name)
       action_method = method_name.capitalize.to_sym
       base_class.const_get(:Action).const_get action_method
     end
 
+    Contract Or[String, Symbol] => Symbol
     def self.listener_name_for(method_name)
       "on_#{method_name}".to_sym
     end
 
+    Contract String => ({ prefix: Symbol })
     def self.subscribe_params_for(method_name)
       { prefix: listener_name_for(method_name) }
     end
   end
   private_constant :Internals
+  include Contracts
 
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
@@ -32,6 +42,7 @@ class ApplicationController < ActionController::Base
 
   private
 
+  Contract None => CurrentUserIdentity
   def identity
     @identity ||= CurrentUserIdentity.new(session)
   end
@@ -51,6 +62,7 @@ class ApplicationController < ActionController::Base
   # notifications appropriate to the class, and then call the action instance's
   # `#execute` method.
   #
+  Contract Symbol, Proc => ControllerInstance
   def self.def_action(action_sym, &block)
     method_name = action_sym.downcase.to_s
     action_class = Internals.action_class_for self, method_name
@@ -59,5 +71,6 @@ class ApplicationController < ActionController::Base
       action.subscribe(self, Internals.subscribe_params_for(method_name))
         .execute
     end
+    self
   end
 end
