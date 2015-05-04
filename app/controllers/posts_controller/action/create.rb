@@ -1,5 +1,5 @@
 
-require_relative 'create/internals/post_data_filter'
+require_relative 'create/post_data_filter'
 require 'action_support/broadcaster'
 require 'action_support/entity_persister'
 require 'action_support/guest_user_access'
