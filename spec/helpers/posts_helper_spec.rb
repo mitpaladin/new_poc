@@ -20,7 +20,7 @@ end
 
 def new_build_and_publish_posts(count = 10)
   ages = new_random_ages(count)
-  repo = Repository::Post.new
+  repo = PostRepository.new
   ret = []
   new_bhs_build_example_posts(count).each_with_index do |post, index|
     attributes = post.attributes.to_hash.merge pubdate: ages[index]

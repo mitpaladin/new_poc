@@ -46,7 +46,7 @@ describe PostsController::Responder::ShowSuccess do
     end
 
     it 'retrieves a DAO instance assigned to the @post controller ivar' do
-      expect(dao).to be_a Repository::Post.new.dao
+      expect(dao).to be_a PostRepository.new.dao
     end
 
     describe 'retrieves a DAO instance assigned to the @post controller ivar' do
