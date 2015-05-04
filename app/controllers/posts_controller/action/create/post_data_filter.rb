@@ -13,12 +13,10 @@ class PostsController < ApplicationController
 
         def initialize(post_data)
           @data = ActionSupport::Hasher.convert post_data
-          @draft_post = false
         end
 
         def filter
           attribs = copy_attributes
-          @draft_post = true if data_defines_draft?
           OpenStruct.new attribs.to_h.select { |_k, v| v }
         end
 
@@ -32,10 +30,6 @@ class PostsController < ApplicationController
             ret[attrib] = data[attrib].to_s.strip if data[attrib].present?
           end
           ret
-        end
-
-        def data_defines_draft?
-          data[:post_status] == 'draft'
         end
 
         def post_attributes
