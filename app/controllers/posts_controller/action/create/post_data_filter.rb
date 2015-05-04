@@ -1,4 +1,6 @@
 
+require 'contracts'
+
 require 'action_support/hasher'
 
 # PostsController: actions related to Posts within our "fancy" blog.
@@ -9,21 +11,24 @@ class PostsController < ApplicationController
     class Create
       # Filters incoming post_data parameter and makes an OpenStruct of it.
       class PostDataFilter
-        attr_reader :draft_post
+        include Contracts
 
+        Contract Hash => PostDataFilter
         def initialize(post_data)
           @data = ActionSupport::Hasher.convert post_data
+          self
         end
 
+        Contract None => OpenStruct
         def filter
-          attribs = copy_attributes
-          OpenStruct.new attribs.to_h.select { |_k, v| v }
+          OpenStruct.new copy_attributes.to_h.select { |_k, v| v }
         end
 
         private
 
         attr_reader :data
 
+        Contract None => Struct
         def copy_attributes
           ret = Struct.new(*post_attributes).new
           post_attributes.each do |attrib|
@@ -32,6 +37,7 @@ class PostsController < ApplicationController
           ret
         end
 
+        Contract None => ArrayOf[Symbol]
         def post_attributes
           %w(author_name title body image_url slug created_at updated_at
              pubdate post_status).map(&:to_sym)

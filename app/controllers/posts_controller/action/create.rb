@@ -17,7 +17,7 @@ class PostsController < ApplicationController
       def initialize(current_user:, post_data:, entity_class: nil)
         filter = PostDataFilter.new(post_data)
         @post_data = filter.filter
-        @draft_post = filter.draft_post
+        @draft_post = draft_post?
         @current_user = current_user
         @entity_class = entity_class || PostFactory.entity_class
       end
@@ -43,6 +43,10 @@ class PostsController < ApplicationController
         }
         @entity = RepositoryAdder.new(params).add.entity
         self
+      end
+
+      def draft_post?
+        post_data[:pubdate].present?
       end
 
       def new_entity_attributes

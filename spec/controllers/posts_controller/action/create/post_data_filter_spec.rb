@@ -10,9 +10,11 @@ describe PostsController::Action::Create::PostDataFilter do
 
     describe 'fails when given a parameter that is invalid because' do
       it 'is not sufficiently Hash-like' do
-        message = %(undefined method `to_h' for "bogus":String)
-        expect { described_class.new 'bogus' }.to raise_error NoMethodError,
-                                                              message
+        param = 'bogus'
+        expect { described_class.new param }.to violate_a_param_contract
+          .with_arg(param)
+          .identified_by(Hash)
+          .returning(described_class)
       end
     end # describe 'fails when given a parameter that is invalid because'
 
