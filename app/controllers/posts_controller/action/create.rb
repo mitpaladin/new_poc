@@ -11,12 +11,6 @@ class PostsController < ApplicationController
   module Action
     # Wisper-based command object called by Posts controller #create action.
     class Create
-      # Internal classes used exclusively by PostsController::Action::Create.
-      # (or should be...)
-      module Internals
-      end
-      private_constant :Internals
-      include Internals
       include ActionSupport::Broadcaster
       include ActionSupport
 
@@ -58,7 +52,7 @@ class PostsController < ApplicationController
       end
 
       def prohibit_guest_access
-        ActionSupport::GuestUserAccess.new(current_user).prohibit
+        GuestUserAccess.new(current_user).prohibit
       end
 
       def validate_post_data
