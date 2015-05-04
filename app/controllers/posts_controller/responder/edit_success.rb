@@ -17,7 +17,7 @@ class PostsController < ApplicationController
       end
 
       def respond_to(payload)
-        repo = Repository::Post.new
+        repo = PostRepository.new
         repo.update identifier: payload.slug,
                     updated_attrs: payload.attributes.to_hash
         post_setter.call repo.dao.find(payload.slug)

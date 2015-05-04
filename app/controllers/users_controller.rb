@@ -13,10 +13,10 @@ require_relative 'users_controller/create_failure'
 class UsersController < ApplicationController
   include Internals
 
-  def_action(:index) { Repository::User.new }
+  def_action(:index) { UserRepository.new }
 
   def_action(:new) do
-    { current_user: current_user, user_repo: Repository::User.new }
+    { current_user: current_user, user_repo: UserRepository.new }
   end
 
   def_action(:create) do
@@ -26,12 +26,12 @@ class UsersController < ApplicationController
   def_action(:edit) do
     {
       slug: params[:id], current_user: current_user,
-      user_repository: Repository::User.new
+      user_repository: UserRepository.new
     }
   end
 
   def_action(:show) do
-    { target_slug: params[:id], user_repository: Repository::User.new }
+    { target_slug: params[:id], user_repository: UserRepository.new }
   end
 
   def_action(:update) do
