@@ -46,12 +46,11 @@ describe PostsController::Action::Create do
   # NOTE: Old `Actions` namespace currently used here. Oops.
   let(:subscriber) { Actions::BroadcastSuccessTester.new }
   let(:current_user) do
-    attribs = FactoryGirl.attributes_for :user, :saved_user
-    user = UserFactory.create attribs
-    repo.add user
-    user
+    FactoryGirl.build_stubbed :user, :saved_user
   end
-  let(:guest_user) { UserFactory.guest_user }
+  let(:guest_user) do
+    UserDao.first
+  end
 
   # regardless of parameters, these steps wire up the Wisper connection
   before :each do

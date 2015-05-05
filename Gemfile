@@ -100,7 +100,7 @@ group :development, :test do
   gem 'ruby-growl'
   gem 'simplecov'
   gem 'tapout'
-  gem 'teaspoon'
+  gem 'teaspoon', '~> 0.9'
 end
 
 group :test do

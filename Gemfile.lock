@@ -500,7 +500,7 @@ DEPENDENCIES
   slim-rails!
   spring
   tapout
-  teaspoon
+  teaspoon (~> 0.9)
   uglifier
   validates_email_format_of
   value_object
