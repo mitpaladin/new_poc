@@ -48,9 +48,12 @@ describe PostsController::Action::Index do
   let(:draft_post_count) { 5 }
   let(:draft_posts) do
     draft_post_count.times.map do |n|
-      FancyOpenStruct.new title: "Title #{n + first_draft_post_id}",
-                          author_name: author_name,
-                          published?: false
+      new_attribs = {
+        title: "Title #{n + first_draft_post_id}",
+        author_name: author_name
+      }
+      attribs = FactoryGirl.attributes_for :post, new_attribs
+      Entity::Post.new attribs
     end
   end
   let(:first_draft_post_id) { published_post_count + 1 }
@@ -59,9 +62,12 @@ describe PostsController::Action::Index do
   let(:published_post_count) { 3 }
   let(:published_posts) do
     published_post_count.times.map do |n|
-      FancyOpenStruct.new title: "Title #{n + first_published_post_id}",
-                          author_name: author_name,
-                          published?: true
+      new_attribs = {
+        title: "Title #{n + first_published_post_id}",
+        author_name: author_name
+      }
+      attribs = FactoryGirl.attributes_for :post, :published_post, new_attribs
+      Entity::Post.new attribs
     end
   end
   let(:repo) { FancyOpenStruct.new all: [draft_posts, published_posts].flatten }

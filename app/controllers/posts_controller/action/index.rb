@@ -24,18 +24,22 @@ class PostsController < ApplicationController
         self
       end
 
+      Contract None => Index
       def execute
         broadcast_success permitted_posts
+        self
       end
 
       private
 
       attr_reader :current_user, :post_repository
 
+      Contract None => ArrayOf[Entity::Post]
       def permitted_posts
         post_repository.all.select { |post| should_include? post }
       end
 
+      Contract Entity::Post => Bool
       def should_include?(post)
         post.published? || post.author_name == current_user.name
       end
