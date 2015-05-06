@@ -8,13 +8,12 @@ describe PostsController::Action::New do
     described_class.new current_user: current_user, repository: user_repo,
                         entity_class: entity_class
   end
-  let(:entity_class) { FancyOpenStruct }
-  let(:guest_user) { UserFactory.guest_user }
-  let(:registered_user) { FancyOpenStruct.new name: 'User Name' }
-  let(:user_repo) do
-    guest = FancyOpenStruct.new entity: guest_user
-    FancyOpenStruct.new guest_user: guest
+  let(:entity_class) { PostFactory.entity_class }
+  let(:registered_user) do
+    FactoryGirl.build_stubbed :user, :saved_user
   end
+  # FIXME: A dummied DAO would be faster
+  let(:user_repo) { UserRepository.new }
   let(:subscriber) { WisperSubscription.new }
 
   before :each do
@@ -35,13 +34,13 @@ describe PostsController::Action::New do
 
       it 'is an entity with only an :author_name attribute' do
         expect(payload.author_name).to eq registered_user.name
-        expect(payload.to_h.keys).to eq [:author_name]
+        expect(payload.attributes.to_hash.keys).to eq [:author_name]
       end
     end # describe 'broadcasts :success with a payload which'
   end # context 'when a registered user is logged in'
 
   context 'when no registered user is logged in' do
-    let(:current_user) { guest_user }
+    let(:current_user) { user_repo.dao.first }
 
     it 'broadcasts failure' do
       expect(subscriber).to be_failure

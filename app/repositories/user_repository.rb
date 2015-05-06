@@ -28,7 +28,7 @@ class UserRepository < Repository::Base
   def guest_user
     user_dao = dao.first
     errors = Repository::Support::ErrorFactory.create(user_dao.errors)
-    new_entity = factory.create(user_dao.attributes)
+    new_entity = factory.create(user_dao.attributes.symbolize_keys)
     Repository::Support::StoreResult.new entity: new_entity,
                                          errors: errors,
                                          success: errors.empty?
