@@ -14,11 +14,21 @@ class PostsController < ApplicationController
     class Edit
       # Current user not author of specified post. Bitch about it, as JSON.
       class NotAuthorFailure
+        include Contracts
+
+        INIT_CONTRACT_INPUTS = {
+          user_name: String,
+          post: Entity::Post
+        }
+
+        Contract INIT_CONTRACT_INPUTS => NotAuthorFailure
         def initialize(user_name:, post:)
           @user_name = user_name
           @post = post
+          self
         end
 
+        Contract None => String
         def to_yaml
           YAML.dump(
             current_user_name: @user_name,
@@ -34,14 +44,12 @@ class PostsController < ApplicationController
 
       INIT_CONTRACT_INPUTS = {
         slug: String,
-        # Currently called with the class built in the spec, a DAO, or entity.
         current_user: RespondTo[:name],
         repository: RespondTo[:find_by_slug]
       }
 
       Contract INIT_CONTRACT_INPUTS => Edit
       def initialize(slug:, current_user:, repository:)
-        ap [:line_43, current_user.class] unless current_user.is_a? UserDao
         @slug = slug
         @current_user = current_user
         @repository = repository
