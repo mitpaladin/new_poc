@@ -6,15 +6,15 @@ require 'support/broadcast_success_tester'
 
 describe PostsController::Action::Edit do
   let(:author) do
-    FancyOpenStruct.new name: 'The Author', slug: 'the-author'
+    FactoryGirl.build_stubbed :user, :saved_user
   end
   let(:command) do
     described_class.new slug: target_slug, current_user: current_user,
                         repository: post_repo
   end
-  let(:guest_user) { UserFactory.guest_user }
+  let(:guest_user) { UserDao.all.first }
   let(:other_user) do
-    FancyOpenStruct.new name: 'J Random User', slug: 'j-random-user'
+    FactoryGirl.build_stubbed :user, :saved_user
   end
   let(:post_repo) do
     Class.new do
@@ -36,7 +36,9 @@ describe PostsController::Action::Edit do
   end
   let(:subscriber) { WisperSubscription.new }
   let(:repo_success_entity) do
-    FancyOpenStruct.new author_name: author.name
+    attribs = FactoryGirl.attributes_for :post, :saved_post,
+                                         author_name: author.name
+    PostFactory.create attribs
   end
 
   before :each do
