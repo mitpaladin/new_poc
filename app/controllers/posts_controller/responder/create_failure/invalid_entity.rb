@@ -9,39 +9,51 @@ class PostsController < ApplicationController
     #
     # Makes use of these methods on the controller passed into `#initialize`:
     #
-    # 1. `:instance_variable_set`;
-    # 2. `:redirect_to`;
-    # 3. `:render`; and
-    # 4. `:root_path`.
+    # 1. `:instance_variable_set` (via `post_setter'); and
+    # 2. `:render`.
     #
     class CreateFailure
       class InvalidEntity
         def initialize(ivars = {})
           @post_setter = ivars.fetch 'post_setter'
           @render = ivars.fetch 'render'
+          self
         end
 
+        # The `payload` should be a RuntimeError with a JSON-serialised entity
+        # in its `message`.
         def self.applies?(payload)
           payload_data = JSON.parse(payload.message).deep_symbolize_keys
           entity_attribs = [:title, :slug, :author_name, :body, :image_url]
-          entity_attribs.detect { |k| payload_data.key? k }
-        rescue RuntimeError
+          entity_attribs.detect { |k| payload_data.key? k } ? true : false
+        rescue JSON::ParserError # NOT a RuntimeError; tsk, tsk
           false
         end
 
         def call(payload)
-          attribs = JSON.parse(payload.message).deep_symbolize_keys
-                    .reject { |k, _v| [:errors].include? k }
-          post = PostRepository.new.dao.new(attribs).tap do |p|
-            p.extend(PostDao::Presentation).valid?
-          end
+          attribs = attribs_from_message_in payload
+          post = create_invalidated_post_dao attribs
+          # post now has errors set (we wouldn't be here if it were valid)
           post_setter.call post
+          # should render an empty string (for an invalid post)
           render.call 'new'
         end
 
         private
 
         attr_reader :post_setter, :render
+
+        def create_invalidated_post_dao(attribs)
+          PostRepository.new.dao.new(attribs).tap do |p|
+            p.extend(PostDao::Presentation).valid?
+          end
+        end
+
+        def attribs_from_message_in(payload)
+          JSON.parse(payload.message).symbolize_keys.reject do |k, _v|
+            k == :errors
+          end
+        end
       end # class PostsController::Responder::CreateFailure::InvalidEntity
       private_constant :InvalidEntity
     end # class PostsController::Responder::CreateFailure
