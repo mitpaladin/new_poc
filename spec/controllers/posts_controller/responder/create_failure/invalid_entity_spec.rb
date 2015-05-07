@@ -5,20 +5,35 @@ describe PostsController::Responder::CreateFailure::InvalidEntity do
   describe 'has initialisation that' do
     describe 'fails when' do
       it 'no parameters are specified' do
-        expect { described_class.new }.to raise_error KeyError
+        expect { described_class.new }.to raise_error ArgumentError
+      end
+
+      it 'a non-Hash parameter is supplied' do
+        expect { described_class.new 'bogus' }.to raise_error ParamContractError
       end
 
       describe 'a Hash is supplied that has no value for key' do
+        after :each do
+          which_field = RSpec.current_example.description[1..-2]
+          params = {
+            'post_setter' => -> (*_) { :post_setter_returned },
+            'render' => -> (*_) { :render_returned }
+          }
+          params.delete which_field
+          expect { described_class.new params }.to raise_error do |e|
+            expect(e).to be_a ParamContractError
+            expected = 'Expected: \({"post_setter"=>Proc,' \
+              ' "render"=>Proc\[,others\]}\)'
+            expect(e.message).to match expected
+            unexpected = /Actual:.+"#{which_field}"/
+            expect(e.message).not_to match unexpected
+          end
+        end
+
         it '"post_setter"' do
-          params = { 'reunder' => -> { :render_returned } }
-          expect { described_class.new params }.to raise_error KeyError,
-                                                               /"post_setter"/
         end
 
         it '"render"' do
-          params = { 'post_setter' => -> { :post_setter_returned } }
-          expect { described_class.new params }.to raise_error KeyError,
-                                                               /"render"/
         end
       end # describe 'a Hash is supplied that has no value for key'
     end # describe 'fails when'
@@ -28,8 +43,9 @@ describe PostsController::Responder::CreateFailure::InvalidEntity do
     describe 'fails when passed a parameter that' do
       it 'does not respond to the :message message' do
         param = 'bogus'
-        expect { described_class.applies? param }.to raise_error NoMethodError,
-                                                                 /`message'/
+        attempt = -> (p) { described_class.applies? p }
+        expect { attempt.call param }.to raise_error ParamContractError,
+                                                     /Actual: "bogus"/
       end
     end # describe 'fails when passed a parameter that'
 
