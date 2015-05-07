@@ -5,7 +5,7 @@ require 'action_support/broadcaster'
 require 'action_support/guest_user_access'
 require 'action_support/slug_finder'
 
-require_relative 'update/internals/not_author_failure'
+require_relative 'update/not_author_failure'
 
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
@@ -13,9 +13,7 @@ class PostsController < ApplicationController
   module Action
     # Verifies that the current user is permitted to update a specified post.
     class Update
-      # Internal support classes for the Update class
-      private_constant :Internals
-      include Internals
+      private_constant :NotAuthorFailure
 
       include ActionSupport::Broadcaster
       include Contracts
