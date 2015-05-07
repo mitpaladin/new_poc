@@ -6,11 +6,14 @@ require 'wisper_subscription'
 
 describe PostsController::Action::Update do
   let(:author) do
-    FancyOpenStruct.new name: 'The Author', slug: 'the-author'
+    FactoryGirl.build_stubbed :user, :saved_user, name: 'The Author',
+                                                  slug: 'the-author'
   end
-  let(:guest_user) { UserFactory.guest_user }
+  let(:guest_user) do
+    UserDao.find 'guest-user'
+  end
   let(:other_user) do
-    FancyOpenStruct.new name: 'J Random User', slug: 'j-random-user'
+    FactoryGirl.build_stubbed :user, :saved_user
   end
   let(:post_repo) do
     Class.new do
