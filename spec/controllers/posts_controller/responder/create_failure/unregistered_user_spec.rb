@@ -40,11 +40,14 @@ describe target_class, type: :request do
   end # describe 'has initialisation that'
 
   describe 'has an .applies? class method that' do
-    describe 'returns false when passed in something that is' do
-      it 'not a RuntimeError or other such error' do
-        expect(described_class.applies? :bogus).to be false
+    describe 'raises a ParamContractError when passed' do
+      fit 'anything other than a RuntimeError instance' do
+        expect { described_class.applies? :bogus }.to violate_a_param_contract
+          .with_arg(:bogus)
+          .identified_by(RuntimeError)
       end
-
+    end
+    describe 'returns false when passed in something that is' do
       it 'a RuntimeError with an invalid payload in its message' do
         data = { anything: false }
         payload = RuntimeError.new YAML.dump(data)
