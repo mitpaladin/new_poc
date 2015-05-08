@@ -41,7 +41,7 @@ describe target_class, type: :request do
 
   describe 'has an .applies? class method that' do
     describe 'raises a ParamContractError when passed' do
-      fit 'anything other than a RuntimeError instance' do
+      it 'anything other than a RuntimeError instance' do
         expect { described_class.applies? :bogus }.to violate_a_param_contract
           .with_arg(:bogus)
           .identified_by(RuntimeError)
