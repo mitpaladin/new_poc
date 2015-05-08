@@ -1,5 +1,5 @@
 
-require 'post_dao'
+require 'contracts'
 
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
@@ -16,33 +16,47 @@ class PostsController < ApplicationController
     # 3. `:root_path`.
     #
     class CreateSuccess
+      include Contracts
+
+      INIT_CONTRACT_INPUTS = RespondTo[:instance_variable_set, :redirect_to,
+                                       :root_path]
+
+      Contract INIT_CONTRACT_INPUTS => CreateSuccess
       def initialize(controller)
         @redirect_to = controller.method :redirect_to
         @root_path = controller.method :root_path
         @post_setter = -> (dao) { controller.instance_variable_set :@post, dao }
+        self
       end
 
+      Contract Entity::Post => CreateSuccess
       def respond_to(payload)
         assign_dao_ivar(payload)
         redirect_to_root
+        self
       end
 
       private
 
       attr_reader :post_setter, :redirect_to, :root_path
 
+      Contract Entity::Post => PostDao
       def dao_from_entity(entity)
         PostDao.new(entity.attributes.to_hash)
       end
 
+      Contract None => Hash
       def flash_options
         { flash: { success: 'Post added!' } }
       end
 
+      Contract None => CreateSuccess
       def redirect_to_root
         redirect_to.call root_path.call, flash_options
+        self
       end
 
+      Contract Entity::Post => CreateSuccess
       def assign_dao_ivar(entity)
         post_setter.call dao_from_entity(entity)
         self
