@@ -25,7 +25,7 @@ class PostsController < ApplicationController
         end
 
         def call(*args)
-          message = "Unknown failure:\nargs: #{args.ai}\nivars #{@ivars.ai}"
+          message = "Unknown failure:\nargs: #{args.ai}\nivars: #{@ivars.ai}"
           fail message
         end
       end # class PostsController::Responder::CreateFailure::UnknownFailure
