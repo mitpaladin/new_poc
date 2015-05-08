@@ -9,10 +9,8 @@ class PostsController < ApplicationController
     #
     # Makes use of these methods on the controller passed into `#initialize`:
     #
-    # 1. `:instance_variable_set`;
-    # 2. `:redirect_to`;
-    # 3. `:render`; and
-    # 4. `:root_path`.
+    # 1. `:redirect_to`; and
+    # 2. `:root_path`.
     #
     class CreateFailure
       class UnregisteredUser
@@ -29,7 +27,7 @@ class PostsController < ApplicationController
         def self.applies?(payload)
           data = YAML.load payload.message
           data == { messages: [alert] }
-        rescue RuntimeError
+        rescue
           false
         end
 

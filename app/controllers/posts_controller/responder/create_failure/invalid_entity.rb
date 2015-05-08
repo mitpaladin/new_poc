@@ -18,27 +18,8 @@ class PostsController < ApplicationController
       class InvalidEntity
         include Contracts
 
-        class InitContractInputs
-          def self.valid?(value)
-            return false unless value.respond_to? :to_hash
-            ret = true
-            %w(render post_setter).each do |key|
-              ret &&= value.key?(key)
-              ret &&= value[key].respond_to? :to_proc
-              ret &&= value[key].to_proc.is_a?(Proc)
-            end
-            ret
-          end
-
-          def self.to_s
-            '{"post_setter"=>Proc, "render"=>Proc[,others]}'
-          end
-        end
-
-        # Contract can't only specify our two keys in a Hash, because that Hash
-        # will contain other key/value pairs when called from non-spec code.
-        Contract InitContractInputs => InvalidEntity
-        def initialize(ivars)
+        Contract RespondTo[:to_hash] => InvalidEntity
+        def initialize(ivars = {})
           @post_setter = ivars.fetch 'post_setter'
           @render = ivars.fetch 'render'
           self
@@ -72,7 +53,7 @@ class PostsController < ApplicationController
 
         Contract HashOf[Symbol, Maybe[String]] => PostDao
         def create_invalidated_post_dao(attribs)
-          PostRepository.new.dao.new(attribs).tap do |p|
+          PostDao.new(attribs).tap do |p|
             p.extend(PostDao::Presentation).valid?
           end
         end

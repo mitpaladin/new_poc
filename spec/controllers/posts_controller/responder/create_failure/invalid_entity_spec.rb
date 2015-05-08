@@ -2,41 +2,48 @@
 require 'spec_helper'
 
 describe PostsController::Responder::CreateFailure::InvalidEntity do
+  let(:fake_controller) do
+    Class.new do
+      attr_reader :ivars_set, :renders, :root_path_calls
+
+      def initialize
+        @ivars_set = []
+        @renders = []
+        @root_path_calls = []
+      end
+
+      def instance_variable_set(*args)
+        @ivars_set.push args
+      end
+
+      def render(*args)
+        @renders.push args
+      end
+
+      def root_path(*_args)
+        @root_path_calls.push :called
+        root_path_literal
+      end
+
+      def root_path_literal
+        '/'
+      end
+    end.new
+  end
+
   describe 'has initialisation that' do
     describe 'fails when' do
       it 'no parameters are specified' do
-        expect { described_class.new }.to raise_error ArgumentError
+        expect { described_class.new }.to raise_error KeyError
       end
-
-      it 'a non-Hash parameter is supplied' do
-        expect { described_class.new 'bogus' }.to raise_error ParamContractError
-      end
-
-      describe 'a Hash is supplied that has no value for key' do
-        after :each do
-          which_field = RSpec.current_example.description[1..-2]
-          params = {
-            'post_setter' => -> (*_) { :post_setter_returned },
-            'render' => -> (*_) { :render_returned }
-          }
-          params.delete which_field
-          expect { described_class.new params }.to raise_error do |e|
-            expect(e).to be_a ParamContractError
-            expected = 'Expected: \({"post_setter"=>Proc,' \
-              ' "render"=>Proc\[,others\]}\)'
-            expect(e.message).to match expected
-            unexpected = /Actual:.+"#{which_field}"/
-            expect(e.message).not_to match unexpected
-          end
-        end
-
-        it '"post_setter"' do
-        end
-
-        it '"render"' do
-        end
-      end # describe 'a Hash is supplied that has no value for key'
     end # describe 'fails when'
+
+    describe 'succeeds when called with' do
+      it 'a controller-like parameter' do
+        h = { 'post_setter' => :post_setter, 'render' => :render }
+        expect { described_class.new h }.not_to raise_error
+      end
+    end # describe 'succeeds when called with'
   end # describe 'has initialisation that'
 
   describe 'has a class method .applies? that' do
@@ -76,21 +83,18 @@ describe PostsController::Responder::CreateFailure::InvalidEntity do
   end # describe 'has a class method .applies that'
 
   describe 'has an instance method #call that' do
-    let(:init_ivars) do
-      {
-        'post_setter' => mock_post_setter,
-        'render' => mock_render
-      }
+    let(:obj) do
+      post_setter = lambda do |dao|
+        fake_controller.instance_variable_set :@post, dao
+      end
+      render = fake_controller.method :render
+      h = { 'post_setter' => post_setter, 'render' => render }
+      described_class.new h
     end
-    let(:mock_post_setter) { -> (post) { posts.push post } }
-    let(:mock_render) { -> (*args) { render_args.push args } }
-    let(:posts) { [] }
-    let(:render_args) { [] }
-    let(:obj) { described_class.new init_ivars }
 
     it 'requires one parameter' do
-      message = 'wrong number of arguments (0 for 1)'
-      expect { obj.call }.to raise_error ArgumentError, message
+      expect { obj.call }.to raise_error ArgumentError,
+                                         /wrong number of arguments/
     end
 
     context 'when passed in a valid payload' do
@@ -106,28 +110,24 @@ describe PostsController::Responder::CreateFailure::InvalidEntity do
 
       describe 'calls the post_setter' do
         it 'once' do
-          expect(posts).to have(1).item
+          expect(fake_controller).to have(1).ivars_set
         end
 
         it 'with an invalid PostDao instance' do
-          expect(posts.first).to be_a PostDao
-          expect(posts.first).to be_invalid
+          ivar_set = fake_controller.ivars_set.first
+          expect(ivar_set[0]).to be :@post
+          expect(ivar_set[1]).to be_a PostDao
+          expect(ivar_set[1]).to be_invalid
         end
       end # describe 'calls the post_setter'
 
-      it 'calls the :post_setter once, with an invalid PostDao' do
-        expect(posts).to have(1).item
-        expect(posts.first).to be_a PostDao
-        expect(posts.first).not_to be_valid
-      end
-
       describe 'calls the renderer' do
         it 'once' do
-          expect(render_args).to have(1).item
+          expect(fake_controller.renders.count).to eq 1
         end
 
         it 'with the template name, "new"' do
-          expect(render_args.first).to eq ['new']
+          expect(fake_controller.renders.first).to eq ['new']
         end
       end # describe 'calls the renderer'
     end # context 'when passed in a valid payload'
