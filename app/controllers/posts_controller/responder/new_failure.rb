@@ -1,5 +1,5 @@
 
-require 'Contracts'
+require 'contracts'
 
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
