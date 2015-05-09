@@ -11,7 +11,8 @@ class UsersController < ApplicationController
       class PasswordLengthVerifier
         include ActionSupport
 
-        def initialize(attributes)
+        def initialize(attributes, length_underflow = 7)
+          @length_underflow = length_underflow
           @attributes = attributes
         end
 
@@ -23,10 +24,10 @@ class UsersController < ApplicationController
 
         private
 
-        attr_reader :attributes
+        attr_reader :attributes, :length_underflow
 
         def messages
-          ['Password must be longer than 7 characters']
+          ["Password must be longer than #{length_underflow} characters"]
         end
 
         def password
@@ -34,7 +35,7 @@ class UsersController < ApplicationController
         end
 
         def password_long_enough?
-          password.length > 7
+          password.strip.length > length_underflow
         end
 
         def password_set?
