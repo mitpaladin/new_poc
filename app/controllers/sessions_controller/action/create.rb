@@ -1,5 +1,5 @@
 
-require 'Contracts'
+require 'contracts'
 
 require 'action_support/broadcaster'
 
