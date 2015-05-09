@@ -1,7 +1,7 @@
 
-require_relative 'create/internals/new_entity_verifier'
-require_relative 'create/internals/password_verifier'
-require_relative 'create/internals/user_data_converter'
+require_relative 'create/new_entity_verifier'
+require_relative 'create/password_verifier'
+require_relative 'create/user_data_converter'
 require 'action_support/broadcaster'
 require 'action_support/entity_persister'
 require 'action_support/guest_user_access'
@@ -13,10 +13,6 @@ class UsersController < ApplicationController
     # Wisper-based command object called by Users controller #new action.
     class Create
       # Internal code called (initially) exclusively from Create class.
-      module Internals
-      end
-      private_constant :Internals
-      include Internals
       include ActionSupport::Broadcaster
 
       def initialize(current_user:, user_data:)
