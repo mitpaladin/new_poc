@@ -5,6 +5,8 @@ class UsersController < ApplicationController
   module Action
     # Wisper-based command object called by Users controller #new action.
     class Create
+      # Convert a query-string-formatted Hash of user data first into a Hash
+      # and then replace each array holding a value with that value.
       # This very well may be more general-purpose than just this action...
       class UserDataConverter
         attr_reader :data
