@@ -1,9 +1,6 @@
 
 require 'contracts'
 
-require_relative 'password_length_verifier'
-require_relative 'password_matcher'
-
 # UsersController: actions related to Users within our "fancy" blog.
 class UsersController < ApplicationController
   # Isolating our Action classes within the controller they're associate with.

@@ -20,7 +20,8 @@ class UsersController < ApplicationController
         end
 
         def match
-          return if user_data[:password] == user_data[:password_confirmation]
+          return if user_data[:password] == user_data[:password_confirmation] &&
+                    user_data[:password].to_s.present?
           ActionSupport::DataObjectFailure.new(attributes: user_data,
                                                messages: messages).fail
         end
