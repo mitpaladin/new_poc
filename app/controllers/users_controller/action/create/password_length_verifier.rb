@@ -1,5 +1,5 @@
 
-require 'action_support/data_object_failure'
+require 'contracts'
 
 # UsersController: actions related to Users within our "fancy" blog.
 class UsersController < ApplicationController
@@ -10,12 +10,17 @@ class UsersController < ApplicationController
       # Verifies password meets length requirement; raises otherwise.
       class PasswordLengthVerifier
         include ActionSupport
+        include Contracts
 
-        def initialize(attributes, length_underflow = 7)
-          @length_underflow = length_underflow
+        LENGTH_UNDERFLOW = 7
+
+        Contract HashOf[Symbol, Any] => PasswordLengthVerifier
+        def initialize(attributes)
           @attributes = attributes
+          self
         end
 
+        Contract None => nil
         def verify
           return if password_set? && password_long_enough?
           ActionSupport::DataObjectFailure.new(attributes: attributes,
@@ -24,20 +29,24 @@ class UsersController < ApplicationController
 
         private
 
-        attr_reader :attributes, :length_underflow
+        attr_reader :attributes
 
+        Contract None => Array[String]
         def messages
-          ["Password must be longer than #{length_underflow} characters"]
+          ["Password must be longer than #{LENGTH_UNDERFLOW} characters"]
         end
 
+        Contract None => String
         def password
           attributes.fetch :password, ''
         end
 
+        Contract None => Bool
         def password_long_enough?
-          password.strip.length > length_underflow
+          password.strip.length > LENGTH_UNDERFLOW
         end
 
+        Contract None => Bool
         def password_set?
           password.present?
         end
