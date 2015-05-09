@@ -1,4 +1,6 @@
 
+require 'contracts'
+
 require_relative 'password_length_verifier'
 require_relative 'password_matcher'
 
@@ -10,13 +12,19 @@ class UsersController < ApplicationController
     class Create
       # Verifies passwords meet both length/match criteria; raises otherwise.
       class PasswordVerifier
+        include Contracts
+
+        Contract HashOf[Symbol, Any] => PasswordVerifier
         def initialize(attributes)
           @attributes = attributes
+          self
         end
 
+        Contract None => PasswordVerifier
         def verify
           PasswordLengthVerifier.new(attributes).verify
           PasswordMatcher.new(attributes).match
+          self
         end
 
         private
