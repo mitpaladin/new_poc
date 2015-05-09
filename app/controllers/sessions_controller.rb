@@ -10,9 +10,7 @@ class SessionsController < ApplicationController
   end
 
   def new
-    action = Action::New.new current_user: current_user,
-                             user_repo: UserRepository.new
-    action.subscribe(self, prefix: :on_new).execute
+    Action::New.new(current_user).subscribe(self, prefix: :on_new).execute
   end
 
   def create

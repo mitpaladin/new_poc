@@ -1,4 +1,6 @@
 
+require 'contracts'
+
 require 'action_support/broadcaster'
 require 'action_support/guest_user_access'
 
@@ -9,22 +11,27 @@ class SessionsController < ApplicationController
     # New-session login encapsulation. Prevent double login.
     class New
       include ActionSupport::Broadcaster
+      include Contracts
 
-      def initialize(current_user:, user_repo:)
+      Contract RespondTo[:name] => New
+      def initialize(current_user)
         @current_user = current_user
-        @user_repo = user_repo
+        self
       end
 
+      Contract None => New
       def execute
         verify_guest_user
         broadcast_success guest_user
+        self
       rescue RuntimeError
         broadcast_failure current_user
+        self
       end
 
       private
 
-      attr_reader :current_user, :user_repo
+      attr_reader :current_user
 
       def guest_user
         UserFactory.guest_user

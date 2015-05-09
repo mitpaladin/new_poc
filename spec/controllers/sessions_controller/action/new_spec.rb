@@ -4,36 +4,18 @@ require 'wisper_subscription'
 
 describe SessionsController::Action::New do
   describe 'has initialisation that' do
-    it 'requires two keyword parameters, :current_user and :user_repo' do
-      args = { current_user: true, user_repo: true }
-      expect { described_class.new args }.not_to raise_error
-      args = { current_user: true }
-      expect do
-        described_class.new true, args
-      end.to raise_error ArgumentError, 'wrong number of arguments (1 for 0)'
-      args = { user_repo: true }
-      expect do
-        described_class.new true, args
-      end.to raise_error ArgumentError, 'wrong number of arguments (1 for 0)'
+    it 'requires one parameter, which must respond to the :name message' do
+      expect { described_class.new true }.to raise_error ParamContractError
+      legal_user = FancyOpenStruct.new name: 'Anybody'
+      expect { described_class.new legal_user }.not_to raise_error
     end
   end # describe 'has initialisation that'
 
   describe 'has an #execute method that' do
     let(:command) do
-      described_class.new current_user: current_user, user_repo: repo
+      described_class.new current_user
     end
     let(:guest_user_entity) { UserFactory.guest_user }
-    let(:repo) do
-      Class.new do
-        def initialize(guest)
-          @guest = guest
-        end
-
-        def guest_user
-          FancyOpenStruct.new entity: @guest
-        end
-      end.new(guest_user_entity)
-    end
     let(:subscriber) { WisperSubscription.new }
 
     before :each do
