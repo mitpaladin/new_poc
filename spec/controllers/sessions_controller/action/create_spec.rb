@@ -8,7 +8,7 @@ describe SessionsController::Action::Create do
                         repository: repo
   end
   let(:subscriber) { WisperSubscription.new }
-  let(:user) { FancyOpenStruct.new name: 'Name', passsword: 'Password' }
+  let(:user) { FancyOpenStruct.new name: 'Name', password: 'Password' }
 
   before :each do
     subscriber.define_message :success
