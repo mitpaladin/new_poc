@@ -1,5 +1,5 @@
 
-require 'action_support/data_object_failure'
+require 'contracts'
 
 # UsersController: actions related to Users within our "fancy" blog.
 class UsersController < ApplicationController
@@ -9,17 +9,28 @@ class UsersController < ApplicationController
     class Create
       # Error raised by NewEntityVerifier if slugged entity already exists.
       class EntityExistsFailure < ActionSupport::DataObjectFailure
+        include Contracts
+
+        INIT_CONTRACT_INPUTS = {
+          slug: String,
+          attributes: RespondTo[:to_hash]
+        }
+
+        Contract INIT_CONTRACT_INPUTS => EntityExistsFailure
         def initialize(slug:, attributes:)
           @slug = slug
           super messages: messages, attributes: attributes
+          self
         end
 
         private
 
+        Contract None => String
         def entity_already_exists_message
           "A record identified by slug '#{@slug}' already exists!"
         end
 
+        Contract None => ArrayOf[String]
         def messages
           [entity_already_exists_message]
         end
