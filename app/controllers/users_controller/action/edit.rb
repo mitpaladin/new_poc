@@ -1,16 +1,12 @@
 
-require_relative 'edit/internals/current_user_entity_matcher'
-require_relative 'edit/internals/slug_finder'
+require_relative 'edit/current_user_entity_matcher'
+require_relative 'edit/slug_finder'
 
 # UsersController: actions related to Users within our "fancy" blog.
 class UsersController < ApplicationController
   module Action
     # Edit-user domain-logic setup verifies that a user is logged in.
     class Edit
-      # Internal support code for UsersController::Action::Edit class.
-      module Internals
-      end
-      include Internals
       include ActionSupport::Broadcaster
 
       attr_reader :entity
