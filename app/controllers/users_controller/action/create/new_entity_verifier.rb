@@ -10,6 +10,7 @@ class UsersController < ApplicationController
       # Verify identified entity does not exist; raise error if it does.
       class NewEntityVerifier
         include Contracts
+        extend Attire::Initializer
 
         INIT_CONTRACT_INPUTS = {
           slug: String,
@@ -17,12 +18,10 @@ class UsersController < ApplicationController
           user_repo: RespondTo[:find_by_slug]
         }
 
-        Contract INIT_CONTRACT_INPUTS => NewEntityVerifier
+        # rubocop:disable Lint/UnusedMethodArgument
+        Contract INIT_CONTRACT_INPUTS => Any
         def initialize(slug:, attributes:, user_repo:)
-          @slug = slug
-          @attributes = attributes
-          @user_repo = user_repo
-          self
+          # rubocop:enable Lint/UnusedMethodArgument
         end
 
         Contract None => nil
