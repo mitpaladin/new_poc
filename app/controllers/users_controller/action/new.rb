@@ -1,14 +1,23 @@
 
+require 'contracts'
+
 # UsersController: actions related to Users within our "fancy" blog.
 class UsersController < ApplicationController
   module Action
     # New-user controller-action encapsulation. Creates a new, empty entity.
     class New
       include ActionSupport::Broadcaster
+      include Contracts
 
-      def initialize(current_user:, user_repo:)
+      INIT_CONTRACT_INPUTS = {
+        current_user: RespondTo[:name]
+      }
+
+      # NOTE: Attire candidate
+      Contract INIT_CONTRACT_INPUTS => New
+      def initialize(current_user:)
         @current_user = current_user
-        @user_repo = user_repo
+        self
       end
 
       def execute
@@ -22,7 +31,7 @@ class UsersController < ApplicationController
 
       private
 
-      attr_reader :current_user, :user_repo
+      attr_reader :current_user
 
       def entity_class
         UserFactory.entity_class
