@@ -16,7 +16,7 @@ class UsersController < ApplicationController
   def_action(:index) { UserRepository.new }
 
   def_action(:new) do
-    { current_user: current_user, user_repo: UserRepository.new }
+    { current_user: current_user }
   end
 
   def_action(:create) do
