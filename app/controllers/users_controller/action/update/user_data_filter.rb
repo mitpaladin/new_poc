@@ -14,9 +14,7 @@ class UsersController < ApplicationController
         end
 
         def filter
-          data = user_data.select do |attrib, _v|
-            permitted_attribs.include? attrib
-          end
+          data = user_data.select { |k, _v| permitted_attribs.include? k }
           @data = FancyOpenStruct.new data
           self
         end
