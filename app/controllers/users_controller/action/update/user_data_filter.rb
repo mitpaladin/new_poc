@@ -1,5 +1,5 @@
 
-require 'action_support/hasher'
+require 'contracts'
 
 class UsersController < ApplicationController
   module Action
@@ -7,12 +7,17 @@ class UsersController < ApplicationController
     class Update
       # Filters out possible extraneous attributes passed in to Update class.
       class UserDataFilter
+        include Contracts
+
         attr_reader :data
 
+        Contract RespondTo[:to_hash] => UserDataFilter
         def initialize(user_data)
           @user_data = ActionSupport::Hasher.convert(user_data)
+          self
         end
 
+        Contract None => UserDataFilter
         def filter
           data = user_data.select { |k, _v| permitted_attribs.include? k }
           @data = FancyOpenStruct.new data
@@ -23,6 +28,7 @@ class UsersController < ApplicationController
 
         attr_reader :user_data
 
+        Contract None => ArrayOf[Symbol]
         def permitted_attribs
           [:email, :profile, :password, :password_confirmation]
         end
