@@ -1,6 +1,8 @@
 
 require 'contracts'
 
+require 'action_support/hasher'
+
 class UsersController < ApplicationController
   module Action
     # Encapsulates domain logic to update db record based on entity contents.
