@@ -1,6 +1,7 @@
 
+require 'action_support/slug_finder'
+
 require_relative 'edit/current_user_entity_matcher'
-require_relative 'edit/slug_finder'
 
 # UsersController: actions related to Users within our "fancy" blog.
 class UsersController < ApplicationController
@@ -31,8 +32,9 @@ class UsersController < ApplicationController
       attr_reader :current_user, :slug, :user_repository
 
       def find_user_for_slug
-        @entity = SlugFinder.new(slug: slug, repository: user_repository).find
-                  .entity
+        @entity = ActionSupport::SlugFinder.new(slug: slug,
+                                                repository: user_repository)
+                  .find.entity
       end
 
       def verify_current_user
