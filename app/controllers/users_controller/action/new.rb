@@ -20,6 +20,7 @@ class UsersController < ApplicationController
         self
       end
 
+      Contract None => New
       def execute
         verify_not_logged_in
         broadcast_success success_payload
@@ -33,18 +34,22 @@ class UsersController < ApplicationController
 
       attr_reader :current_user
 
+      Contract None => Class
       def entity_class
         UserFactory.entity_class
       end
 
+      Contract None => Bool
       def guest_user?
         UserFactory.guest_user.name == current_user.name
       end
 
+      Contract None => Entity::User
       def success_payload
         entity_class.new({})
       end
 
+      Contract None => AlwaysRaises
       def verify_not_logged_in
         fail current_user.name unless guest_user?
       end
