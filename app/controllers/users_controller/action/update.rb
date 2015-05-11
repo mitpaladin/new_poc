@@ -2,17 +2,12 @@
 require 'action_support/broadcaster'
 require 'action_support/guest_user_access'
 
-require_relative 'update/internals/user_data_filter'
+require_relative 'update/user_data_filter'
 
 class UsersController < ApplicationController
   module Action
     # Encapsulates domain logic to update db record based on entity contents.
     class Update
-      # Internal code called (initially) exclusively from Update class.
-      module Internals
-      end
-      private_constant :Internals
-      include Internals
       include ActionSupport::Broadcaster
 
       attr_reader :entity
