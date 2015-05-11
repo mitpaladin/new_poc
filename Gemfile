@@ -14,7 +14,7 @@ gem 'repository-base', '>= 0.2.0'
 gem 'wisper_subscription', '>= 0.2.0'
 
 gem 'active_attr'
-gem 'attire'
+gem 'attire', '>= 2.0.1'
 gem 'bcrypt-ruby'
 gem 'coffee-rails'
 gem 'contracts'
