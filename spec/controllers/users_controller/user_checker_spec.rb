@@ -9,8 +9,12 @@ describe UsersController::CreateFailure::UserChecker do
 
     describe 'two required parameters, where' do
       it 'the first is a YAML-encoded string' do
-        expr = /no implicit conversion of nil into String/
-        expect { described_class.new nil, nil }.to raise_error TypeError, expr
+        expect { described_class.new nil, nil }.to raise_error do |e|
+          expect(e).to be_a ParamContractError
+          expect(e.message).to match(/argument 1 of 2/)
+          expect(e.message).to match(/Expected: String/)
+          expect(e.message).to match(/Actual: nil/)
+        end
         # OK, it needs to be a String
         expect { described_class.new 'foo', nil }.to raise_error do |e|
           expr = /undefined method `each' for "foo":String/
