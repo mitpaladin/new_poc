@@ -1,4 +1,5 @@
 
+require 'attire'
 require 'contracts'
 
 # UsersController: actions related to Users within our "fancy" blog.
@@ -6,16 +7,17 @@ class UsersController < ApplicationController
   # Wraps error-message and redirect logic for Edit action failure.
   class EditFailureRedirector
     include Contracts
+    extend Attire::Initializer
 
     INIT_CONTRACT_INPUTS = {
       payload: Hash,
       helper: RespondTo[:redirect_to, :root_url]
     }
 
+    # rubocop:disable Lint/UnusedMethodArgument
     Contract INIT_CONTRACT_INPUTS => EditFailureRedirector
     def initialize(payload:, helper:)
-      @payload = payload
-      @helper = helper
+      # rubocop:enable Lint/UnusedMethodArgument
       self
     end
 
