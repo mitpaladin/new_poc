@@ -53,7 +53,5 @@ class UsersController < ApplicationController
 
       attr_reader :controller, :data, :user, :filtered_messages
     end # class UsersController::CreateFailure::UserChecker
-
-    private_constant :UserChecker
   end # module UsersController::CreateFailure
 end # class UsersController
