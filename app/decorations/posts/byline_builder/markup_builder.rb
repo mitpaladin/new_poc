@@ -1,4 +1,5 @@
 
+require_relative 'attributes'
 require_relative 'markup_builder/published_parts'
 require_relative 'markup_builder/draft_parts'
 
@@ -48,7 +49,7 @@ module Decorations
           end
         end
       end # class Decorations::Posts::BylineBuilder::MarkupBuilder
-      private_constant :MarkupBuilder
+      # private_constant :MarkupBuilder
     end # class Decorations::Posts::BylineBuilder
   end
 end

@@ -3,7 +3,7 @@ require 'spec_helper'
 
 describe Decorations::Posts::BylineBuilder::Attributes do
   before :each do
-    Time.zone = 'Asia/Tokyo' # chosen arbitrarily
+    Time.zone = 'Asia/Singapore'
   end
 
   describe 'can be initialised with a' do
