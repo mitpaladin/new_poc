@@ -31,13 +31,6 @@ describe UsersController::EditFailureRedirector do
     it 'requires two keyword parameters, :payload and :helper' do
       message = /missing keywords: payload, helper/
       expect { described_class.new }.to raise_error ArgumentError, message
-      # expect { described_class.new }.to raise_error do |e|
-      #   expect(e).to be_a ParamContractError
-      #   expected = Regexp.escape 'Expected: {:payload=>Hash, :helper=>(a' \
-      #     ' value that responds to [:redirect_to, :root_url])},'
-      #   expect(e.message).to match expected
-      #   expect(e.message).to match 'Actual: {}'
-      # end
     end
   end # describe 'has initialisation that'
 
