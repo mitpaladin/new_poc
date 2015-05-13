@@ -1,13 +1,9 @@
 
 require_relative 'sessions_controller/action/create'
-require_relative 'sessions_controller/action/destroy'
-require_relative 'sessions_controller/action/new'
 
 # SessionsController: actions related to Sessions (logging in and out)
 class SessionsController < ApplicationController
-  # Isolating our Action classes within the controller they're associated with.
-  module Action
-  end
+  include Contracts
 
   def new
     Action::New.new(current_user).subscribe(self, prefix: :on_new).execute
