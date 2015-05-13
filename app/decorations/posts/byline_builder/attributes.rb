@@ -48,7 +48,7 @@ module Decorations
           end.new attrs
         end
       end # class Decorations::Posts::BylineBuilder::Attributes
-      private_constant :Attributes
+      # private_constant :Attributes
     end # class Decorations::Posts::BylineBuilder
   end
 end
