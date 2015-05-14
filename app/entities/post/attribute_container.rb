@@ -1,4 +1,6 @@
 
+require 'contracts'
+
 # Namespace containing all application-defined entities.
 module Entity
   # The Post class encapsulates post-related domain logic of our "fancy" blog.
@@ -10,15 +12,20 @@ module Entity
     # on PR #254.
     class AttributeContainer
       extend Forwardable
+      include Contracts
 
       attr_reader :attributes
 
+      Contract RespondTo[:to_hash] => AttributeContainer
       def initialize(attributes_in = {})
         @attributes = value_object_for attributes_in.to_hash
+        self
       end
 
       def_delegator :@attributes, :fields, :keys
 
+      Contract RespondTo[:attributes], Or[Symbol, ArrayOf[Symbol]] => \
+        RespondTo[:attributes]
       def self.blacklist_from(source, *blacklisted_attrs)
         attributes = source.attributes.to_hash.reject do |k, _v|
           blacklisted_attrs.include? k
