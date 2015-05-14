@@ -32,6 +32,6 @@ module Entity
         [self]
       end
     end # class Entity::Post::ErrorConverter
-    private_constant :ErrorConverter
+    # private_constant :ErrorConverter
   end # class Entity::Post
 end
