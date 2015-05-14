@@ -1,4 +1,6 @@
 
+require 'contracts'
+
 # Namespace containing all application-defined entities.
 module Entity
   # The `User` class is the *core business-logic entity* modelling users in the
@@ -8,15 +10,18 @@ module Entity
   class User
     # Add comparison support to entity.
     class ComparableSetup
+      include Contracts
       # Add comparison support to entity, by including `Comparable` in its
       # singleton class and defining the comparison-operator method on the
       # entity.
       # @param entity Incoming entity instance to be manipulated as described;
+      Contract Entity::User => Entity::User
       def self.setup(entity)
         entity.class_eval { include Comparable }
         entity.define_singleton_method :<=> do |other|
           name <=> other.name
         end
+        entity
       end
     end # class Entity::User::ComparableSetup
   end # class Entity::User
