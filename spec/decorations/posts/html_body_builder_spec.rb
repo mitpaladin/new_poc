@@ -18,9 +18,12 @@ module Decorations
     end # describe 'can be initialised'
 
     it 'cannot be initialised with an invalid parameter' do
-      expected = 'parameter must respond to the :to_html message'
-      expect { described_class.new 'bogus' }.to raise_error ArgumentError,
-                                                            expected
+      expect { described_class.new 'bogus' }.to raise_error do |e|
+        expect(e).to be_a ParamContractError
+        expected = 'Expected: ((a value that responds to [:to_html]) or nil)'
+        expect(e.message).to match Regexp.escape(expected)
+        expect(e.message).to match(/Actual: "bogus"/)
+      end
     end
 
     describe 'has a #build method that when called with a Post' do

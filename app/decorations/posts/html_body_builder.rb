@@ -1,4 +1,6 @@
 
+require 'contracts'
+
 require 'markdown_html_converter'
 
 require_relative 'html_body_builder/image_post_builder'
@@ -15,13 +17,16 @@ module Decorations
     # 2. the post body and image URL within a `figure`; see #build for details.
     #
     class HtmlBodyBuilder
+      include Contracts
+
       # Overriding the default `markdown_converter` parameter is mostly
       # useful for situations where the app makes use of Pivotal's "unbuilt
       # Rails dependency" idiom. As we're no longer doing that, we *could*
       # just rip it out entirely. One step at a time.
+      Contract Maybe[RespondTo[:to_html]] => HtmlBodyBuilder
       def initialize(markdown_converter = default_markdown_converter)
         @markdown_converter = markdown_converter
-        return if markdown_converter.respond_to? :to_html
+        return self if markdown_converter.respond_to? :to_html
         fail ArgumentError, 'parameter must respond to the :to_html message'
       end
 
@@ -36,6 +41,7 @@ module Decorations
       # image URL wrapped in an `img` tag pair, and a `figcaption` tag pair
       # containing the (converted) post body, returning the generated `figure`
       # fragment.
+      Contract RespondTo[:title, :body] => String
       def build(post)
         @post = post
         return body_markup(post.body) if text_post?
@@ -46,21 +52,25 @@ module Decorations
 
       attr_reader :markdown_converter, :post
 
+      Contract String => String
       def body_markup(markup)
         markdown_converter.to_html markup
       end
 
+      Contract None => String
       def build_image_post
         ImagePostBuilder.new(image_url: post.image_url,
                              body_html: body_markup(post.body)).to_html
       end
 
+      Contract None => MarkdownHtmlConverter
       def default_markdown_converter
         MarkdownHtmlConverter.new
       end
 
+      Contract None => Bool
       def text_post?
-        post.image_url.present? == false
+        post.image_url.blank?
       end
     end # class Decorations::Posts::HtmpBodyBuilder
   end
