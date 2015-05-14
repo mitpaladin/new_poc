@@ -1,4 +1,6 @@
 
+require 'contracts'
+
 # Namespace containing all application-defined entities.
 module Entity
   # The Post class encapsulates post-related domain logic of our "fancy" blog.
@@ -14,10 +16,13 @@ module Entity
       # Enumerates validation classes and produces a hash of instances of each.
       class Discoverer
         extend Forwardable
+        include Contracts
 
+        Contract Any => Discoverer
         def initialize(source_obj)
           @namespace = namespace_based_on source_obj
           @classes = find_classes
+          self
         end
 
         def_delegators :@classes, :each, :[]
@@ -26,6 +31,7 @@ module Entity
 
         attr_reader :namespace
 
+        Contract None => HashOf[Symbol, Class]
         def find_classes
           {}.tap do |classes|
             namespaced_constants.each do |const_sym|
@@ -35,6 +41,7 @@ module Entity
           end
         end
 
+        Contract Symbol => Symbol
         def index_for(sym)
           # gsub is to convert eg, `ImageUrl` to `image_url`
           sym.to_s
@@ -42,16 +49,19 @@ module Entity
             .to_sym
         end
 
+        Contract Any => Module
         def namespace_based_on(source_obj)
           source_obj.class.parent.const_get :Validators
         end
 
+        Contract None => ArrayOf[Symbol]
         def namespaced_constants
           namespace.constants.select do |candidate|
             namespaced_sym_for(candidate).is_a? Class
           end
         end
 
+        Contract Symbol => Module
         def namespaced_sym_for(sym)
           [namespace.to_s, sym.to_s].join('::').constantize
         end
