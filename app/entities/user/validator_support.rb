@@ -1,4 +1,6 @@
 
+require 'contracts'
+
 require_relative 'validator_support/internals/validator'
 
 # Namespace containing all application-defined entities.
@@ -10,6 +12,8 @@ module Entity
   class User
     # Class responsible for adding field validation to a User entity.
     class ValidatorSupport
+      include Contracts
+
       # Internal classes used exclusively by ValidatorSupport class.
       module Internals
       end
@@ -34,6 +38,7 @@ module Entity
       # (which is what instance variables *are*) is inferior to modifying its
       # logic via `extend` and other bits of Ruby inheritance/metaprogramming.
       # @param entity Incoming entity instance to be manipulated.
+      Contract Entity::User => Entity::User
       def self.setup(entity)
         validator = Validator.new entity
         entity.instance_variable_set :@validator, validator
@@ -42,6 +47,7 @@ module Entity
           extend Forwardable
           def_delegators :@validator, :valid?, :invalid?, :errors
         end
+        entity
       end
     end # class ValidatorSupport
   end # class Entity::User
