@@ -3,6 +3,7 @@ require_relative 'core_attribute_setup/internals'
 
 # Namespace containing all application-defined entities.
 module Entity
+  # FIXME: Contracts?
   # The `User` class is the *core business-logic entity* modelling users in the
   # system. The core class encapsulates logic not specific to one use case or
   # group of use cases (such as authorisation). It also establishes a namespace
