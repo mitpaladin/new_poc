@@ -3,13 +3,23 @@ require 'spec_helper'
 
 describe Decorations::Posts::HtmlBodyBuilder::ImagePostBuilder do
   describe 'can be initialised with' do
+    let(:contract_expected) do
+      /Expected: {:body_html=>String, :image_url=>String}/
+    end
+
     it ':body_html and :image_url parameter strings' do
       expect { described_class.new body_html: '', image_url: '' }
         .not_to raise_error
-      expect { described_class.new body_html: '' }
-        .to raise_error ArgumentError, /missing keyword: image_url/
-      expect { described_class.new image_url: '' }
-        .to raise_error ArgumentError, /missing keyword: body_html/
+      expect { described_class.new body_html: '' }.to raise_error do |e|
+        expect(e).to be_a ParamContractError
+        expect(e.message).to match(/Actual: {:body_html=>""}/)
+        expect(e.message).to match(contract_expected)
+      end
+      expect { described_class.new image_url: '' }.to raise_error do |e|
+        expect(e).to be_a ParamContractError
+        expect(e.message).to match(/Actual: {:image_url=>""}/)
+        expect(e.message).to match(contract_expected)
+      end
     end
   end # describe 'can be initialised with'
 
