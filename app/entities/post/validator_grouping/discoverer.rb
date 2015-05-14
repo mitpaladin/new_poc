@@ -53,8 +53,7 @@ module Entity
         end
 
         def namespaced_sym_for(sym)
-          str = namespace.to_s + '::' + sym.to_s
-          str.constantize
+          [namespace.to_s, sym.to_s].join('::').constantize
         end
       end # class Entity::Post::ValidatorGrouping::Discoverer
     end # class Entity::Post::ValidatorGrouping
