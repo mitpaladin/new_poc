@@ -1,4 +1,6 @@
 
+require 'contracts'
+
 require_relative 'user/comparable_setup'
 require_relative 'user/core_attribute_setup'
 require_relative 'user/guest_user'
@@ -14,9 +16,12 @@ module Entity
   # group of use cases (such as authorisation). It also establishes a namespace
   # which encapsulates more specific entity-oriented responsibilities.
   class User
+    include Contracts
+
     # Initialise a new `Entity::User` instance, optionally specifying values for
     # setting attributes.
     # @param attributes Named attribute values to use for initialisation.
+    Contract RespondTo[:[]] => Entity::User
     def initialize(attributes = {})
       CoreAttributeSetup.setup entity: self, attributes: attributes
       PersistenceSetup.setup entity: self, attributes: attributes
@@ -24,10 +29,12 @@ module Entity
       TimestampSetup.setup entity: self, attributes: attributes
       ValidatorSupport.setup self
       ComparableSetup.setup self
+      self
     end
 
     # Help ActiveModel separate its oesophagus from its tailpipe.
     # FIXME: Move to module?
+    Contract None => ActiveModel::Name
     def model_name
       ActiveModel::Name.new self, nil, 'User'
     end
