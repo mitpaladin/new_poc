@@ -1,15 +1,18 @@
 
+require 'contracts'
+
 # Shell for ApplicationHelper module. Used to reopen module.
 module ApplicationHelper
   # Module containing `#show_appwide_flashes` method and support code
   # exclusively therefor.
   module AppwideFlashes
+    include Contracts
+
+    Contract ArrayOf
     def show_appwide_flashes(flashes)
       return '' if flashes.empty?
       AppFlashBuilder.new(self).build(flashes)
     end
-
-    private
 
     # Internal support class used by `ApplicationHelper#show_appwide_flashes`
     class AppFlashBuilder
@@ -64,5 +67,6 @@ module ApplicationHelper
         end
       end
     end # class AppFlashBuilder
+    private_constant :AppFlashBuilder
   end # module ApplicationHelper::AppwideFlashes
 end # module ApplicationHelper
