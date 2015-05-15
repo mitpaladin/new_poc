@@ -3,15 +3,27 @@ require_relative 'user_factory'
 
 # Class to create instance of entities with passwords for use cases.
 class UserPasswordEntityFactory
+  include Contracts
   # Internal to containing class only; hidden from outside world.
   module Internals
+    include Contracts
+
+    AP_INPUT_CONTRACT = {
+      entity: Entity::User,
+      attributes: HashOf[Symbol, Any],
+      password: Maybe[String] # See Issue #276
+    }
+
+    Contract AP_INPUT_CONTRACT => Any # UserPasswordEntityFactory
     def add_passwords(entity:, attributes:, password:)
       password ||= attributes[:password]
       confirmation = attributes[:password_confirmation] || password
       entity.add_attribute :password, password
       entity.add_attribute :password_confirmation, confirmation
+      self
     end
 
+    Contract Entity::User => Any # UserPasswordEntityFactory
     def add_validation_method(entity)
       existing = entity.method :valid? if entity.methods.include?(:valid?)
       entity.instance_variable_set :@existing_valid, existing
@@ -21,11 +33,13 @@ class UserPasswordEntityFactory
         return true unless @existing_valid
         @existing_valid.call
       end
+      self
     end
   end
   private_constant :Internals
   extend Internals
 
+  Contract Hashlike, Maybe[String] => Entity::User
   def self.create(attribs_in, password = nil)
     attribs = attribs_in.symbolize_keys
     entity = UserFactory.create attribs
