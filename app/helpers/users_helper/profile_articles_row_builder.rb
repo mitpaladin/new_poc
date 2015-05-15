@@ -1,12 +1,19 @@
 
+require 'contracts'
+
 require_relative './profile_article_list_builder'
 
 # Builds a Bootstrap-styled "row" with a header and list of articles.
 class ProfileArticlesRowBuilder
+  include Contracts
+
+  Contract String, RespondTo[:concat, :content_tag] => ProfileArticlesRowBuilder
   def initialize(user_name, h)
     @user_name, @h = user_name, h
+    self
   end
 
+  Contract None => String
   def to_html
     h.content_tag :div, nil, { class: 'row', id: 'contrib-row' }, false do
       header = h.content_tag(:h3) { "Articles Authored By #{user_name}" }
