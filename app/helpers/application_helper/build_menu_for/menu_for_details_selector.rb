@@ -19,7 +19,7 @@ module ApplicationHelper
       MENUBAR_SELECT_INPUT = Or[:navbar, :sidebar]
       MENUBAR_CONTRACT_OUTPUT = RespondTo[:container_classes, :separator_attrs]
 
-      Contract MENUBAR_SELECT_INPUT => Any # MENUBAR_CONTRACT_OUTPUT
+      Contract MENUBAR_SELECT_INPUT => Module # MENUBAR_CONTRACT_OUTPUT
       def select(which)
         if which == :navbar
           NavbarMenuForDetails
