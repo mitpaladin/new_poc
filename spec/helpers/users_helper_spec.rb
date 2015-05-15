@@ -23,7 +23,7 @@ describe UsersHelper do
 
   describe :profile_articles_row.to_s do
     let(:fragment) do
-      allow(helper).to receive(:current_user).and_return true
+      allow(helper).to receive(:current_user).and_return user
       Nokogiri.parse(helper.profile_articles_row user.name).children.first
     end
 
