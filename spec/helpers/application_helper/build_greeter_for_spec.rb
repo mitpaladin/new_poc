@@ -20,16 +20,17 @@ end # shared_examples 'the message for a user of type'
 describe ApplicationHelper::BuildGreeterFor do
   describe :build_greeter_for.to_s do
     subject(:method) { public_method :build_greeter_for }
-    let(:error_class) do
-      ApplicationHelper::BuildGreeterFor::UserParameterHasNoName
-    end
 
     it 'takes a single parameter' do
-      expect(method.arity).to be 1
+      expect(method.arity.abs).to be 1
     end
 
     it 'raises when called with a parameter that does not respond to :name' do
-      expect { method.call Object.new }.to raise_error error_class
+      expect { method.call Object.new }.to raise_error do |e|
+        expect(e).to be_a ParamContractError
+        expected = Regexp.escape 'Expected: (a value that responds to [:name])'
+        expect(e.message).to match expected
+      end
     end
 
     context 'for either a Guest or Registered User' do
