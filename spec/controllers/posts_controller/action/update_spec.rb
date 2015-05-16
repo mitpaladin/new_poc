@@ -66,9 +66,11 @@ describe PostsController::Action::Update do
   context 'with a valid post slug as a search key, and' do
     let(:target_slug) { post_slug }
     let(:repo_success_entity) do
-      FancyOpenStruct.new author_name: author.name,
-                          valid?: true,
-                          attributes: { author_name: author.name }
+      # FIXME: Revert this to an Entity::Post when we've fixed that similarly to
+      # how Entity::User is now
+      FactoryGirl.build_stubbed :post, author_name: author.name
+      # attributes = FactoryGirl.attributes_for :post, author_name: author.name
+      # PostFactory.create attributes
     end
 
     context 'with valid post data, and' do
