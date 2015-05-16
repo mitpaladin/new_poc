@@ -1,10 +1,21 @@
 
+require 'contracts'
+
 # Builds a Bootstrap panel with a profile's biodata/"profile" information.
 class ProfileBioPanelBuilder
+  include Contracts
+
+  # FIXME: Apparent bug in shared helper 'a_profile_bio_panel.rb' called from
+  #        'profile_bio_panel_builder_spec.rb'.
+  FIXME_HELPER = Maybe[RespondTo[:concat, :content_tag]]
+
+  Contract String, FIXME_HELPER => Any
   def initialize(user_profile, h)
     @user_profile, @h = user_profile, h
+    self
   end
 
+  Contract None => String
   def to_html
     [
       %(<div class="panel panel-default">),
@@ -16,33 +27,9 @@ class ProfileBioPanelBuilder
       %(</div>),  # panel-body
       %(</div>)   # panel panel-default
     ].join
-    # h.content_tag :div, nil, { class: 'panel panel-default' }, false do
-    #   h.concat build_panel_heading
-    #   h.concat build_panel_body
-    # end
   end
 
   protected
 
   attr_reader :h, :user_profile
-
-  # private
-
-  # def build_panel_body
-  #   h.content_tag :div, nil, { class: 'panel-body' }, false do
-  #     user_profile
-  #   end
-  # end
-  #
-  # def build_panel_heading
-  #   h.content_tag :div, nil, { class: 'panel-heading' }, false do
-  #     h.concat build_panel_title
-  #   end
-  # end
-  #
-  # def build_panel_title
-  #   h.content_tag :h3, nil, { class: 'panel-title' }, false do
-  #     'User Profile/Bio Information'
-  #   end
-  # end
 end
