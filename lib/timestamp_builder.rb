@@ -5,8 +5,11 @@ require 'contracts'
 module TimestampBuilder
   include Contracts
 
+  # FIXME: Where is the Time coming from? Why does TWZ pass locally but not CI?
+  TF_CONTRACT_INPUT = Maybe[Or[ActiveSupport::TimeWithZone, Time]]
+
   # Provides uniform formatting for timestamps.
-  Contract Maybe[ActiveSupport::TimeWithZone] => String
+  Contract TF_CONTRACT_INPUT => String
   def timestamp_for(the_time = Time.zone.now)
     the_time.strftime timestamp_format
   end
