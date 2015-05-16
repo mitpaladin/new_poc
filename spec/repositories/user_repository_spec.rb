@@ -91,13 +91,13 @@ describe UserRepository do
   describe :attributes_for.to_s do
     context 'for a dao with no passwords' do
       it 'adds test password' do
-        dao = FactoryGirl.create :user
+        dao = FactoryGirl.build_stubbed :user
         attr = UserRepository.new.send(:attributes_for, dao, [])
         expect(attr[:password]).to eq 'password'
       end
 
       it 'adds no test password per instruction' do
-        dao = FactoryGirl.create :user
+        dao = FactoryGirl.build_stubbed :user
         attr = UserRepository.new.send(:attributes_for, dao, [:no_password])
         expect(attr[:password]).to be_nil
       end
