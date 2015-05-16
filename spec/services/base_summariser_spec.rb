@@ -4,14 +4,13 @@ require 'spec_helper'
 require 'base_summariser'
 
 describe BaseSummariser do
-  let(:klass) { BaseSummariser }
   let(:data_length) { 20 }
   let(:default_length) { 10 }
 
   describe 'responds to DSL methods including' do
     [:selector, :sorter, :orderer, :chunker].each do |sym|
       it sym.to_s do
-        expect(klass.new).to respond_to sym
+        expect(described_class.new).to respond_to sym
       end
     end
   end # describe 'responds to DSL methods including'
@@ -19,7 +18,7 @@ describe BaseSummariser do
       ' 10 items of whatever collection is passed to #summarise_data,' \
       ' including for'
   describe description do
-    let(:obj) { klass.new }
+    let(:obj) { described_class.new }
 
     it 'an Array' do
       data = ['a'] * (default_length * 2)
@@ -36,11 +35,11 @@ describe BaseSummariser do
   end # describe 'when used without a configuration block, returns...'
 
   describe 'requires that the data supplied responds to the :take method' do
-    let(:obj) { klass.new }
+    let(:obj) { described_class.new }
     let(:data) { 'a' * data_length }
 
     it 'and succeeds if it does' do
-      def data.take(n)
+      data.define_singleton_method :take do |n|
         slice 0, n
       end
 
@@ -61,7 +60,7 @@ describe BaseSummariser do
     end
 
     it '#count' do
-      obj = klass.new do |summ|
+      obj = described_class.new do |summ|
         summ.count = 4
       end
 
@@ -69,7 +68,7 @@ describe BaseSummariser do
     end
 
     it '#selector' do
-      obj = klass.new do
+      obj = described_class.new do
         selector -> (data) { data.select(&:even?) }
       end
 
@@ -79,7 +78,7 @@ describe BaseSummariser do
     end
 
     it '#sorter' do
-      obj = klass.new do
+      obj = described_class.new do
         sorter -> (data) { data.reverse }
       end
 
@@ -87,7 +86,7 @@ describe BaseSummariser do
     end
 
     it '#orderer' do
-      obj = klass.new do
+      obj = described_class.new do
         orderer -> (data) { data.reverse }
       end
 
@@ -96,7 +95,7 @@ describe BaseSummariser do
 
     it '#chunker' do
       new_length = 3
-      obj = klass.new do
+      obj = described_class.new do
         chunker -> (data) { data.take new_length }
       end
 
