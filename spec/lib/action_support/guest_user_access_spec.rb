@@ -5,14 +5,16 @@ require 'action_support/guest_user_access'
 
 describe ActionSupport::GuestUserAccess do
   describe 'has initialisation that' do
-    it 'requires one parameter' do
+    it 'requires one parameter that responds to :name' do
       message = 'wrong number of arguments (0 for 1..2)'
       expect { described_class.new }.to raise_error ArgumentError, message
-      expect { described_class.new 'testing' }.not_to raise_error
+      param = FancyOpenStruct.new name: 'testing'
+      expect { described_class.new param }.not_to raise_error
     end
 
-    it 'accepts a second, optional parameter' do
-      expect { described_class.new 'foo', 'bar' }.not_to raise_error
+    it 'accepts a second, optional parameter as a String' do
+      param = FancyOpenStruct.new name: 'foo'
+      expect { described_class.new param, 'bar' }.not_to raise_error
     end
   end # describe 'has initialisation that'
 
