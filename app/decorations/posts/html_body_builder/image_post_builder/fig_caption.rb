@@ -1,4 +1,5 @@
 
+require 'contracts'
 require 'nokogiri'
 
 require 'markdown_html_converter'
@@ -23,11 +24,21 @@ module Decorations
         # Wraps building an HTML :figcaption element from a Markdown post body
         # (remembering that HTML is a valid subset of Markdown).
         class FigCaption < Element
+          include Contracts
+
+          INIT_CONTRACT_INPUTS = {
+            doc: Nokogiri::HTML::Document,
+            content: String
+          }
+
+          Contract INIT_CONTRACT_INPUTS => FigCaption
           def initialize(doc:, content:)
             super doc
             @content = content
+            self
           end
 
+          Contract None => String
           def to_html
             node = element('figcaption').tap { |container| container << markup }
             node.to_html
@@ -37,6 +48,7 @@ module Decorations
 
           attr_reader :content
 
+          Contract None => String
           def markup
             MarkdownHtmlConverter.new.to_html content
           end

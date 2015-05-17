@@ -1,35 +1,49 @@
 
+require 'attire'
+require 'contracts'
+
 # UsersController: actions related to Users within our "fancy" blog.
 class UsersController < ApplicationController
-  # Contains internal modules/classes used by methods, e.g., #on_create_failure.
-  module Internals
-    # Wraps error-message and redirect logic for Edit action failure.
-    class EditFailureRedirector
-      def initialize(payload:, helper:)
-        @payload = payload
-        @helper = helper
-      end
+  # Wraps error-message and redirect logic for Edit action failure.
+  class EditFailureRedirector
+    include Contracts
+    extend Attire::Initializer
 
-      def go
-        helper.redirect_to helper.root_url, flash: { alert: alert }
-      end
+    INIT_CONTRACT_INPUTS = {
+      payload: Hash,
+      helper: RespondTo[:redirect_to, :root_url]
+    }
 
-      private
+    # rubocop:disable Lint/UnusedMethodArgument
+    Contract INIT_CONTRACT_INPUTS => EditFailureRedirector
+    def initialize(payload:, helper:)
+      # rubocop:enable Lint/UnusedMethodArgument
+      self
+    end
 
-      attr_reader :helper, :payload
+    Contract None => Any
+    def go
+      helper.redirect_to helper.root_url, flash: { alert: alert }
+    end
 
-      def alert
-        return not_logged_in_message if not_logged_in?
-        payload
-      end
+    private
 
-      def not_logged_in?
-        payload.key? :not_user
-      end
+    attr_reader :helper, :payload
 
-      def not_logged_in_message
-        "Not logged in as #{payload[:not_user]}!"
-      end
-    end # class UsersController::Internals::EditFailureRedirector
-  end
+    Contract None => Or[String, Hash]
+    def alert
+      return not_logged_in_message if not_logged_in?
+      payload
+    end
+
+    Contract None => Bool
+    def not_logged_in?
+      payload.key? :not_user
+    end
+
+    Contract None => String
+    def not_logged_in_message
+      "Not logged in as #{payload[:not_user]}!"
+    end
+  end # class UsersController::Internals::EditFailureRedirector
 end # class UsersController

@@ -1,7 +1,4 @@
 
-require_relative 'posts_controller/create_failure_setup'
-require_relative 'posts_controller/error_message_builder'
-
 require_relative 'posts_controller/action/create'
 require_relative 'posts_controller/action/edit'
 require_relative 'posts_controller/action/index'

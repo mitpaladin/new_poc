@@ -1,13 +1,13 @@
 
+require 'contracts'
+
 module ApplicationHelper
   # Module containing the `#build_greeter_for` application-helper method.
   module BuildGreeterFor
-    class UserParameterHasNoName < StandardError
-    end
+    include Contracts
 
+    Contract RespondTo[:name] => String
     def build_greeter_for(user)
-      fail UserParameterHasNoName unless user.respond_to?(:name)
-
       classes = 'greeter navbar-text navbar-right'
       content_tag :div, nil, { class: classes }, false do
         concat "Hello, #{user.name}!"

@@ -46,7 +46,10 @@ module Decorations
         it 'is neither Hash-like nor has an #attributes method' do
           message = 'Post must expose its attributes either through an' \
             ' #attributes or #to_hash method'
-          expect { described_class.build :bogus }.to raise_error message
+          expect { described_class.build :bogus }.to raise_error do |e|
+            expect(e).to be_a ParamContractError
+            expect(e.message).to match(/Actual: :bogus/)
+          end
         end
 
         it 'lacks an :author_name attribute' do

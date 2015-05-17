@@ -12,6 +12,8 @@ describe PostsController::Responder::CreateFailure do
         @root_path_calls = []
       end
 
+      # We don't override #instance_variable_set; let the real one do its thing
+
       def redirect_to(*args)
         @redirects.push args
         # don't care about faking a return value here
@@ -36,7 +38,7 @@ describe PostsController::Responder::CreateFailure do
 
   describe 'initialisation' do
     context 'succeeds when passed a parameter that' do
-      it 'implements the three required controller methods' do
+      it 'implements the four required controller methods' do
         expect { described_class.new fake_controller }.not_to raise_error
       end
     end # context 'succeeds when passed a parameter that'

@@ -50,8 +50,12 @@ module Entity
     describe 'it cannot be instantiated with' do
       it 'something that does not respond to #to_hash' do
         expected = /undefined method \`to_hash\'/
-        expect { described_class.new 'oops' }.to raise_error NoMethodError,
-                                                             expected
+        expect { described_class.new 'oops' }.to raise_error do |e|
+          expect(e).to be_a ParamContractError
+          expect(e.message).to match(/Actual: "oops"/)
+          expected = 'Expected: (a value that responds to [:to_hash]),'
+          expect(e.message).to match Regexp.escape(expected)
+        end
       end
     end
 

@@ -14,8 +14,10 @@ gem 'repository-base', '>= 0.2.0'
 gem 'wisper_subscription', '>= 0.2.0'
 
 gem 'active_attr'
+gem 'attire', '>= 2.0.1'
 gem 'bcrypt-ruby'
 gem 'coffee-rails'
+gem 'contracts'
 gem 'fancy-open-struct'
 gem 'friendly_id'
 gem 'gemoji'
@@ -98,7 +100,7 @@ group :development, :test do
   gem 'ruby-growl'
   gem 'simplecov'
   gem 'tapout'
-  gem 'teaspoon'
+  gem 'teaspoon', '~> 0.9'
 end
 
 group :test do

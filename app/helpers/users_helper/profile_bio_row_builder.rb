@@ -1,9 +1,17 @@
 
+require 'contracts'
+
 # Builds a Bootstrap-styled "row" with a panel containing profile/"biodata" text
 # for a user.
 class ProfileBioRowBuilder
+  include Contracts
+
+  HELPER_CONTRACT = RespondTo[:concat, :content_tag]
+
+  Contract String, String, HELPER_CONTRACT => ProfileBioRowBuilder
   def initialize(user_name, user_profile, h)
     @user_name, @user_profile, @h = user_name, user_profile, h
+    self
   end
 
   # NOTE: PAY ATTENTION! WTF WORKAROUND IN PROGRESS!
@@ -17,6 +25,7 @@ class ProfileBioRowBuilder
   # (and thus invalid as HTML).
   #
   # Nokogiri, the Swiss Army Nuclear Ginsu Chainsaw, to the rescue!
+  Contract None => String
   def to_html
     outer_div = outer_container do |div|
       div['class'] = 'row'
@@ -32,11 +41,13 @@ class ProfileBioRowBuilder
 
   private
 
+  Contract Proc => String
   def outer_container
     doc = Nokogiri::HTML::Document.new
     Nokogiri::XML::Element.new('div', doc).tap { |div| yield div }.to_html
   end
 
+  Contract String => String
   def reformat_html_output(markup)
     markup.lines.each(&:strip!).join
   end

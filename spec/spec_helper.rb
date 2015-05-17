@@ -8,6 +8,7 @@ if ENV['RAILS_ENV'] == 'test'
   SimpleCov.start 'rails' do
     add_filter '/vendor/'
     add_group 'DAOs', 'app/daos'
+    add_group 'Decorations', 'app/decorations'
     add_group 'Entities', 'app/entities'
     add_group 'Repositories', 'app/repositories'
     add_group 'Services', 'app/services'
@@ -80,4 +81,3 @@ RSpec.configure do |config|
 end
 
 require 'logger'
-require 'main_logger'

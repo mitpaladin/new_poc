@@ -1,18 +1,24 @@
 
+require 'contracts'
+
 require 'repository/base'
 require 'repository/support/store_result'
 
 # Intermediary between engine-bound DAO and Entity for User-related use cases.
 class UserRepository < Repository::Base
+  include Contracts
+
   def initialize(factory = UserFactory, dao = UserDao)
     super factory: factory, dao: dao
   end
 
   # Don't return the Guest User as part of the results from #all.
+  Contract None => ArrayOf[Entity::User]
   def all
     super.reject { |user| user.slug == 'guest-user' }
   end
 
+  Contract String, String => Repository::Support::StoreResult
   def authenticate(user, password)
     user_dao = dao.find_by_slug user.parameterize
     return return_for_invalid_user unless user_dao
@@ -25,10 +31,11 @@ class UserRepository < Repository::Base
                                          success: errors.empty?
   end
 
+  Contract None => Repository::Support::StoreResult
   def guest_user
     user_dao = dao.first
     errors = Repository::Support::ErrorFactory.create(user_dao.errors)
-    new_entity = factory.create(user_dao.attributes)
+    new_entity = factory.create(user_dao.attributes.symbolize_keys)
     Repository::Support::StoreResult.new entity: new_entity,
                                          errors: errors,
                                          success: errors.empty?
@@ -36,6 +43,7 @@ class UserRepository < Repository::Base
 
   private
 
+  Contract UserDao, ArrayOf[Symbol] => OpenStruct
   def attributes_for(user_dao, options)
     attribs = OpenStruct.new user_dao.attributes
     # set dummy password for testing
@@ -46,6 +54,7 @@ class UserRepository < Repository::Base
     attribs
   end
 
+  Contract Maybe[RespondTo[:attributes]] => RespondTo[:attributes]
   def entity_for(user)
     return guest_user.entity unless user
     factory.create user.attributes

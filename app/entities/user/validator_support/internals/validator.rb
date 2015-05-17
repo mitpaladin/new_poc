@@ -1,4 +1,5 @@
 
+require 'contracts'
 require_relative 'name_validator'
 
 # Namespace containing all application-defined entities.
@@ -15,6 +16,7 @@ module Entity
         class Validator
           extend Forwardable
           include ActiveModel::Validations
+          include Contracts
 
           def_delegators :@entity, :email, :name, :profile
 
@@ -27,8 +29,10 @@ module Entity
           # `Entity::User` instance whose attributes are to be validated.
           # @param entity [Entity::User] Instance to delegate attribute access
           # to.
+          Contract Entity::User => Validator
           def initialize(entity)
             @entity = entity
+            self
           end
 
           private
@@ -36,8 +40,10 @@ module Entity
           # Validation method called by ActiveModel validation.
           # Instantiates internal object which validates name attribute and adds
           # ActiveModel errors if any validations fail.
+          Contract None => Validator
           def validate_name
             NameValidator.new(name).validate.add_errors_to_model(self)
+            self
           end
         end # class Entity::User::ValidatorSupport::Internals::Validator
       end

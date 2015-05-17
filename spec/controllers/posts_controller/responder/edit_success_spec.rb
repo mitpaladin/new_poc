@@ -8,7 +8,7 @@ describe PostsController::Responder::EditSuccess do
         # Dummy class for testing initialisation. Methods don't have to *do*
         # anything yet; they just have to be there.
         Class.new do
-          def instance_variable_set
+          def instance_variable_set(_name_or_sym, _value)
           end
         end.new
       end

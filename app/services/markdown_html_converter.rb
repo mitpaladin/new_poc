@@ -1,13 +1,22 @@
 
+require 'contracts'
+
 require 'html/pipeline'
 require 'pygments'
 
 # Convert possibly mixed Markdown/HTML content to HTML.
 class MarkdownHtmlConverter
+  include Contracts
+
   # HTML::Pipeline-based code for Markdown parsing.
   module HtmlPipelineConverter
+    include Contracts
+
     # Internal workings that needn't be visible to caller of `.render`.
     module Internals
+      include Contracts
+
+      Contract None => HashOf[Symbol, Any]
       def self.context
         {
           gfm: true,
@@ -16,6 +25,7 @@ class MarkdownHtmlConverter
         }
       end
 
+      Contract None => ArrayOf[Class]
       def self.filters
         [
           HTML::Pipeline::MarkdownFilter,
@@ -30,12 +40,14 @@ class MarkdownHtmlConverter
         ]
       end
 
+      Contract None => HTML::Pipeline
       def self.pipeline
         HTML::Pipeline.new filters, context
       end
     end # module MarkdownHtmlConverter::HtmlPipelineConverter::Internals
     private_constant :Internals
 
+    Contract String => String
     def self.render(fragment)
       result = Internals.pipeline.call fragment
       result[:output]
@@ -45,6 +57,7 @@ class MarkdownHtmlConverter
 
   # `fragment` is Markdown, HTML or some combination thereof; run it through
   # the selected Markdown parser to yield HTML to return to caller.
+  Contract String => String
   def to_html(fragment)
     HtmlPipelineConverter.render fragment
   end

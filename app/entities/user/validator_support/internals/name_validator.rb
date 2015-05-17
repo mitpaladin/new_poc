@@ -1,4 +1,6 @@
 
+require 'contracts'
+
 # Namespace containing all application-defined entities.
 module Entity
   # The `User` class is the *core business-logic entity* modelling users in the
@@ -12,14 +14,19 @@ module Entity
       module Internals
         # Validates user name string following rules documented at #validate.
         class NameValidator
+          include Contracts
+
           attr_reader :errors
 
           # Initialise a new instance by setting the `name` attribute to the
-          # specified value.
+          # specified value. Calling with `nil` will simply return false from
+          # `#validate`, but should be accepted here unmolested.
           # @param name [String] User name to be validated by this instance.
+          Contract Maybe[String] => NameValidator
           def initialize(name)
             @name = name
             @errors = []
+            self
           end
 
           # Validates user name by three separate, related rules.
@@ -31,6 +38,7 @@ module Entity
           #
           # Calls methods to perform each validation step and add an appropriate
           # message to an internal list if that validation step fails.
+          Contract None => NameValidator
           def validate
             check_for_spaces_at_ends
             check_for_invalid_whitespace
@@ -41,6 +49,7 @@ module Entity
           # Adds error messages generated on behalf of #validate to an
           # ActiveModel instance passed in as a parameter.
           # @param Model instance quacking like ActiveModel::Validations.
+          Contract RespondTo[:errors] => NameValidator
           def add_errors_to_model(model)
             @errors.each { |message| model.errors.add :name, message }
             self
@@ -57,6 +66,7 @@ module Entity
           #                             at the beginning of the `name`
           #                             attribute, OR `:trailing` to check at
           #                             the end.
+          Contract Symbol => NameValidator
           def add_error_if_whitespace(strip_where)
             strips = {
               leading: :lstrip,
@@ -70,17 +80,20 @@ module Entity
 
           # Adds an error message to the internal list if the `name` attribute
           # contains two or more consecutive internal whitespace characters.
+          Contract None => NameValidator
           def check_for_adjacent_whitespace
-            return if name.to_s.strip == name.to_s.strip.gsub(/\s{2,}/, '?')
+            cleaned_name = name.to_s.strip.gsub(/\s{2,}/, '?')
+            return self if name.to_s.strip == cleaned_name
             @errors << 'may not have adjacent whitespace'
             self
           end
 
           # Adds an error message to the internal list if the `name` attribute
           # contains whitespace *other than* the space character. (`' '`)
+          Contract None => NameValidator
           def check_for_invalid_whitespace
             expected = name.to_s.strip.gsub(/ {2,}/, ' ')
-            return if expected == expected.gsub(/\s/, ' ')
+            return self if expected == expected.gsub(/\s/, ' ')
             @errors << 'may not have whitespace other than spaces'
             self
           end
@@ -88,8 +101,9 @@ module Entity
           # Calls the internal #add_error_if_whitespace method to check first
           # for leading, then for trailing, whitespace at the ends of the `name`
           # attributes.
+          Contract None => NameValidator
           def check_for_spaces_at_ends
-            return if name.to_s == name.to_s.strip
+            return self if name.to_s == name.to_s.strip
             add_error_if_whitespace :leading
             add_error_if_whitespace :trailing
             self

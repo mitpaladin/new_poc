@@ -8,7 +8,9 @@ describe PostsController::Action::Show do
     described_class.new current_user: current_user, repository: post_repository,
                         target_slug: target_slug
   end
-  let(:current_user) { FancyOpenStruct.new name: user_name }
+  let(:current_user) do
+    FactoryGirl.build_stubbed :user, :saved_user, name: user_name
+  end
   let(:post_repository) do
     Class.new do
       def initialize(returned_result)
@@ -24,7 +26,11 @@ describe PostsController::Action::Show do
     FancyOpenStruct.new entity: the_entity, success?: result_success
   end
   let(:subscriber) { WisperSubscription.new }
-  let(:success_entity) { FancyOpenStruct.new author_name: entity_author_name }
+  let(:success_entity) do
+    attribs = FactoryGirl.attributes_for :post, :saved_post,
+                                         author_name: entity_author_name
+    PostFactory.create attribs
+  end
   let(:target_slug) { 'some-slug' }
   let(:user_name) { 'Just Anybody' }
 

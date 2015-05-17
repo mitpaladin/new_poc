@@ -12,8 +12,12 @@ module Entity
       # Validates body attribute, providing #valid? and #errors public methods
       # that work generally as you'd expect.
       class Body < Support::EitherRequiredField
+        include Contracts
+
+        Contract RespondTo[:to_hash] => Body
         def initialize(attributes)
           super attributes: attributes, primary: :body, other: :image_url
+          self
         end
       end # class Entity::Post::Validators::Body
     end

@@ -19,7 +19,7 @@ describe UsersController::Action::Edit do
   end
   let(:subscriber) { WisperSubscription.new }
   let(:success_entity) do
-    FancyOpenStruct.new name: user_name, slug: target_slug
+    UserFactory.create name: user_name, slug: target_slug
   end
   let(:target_slug) { 'just-anybody' }
   let(:user_name) { 'Just Anybody' }

@@ -1,4 +1,6 @@
 
+require 'contracts'
+
 require_relative 'support/either_required_field'
 
 # Namespace containing all application-defined entities.
@@ -12,6 +14,9 @@ module Entity
       # Validates image URL attribute, providing #valid? and #errors public
       # methods that work generally as you'd expect.
       class ImageUrl < Support::EitherRequiredField
+        include Contracts
+
+        Contract RespondTo[:to_hash] => ImageUrl
         def initialize(attributes)
           super attributes: attributes, primary: :image_url, other: :body
         end

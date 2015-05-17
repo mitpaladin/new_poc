@@ -1,4 +1,6 @@
 
+require 'contracts'
+
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
   # A Responder responds to the reported result of an application action in an
@@ -9,32 +11,38 @@ class PostsController < ApplicationController
     #
     # Makes use of these methods on the controller passed into `#initialize`:
     #
-    # 1. `:instance_variable_set`;
-    # 2. `:redirect_to`;
-    # 3. `:render`; and
-    # 4. `:root_path`.
+    # 1. `:redirect_to`; and
+    # 2. `:root_path`.
     #
     class CreateFailure
       class UnregisteredUser
+        include Contracts
+
+        Contract HashOf[String, Any] => UnregisteredUser
         def initialize(ivars = {})
           # Rails' #instance_values returns a Hash with *String* keys
           @redirect_to = ivars.fetch 'redirect_to'
           @root_path = ivars.fetch 'root_path'
+          self
         end
 
+        Contract None => String
         def self.alert
           'Not logged in as a registered user!'
         end
 
+        Contract RuntimeError => Bool
         def self.applies?(payload)
           data = YAML.load payload.message
           data == { messages: [alert] }
-        rescue RuntimeError
+        rescue
           false
         end
 
+        Contract Any => UnregisteredUser
         def call(*_args)
           redirect_to.call root_path.call, flash: { alert: self.class.alert }
+          self
         end
 
         private

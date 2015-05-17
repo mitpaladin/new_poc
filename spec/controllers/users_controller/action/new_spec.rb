@@ -5,14 +5,10 @@ require 'wisper_subscription'
 
 describe UsersController::Action::New do
   let(:command) do
-    described_class.new current_user: current_user, user_repo: repo
+    described_class.new current_user: current_user
   end
   let(:guest_user) { UserFactory.guest_user }
   let(:registered_user) { FancyOpenStruct.new name: 'User Name' }
-  let(:repo) do
-    guest = FancyOpenStruct.new entity: guest_user
-    FancyOpenStruct.new guest_user: guest
-  end
   let(:subscriber) { WisperSubscription.new }
 
   before :each do

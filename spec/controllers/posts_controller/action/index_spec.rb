@@ -48,20 +48,26 @@ describe PostsController::Action::Index do
   let(:draft_post_count) { 5 }
   let(:draft_posts) do
     draft_post_count.times.map do |n|
-      FancyOpenStruct.new title: "Title #{n + first_draft_post_id}",
-                          author_name: author_name,
-                          published?: false
+      new_attribs = {
+        title: "Title #{n + first_draft_post_id}",
+        author_name: author_name
+      }
+      attribs = FactoryGirl.attributes_for :post, new_attribs
+      Entity::Post.new attribs
     end
   end
   let(:first_draft_post_id) { published_post_count + 1 }
   let(:first_published_post_id) { 1 }
-  let(:guest_user) { UserFactory.guest_user }
+  let(:guest_user) { UserDao.first }
   let(:published_post_count) { 3 }
   let(:published_posts) do
     published_post_count.times.map do |n|
-      FancyOpenStruct.new title: "Title #{n + first_published_post_id}",
-                          author_name: author_name,
-                          published?: true
+      new_attribs = {
+        title: "Title #{n + first_published_post_id}",
+        author_name: author_name
+      }
+      attribs = FactoryGirl.attributes_for :post, :published_post, new_attribs
+      Entity::Post.new attribs
     end
   end
   let(:repo) { FancyOpenStruct.new all: [draft_posts, published_posts].flatten }
@@ -84,7 +90,9 @@ describe PostsController::Action::Index do
   end # context 'for the Guest User'
 
   context 'for a registered user' do
-    let(:author_user) { FancyOpenStruct.new name: author_name }
+    let(:author_user) do
+      FactoryGirl.build_stubbed :user, name: author_name
+    end
 
     context 'who has authored draft posts' do
       let(:current_user) { author_user }
@@ -94,7 +102,9 @@ describe PostsController::Action::Index do
 
     context 'who has *not* authored draft posts' do
       let(:current_user) { other_user }
-      let(:other_user) { FancyOpenStruct.new name: 'Somebody Else' }
+      let(:other_user) do
+        FactoryGirl.build_stubbed :user, :saved_user, name: 'Somebody Else'
+      end
 
       it_behaves_like 'a successful action', 0
     end # context 'who has *not* authored draft posts'

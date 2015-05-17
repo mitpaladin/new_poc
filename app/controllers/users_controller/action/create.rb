@@ -1,7 +1,7 @@
 
-require_relative 'create/internals/new_entity_verifier'
-require_relative 'create/internals/password_verifier'
-require_relative 'create/internals/user_data_converter'
+require_relative 'create/new_entity_verifier'
+require_relative 'create/password_verifier'
+require_relative 'create/user_data_converter'
 require 'action_support/broadcaster'
 require 'action_support/entity_persister'
 require 'action_support/guest_user_access'
@@ -12,13 +12,15 @@ class UsersController < ApplicationController
   module Action
     # Wisper-based command object called by Users controller #new action.
     class Create
-      # Internal code called (initially) exclusively from Create class.
-      module Internals
-      end
-      private_constant :Internals
-      include Internals
       include ActionSupport::Broadcaster
+      include Contracts
 
+      INIT_CONTRACT_INPUTS = {
+        current_user: RespondTo[:name],
+        user_data: Or[String, RespondTo[:to_hash]]
+      }
+
+      Contract INIT_CONTRACT_INPUTS => Create
       def initialize(current_user:, user_data:)
         @current_user = current_user
         @user_data = UserDataConverter.new(user_data).data
@@ -26,26 +28,33 @@ class UsersController < ApplicationController
         @user_data.delete :slug # will be recreated on successful save
         @password = @user_data[:password]
         @password_confirmation = @user_data[:password_confirmation]
+        self
       end
 
+      Contract None => Create
       def execute
         require_guest_user
         verify_entity_does_not_exist
         verify_password
         add_user_entity_to_repo
         broadcast_success entity
+        self
       rescue RuntimeError => error
         broadcast_failure error.message
+        self
       end
 
       private
 
       attr_reader :current_user, :user_data, :entity
 
+      Contract None => Create
       def verify_password
         PasswordVerifier.new(user_data).verify
+        self
       end
 
+      Contract None => Entity::User
       def add_user_entity_to_repo
         persister = ActionSupport::EntityPersister.new attributes: user_data,
                                                        repository: user_repo
@@ -58,17 +67,20 @@ class UsersController < ApplicationController
         end.entity
       end
 
+      Contract None => Create
       def require_guest_user
         ActionSupport::GuestUserAccess.new(current_user).verify
+        self
       end
 
+      Contract None => Create
       def verify_entity_does_not_exist
         NewEntityVerifier.new(slug: @user_slug, attributes: user_data,
                               user_repo: user_repo).verify
+        self
       end
 
-      # Support methods
-
+      Contract None => UserRepository
       def user_repo
         @user_repo ||= UserRepository.new
       end

@@ -1,12 +1,7 @@
 
-require_relative 'users_controller/edit_failure_redirector'
-
+# We really only need to require one file in each non-default directory to have
+# the whole directory sucked into the auto-load pool, apparently.
 require_relative 'users_controller/action/create'
-require_relative 'users_controller/action/edit'
-require_relative 'users_controller/action/index'
-require_relative 'users_controller/action/new'
-require_relative 'users_controller/action/show'
-require_relative 'users_controller/action/update'
 require_relative 'users_controller/create_failure'
 
 # UsersController: actions related to Users within our "fancy" blog.
@@ -16,7 +11,7 @@ class UsersController < ApplicationController
   def_action(:index) { UserRepository.new }
 
   def_action(:new) do
-    { current_user: current_user, user_repo: UserRepository.new }
+    { current_user: current_user }
   end
 
   def_action(:create) do

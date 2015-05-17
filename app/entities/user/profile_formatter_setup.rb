@@ -1,4 +1,6 @@
 
+require 'contracts'
+
 require_relative 'profile_formatter_setup/internals'
 
 # Namespace containing all application-defined entities.
@@ -11,11 +13,18 @@ module Entity
     # Adds the `#formatted_profile` method and its supporting attribute to an
     # object instance (presumably of `Entity::User`).
     class ProfileFormatterSetup
+      include Contracts
+
       # Internal code used exclusively by `ProfileFormatterSetup`.
       module Internals
       end # module Entity::User::ProfileFormatterSetup::Internals
       private_constant :Internals
       extend Internals
+
+      SETUP_CONTRACT_INPUTS = {
+        entity: Entity::User,
+        attributes: RespondTo[:[]]
+      }
 
       # Class method that creates a new attribute on an entity, setting it from
       # a value read from the incoming attributes. It then defines a method that
@@ -24,12 +33,14 @@ module Entity
       # @param entity Incoming entity instance to be manipulated as described;
       # @param attributes A Hash-like object whose `:markdown_converter` entry
       #                   is used to initialise a new attribute on the entity.
+      Contract SETUP_CONTRACT_INPUTS => Entity::User
       def self.setup(entity:, attributes:)
         entity.instance_variable_set :@markdown_converter,
                                      get_markdown_converter(attributes)
         entity.define_singleton_method :formatted_profile do
           @markdown_converter.call profile
         end
+        entity
       end
     end # class Entity::User::ProfileFormatterSetup
   end # class Entity::User

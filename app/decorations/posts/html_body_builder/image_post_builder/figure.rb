@@ -1,4 +1,6 @@
 
+require 'contracts'
+
 require_relative 'element'
 
 # POROs that act as presentational support for entities.
@@ -20,13 +22,18 @@ module Decorations
         # `figcaption` and `img` attributes set before calling the `#to_html`
         # method.
         class Figure < Element
+          include Contracts
+
           attr_writer :figcaption, :img
 
+          Contract Nokogiri::HTML::Document => Figure
           def initialize(doc)
             super
             @figure = element 'figure'
+            self
           end
 
+          Contract None => String
           def to_html
             figure << img << figcaption
             figure.to_html save_with: html_save_options

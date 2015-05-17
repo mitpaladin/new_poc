@@ -1,4 +1,6 @@
 
+require 'contracts'
+
 require_relative 'validators/author_name'
 require_relative 'validators/body'
 require_relative 'validators/image_url'
@@ -17,20 +19,27 @@ module Entity
     # It also supports adding new validators that quack like the existing ones
     # (attribute-based initialisation with `#errors` and `#valid?` methods).
     class ValidatorGrouping
+      include Contracts
+
+      Contract RespondTo[:to_hash] => ValidatorGrouping
       def initialize(attributes)
         @validators = {}
         Discoverer.new(self).each { |k, v| add k, v.new(attributes) }
+        self
       end
 
+      Contract Symbol, RespondTo[:valid?] => ValidatorGrouping
       def add(key, validator)
         validators[key] = validator
         self
       end
 
+      Contract None => ArrayOf[HashOf[Symbol, String]]
       def errors
         validators.values.inject([]) { |a, e| a + e.errors }
       end
 
+      Contract None => Bool
       def valid?
         validators.select { |_k, validator| !validator.valid? }.empty?
       end

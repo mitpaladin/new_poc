@@ -1,4 +1,6 @@
 
+require 'contracts'
+
 # PostsController: actions related to Posts within our "fancy" blog.
 class PostsController < ApplicationController
   # A Responder responds to the reported result of an application action in an
@@ -13,13 +15,21 @@ class PostsController < ApplicationController
     # 2. `:root_path`.
     #
     class NewFailure
+      include Contracts
+
+      INIT_CONTRACT_INPUTS = RespondTo[:redirect_to, :root_path]
+
+      Contract INIT_CONTRACT_INPUTS => NewFailure
       def initialize(controller)
         @redirect_to = controller.method :redirect_to
         @root_path = controller.method :root_path
+        self
       end
 
+      Contract String => NewFailure
       def respond_to(alert)
         redirect_to.call root_path.call, flash: { alert: alert }
+        self
       end
 
       private
