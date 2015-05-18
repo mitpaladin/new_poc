@@ -73,12 +73,13 @@ module PostsHelper
     end
   end
 
-  SBT_CONTRACT_RETURN = [Symbol, ActiveSupport::TimeWithZone]
+  SBT_CONTRACT_RETURN = ActiveSupport::TimeWithZone
 
   Contract RespondTo[:attributes], ArrayOf[Symbol] => SBT_CONTRACT_RETURN
   def sort_by_timestamp(post, fields)
     selectors = post.attributes.to_hash.select { |k, _v| fields.include? k }
-    return [:current, Time.zone.now] if selectors.empty?
-    selectors.first
+    return Time.zone.now if selectors.empty?
+    # selectors.first.first would be the field sorted on, e.g., :pubdate
+    selectors.first.last
   end
 end
