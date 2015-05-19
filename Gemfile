@@ -14,7 +14,7 @@ gem 'repository-base', '>= 0.2.0'
 gem 'wisper_subscription', '>= 0.2.0'
 
 gem 'active_attr'
-gem 'attire', '>= 2.0.1'
+gem 'attire', '~> 2.0'
 gem 'bcrypt-ruby'
 gem 'coffee-rails'
 gem 'contracts'
@@ -99,8 +99,6 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'ruby-growl'
   gem 'simplecov'
-  gem 'tapout'
-  gem 'teaspoon', '~> 0.9'
 end
 
 group :test do
