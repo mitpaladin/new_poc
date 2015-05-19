@@ -31,7 +31,7 @@ describe UserRepository do
     FactoryGirl.attributes_for :user, :saved_user
   end
   let(:entity) do
-    UserPasswordEntityFactory.create entity_attributes, 'password'
+    UserFactory::WithPassword.create entity_attributes, 'password'
   end
   let(:save_error_data) { { frobulator: 'is busted' } }
   let(:record_errors) do

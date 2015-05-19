@@ -20,7 +20,7 @@ describe UsersController::Action::Update do
   context 'for a Registered User' do
     let(:current_user) do
       user_attribs = FactoryGirl.attributes_for :user, :saved_user
-      entity = UserPasswordEntityFactory.create user_attribs, 'password'
+      entity = UserFactory::WithPassword.create user_attribs, 'password'
       user_repo.add entity
       entity
     end

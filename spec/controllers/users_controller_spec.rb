@@ -36,7 +36,7 @@ describe UsersController do
     before :each do
       user_count.times do
         attribs = FactoryGirl.attributes_for :user, :saved_user
-        user = UserPasswordEntityFactory.create attribs, 'password'
+        user = UserFactory::WithPassword.create attribs, 'password'
         repo.add user
         users << user
       end
@@ -90,7 +90,7 @@ describe UsersController do
     context 'with a user logged in' do
       let(:user_attrs) { FactoryGirl.attributes_for :user, :saved_user }
       let(:user) do
-        user = UserPasswordEntityFactory.create user_attrs, 'password'
+        user = UserFactory::WithPassword.create user_attrs, 'password'
         UserRepository.new.add user
         user
       end
@@ -299,7 +299,7 @@ describe UsersController do
     describe 'succeeds in requesting any existing public profile, so that it' do
       let(:target_user) do
         user_attribs = FactoryGirl.attributes_for(:user, :saved_user)
-        entity = UserPasswordEntityFactory.create user_attribs, 'password'
+        entity = UserFactory::WithPassword.create user_attribs, 'password'
         UserRepository.new.add entity
         entity
       end
