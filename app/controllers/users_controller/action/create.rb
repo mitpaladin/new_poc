@@ -60,7 +60,7 @@ class UsersController < ApplicationController
                                                        repository: user_repo
         @entity = persister.persist do |attributes|
           password = attributes[:password]
-          UserPasswordEntityFactory.create(attributes, password).tap do |entity|
+          UserFactory::WithPassword.create(attributes, password).tap do |entity|
             entity.password = password
             entity.password_confirmation = password
           end

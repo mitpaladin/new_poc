@@ -50,7 +50,7 @@ describe UsersController::Action::Create do
         described_class.new current_user: current_user, user_data: user_data
       end
       let(:current_user) do
-        entity = UserPasswordEntityFactory.create user_attribs, 'password'
+        entity = UserFactory::WithPassword.create user_attribs, 'password'
         user_repository.add(entity).entity
       end
 
@@ -76,7 +76,7 @@ describe UsersController::Action::Create do
                             user_data: other_user.attributes
       end
       let(:other_user) do
-        user = UserPasswordEntityFactory.create user_attribs, 'password'
+        user = UserFactory::WithPassword.create user_attribs, 'password'
         user_repository.add user
         user
       end
@@ -112,7 +112,7 @@ describe UsersController::Action::Create do
         described_class.new current_user: guest_user, user_data: user.attributes
       end
       let(:user) do
-        user = UserPasswordEntityFactory.create user_attribs, 'password'
+        user = UserFactory::WithPassword.create user_attribs, 'password'
         user_repository.add user
         user
       end

@@ -1,7 +1,7 @@
 
 require 'spec_helper'
 
-describe UserPasswordEntityFactory do
+describe UserFactory::WithPassword do
   describe 'has a .create class method that' do
     describe 'returns an object with' do
       let(:password) { 'password' }
@@ -82,4 +82,4 @@ describe UserPasswordEntityFactory do
       end # context 'when called with a single parameter with ... valid data'
     end # describe 'returns an object with'
   end # describe 'has a .create class method that'
-end # describe UserPasswordEntityFactory
+end # describe UserFactory::WithPassword
