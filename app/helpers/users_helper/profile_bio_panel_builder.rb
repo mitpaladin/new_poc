@@ -11,7 +11,8 @@ class ProfileBioPanelBuilder
 
   Contract String, FIXME_HELPER => Any
   def initialize(user_profile, h)
-    @user_profile, @h = user_profile, h
+    @user_profile = user_profile
+    @h = h
     self
   end
 

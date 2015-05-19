@@ -1,6 +1,7 @@
 
 require 'support/feature_spec/post_helper_support/post_creator_data'
 
+# rubocop:disable Metrics/ModuleLength
 # Internal support-code module for FeatureSpecNewPostHelper class.
 module PostHelperSupport
   # Specs for class that encapsulates/sequences data for post generation.
@@ -145,3 +146,4 @@ module PostHelperSupport
     end # describe :post_status
   end # describe PostCreatorData
 end # module PostHelperSupport
+# rubocop:enable Metrics/ModuleLength

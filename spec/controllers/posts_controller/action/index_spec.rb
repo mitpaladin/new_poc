@@ -27,8 +27,8 @@ shared_examples 'a successful action' do |expected_drafts|
                       'current user\'s own draft posts'
                     end
       it description do
-        draft_count = payload.select { |post| !post.published? }.count
-        expect(draft_count).to eq expected_drafts
+        drafts = payload.select { |post| !post.published? }
+        expect(drafts.count).to eq expected_drafts
       end
     end # describe 'contains'
   end # describe 'is successful, broadcasting a payload which'

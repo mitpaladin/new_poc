@@ -10,7 +10,9 @@ class ProfileBioRowBuilder
 
   Contract String, String, HELPER_CONTRACT => ProfileBioRowBuilder
   def initialize(user_name, user_profile, h)
-    @user_name, @user_profile, @h = user_name, user_profile, h
+    @user_name = user_name
+    @user_profile = user_profile
+    @h = h
     self
   end
 

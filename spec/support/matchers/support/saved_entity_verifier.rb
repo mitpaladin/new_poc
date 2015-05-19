@@ -4,8 +4,11 @@ class SavedEntityVerifier
   attr_reader :reasons
 
   def initialize(source, actual, &block)
-    @source, @actual = source, actual
-    @required_in_both, @required_in_source, @required_in_actual = [], [], []
+    @source = source
+    @actual = actual
+    @required_in_both = []
+    @required_in_source = []
+    @required_in_actual = []
     @reasons = []
     instance_eval(&block) if block
   end

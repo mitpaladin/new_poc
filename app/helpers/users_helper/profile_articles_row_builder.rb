@@ -9,7 +9,8 @@ class ProfileArticlesRowBuilder
 
   Contract String, RespondTo[:concat, :content_tag] => ProfileArticlesRowBuilder
   def initialize(user_name, h)
-    @user_name, @h = user_name, h
+    @user_name = user_name
+    @h = h
     self
   end
 

@@ -11,7 +11,8 @@ class ProfileArticleListBuilder
 
   Contract String, USER_HELPER_INPUT_CONTRACT => ProfileArticleListBuilder
   def initialize(user_name, h)
-    @user_name, @h = user_name, h
+    @user_name = user_name
+    @h = h
     self
   end
 

@@ -12,7 +12,8 @@ class ProfilePostItemBuilder
 
   Contract Any, RespondTo[:pubdate_str, :slug] => ProfilePostItemBuilder
   def initialize(h, post)
-    @h, @post = h, post
+    @h = h
+    @post = post
     self
   end
 

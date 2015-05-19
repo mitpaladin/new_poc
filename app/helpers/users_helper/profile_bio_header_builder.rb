@@ -9,7 +9,8 @@ class ProfileBioHeaderBuilder
 
   Contract String, RespondTo[:concat, :content_tag] => ProfileBioHeaderBuilder
   def initialize(user_name, h)
-    @user_name, @h = user_name, h
+    @user_name = user_name
+    @h = h
     self
   end
 
