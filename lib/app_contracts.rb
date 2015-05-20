@@ -5,3 +5,5 @@ AlwaysRaises = Contracts::Any
 ControllerInstance = Contracts::RespondTo[:view_cache_dependency]
 
 Hashlike = Contracts::RespondTo[:to_hash]
+
+ViewHelper = Contracts::RespondTo[:content_tag]
