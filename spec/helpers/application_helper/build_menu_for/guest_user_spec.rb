@@ -38,4 +38,48 @@ describe ApplicationHelper::BuildMenuFor::GuestUser, type: :request do
       end
     end
   end # describe 'supports initialisation with'
+
+  # NOTE: Validating markup can be done in one of two ways: by matching against
+  # regexes or by parsing it with Ox, Nokogiri, et al, and walking the node tree
+  # handed back. While regex matching is (purportedly) *conceptually* simpler,
+  # it quickly devolves into esoteric, intricate hieroglyphs that require at
+  # least as much effort to produce or decode as the code they're supposedly
+  # helping to verify. No, thank you. Been there; done that; lived to tell.
+  describe 'has a #markup method which' do
+    let(:helper) do
+      Class.new do
+        include ActionView::Helpers
+        include ActionView::Context
+        include Rails.application.routes.url_helpers
+      end.new
+    end
+    let(:obj) { described_class.new helper, :sidebar }
+    let(:markup) { obj.markup }
+    let(:outer_node) { Ox.parse obj.markup }
+
+    describe 'returns HTML markup that' do
+      it 'has an outermost :ul tag with "nav" and "nav-*" CSS classes' do
+        expect(outer_node.value).to eq 'ul'
+        expect(outer_node[:class]).to match(/nav nav-.+/)
+      end
+
+      describe 'has a :ul element which contains' do
+        describe 'as its child node' do
+          let(:list_item) { outer_node.nodes.first }
+          let(:node) { list_item.nodes.first }
+
+          it 'an :li element containing an :a element' do
+            expect(list_item.value).to eq 'li'
+            expect(list_item).to have(1).node
+            expect(node.value).to eq 'a'
+          end
+
+          it 'a "Home" link to the root path' do
+            expect(node.text).to eq 'Home'
+            expect(node[:href]).to eq root_path
+          end
+        end # describe 'as its first child node'
+      end # describe 'has a :ul element which contains'
+    end # describe 'returns HTML markup that'
+  end # describe 'has a #markup method which'
 end # describe ApplicationHelper::BuildMenuFor::GuestUser
