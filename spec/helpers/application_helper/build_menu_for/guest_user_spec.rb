@@ -4,6 +4,10 @@ require 'spec_helper'
 require 'application_helper/build_menu_for/guest_user'
 
 describe ApplicationHelper::BuildMenuFor::GuestUser, type: :request do
+  before :each do
+    Ox.default_options = { encoding: 'UTF-8' }
+  end
+
   describe 'supports initialisation with' do
     it 'two parameters' do
       expected = /wrong number of arguments \(0 for 2\)/
@@ -105,7 +109,7 @@ describe ApplicationHelper::BuildMenuFor::GuestUser, type: :request do
             #
             # expected = HTMLEntities.new.decode '&nbsp;'
             # expect(content).to eq expected
-            expected = [0xC2, 0xA0]
+            expected = [0xA0]
             expect(content.codepoints).to eq expected
           end
         end # describe 'within its second list item, a string that'
