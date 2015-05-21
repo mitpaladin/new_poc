@@ -63,23 +63,79 @@ describe ApplicationHelper::BuildMenuFor::GuestUser, type: :request do
         expect(outer_node[:class]).to match(/nav nav-.+/)
       end
 
-      describe 'has a :ul element which contains' do
-        describe 'as its child node' do
-          let(:list_item) { outer_node.nodes.first }
-          let(:node) { list_item.nodes.first }
+      describe 'has an outermost :ul element which contains' do
+        it 'five :li child nodes, and no other nodes' do
+          expect(outer_node).to have(5).nodes
+          expect(outer_node.locate 'li').to eq outer_node.nodes
+        end
 
-          it 'an :li element containing an :a element' do
-            expect(list_item.value).to eq 'li'
-            expect(list_item).to have(1).node
-            expect(node.value).to eq 'a'
+        describe 'within its first list item, an :a element that' do
+          let(:list_item) { outer_node.locate('li[0]').first }
+          let(:anchor) { list_item.locate('a').first }
+
+          it 'has the text "Home"' do
+            expect(anchor.text).to eq 'Home'
           end
 
-          it 'a "Home" link to the root path' do
-            expect(node.text).to eq 'Home'
-            expect(node[:href]).to eq root_path
+          it 'links to the root path' do
+            expect(anchor[:href]).to eq root_path
           end
-        end # describe 'as its first child node'
-      end # describe 'has a :ul element which contains'
+        end # describe 'within its first list item, an :a element that'
+
+        describe 'within its second list item, an :a element that' do
+          let(:list_item) { outer_node.locate('li[1]').first }
+          let(:anchor) { list_item.locate('a').first }
+
+          it 'has the text "All members"' do
+            expect(anchor.text).to eq 'All members'
+          end
+
+          it 'links to the users path' do
+            expect(anchor[:href]).to eq users_path
+          end
+        end # describe 'within its second list item, an :a element that'
+
+        describe 'within its third list item, a string that' do
+          let(:list_item) { outer_node.locate('li[2]').first }
+          let(:content) { list_item.nodes.first }
+
+          it 'is a nonbreaking space' do
+            # FIXME: Ox apparently parses as ASCII_8BIT. See
+            #        https://github.com/ohler55/ox/issues/110.
+            #
+            # expected = HTMLEntities.new.decode '&nbsp;'
+            # expect(content).to eq expected
+            expected = [0xC2, 0xA0]
+            expect(content.codepoints).to eq expected
+          end
+        end # describe 'within its second list item, a string that'
+
+        describe 'within its fourth list item, an :a element that' do
+          let(:list_item) { outer_node.locate('li[3]').first }
+          let(:anchor) { list_item.locate('a').first }
+
+          it 'has the text "Sign up"' do
+            expect(anchor.text).to eq 'Sign up'
+          end
+
+          it 'links to the new-user path' do
+            expect(anchor[:href]).to eq new_user_path
+          end
+        end # describe 'within its fourth list item, an :a element that'
+
+        describe 'within its fifth list item, an :a element that' do
+          let(:list_item) { outer_node.locate('li').last }
+          let(:anchor) { list_item.locate('a').first }
+
+          it 'has the text "Log in"' do
+            expect(anchor.text).to eq 'Log in'
+          end
+
+          it 'links to the new-session path' do
+            expect(anchor[:href]).to eq new_session_path
+          end
+        end # describe 'within its fifth list item, an :a element that'
+      end # describe 'has an outermost :ul element which contains' do
     end # describe 'returns HTML markup that'
   end # describe 'has a #markup method which'
 end # describe ApplicationHelper::BuildMenuFor::GuestUser
