@@ -10,13 +10,16 @@ module ApplicationHelper
     include Contracts
     include Contracts::Modules
 
+    Contract RespondTo[:name] => Bool
+    def guest?(current_user)
+      current_user.name == 'Guest User'
+    end
+    private :guest?
+
     Contract Symbol, RespondTo[:name, :profile] => String
     def build_menu_for(which, current_user)
-      if current_user.name == 'Guest User'
-        GuestUser.new(self, which).markup
-      else
-        RegisteredUser.new(self, which, current_user).markup
-      end
+      return GuestUser.new(self, which).markup if guest?(current_user)
+      RegisteredUser.new(self, which, current_user).markup
     end
   end # module ApplicationHelper::BuildMenuFor
 end # module ApplicationHelper
