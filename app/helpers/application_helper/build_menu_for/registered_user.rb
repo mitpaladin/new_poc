@@ -21,6 +21,8 @@ module ApplicationHelper
       Contract None => String
       def markup
         build_container do
+          build_item_for 'New Post', href: h.new_post_path
+          build_separator_item
           build_item_for 'View your profile', href: user_profile_path
           build_separator_item
           build_item_for 'Log out', logout_params

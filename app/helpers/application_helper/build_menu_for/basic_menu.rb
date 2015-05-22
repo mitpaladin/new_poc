@@ -26,8 +26,6 @@ module ApplicationHelper
           build_item_for 'Home', href: h.root_path
           build_item_for 'All members', href: h.users_path
           build_separator_item
-          build_item_for 'New Post', href: h.new_post_path
-          build_separator_item
           instance_eval(&block)
         end
       end
