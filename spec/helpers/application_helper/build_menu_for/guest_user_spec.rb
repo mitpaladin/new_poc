@@ -104,15 +104,10 @@ describe ApplicationHelper::BuildMenuFor::GuestUser, type: :request do
           let(:content) { list_item.nodes.first }
 
           it 'is a nonbreaking space' do
-            # FIXME: Ox apparently parses as ASCII_8BIT. See
-            #        https://github.com/ohler55/ox/issues/110.
-            #
-            # expected = HTMLEntities.new.decode '&nbsp;'
-            # expect(content).to eq expected
             expected = [0xA0]
             expect(content.codepoints).to eq expected
           end
-        end # describe 'within its second list item, a string that'
+        end # describe 'within its third list item, a string that'
 
         describe 'within its fourth list item, an :a element that' do
           let(:list_item) { outer_node.locate('li[3]').first }
