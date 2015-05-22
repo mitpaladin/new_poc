@@ -12,7 +12,11 @@ module ApplicationHelper
 
     Contract Symbol, RespondTo[:name, :profile] => String
     def build_menu_for(which, current_user)
-      MenuForBuilder.new(self, which, current_user).markup
+      if current_user.name == 'Guest User'
+        GuestUser.new(self, which).markup
+      else
+        MenuForBuilder.new(self, which, current_user).markup
+      end
     end
 
     # Class wrapping logic of `#build_menu_for` application-helper function.
