@@ -5,17 +5,26 @@ require 'application_helper/build_menu_for/registered_user'
 
 describe ApplicationHelper::BuildMenuFor::RegisteredUser, type: :request do
   let(:current_user) { FancyOpenStruct.new name: 'Some User' }
+  let(:helper) do
+    Class.new do
+      include ActionView::Helpers
+      include ActionView::Context
+      include Rails.application.routes.url_helpers
+    end.new
+  end
+
   before :each do
     Ox.default_options = { encoding: 'UTF-8' }
   end
 
+  it 'includes the BasicMenu module' do
+    obj = described_class.new helper, :navbar, current_user
+    expect(obj).to be_a ApplicationHelper::BuildMenuFor::BasicMenu
+  end
+
   describe 'supports initialisation with' do
-    let(:helper) do
-      Class.new do
-        include ActionView::Helpers::TagHelper
-      end.new
-    end
     let(:u) { current_user } # keep lines short
+
     it 'three parameters' do
       expected = /wrong number of arguments \(0 for 3\)/
       expect { described_class.new }.to raise_error ArgumentError, expected
@@ -59,13 +68,6 @@ describe ApplicationHelper::BuildMenuFor::RegisteredUser, type: :request do
   end # describe 'supports initialisation with'
 
   describe 'has a #markup method which' do
-    let(:helper) do
-      Class.new do
-        include ActionView::Helpers
-        include ActionView::Context
-        include Rails.application.routes.url_helpers
-      end.new
-    end
     let(:obj) { described_class.new helper, :sidebar, current_user }
     let(:markup) { obj.markup }
     let(:outer_node) { Ox.parse obj.markup }
@@ -76,41 +78,7 @@ describe ApplicationHelper::BuildMenuFor::RegisteredUser, type: :request do
         expect(outer_node[:class]).to match(/nav nav-.+/)
       end
 
-      describe 'within its first list item, an :a element that' do
-        let(:list_item) { outer_node.locate('li[0]').first }
-        let(:anchor) { list_item.locate('a').first }
-
-        it 'has the text "Home"' do
-          expect(anchor.text).to eq 'Home'
-        end
-
-        it 'links to the root path' do
-          expect(anchor[:href]).to eq root_path
-        end
-      end # describe 'within its first list item, an :a element that'
-
-      describe 'within its second list item, an :a element that' do
-        let(:list_item) { outer_node.locate('li[1]').first }
-        let(:anchor) { list_item.locate('a').first }
-
-        it 'has the text "All members"' do
-          expect(anchor.text).to eq 'All members'
-        end
-
-        it 'links to the users path' do
-          expect(anchor[:href]).to eq users_path
-        end
-      end # describe 'within its second list item, an :a element that'
-
-      describe 'within its third list item, a string that' do
-        let(:list_item) { outer_node.locate('li[2]').first }
-        let(:content) { list_item.nodes.first }
-
-        it 'is a nonbreaking space' do
-          expected = [0xA0]
-          expect(content.codepoints).to eq expected
-        end
-      end # describe 'within its third list item, a string that'
+      # First three list items are as standard for a BasicMenu; no specs here.
 
       describe 'within its fourth list item, an :a element that' do
         let(:list_item) { outer_node.locate('li[3]').first }
@@ -125,7 +93,7 @@ describe ApplicationHelper::BuildMenuFor::RegisteredUser, type: :request do
         end
       end # describe 'within its fourth list item, an :a element that'
 
-      describe 'within its fifth list item, an :a element that' do
+      describe 'within its last list item, an :a element that' do
         let(:list_item) { outer_node.locate('li').last }
         let(:anchor) { list_item.locate('a').first }
 
@@ -144,7 +112,7 @@ describe ApplicationHelper::BuildMenuFor::RegisteredUser, type: :request do
         it 'links to the current-session path' do
           expect(anchor[:href]).to eq session_path('current')
         end
-      end # describe 'within its fifth list item, an :a element that'
+      end # describe 'within its last list item, an :a element that'
     end # describe 'returns HTML markup that'
   end # describe 'has a #markup method which'
 end # describe ApplicationHelper::BuildMenuFor::RegisteredUser
