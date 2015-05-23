@@ -13,39 +13,30 @@ describe ApplicationHelper::AppwideFlashes do
         flashes = PseudoFlash.new
         flashes[:notice] = @message
         fragment = helper.show_appwide_flashes flashes
-        @outer = Nokogiri::HTML::DocumentFragment.parse fragment
-      end
-
-      it 'generates a single outer element' do
-        expect(@outer.children.length).to eq 1
+        Ox.default_options = { encoding: 'UTF-8' }
+        @outer = Ox.parse fragment
       end
 
       describe 'generates an outer element that' do
-        before :each do
-          @element = @outer.children.first
-        end
-
         it 'is a "div" element' do
-          expect(@element).to be_element
-          expect(@element.name).to eq 'div'
+          expect(@outer.value).to eq 'div'
         end
 
         it 'has the .alert class' do
-          expect(@element['class'].split).to include 'alert'
+          expect(@outer['class'].split).to include 'alert'
         end
 
         it 'has two children' do
-          expect(@element.children.length).to eq 2
+          expect(@outer).to have(2).nodes
         end
 
         describe 'has as its first child node' do
           before :each do
-            @child = @element.children.first
+            @child = @outer.nodes.first
           end
 
           it 'a "button" element' do
-            expect(@child).to be_element
-            expect(@child.name).to eq 'button'
+            expect(@child.value).to eq 'button'
           end
 
           describe 'an element that' do
@@ -62,24 +53,23 @@ describe ApplicationHelper::AppwideFlashes do
             end
 
             it 'has the "times" entity value as its text' do
-              expected = Nokogiri::HTML::NamedCharacters.get('times').value
-              expect(@child.text.codepoints.first).to eq expected
-              expect(@child.text.length).to eq 1
+              expected = HTMLEntities.new.decode '&times;'
+              expect(@child.text).to eq expected
             end
           end # describe 'an element that'
         end # describe 'has as its first child node'
 
         describe 'has as its second child node' do
           before :each do
-            @node = @element.children.last
+            @node = @outer.nodes.last
           end
 
-          it 'a text node' do
-            expect(@node.type).to eq Nokogiri::XML::Node::TEXT_NODE
+          it 'a string' do
+            expect(@node).to be_a String
           end
 
           it 'the correct text' do
-            expect(@node.text).to eq @message
+            expect(@node).to eq @message
           end
         end # describe 'has as its second child node'
       end # describe 'generates an outer element that'
@@ -90,8 +80,7 @@ describe ApplicationHelper::AppwideFlashes do
         flash = PseudoFlash.new
         flash[@level] = @message
         fragment = helper.show_appwide_flashes flash
-        outer = Nokogiri::HTML::DocumentFragment.parse fragment
-        element = outer.children.first
+        element = Ox.parse fragment
         @expected_class = "alert-#{@level}" unless @expected_class
         expect(element['class']).to include @expected_class
       end

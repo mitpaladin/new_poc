@@ -57,7 +57,7 @@ module ApplicationHelper
 
       Contract None => String
       def close_button
-        close_button_tag { Nokogiri::HTML.fragment('&times;').to_s }
+        close_button_tag { HTMLEntities.new.decode '&times;' }
       end
 
       Contract Proc => String
