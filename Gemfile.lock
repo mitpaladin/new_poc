@@ -6,9 +6,9 @@ GIT
 
 GIT
   remote: git://github.com/ctran/annotate_models.git
-  revision: 52ffefcbe4e89cb172e2007eda0f74ac40798727
+  revision: 0146ee7b9a70d530a30a5e220c94d5e353624671
   specs:
-    annotate (2.6.8)
+    annotate (2.6.10)
       activerecord (>= 3.2, <= 4.3)
       rake (~> 10.4)
 
@@ -40,7 +40,7 @@ GIT
 
 GIT
   remote: git://github.com/slim-template/slim-rails.git
-  revision: 7f2a0542f8dacb3fb661c08a004cefc83c4684a2
+  revision: a8faeae6b148eba23509592e176cf75ca72e7a15
   specs:
     slim-rails (3.0.1)
       actionmailer (>= 3.1, < 5.0)
@@ -215,7 +215,7 @@ GEM
     ox (2.2.0)
     parser (2.2.2.3)
       ast (>= 1.1, < 3.0)
-    passenger (5.0.7)
+    passenger (5.0.8)
       rack
       rake (>= 0.8.1)
     pg (0.18.2)
@@ -360,7 +360,7 @@ GEM
     rugged (0.23.0b2)
     sanitizer (0.2.1)
       htmlentities (~> 4.3.0)
-    sass (3.4.13)
+    sass (3.4.14)
     sass-rails (5.0.3)
       railties (>= 4.0.0, < 5.0)
       sass (~> 3.1)
