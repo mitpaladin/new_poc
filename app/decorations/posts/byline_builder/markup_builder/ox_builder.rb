@@ -37,6 +37,7 @@ module Decorations
             Ox::Element.new name
           end
 
+          Contract None => Ox::Document
           def new_doc
             Ox::Document.new
           end
