@@ -2,8 +2,9 @@
 require 'contracts'
 
 require_relative 'attributes'
-require_relative 'markup_builder/published_parts'
 require_relative 'markup_builder/draft_parts'
+require_relative 'markup_builder/ox_builder'
+require_relative 'markup_builder/published_parts'
 
 # POROs that act as presentational support for entities.
 module Decorations
@@ -26,37 +27,30 @@ module Decorations
 
         Contract None => String
         def to_html
-          para = element 'p'
-          para << inner
-          doc << para
-          para.to_html
+          reformat build.dump
         end
 
         private
 
         def_delegators :@attributes, :author_name, :pubdate, :updated_at
 
-        Contract None => Nokogiri::HTML::Document
-        def doc
-          @doc ||= Nokogiri::HTML::Document.new
-        end
-
-        Contract None => Bool
-        def draft?
-          pubdate.nil?
-        end
-
-        Contract String => Nokogiri::XML::Element
-        def element(tag)
-          Nokogiri::XML::Element.new(tag, doc)
-        end
-
-        Contract None => Nokogiri::XML::Element
-        def inner
-          element('time').tap do |time_tag|
-            time_tag[:pubdate] = 'pubdate'
-            time_tag << @content_class.new(@attributes).content
+        Contract None => OxBuilder
+        def build
+          content_class = @content_class
+          attributes = @attributes
+          OxBuilder.new.build do
+            para = element 'p'
+            inner = element('time').tap do |time_tag|
+              time_tag['pubdate'] = 'pubdate'
+              time_tag << content_class.new(attributes).content
+            end
+            para << inner
           end
+        end
+
+        Contract String => String
+        def reformat(as_built)
+          as_built.lines.map(&:strip).join
         end
       end # class Decorations::Posts::BylineBuilder::MarkupBuilder
       # private_constant :MarkupBuilder
