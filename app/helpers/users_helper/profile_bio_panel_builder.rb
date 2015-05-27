@@ -16,21 +16,48 @@ class ProfileBioPanelBuilder
     self
   end
 
-  Contract None => String
-  def to_html
-    [
-      %(<div class="panel panel-default">),
-      %(<div class="panel-heading">),
-      %(<h3 class="panel-title">User Profile/Bio Information</h3>),
-      %(</div>),  # panel-heading
-      %(<div class="panel-body">),
-      @user_profile,
-      %(</div>),  # panel-body
-      %(</div>)   # panel panel-default
-    ].join
+  Contract None => Ox::Element
+  def to_ox
+    Ox::Element.new('div').tap do |outer_div|
+      outer_div[:class] = 'panel panel-default'
+      outer_div << panel_heading
+      outer_div << wrap_profile
+    end # outer_div
   end
 
-  protected
+  Contract None => String
+  def to_html
+    Ox.default_options = { indent: 0, encoding: 'UTF-8' }
+    Ox.dump(to_ox).tr("\n", '')
+  end
+
+  private
+
+  Contract None => Ox::Element
+  def panel_heading
+    Ox::Element.new('div').tap do |ph|
+      ph[:class] = 'panel-heading'
+      ph << Ox::Element.new('h3').tap do |h3|
+        h3[:class] = 'panel-title'
+        h3 << 'User Profile/Bio Information'
+      end
+    end # div.panel-heading
+  end
+
+  Contract None => Ox::Element
+  def parse_profile
+    Ox.parse user_profile
+  rescue Ox::ParseError # no outer/leading element markup; content only
+    Ox::Element.new('p').tap { |p| p << user_profile }
+  end
+
+  Contract None => Ox::Element
+  def wrap_profile
+    Ox::Element.new('div').tap do |pb|
+      pb[:class] = 'panel-body'
+      pb << parse_profile
+    end
+  end
 
   attr_reader :h, :user_profile
 end
