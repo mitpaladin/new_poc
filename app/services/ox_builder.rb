@@ -38,7 +38,7 @@ module Services
 
     Contract None => DOCUMENT_TYPE
     def new_doc
-      Ox::Document.new
+      @doc = Ox::Document.new
     end
   end # class Services::OxBuilder
 end

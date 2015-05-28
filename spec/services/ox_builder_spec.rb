@@ -85,6 +85,7 @@ describe Services::OxBuilder do
 
   describe 'has an #element instance method which' do
     let(:elem) { obj.build { element('hr') } }
+
     it 'is not a public method' do
       expect { obj.element 'p' }.to raise_error NoMethodError, /private method/
     end
@@ -97,4 +98,30 @@ describe Services::OxBuilder do
       expect(elem).to be_a Ox::Element
     end
   end # describe 'has an #element instance method which'
+
+  describe 'has a #new_doc instance method which' do
+    it 'is not a public method' do
+      expect { obj.new_doc }.to raise_error NoMethodError, /private method/
+    end
+
+    it 'returns a new instance each time it is called' do
+      doc1 = nil
+      doc2 = nil
+      doc2a = nil
+      doc3 = nil
+      doc3a = nil
+      obj.build do
+        doc1 = doc
+        doc2 = new_doc
+        doc2a = doc
+        doc3 = new_doc
+        doc3a = doc
+        element('hr')
+      end
+      expect(doc1).not_to be doc2
+      expect(doc2).to be doc2a
+      expect(doc3).not_to be doc2
+      expect(doc3a).to be doc3
+    end
+  end # describe 'has a #new_doc instance method which'
 end # describe Services::OxBuilder
