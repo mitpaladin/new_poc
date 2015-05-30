@@ -7,7 +7,9 @@ require 'current_user_identity'
 class ProfileBioHeaderBuilder
   include Contracts
 
-  Contract String, RespondTo[:concat, :content_tag] => ProfileBioHeaderBuilder
+  HELPER_INPUTS = Contracts::RespondTo[:concat, :content_tag]
+
+  Contract String, HELPER_INPUTS => ProfileBioHeaderBuilder
   def initialize(user_name, h)
     @user_name = user_name
     @h = h
@@ -16,10 +18,16 @@ class ProfileBioHeaderBuilder
 
   Contract None => String
   def to_html
-    h.content_tag :h1, nil, { class: 'bio' }, false do
-      h.concat "Profile Page for #{user_name}"
-      h.concat make_button
+    title_text = "Profile Page for #{user_name}"
+    button = make_button if current_user?
+    ret = Services::OxBuilder.new.build do
+      element('h1').tap do |h1|
+        h1[:class] = 'bio'
+        h1 << title_text
+        h1 << button if button
+      end
     end
+    Ox.dump(ret).strip
   end
 
   protected
@@ -31,6 +39,11 @@ class ProfileBioHeaderBuilder
   Contract None => CurrentUserIdentity
   def identity
     @identity ||= CurrentUserIdentity.new(h.session)
+  end
+
+  Contract None => Bool
+  def current_user?
+    current_user.name == user_name
   end
 
   Contract None => RespondTo[:name]
@@ -48,11 +61,12 @@ class ProfileBioHeaderBuilder
     }
   end
 
-  Contract None => String
+  Contract None => Ox::Element
   def make_button
-    return '' unless current_user.name == user_name
-    h.content_tag :a, nil, link_attribs, false do
-      'Edit Your Profile'
+    Ox::Element.new(:a).tap do |a|
+      a[:class] = 'btn btn-xs pull-right'
+      a[:href] = h.edit_user_path(current_user.slug)
+      a << 'Edit Your Profile'
     end
   end
 end

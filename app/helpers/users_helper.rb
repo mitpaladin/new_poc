@@ -24,13 +24,11 @@ module UsersHelper
   end
 
   Contract String => String
-
   def profile_articles_row(user_name)
     ProfileArticlesRowBuilder.new(user_name, self).to_html
   end
 
   Contract String, String => String
-
   def profile_bio_row(user_name, user_profile)
     ProfileBioRowBuilder.new(user_name, user_profile, self).to_html
   end
