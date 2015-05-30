@@ -1,9 +1,9 @@
 
-shared_examples 'a profile bio panel' do |fragment_builder, h|
+shared_examples 'a profile bio panel' do |fragment_builder|
   let(:user_entity) { UserFactory.entity_class }
   let(:user) { user_entity.new FactoryGirl.attributes_for(:user) }
   let(:fragment) do
-    builder = ProfileBioPanelBuilder.new user.profile.squish, h
+    builder = ProfileBioPanelBuilder.new user.profile.squish
     fragment_builder.call builder.to_html
   end
 
