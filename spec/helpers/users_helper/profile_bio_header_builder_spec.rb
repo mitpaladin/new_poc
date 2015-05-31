@@ -1,6 +1,8 @@
 
 require 'spec_helper'
 
+require 'current_user_identity'
+
 describe ProfileBioHeaderBuilder, type: :request do
   let(:helper) do
     Class.new do
@@ -59,6 +61,65 @@ describe ProfileBioHeaderBuilder, type: :request do
           expect(h1).to eq 'Profile Page for ' + user_name
         end
       end # context 'when called while no user is logged in'
-    end
+    end # context 'when called while no user is logged in'
+
+    context 'when called while the target user is logged in' do
+      let(:actual) { obj.to_html }
+      let(:obj) { described_class.new user.name, helper }
+      let(:user) { FactoryGirl.create :user, :saved_user }
+      let(:identity) { CurrentUserIdentity.new helper.session }
+
+      before :each do
+        identity.current_user = user
+      end
+
+      it 'returns an HTML string' do
+        expect(actual).to be_a String
+        expect { Ox.parse actual }.not_to raise_error
+      end
+
+      describe 'containing an :a tag pair at the end of the content that' do
+        let(:button) { Ox.parse(actual).nodes.last }
+
+        it 'is the second of two nodes in the returned HTML' do
+          expect(Ox.parse actual).to have(2).nodes
+        end
+
+        it 'is an :a tag' do
+          expect(button.value).to eq 'a'
+        end
+
+        it 'has the correct CSS styles' do
+          expect(button[:class]).to eq 'btn btn-xs pull-right'
+        end
+
+        it 'has the correct "button" caption text' do
+          expect(button.text).to eq 'Edit Your Profile'
+        end
+      end # describe 'containing an :a tag pair at the end of the content...'
+    end # context 'when called while the target user is logged in'
+
+    context 'when called while a user other than the target is logged in' do
+      let(:actual) { obj.to_html }
+      let(:obj) { described_class.new user.name, helper }
+      let(:other_user) { FactoryGirl.create :user, :saved_user }
+      let(:user) { FactoryGirl.create :user, :saved_user }
+      let(:identity) { CurrentUserIdentity.new helper.session }
+
+      before :each do
+        identity.current_user = other_user
+      end
+
+      it 'returns an HTML string' do
+        expect(actual).to be_a String
+        expect { Ox.parse actual }.not_to raise_error
+      end
+
+      it 'does not include a button-styled :a tag pair' do
+        parsed = Ox.parse(actual)
+        expect(parsed.nodes.count).to eq 1
+        expect(parsed.nodes.first).to be_a String # NOT a node-like thing.
+      end
+    end # context 'when called while a user other than the target is logged in'
   end # describe 'supports a #to_html instance method that'
 end
