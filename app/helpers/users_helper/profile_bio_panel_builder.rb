@@ -15,7 +15,12 @@ class ProfileBioPanelBuilder
 
   Contract None => String
   def to_html
-    reformat Ox.dump(Builder.build_native user_profile)
+    reformat Ox.dump(native)
+  end
+
+  Contract None => Builder::ELEMENT_TYPE
+  def native
+    Builder.build_native user_profile
   end
 
   private
