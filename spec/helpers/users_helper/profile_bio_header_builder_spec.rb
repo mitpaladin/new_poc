@@ -31,7 +31,7 @@ describe ProfileBioHeaderBuilder, type: :request do
         expect(e).to be_a ParamContractError
         expect(e.message).to match(/Actual: "oops"/)
         expected = 'Expected: ' \
-          '(a value that responds to [:concat, :content_tag]),'
+          '(a value that responds to [:concat, :content_tag, :session]),'
         expect(e.message).to match Regexp.escape(expected)
       end
     end

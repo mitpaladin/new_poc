@@ -7,7 +7,8 @@ require 'current_user_identity'
 class ProfileBioHeaderBuilder
   include Contracts
 
-  HELPER_INPUTS = Contracts::RespondTo[:concat, :content_tag]
+  # :edit_user_path
+  HELPER_INPUTS = Contracts::RespondTo[:concat, :content_tag, :session]
 
   Contract String, HELPER_INPUTS => ProfileBioHeaderBuilder
   def initialize(user_name, h)
@@ -51,14 +52,6 @@ class ProfileBioHeaderBuilder
     default = Struct.new(:name).new ''
     return default if identity.guest_user?
     identity.current_user
-  end
-
-  Contract None => HashOf[Symbol, String]
-  def link_attribs
-    {
-      class: 'btn btn-xs pull-right',
-      href: h.edit_user_path(current_user.slug)
-    }
   end
 
   Contract None => Ox::Element
