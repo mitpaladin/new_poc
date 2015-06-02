@@ -122,4 +122,26 @@ describe ProfileBioHeaderBuilder, type: :request do
       end
     end # context 'when called while a user other than the target is logged in'
   end # describe 'supports a #to_html instance method that'
+
+  describe 'supports a #native instance method that' do
+    context 'when called while no user is logged in' do
+      let(:actual) { obj.native }
+      let(:obj) { described_class.new user_name, helper }
+      let(:user_name) { 'Thaddeus Q Bostwick-Huddle LXVI' }
+
+      it 'returns an :h1 element' do
+        expect(actual.value).to eq 'h1'
+      end
+
+      it 'has a :class attribute value of "bio" and no other attributes' do
+        expect(actual.attributes.count).to eq 1
+        expect(actual[:class]).to eq 'bio'
+      end
+
+      it 'has a single child node, the expected title including user name' do
+        expect(actual.nodes.count).to eq 1
+        expect(actual.nodes.first).to eq "Profile Page for #{user_name}"
+      end
+    end # context 'when called while no user is logged in'
+  end # describe 'supports a #native instance method that'
 end
