@@ -4,7 +4,6 @@ require 'spec_helper'
 require 'current_user_identity'
 
 require 'support/shared_examples/users_helper/a_profile_article_list'
-require 'support/shared_examples/users_helper/a_profile_bio_panel'
 
 describe UsersHelper do
   let(:user) { FactoryGirl.create :user, :saved_user }
@@ -84,10 +83,71 @@ describe UsersHelper do
     end # describe 'has a first child element that'
 
     describe 'has a second child element that' do
-      fragment_builder = lambda do |markup|
-        Nokogiri.parse(markup).children.last
+      let(:user_entity) { UserFactory.entity_class }
+      let(:user) { user_entity.new FactoryGirl.attributes_for(:user) }
+      let(:fragment) do
+        builder = ProfileBioPanelBuilder.new user.profile.squish
+        Ox.parse builder.to_html
       end
-      it_behaves_like 'a profile bio panel', fragment_builder
+
+      it 'generates an outermost div.panel.panel-default element' do
+        expect(fragment.name).to eq 'div'
+        classes = fragment[:class].split
+        expect(classes.sort).to eq ['panel', 'panel-default']
+      end
+
+      it 'contains two child nodes' do
+        expect(fragment).to have(2).nodes
+      end
+
+      describe 'contains as its first child node' do
+        let(:actual) { fragment.nodes.first }
+
+        it 'a "div" element with the CSS class "panel-heading"' do
+          expect(actual.name).to eq 'div'
+          expect(actual[:class]).to eq 'panel-heading'
+        end
+
+        describe 'an element whose only child node is' do
+          let(:child) { actual.nodes.first }
+
+          it 'an :h3 element' do
+            expect(child.name).to eq 'h3'
+          end
+
+          it 'an element with the :class attribute of "panel-title"' do
+            expect(child[:class]).to eq 'panel-title'
+          end
+
+          it 'an element containing the correct text' do
+            expect(child.text).to eq 'User Profile/Bio Information'
+          end
+        end # describe 'an element whose only child node is'
+      end # describe 'contains as its first child node'
+
+      describe 'contains as its second child node' do
+        let(:actual) { fragment.nodes.last }
+
+        it 'a :div element' do
+          expect(actual.name).to eq 'div'
+        end
+
+        it 'an element with the CSS :class attribute of "panel-body"' do
+          expect(actual[:class]).to eq 'panel-body'
+        end
+
+        describe 'an element containing one child element that' do
+          let(:child) { actual.nodes.first }
+
+          it 'is a :p element' do
+            expect(child.name).to eq 'p'
+          end
+
+          it 'has the correct text' do
+            expect(child.text).to eq user.profile
+          end
+        end # describe 'an element containing one child element that'
+      end # describe 'contains as its second child node'
     end # describe 'has a second child element that'
   end # describe :profile_bio_row
 end # describe UsersHelper
