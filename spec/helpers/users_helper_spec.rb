@@ -87,7 +87,7 @@ describe UsersHelper do
       fragment_builder = lambda do |markup|
         Nokogiri.parse(markup).children.last
       end
-      it_behaves_like 'a profile bio panel', fragment_builder, helper
+      it_behaves_like 'a profile bio panel', fragment_builder
     end # describe 'has a second child element that'
   end # describe :profile_bio_row
 end # describe UsersHelper

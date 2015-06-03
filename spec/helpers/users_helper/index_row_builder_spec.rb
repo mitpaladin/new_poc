@@ -74,7 +74,7 @@ describe IndexRowBuilder, type: :request do
     context 'when the target user is the current user' do
       let(:actual) { obj.build default_user }
 
-      fit 'returns an HTML table row' do
+      it 'returns an HTML table row' do
         expect(actual).to match %r{\A<tr.+</tr>\z}
       end
 
