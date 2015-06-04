@@ -27,7 +27,7 @@ describe 'Member can view own profile page' do
     parts = @user_bio.match(/(.+?)\*(.+?)\*(.+)/).to_a.slice(1..3)
     # Find the entire @user_bio markup in the panel
     expected = [parts[0], '<em>', parts[1], '</em>', parts[2]].join
-    bio = page.find('.panel-body p').native # get the Nokogiri element node
+    bio = page.find('.panel-body p').native # get the element node
     expect(bio.to_html).to eq ['<p>', '</p>'].join(expected)
   end
 end # describe 'Member can view own profile page'

@@ -22,13 +22,13 @@ shared_examples 'a profile article list' do |fragment_builder|
   end
 
   it 'contains the correct number of child elements' do
-    expect(fragment).to have(5).children
+    expect(fragment).to have(5).nodes
   end
 
   # FIXME: There's *got* to be a better way to do this.
   describe 'for each child element of the ul.list-group element' do
     it 'is a li.list-group-item element' do
-      fragment.children.each do |child|
+      fragment.nodes.each do |child|
         expect(child.name).to eq 'li'
         expect(child['class']).to eq 'list-group-item'
       end
@@ -36,34 +36,34 @@ shared_examples 'a profile article list' do |fragment_builder|
 
     describe 'for each li.list-group-item element' do
       it 'has a single child element' do
-        fragment.children.each do |li|
-          expect(li).to have(1).child
+        fragment.nodes.each do |li|
+          expect(li).to have(1).node
         end
       end
 
       it 'contains a child element with an "a" tag' do
-        fragment.children.each do |li|
-          expect(li.children.first.name).to eq 'a'
+        fragment.nodes.each do |li|
+          expect(li.nodes.first.name).to eq 'a'
         end
       end
 
       describe 'contains a child anchor link with' do
         it 'an "href" attribute matching the currect article slug' do
-          fragment.children.each_with_index do |li, li_index|
+          fragment.nodes.each_with_index do |li, li_index|
             slug = "/posts/#{posts[li_index].title.parameterize}"
-            expect(li.children.first['href']).to eq slug
+            expect(li.nodes.first['href']).to eq slug
           end
         end
 
         it 'the correct text content' do
-          fragment.children.each_with_index do |li, li_index|
+          fragment.nodes.each_with_index do |li, li_index|
             title = posts[li_index].title
             expected = [
               %("#{title}"),
               'Published',
               FeatureSpecTimestampHelper.to_timestamp_s(pubdate)
             ].join ' '
-            expect(li.children.first.content).to eq expected
+            expect(li.nodes.first.text).to eq expected
           end
         end
       end # describe 'contains a child anchor link with'

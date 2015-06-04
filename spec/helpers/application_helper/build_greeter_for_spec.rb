@@ -11,8 +11,8 @@ shared_examples 'the message for a user of type' do |user_type|
   context "for a #{user_type}" do
     it 'includes the correct greeting text in the markup' do
       user = FancyOpenStruct.new name: user_name
-      doc = Nokogiri.parse(method.call user)
-      expect(doc.children.first.text).to eq "Hello, #{user.name}!"
+      el = Ox.parse method.call(user)
+      expect(el.text).to eq "Hello, #{user.name}!"
     end
   end # context "for a #{user_type}"
 end # shared_examples 'the message for a user of type'
@@ -38,8 +38,7 @@ describe ApplicationHelper::BuildGreeterFor do
 
       describe 'returns the correct markup, comprising' do
         let(:markup) do
-          doc = Nokogiri.parse(method.call user)
-          doc.children.first
+          Ox.parse method.call(user)
         end
 
         it 'a div' do

@@ -2,7 +2,6 @@
 require 'spec_helper'
 
 describe Decorations::Posts::HtmlBodyBuilder::ImagePostBuilder::FigCaption do
-  let(:doc) { Nokogiri::HTML::Document.new }
   let(:dummy_caption) { 'a caption' }
   let(:tag_pair) { ['<figcaption><p>', '</p></figcaption>'] }
 

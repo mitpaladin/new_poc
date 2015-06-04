@@ -10,11 +10,11 @@ module AHBMF
     end
 
     def current_li
-      current_el.children[index]
+      current_el.nodes[index]
     end
 
     def current_a_tag
-      current_li.children.first
+      current_li.nodes.first
     end
   end # class AHBMF::ParamValues
 
@@ -27,7 +27,7 @@ module AHBMF
     end
 
     def current_li
-      current_el.children[index]
+      current_el.nodes[index]
     end
   end # class AHBMF::MenuSeparatorParamValues
 
@@ -38,7 +38,7 @@ module AHBMF
     end
 
     def indexed_child_with_one_child?
-      param_values.current_li.children.length == 1
+      param_values.current_li.nodes.length == 1
     end
 
     def list_item_as_indexed_child?
@@ -97,9 +97,9 @@ module AHBMF
     end
 
     def valid?
-      inner_text = param_obj.current_li.children.first
-      return false unless inner_text.text?
-      inner_text.inner_text == HTMLEntities.new.decode('&nbsp;')
+      inner_text = param_obj.current_li.nodes.first
+      return false unless inner_text.is_a? String
+      inner_text == HTMLEntities.new.decode('&nbsp;')
     end
 
     private

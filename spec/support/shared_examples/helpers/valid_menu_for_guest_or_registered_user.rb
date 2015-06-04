@@ -9,7 +9,6 @@ shared_examples description do |current_user, menu_sym|
       Ox.default_options = { encoding: 'UTF-8' }
       Ox.parse built_menu
     end
-    # let(:container) { Nokogiri.parse built_menu }
     nav_style = if menu_sym == :navbar
                   'navbar-nav'
                 elsif menu_sym == :sidebar

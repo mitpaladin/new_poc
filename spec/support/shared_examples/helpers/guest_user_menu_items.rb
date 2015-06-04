@@ -5,14 +5,14 @@ description = 'a menu containing appropriate items for a Guest User'
 shared_examples description do |current_user, menu_sym|
   context "when called passing in :#{menu_sym} for a Guest User" do
     let(:built_menu) { build_menu_for menu_sym, current_user }
-    let(:container) { Nokogiri.parse built_menu }
+    let(:container) { Ox.parse built_menu }
     separator_style = separator_style_for menu_sym
 
     describe 'contains a top-level `ul` element that' do
-      let(:current_el) { container.elements.first }
+      let(:current_el) { container }
 
       it 'contains 5 child elements' do
-        expect(current_el).to have(5).children
+        expect(current_el).to have(5).nodes
       end
 
       it %w(has as its first child element an `li` element whose only child is

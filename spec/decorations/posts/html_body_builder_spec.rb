@@ -48,9 +48,6 @@ module Decorations
           # Match the ordered list.
           expected = %r{<ol>\n<li>Foo;<\/li>\n<li>Bar.<\/li>\n<\/ol>}m
           expect(actual).to match expected
-          # Why can't these be joined into a single regexp? Development and CI
-          # disagree on newline placement, even with the (reported) same version
-          # of Nokogiri. Pfffft.
         end
       end # context 'not containing an image URL'
 
@@ -68,8 +65,9 @@ module Decorations
 
         describe 'returns markup enclosed in a :figure tag pair, with' do
           it 'the first child of the :figure being an :a tag pair' do
-            # NOTE: Nokogiri forces a paragraph around the contents of the
-            #       figure; Ox does not (but can if we choose to, of course).
+            # NOTE: Ox v Nokogiri: Nokogiri forces a paragraph around the
+            #       contents of the figure; Ox does not (but can if we choose
+            #       to, of course).
             expected = %r{<figure><a .+>.+?</a><figcaption>}
             expect(actual).to match(expected)
           end

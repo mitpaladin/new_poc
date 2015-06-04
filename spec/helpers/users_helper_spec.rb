@@ -14,7 +14,7 @@ describe UsersHelper do
 
   describe :profile_article_list.to_s do
     fragment_builder = lambda do |markup|
-      Nokogiri.parse(markup).children.first
+      Ox.parse markup
     end
 
     it_behaves_like 'a profile article list', fragment_builder
@@ -23,7 +23,7 @@ describe UsersHelper do
   describe :profile_articles_row.to_s do
     let(:fragment) do
       allow(helper).to receive(:current_user).and_return user
-      Nokogiri.parse(helper.profile_articles_row user.name).children.first
+      Ox.parse(helper.profile_articles_row user.name)
     end
 
     it 'is a div.row#contrib-row element' do
@@ -33,11 +33,11 @@ describe UsersHelper do
     end
 
     it 'has two child elements' do
-      expect(fragment).to have(2).children
+      expect(fragment).to have(2).nodes
     end
 
     describe 'contains a first child element that' do
-      let(:element) { fragment.children.first }
+      let(:element) { fragment.nodes.first }
 
       it 'is an h3 element' do
         expect(element.name).to eq 'h3'
@@ -45,13 +45,13 @@ describe UsersHelper do
 
       it 'contains the expected text, including the user name' do
         expected = ['Articles Authored By', user.name].join ' '
-        expect(element.content).to eq expected
+        expect(element.text).to eq expected
       end
     end # describe 'contains a first child element that'
 
     describe 'contains a second child element that is a profile article list' do
       fragment_builder = lambda do |markup|
-        Nokogiri.parse(markup).children.last
+        Ox.parse markup
       end
       it_behaves_like 'a profile article list', fragment_builder
     end # describe 'contains a second child element...a profile article list'
@@ -59,7 +59,7 @@ describe UsersHelper do
 
   describe :profile_bio_row.to_s do
     let(:actual) { profile_bio_row user.name, user.profile }
-    let(:fragment) { Nokogiri.parse(actual).children.first }
+    let(:fragment) { Ox.parse actual }
 
     it 'is a div.row element' do
       expect(fragment.name).to eq 'div'
@@ -67,18 +67,18 @@ describe UsersHelper do
     end
 
     it 'contains two child elements' do
-      expect(fragment).to have(2).children
+      expect(fragment).to have(2).nodes
     end
 
     describe 'has a first child element that' do
-      let(:child) { fragment.children.first }
+      let(:child) { fragment.nodes.first }
 
       it 'is an h1 tag' do
         expect(child.name).to eq 'h1'
       end
 
       it 'contains text including the user name' do
-        expect(child.content).to eq "Profile Page for #{user.name}"
+        expect(child.text).to eq "Profile Page for #{user.name}"
       end
     end # describe 'has a first child element that'
 
