@@ -2,12 +2,14 @@
 require 'spec_helper'
 
 describe Decorations::Posts::HtmlBodyBuilder::ImagePostBuilder::Figure do
-  let(:doc) { Nokogiri::HTML::Document.new }
-  let(:actual) { described_class.new doc }
+  let(:actual) { described_class.new }
 
-  it 'is initialised using a Nokogiri::HTML::Document instance' do
-    expect { described_class.new }.to raise_error ArgumentError, /0 for 1/
-    expect { described_class.new doc }.not_to raise_error
+  it 'is initialised without parameters' do
+    expect { described_class.new :bogus }.to raise_error do |e|
+      expect(e).to be_a ParamContractError
+      expect(e.message).to match %r{Expected: None,}
+      expect(e.message).to match %r{Actual: :bogus}
+    end
   end
 
   describe 'attribute' do
@@ -30,7 +32,7 @@ describe Decorations::Posts::HtmlBodyBuilder::ImagePostBuilder::Figure do
 
   describe 'has a #to_html method that' do
     let(:actual) do
-      described_class.new(doc).tap do |figure|
+      described_class.new.tap do |figure|
         figure.figcaption = dummy_figcaption
         figure.img = dummy_img
       end
@@ -48,5 +50,38 @@ describe Decorations::Posts::HtmlBodyBuilder::ImagePostBuilder::Figure do
       parts = ['<figure>', dummy_img, dummy_figcaption, '</figure>']
       expect(actual.to_html).to eq parts.join
     end
-  end
+  end # describe 'has a #to_html method that'
+
+  describe 'has a #native method that' do
+    let(:actual) do
+      described_class.new.tap do |figure|
+        figure.figcaption = dummy_figcaption
+        figure.img = dummy_img
+      end.native
+    end
+    let(:dummy_figcaption) { Ox::Element.new 'figcaption' }
+    let(:dummy_img) { Ox::Element.new 'img' }
+
+    it 'returns a single top-level Ox::Element instance' do
+      expect(actual).to be_a Ox::Element
+    end
+
+    describe 'returns an element that has' do
+      it 'a name of "figure"' do
+        expect(actual.name).to eq 'figure'
+      end
+
+      it 'two child nodes' do
+        expect(actual).to have(2).nodes
+      end
+
+      it 'an :img element as its first child node' do
+        expect(actual.nodes.first.name).to eq 'img'
+      end
+
+      it 'a :figcaption element as its second child node' do
+        expect(actual.nodes.last.name).to eq 'figcaption'
+      end
+    end # describe 'returns an element that has'
+  end # describe 'has a #native method that'
 end # describe Decorations::Posts::HtmlBodyBuilder::ImagePostBuilder::Figure

@@ -31,35 +31,29 @@ module Decorations
         def initialize(body_html:, image_url:)
           @body = body_html
           @image_url = image_url
-          @doc = document
           self
         end
 
         Contract None => String
         def to_html
-          figure = Figure.new(doc)
+          figure = Figure.new
           figure.figcaption = build_figcaption
           figure.img = build_image
-          figure.to_html
+          MarkdownHtmlConverter.new.to_html figure.to_html
         end
 
         private
 
         attr_reader :body, :doc, :image_url
 
-        Contract None => String
+        Contract None => Ox::Element
         def build_figcaption
-          FigCaption.new(doc: doc, content: body).to_html
+          FigCaption.new(body).native
         end
 
-        Contract None => String
+        Contract None => Ox::Element
         def build_image
-          Image.new(doc: doc, image_url: image_url).to_html
-        end
-
-        Contract None => Nokogiri::HTML::Document
-        def document
-          Nokogiri::HTML::Document.new
+          Image.new(image_url).native
         end
       end # class Decorations::Posts::HtmlBodyBuilder::ImagePostBuilder
     end # class Decorations::Posts::HtmlBodyBuilder

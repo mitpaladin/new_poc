@@ -34,7 +34,7 @@ describe 'Member can create a draft post and see' do
     end
 
     it 'the post image, inside a link to it' do
-      selector = format 'article > figure > p > a > img[src="%s"]', @image_url
+      selector = format 'article > figure > a > img[src="%s"]', @image_url
       expect(page).to have_selector selector
     end
   end # describe 'the newly-entered article details, including'

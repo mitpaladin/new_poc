@@ -3,30 +3,67 @@ require 'spec_helper'
 
 describe Decorations::Posts::HtmlBodyBuilder::ImagePostBuilder::FigCaption do
   let(:doc) { Nokogiri::HTML::Document.new }
+  let(:dummy_caption) { 'a caption' }
   let(:tag_pair) { ['<figcaption><p>', '</p></figcaption>'] }
-  let(:text_caption) { 'This is a caption.' }
-  let(:html_caption) { '<p>This <em>is</em> a caption.</p>' }
-  let(:markdown_caption) { 'This **is** a caption.' }
 
-  describe 'has a #to_html method that correctly builds a figcaption from' do
-    after :each do
-      obj = described_class.new doc: doc, content: @caption
-      expect(obj.to_html).to eq @expected
+  describe 'can be initialised with' do
+    it 'a single parameter' do
+      expect { described_class.new }.to raise_error ArgumentError, /0 for 1/
     end
 
-    it 'text' do
-      @caption = text_caption
-      @expected = tag_pair.join 'This is a caption.'
+    it 'a single string parameter' do
+      expect { described_class.new :oops }.to raise_error do |e|
+        expect(e).to be_a ParamContractError
+        expect(e.message).to match /Expected: String,/
+        expect(e.message).to match /Actual: :oops/
+      end
+    end
+  end # describe 'can be initialised with'
+
+  describe 'has a #to_html method that returns' do
+    let(:actual) { described_class.new(dummy_caption).to_html }
+
+    it 'a :figcaption tag pair' do
+      expect(actual).to match %r{^<figcaption>.+</figcaption>$}
     end
 
-    it 'HTML' do
-      @caption = html_caption
-      @expected = tag_pair.join 'This <em>is</em> a caption.'
+    describe 'correctly-rendered content when supplied as' do
+      after :each do
+        expect(described_class.new(@caption).to_html).to eq @expected
+      end
+
+      it 'text' do
+        @caption = 'This is a caption.'
+        @expected = tag_pair.join @caption
+      end
+
+      it 'HTML' do
+        content = 'This <em>is</em> a caption.'
+        @caption = ['<p>','</p>'].join content
+        @expected = tag_pair.join content
+      end
+
+      it 'Markdown' do
+        @caption = 'This **is** a caption.'
+        @expected = tag_pair.join 'This <strong>is</strong> a caption.'
+      end
+    end # describe 'correctly-rendered content when supplied as'
+  end # describe 'has a #to_html method that returns'
+
+  describe 'has a #native method that returns' do
+    let(:actual) { described_class.new(dummy_caption).native }
+
+    it 'an Ox::Element instance' do
+      expect(actual).to be_a Ox::Element
     end
 
-    it 'Markdown' do
-      @caption = markdown_caption
-      @expected = tag_pair.join 'This <strong>is</strong> a caption.'
+    it 'an instance whose name is "figcaption"' do
+      expect(actual.name).to eq 'figcaption'
     end
-  end # describe 'has a #to_html method that correctly builds a figcaption from'
+
+    it 'the correct content as its single child node' do
+      expect(actual).to have(1).node
+      expect(Ox.dump actual.nodes.first).to match %r{<p>#{dummy_caption}</p>}
+    end
+  end # describe 'has a #native method that returns'
 end # describe Decorations::Posts::HtmlBodyBuilder::ImagePostBuilder::FigCaption

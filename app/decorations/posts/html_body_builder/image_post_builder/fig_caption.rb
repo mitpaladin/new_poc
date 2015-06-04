@@ -4,8 +4,6 @@ require 'nokogiri'
 
 require 'markdown_html_converter'
 
-require_relative 'element'
-
 # POROs that act as presentational support for entities.
 module Decorations
   # Decorations for `Post` entities. D'oh!
@@ -23,30 +21,34 @@ module Decorations
       class ImagePostBuilder
         # Wraps building an HTML :figcaption element from a Markdown post body
         # (remembering that HTML is a valid subset of Markdown).
-        class FigCaption < Element
+        class FigCaption
           include Contracts
 
-          INIT_CONTRACT_INPUTS = {
-            doc: Nokogiri::HTML::Document,
-            content: String
-          }
-
-          Contract INIT_CONTRACT_INPUTS => FigCaption
-          def initialize(doc:, content:)
-            super doc
+          Contract String => FigCaption
+          def initialize(content)
             @content = content
+            Ox.default_options = { indent: 0, encoding: 'UTF-8' }
             self
+          end
+
+          Contract None => Ox::Element
+          def native
+            Ox::Element.new('figcaption').tap { |el| el << native_content }
           end
 
           Contract None => String
           def to_html
-            node = element('figcaption').tap { |container| container << markup }
-            node.to_html
+            Ox.dump(native).tr "\n", ''
           end
 
           private
 
           attr_reader :content
+
+          Contract None => Ox::Element
+          def native_content
+            Ox.parse markup
+          end
 
           Contract None => String
           def markup
